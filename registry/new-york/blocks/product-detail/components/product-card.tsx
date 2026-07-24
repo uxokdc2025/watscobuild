@@ -4,6 +4,10 @@ import {
   formatPrice,
   type RelatedProduct,
 } from "@/registry/new-york/blocks/product-detail/lib/products";
+import {
+  FOCUS_RING,
+  TRANSITION,
+} from "@/registry/new-york/blocks/product-detail/lib/motion";
 import { ProductIcon } from "@/registry/new-york/blocks/product-detail/components/product-icon";
 import { StarRating } from "@/registry/new-york/blocks/product-detail/components/star-rating";
 
@@ -11,17 +15,27 @@ export function ProductCard({ product }: { product: RelatedProduct }) {
   const onSale = product.originalPrice != null;
 
   return (
-    <Card className="overflow-hidden py-0">
+    <Card
+      className={cn(
+        "group overflow-hidden py-0",
+        TRANSITION,
+        "hover:border-primary/40 hover:shadow-md"
+      )}
+    >
       <CardContent className="flex flex-col gap-3 p-0">
         <a
           href="#"
-          className="flex flex-col gap-3 rounded-xl outline-none"
+          className={cn("flex flex-col gap-3 rounded-xl", FOCUS_RING)}
           aria-label={product.name}
         >
           <div className="aspect-square overflow-hidden border-b bg-muted">
             <ProductIcon
               icon={product.icon}
-              className="size-full rounded-none"
+              className={cn(
+                "size-full rounded-none",
+                TRANSITION,
+                "motion-safe:group-hover:scale-105"
+              )}
               iconClassName="size-12"
             />
           </div>

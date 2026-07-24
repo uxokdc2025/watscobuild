@@ -4,6 +4,10 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import type { ProductImage } from "@/registry/new-york/blocks/product-detail/lib/products";
+import {
+  PRESS,
+  TRANSITION,
+} from "@/registry/new-york/blocks/product-detail/lib/motion";
 import { ProductIcon } from "@/registry/new-york/blocks/product-detail/components/product-icon";
 
 export function ProductGallery({ images }: { images: ProductImage[] }) {
@@ -28,10 +32,14 @@ export function ProductGallery({ images }: { images: ProductImage[] }) {
                 aria-label={`Show ${image.alt}`}
                 aria-pressed={selected}
                 className={cn(
-                  "size-16 overflow-hidden rounded-md border outline-none",
+                  "size-16 cursor-pointer overflow-hidden rounded-md border outline-none",
+                  TRANSITION,
+                  PRESS,
+                  // Focus: offset ring. Selection: solid inset primary ring — distinct.
+                  "focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   selected
-                    ? "border-primary ring-2 ring-ring"
-                    : "border-border"
+                    ? "border-primary ring-2 ring-primary"
+                    : "border-border hover:border-primary/60"
                 )}
               >
                 <ProductIcon
