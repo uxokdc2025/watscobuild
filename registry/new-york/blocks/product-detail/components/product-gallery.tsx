@@ -15,11 +15,19 @@ export function ProductGallery({ images }: { images: ProductImage[] }) {
   const current = images[active];
 
   return (
-    // Rail below on mobile, beside on md+ (thumbnail rail returns at 768).
-    <div className="flex flex-col-reverse gap-4 md:flex-row">
-      {/* Thumbnail rail — horizontal scroll on mobile, vertical column on md+ */}
+    <div className="flex flex-col gap-4">
+      {/* Main image */}
+      <div className="aspect-square overflow-hidden rounded-xl border bg-muted">
+        <ProductIcon
+          icon={current.icon}
+          className="size-full rounded-none"
+          iconClassName="size-20"
+        />
+      </div>
+
+      {/* Thumbnail row — below the main photo, scrolls horizontally on small screens */}
       <ul
-        className="flex shrink-0 gap-3 overflow-x-auto pb-1 md:flex-col md:overflow-visible md:pb-0"
+        className="flex gap-3 overflow-x-auto pb-1"
         aria-label="Product image thumbnails"
       >
         {images.map((image, i) => {
@@ -32,14 +40,15 @@ export function ProductGallery({ images }: { images: ProductImage[] }) {
                 aria-label={`Show ${image.alt}`}
                 aria-pressed={selected}
                 className={cn(
-                  "size-16 cursor-pointer overflow-hidden rounded-md border outline-none",
+                  // Constant 2px border avoids layout shift between states.
+                  "size-16 cursor-pointer overflow-hidden rounded-md border-2 outline-none",
                   TRANSITION,
                   PRESS,
-                  // Focus: offset ring. Selection: solid inset primary ring — distinct.
+                  // Focus: ring (keyboard). Selection: thin solid black frame.
                   "focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   selected
-                    ? "border-primary ring-2 ring-primary"
-                    : "border-border hover:border-primary/60"
+                    ? "border-foreground"
+                    : "border-transparent hover:border-foreground/30"
                 )}
               >
                 <ProductIcon
@@ -52,20 +61,6 @@ export function ProductGallery({ images }: { images: ProductImage[] }) {
           );
         })}
       </ul>
-
-      {/* Main image */}
-      <div className="relative min-w-0 flex-1">
-        <div className="aspect-square overflow-hidden rounded-xl border bg-muted">
-          <ProductIcon
-            icon={current.icon}
-            className="size-full rounded-none"
-            iconClassName="size-20"
-          />
-        </div>
-        <span className="absolute right-3 bottom-3 rounded-full border bg-background/80 px-2.5 py-1 text-xs text-muted-foreground backdrop-blur">
-          {active + 1} / {images.length} · {current.alt}
-        </span>
-      </div>
     </div>
   );
 }

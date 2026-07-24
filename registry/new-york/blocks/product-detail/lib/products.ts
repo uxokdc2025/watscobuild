@@ -48,6 +48,10 @@ export type RelatedProduct = {
   slug: string;
   name: string;
   category: string;
+  /** Optional second segment shown after the category, e.g. "Oxford". */
+  subcategory?: string;
+  /** Optional corner tag, e.g. "New" or "Trending". */
+  badge?: string;
   price: number;
   originalPrice?: number;
   rating: number;
@@ -162,6 +166,7 @@ export const relatedProducts: RelatedProduct[] = [
     slug: "meridian-oxford-shirt",
     name: "Meridian Oxford Shirt",
     category: "Shirts",
+    subcategory: "Oxford",
     price: 92,
     rating: 4.4,
     reviewCount: 96,
@@ -172,6 +177,8 @@ export const relatedProducts: RelatedProduct[] = [
     slug: "terra-brushed-flannel",
     name: "Terra Brushed Flannel",
     category: "Shirts",
+    subcategory: "Flannel",
+    badge: "Trending",
     price: 78,
     originalPrice: 110,
     rating: 4.7,
@@ -183,6 +190,8 @@ export const relatedProducts: RelatedProduct[] = [
     slug: "coastal-supima-tee",
     name: "Coastal Supima Tee",
     category: "T-Shirts",
+    subcategory: "Supima",
+    badge: "New",
     price: 42,
     rating: 4.5,
     reviewCount: 311,
@@ -193,6 +202,7 @@ export const relatedProducts: RelatedProduct[] = [
     slug: "harbor-wool-overshirt",
     name: "Harbor Wool Overshirt",
     category: "Outerwear",
+    subcategory: "Wool",
     price: 188,
     originalPrice: 240,
     rating: 4.8,

@@ -19,7 +19,7 @@ export function StickyBuyBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t bg-background/95 px-4 py-3 pb-[max(var(--space-3),env(safe-area-inset-bottom))] backdrop-blur md:hidden">
       <div className="flex flex-col">
-        <span className="text-lg font-bold text-sale-price">
+        <span className="text-lg font-bold text-price">
           {formatPrice(product.price, product.currency)}
         </span>
         <span className="text-xs text-muted-foreground line-through">

@@ -11,6 +11,10 @@ type ProductStore = {
   size: string | undefined;
   setColor: (id: string) => void;
   setSize: (id: string) => void;
+  quantity: number;
+  setQuantity: (n: number) => void;
+  incrementQuantity: () => void;
+  decrementQuantity: () => void;
   wishlisted: boolean;
   toggleWishlist: () => void;
   pending: boolean;
@@ -32,6 +36,18 @@ export function ProductStoreProvider({
     product.colors[0]?.id
   );
   const [size, setSize] = React.useState<string>();
+  const [quantity, setQuantityState] = React.useState(1);
+  const clamp = (n: number) => Math.max(1, Math.min(99, Math.round(n)));
+  const setQuantity = React.useCallback((n: number) => setQuantityState(clamp(n)), []);
+  // Functional updates so rapid clicks don't read a stale `quantity` closure.
+  const incrementQuantity = React.useCallback(
+    () => setQuantityState((q) => clamp(q + 1)),
+    []
+  );
+  const decrementQuantity = React.useCallback(
+    () => setQuantityState((q) => clamp(q - 1)),
+    []
+  );
   const [wishlisted, setWishlisted] = React.useState(false);
   const wishlistedRef = React.useRef(false);
   const [pending, setPending] = React.useState(false);
@@ -57,10 +73,10 @@ export function ProductStoreProvider({
     timer.current = setTimeout(() => {
       setPending(false);
       toast.success("Added to cart", {
-        description: `${product.name} · ${colorName} · Size ${size.toUpperCase()}`,
+        description: `${quantity} × ${product.name} · ${colorName} · Size ${size.toUpperCase()}`,
       });
     }, 1100);
-  }, [pending, outOfStock, size, color, product]);
+  }, [pending, outOfStock, size, color, quantity, product]);
 
   const toggleWishlist = React.useCallback(() => {
     // Derive the next value from a ref (not inside the state updater) so the
@@ -82,13 +98,30 @@ export function ProductStoreProvider({
       size,
       setColor,
       setSize,
+      quantity,
+      setQuantity,
+      incrementQuantity,
+      decrementQuantity,
       wishlisted,
       toggleWishlist,
       pending,
       canAdd,
       addToCart,
     }),
-    [product, color, size, wishlisted, toggleWishlist, pending, canAdd, addToCart]
+    [
+      product,
+      color,
+      size,
+      quantity,
+      setQuantity,
+      incrementQuantity,
+      decrementQuantity,
+      wishlisted,
+      toggleWishlist,
+      pending,
+      canAdd,
+      addToCart,
+    ]
   );
 
   return (

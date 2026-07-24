@@ -4,6 +4,8 @@ import {
   Check,
   Heart,
   Loader2,
+  Minus,
+  Plus,
   RotateCcw,
   ShieldCheck,
   ShoppingCart,
@@ -40,6 +42,52 @@ const TRUST_BADGES = [
   { icon: ShieldCheck, title: "2-year warranty", detail: "Craftsmanship covered" },
   { icon: RotateCcw, title: "30-day returns", detail: "No-questions refunds" },
 ];
+
+function QuantityStepper() {
+  const { quantity, incrementQuantity, decrementQuantity } = useProductStore();
+
+  const stepBtn = cn(
+    "grid h-full w-11 cursor-pointer place-items-center text-foreground",
+    "hover:bg-accent hover:text-accent-foreground",
+    "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground",
+    TRANSITION,
+    PRESS,
+    FOCUS_RING
+  );
+
+  return (
+    <div
+      role="group"
+      aria-label="Quantity"
+      className="inline-flex h-12 shrink-0 items-center rounded-md border"
+    >
+      <button
+        type="button"
+        onClick={decrementQuantity}
+        disabled={quantity <= 1}
+        aria-label="Decrease quantity"
+        className={cn(stepBtn, "rounded-l-md")}
+      >
+        <Minus className="size-4" />
+      </button>
+      <span
+        aria-live="polite"
+        className="grid h-full w-11 place-items-center border-x text-sm font-medium tabular-nums"
+      >
+        {quantity}
+      </span>
+      <button
+        type="button"
+        onClick={incrementQuantity}
+        disabled={quantity >= 99}
+        aria-label="Increase quantity"
+        className={cn(stepBtn, "rounded-r-md")}
+      >
+        <Plus className="size-4" />
+      </button>
+    </div>
+  );
+}
 
 export function ProductSummary({ product }: { product: Product }) {
   const {
@@ -88,7 +136,7 @@ export function ProductSummary({ product }: { product: Product }) {
 
       {/* Price */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="text-3xl font-bold text-sale-price">
+        <span className="text-3xl font-bold text-price">
           {formatPrice(product.price, product.currency)}
         </span>
         <span className="text-lg text-muted-foreground line-through">
@@ -202,7 +250,8 @@ export function ProductSummary({ product }: { product: Product }) {
 
       {/* Buy actions */}
       <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex items-stretch gap-2 sm:gap-3">
+          <QuantityStepper />
           <span className={cn("flex-1", !canAdd && "cursor-not-allowed")}>
             <Button
               size="lg"
@@ -220,13 +269,13 @@ export function ProductSummary({ product }: { product: Product }) {
             </Button>
           </span>
           <Button
-            size="lg"
+            size="icon"
             variant="outline"
             onClick={toggleWishlist}
             aria-pressed={wishlisted}
             aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
             className={cn(
-              "h-12 sm:w-12",
+              "size-12 shrink-0",
               PRESS,
               wishlisted && "border-primary text-primary hover:text-primary"
             )}
@@ -237,9 +286,6 @@ export function ProductSummary({ product }: { product: Product }) {
                 wishlisted && "fill-primary text-primary"
               )}
             />
-            <span className="sm:hidden">
-              {wishlisted ? "Wishlisted" : "Wishlist"}
-            </span>
           </Button>
         </div>
         {!size ? (

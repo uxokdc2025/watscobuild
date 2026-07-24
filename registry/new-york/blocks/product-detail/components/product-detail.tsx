@@ -69,7 +69,13 @@ export function ProductDetail({
 
         {/* Related */}
         <div className="mt-12 md:mt-16">
-          <RelatedProducts products={related} />
+          <RelatedProducts
+            products={related}
+            title={`Pairs Well With ${product.name
+              .split(" ")
+              .slice(0, 2)
+              .join(" ")}`}
+          />
         </div>
 
         {/* Mobile sticky buy bar (shares the product store) */}
