@@ -4,29 +4,89 @@
   "homepage": "https://acme.com",
   "items": [
     {
-      "name": "hello-world",
-      "type": "registry:component",
-      "title": "Hello World",
-      "description": "A simple hello world component",
-      "registryDependencies": ["button"],
-      "files": [
-        {
-          "path": "registry/new-york/blocks/hello-world/hello-world.tsx",
-          "type": "registry:component"
+      "name": "product-detail",
+      "type": "registry:block",
+      "title": "Product Detail",
+      "description": "An e-commerce product-detail page: gallery, pricing, variant selectors, trust badges, detail tabs, and a related-products carousel. Ships ecommerce color tokens.",
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "badge",
+        "breadcrumb",
+        "button",
+        "card",
+        "carousel",
+        "label",
+        "radio-group",
+        "separator",
+        "tabs"
+      ],
+      "cssVars": {
+        "theme": {
+          "color-price": "var(--price)",
+          "color-sale-price": "var(--sale-price)",
+          "color-in-stock": "var(--in-stock)",
+          "color-low-stock": "var(--low-stock)",
+          "color-out-of-stock": "var(--out-of-stock)",
+          "color-rating-star": "var(--rating-star)"
+        },
+        "light": {
+          "price": "oklch(0.21 0.006 285.885)",
+          "sale-price": "oklch(0.577 0.245 27.325)",
+          "in-stock": "oklch(0.596 0.145 163.225)",
+          "low-stock": "oklch(0.666 0.179 58.318)",
+          "out-of-stock": "oklch(0.552 0.016 285.938)",
+          "rating-star": "oklch(0.769 0.188 70.08)"
+        },
+        "dark": {
+          "price": "oklch(0.985 0 0)",
+          "sale-price": "oklch(0.704 0.191 22.216)",
+          "in-stock": "oklch(0.696 0.17 162.48)",
+          "low-stock": "oklch(0.828 0.189 84.429)",
+          "out-of-stock": "oklch(0.705 0.015 286.067)",
+          "rating-star": "oklch(0.828 0.189 84.429)"
         }
-      ]
-    },
-    {
-      "name": "example-form",
-      "type": "registry:component",
-      "title": "Example Form",
-      "description": "A contact form with Zod validation.",
-      "dependencies": ["zod"],
-      "registryDependencies": ["button", "input", "label", "textarea", "card"],
+      },
       "files": [
         {
-          "path": "registry/new-york/blocks/example-form/example-form.tsx",
+          "path": "registry/new-york/blocks/product-detail/page.tsx",
+          "type": "registry:page",
+          "target": "app/product/page.tsx"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/components/product-detail.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/components/product-gallery.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/components/product-summary.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/components/product-tabs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/components/product-card.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/components/related-products.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/components/product-icon.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/components/star-rating.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/blocks/product-detail/lib/products.ts",
+          "type": "registry:lib"
         }
       ]
     },

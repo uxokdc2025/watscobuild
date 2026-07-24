@@ -1,7 +1,7 @@
 import * as React from "react"
+import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 import { OpenInV0Button } from "@/components/open-in-v0-button"
-import { HelloWorld } from "@/registry/new-york/blocks/hello-world/hello-world"
-import { ExampleForm } from "@/registry/new-york/blocks/example-form/example-form"
 import PokemonPage from "@/registry/new-york/blocks/complex-component/page"
 import { ExampleCard } from "@/registry/new-york/blocks/example-with-css/example-card"
 // This page displays items from the custom registry.
@@ -17,27 +17,21 @@ export default function Home() {
         </p>
       </header>
       <main className="flex flex-col flex-1 gap-8">
-        <div className="flex flex-col gap-4 border rounded-lg p-4 min-h-[450px] relative">
+        <div className="flex flex-col gap-4 border rounded-lg p-4 min-h-[220px] relative">
           <div className="flex items-center justify-between">
             <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A simple hello world component
+              An e-commerce product-detail page.
             </h2>
-            <OpenInV0Button name="hello-world" className="w-fit" />
+            <OpenInV0Button name="product-detail" className="w-fit" />
           </div>
-          <div className="flex items-center justify-center min-h-[400px] relative">
-            <HelloWorld />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-4 border rounded-lg p-4 min-h-[450px] relative">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A contact form with Zod validation.
-            </h2>
-            <OpenInV0Button name="example-form" className="w-fit" />
-          </div>
-          <div className="flex items-center justify-center min-h-[500px] relative">
-            <ExampleForm />
+          <div className="flex flex-1 items-center justify-center gap-3">
+            <Link
+              href="/product"
+              className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              View product-detail block
+              <ArrowUpRight className="size-4" />
+            </Link>
           </div>
         </div>
 
