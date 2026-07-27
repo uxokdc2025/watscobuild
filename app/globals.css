@@ -64,22 +64,23 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* ── Radius scale (Intent, proportional) ── */
+  /* ── Radius scale — flat 4px across the system (var(--radius) = 4px).
+        none=0 keeps sharp corners; full=9999px keeps pills/circles round. ── */
   --radius-none: 0;
-  --radius-xs: calc(var(--radius) * 0.5);
-  --radius-sm: calc(var(--radius) * 0.75);
-  --radius-md: calc(var(--radius) * 0.9);
+  --radius-xs: var(--radius);
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.25);
-  --radius-2xl: calc(var(--radius) * 1.5);
-  --radius-3xl: calc(var(--radius) * 2);
-  --radius-4xl: calc(var(--radius) * 3);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
+  --radius-4xl: var(--radius);
   --radius-full: 9999px;
 }
 
 :root {
-  /* ══════════ RADIUS (base — from Intent --radius-lg) ══════════ */
-  --radius: 0.5rem;
+  /* ══════════ RADIUS (base — 4px, flat across the system) ══════════ */
+  --radius: 0.25rem;
 
   /* ══════════ COLORS — light mode (Intent values on shadcn names) ══════════ */
   --background: oklch(1 0 0);
@@ -88,13 +89,13 @@
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.546 0.245 262.881);
+  --primary: oklch(0.597 0.167 253.1);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.92 0.004 286.32);
   --secondary-foreground: oklch(0.141 0.005 285.823);
   --muted: oklch(0.967 0.001 286.375);
   --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.546 0.245 262.881);
+  --accent: oklch(0.597 0.167 253.1);
   --accent-foreground: oklch(1 0 0);
   --success: oklch(0.596 0.145 163.225);
   --success-foreground: oklch(1 0 0);
@@ -104,19 +105,19 @@
   --destructive-foreground: oklch(0.971 0.013 17.38);
   --border: oklch(0.911 0.006 286.286);
   --input: oklch(0.871 0.006 286.286);
-  --ring: oklch(0.546 0.245 262.881);
+  --ring: oklch(0.597 0.167 253.1);
   --navbar: oklch(0.985 0 0);
   --navbar-foreground: oklch(0.141 0.005 285.823);
 
   /* Sidebar */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.546 0.245 262.881);
+  --sidebar-primary: oklch(0.597 0.167 253.1);
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.967 0.001 286.375);
   --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
   --sidebar-border: oklch(0.911 0.006 286.286);
-  --sidebar-ring: oklch(0.546 0.245 262.881);
+  --sidebar-ring: oklch(0.597 0.167 253.1);
 
   /* Charts */
   --chart-1: oklch(0.546 0.245 262.881);
@@ -221,11 +222,11 @@
   --radius-input:    var(--radius);
   --radius-card:     var(--radius);
   --radius-badge:    9999px;
-  --radius-badge-sq: calc(var(--radius) * 0.5);
+  --radius-badge-sq: var(--radius);
   --radius-avatar:   9999px;
-  --radius-dialog:   calc(var(--radius) * 1.25);
+  --radius-dialog:   var(--radius);
   --radius-popover:  var(--radius);
-  --radius-tooltip:  calc(var(--radius) * 0.75);
+  --radius-tooltip:  var(--radius);
 
   /* ══════════ SHADOWS ══════════ */
   --shadow-xs:  0 1px 2px 0 oklch(0 0 0 / 0.05);
@@ -236,7 +237,7 @@
   --shadow-none: none;
   --shadow-btn-inset: inset 0 2px oklch(1 0 0 / 0.15);
   --ring-width: 4px;
-  --ring-color: oklch(0.546 0.245 262.881 / 0.20);
+  --ring-color: oklch(0.597 0.167 253.1 / 0.20);
   --shadow-card:    var(--shadow-xs);
   --shadow-input:   var(--shadow-xs);
   --shadow-dialog:  var(--shadow-lg);
@@ -271,13 +272,13 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.17 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.546 0.245 262.881);
+  --primary: oklch(0.597 0.167 253.1);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.244 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.21 0.006 285.885);
   --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.546 0.245 262.881);
+  --accent: oklch(0.597 0.167 253.1);
   --accent-foreground: oklch(1 0 0);
   --success: oklch(0.596 0.145 163.225);
   --success-foreground: oklch(1 0 0);
@@ -287,19 +288,19 @@
   --destructive-foreground: oklch(0.971 0.013 17.38);
   --border: oklch(0.270 0.013 285.805);
   --input: oklch(0.290 0.013 285.805);
-  --ring: oklch(0.546 0.245 262.881);
+  --ring: oklch(0.597 0.167 253.1);
   --navbar: oklch(0.17 0.006 285.885);
   --navbar-foreground: oklch(0.985 0 0);
 
   /* Sidebar */
   --sidebar: oklch(0.16 0.006 285.885);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.546 0.245 262.881);
+  --sidebar-primary: oklch(0.597 0.167 253.1);
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.244 0.006 286.033);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.270 0.013 285.805);
-  --sidebar-ring: oklch(0.546 0.245 262.881);
+  --sidebar-ring: oklch(0.597 0.167 253.1);
 
   /* Charts */
   --chart-1: oklch(0.488 0.243 264.376);
