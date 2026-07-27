@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Loader2, Plus } from "lucide-react";
+import { Check, Loader2, Plus, Shield } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -87,6 +87,37 @@ export function ActionsSection() {
             <Check className="size-3" />
             Active
           </Badge>
+        </State>
+        <State label="Soft (Pro Essentials)">
+          <Badge variant="soft" color="blue">
+            <Shield className="size-3" />
+            Pro Essentials
+          </Badge>
+        </State>
+        <State label="Solid (Best Value)">
+          <Badge variant="solid" color="violet">
+            Best Value
+          </Badge>
+        </State>
+        <State label="Soft — colors" className="w-full">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Badge variant="soft" color="blue">Blue</Badge>
+            <Badge variant="soft" color="violet">Violet</Badge>
+            <Badge variant="soft" color="green">Green</Badge>
+            <Badge variant="soft" color="amber">Amber</Badge>
+            <Badge variant="soft" color="red">Red</Badge>
+            <Badge variant="soft" color="slate">Slate</Badge>
+          </div>
+        </State>
+        <State label="Solid — colors" className="w-full">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Badge variant="solid" color="blue">Blue</Badge>
+            <Badge variant="solid" color="violet">Violet</Badge>
+            <Badge variant="solid" color="green">Green</Badge>
+            <Badge variant="solid" color="amber">Amber</Badge>
+            <Badge variant="solid" color="red">Red</Badge>
+            <Badge variant="solid" color="slate">Slate</Badge>
+          </div>
         </State>
       </Demo>
     </Category>

@@ -60,6 +60,34 @@ export function NavigationSection() {
             </TabsContent>
           </Tabs>
         </Block>
+
+        <Block label="Line — underline, brand-colored active tab">
+          <Tabs defaultValue="equipment">
+            <TabsList variant="line">
+              <TabsTrigger value="equipment">Equipment</TabsTrigger>
+              <TabsTrigger value="parts">Parts</TabsTrigger>
+              <TabsTrigger value="supplies">Supplies</TabsTrigger>
+            </TabsList>
+            <TabsContent
+              value="equipment"
+              className="pt-3 text-sm text-muted-foreground"
+            >
+              Frequently bought equipment.
+            </TabsContent>
+            <TabsContent
+              value="parts"
+              className="pt-3 text-sm text-muted-foreground"
+            >
+              Replacement parts and components.
+            </TabsContent>
+            <TabsContent
+              value="supplies"
+              className="pt-3 text-sm text-muted-foreground"
+            >
+              Consumable supplies.
+            </TabsContent>
+          </Tabs>
+        </Block>
       </Demo>
 
       {/* ── Breadcrumb ── */}
