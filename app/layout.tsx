@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto, Geist_Mono } from "next/font/google";
+import { Roboto, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -9,8 +9,8 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const robotoMono = Roboto_Mono({
+  variable: "--font-roboto-mono",
   subsets: ["latin"],
 });
 
@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${roboto.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`${roboto.variable} ${robotoMono.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"
