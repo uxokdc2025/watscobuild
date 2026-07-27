@@ -33,6 +33,8 @@ const tabsListVariants = cva(
         default: "bg-muted",
         // Full-width grey baseline rule; tabs left-aligned, natural width.
         line: "w-full justify-start gap-6 rounded-none border-b border-border bg-transparent",
+        // Solid segmented control: muted track, primary-filled active pill.
+        segmented: "bg-muted",
       },
     },
     defaultVariants: {
@@ -70,7 +72,9 @@ function TabsTrigger({
         // Line variant: natural-width tabs that pack left, brand-colored active (blue text + blue underline)
         "group-data-[variant=line]/tabs-list:flex-none group-data-[variant=line]/tabs-list:data-[state=active]:text-primary dark:group-data-[variant=line]/tabs-list:data-[state=active]:text-primary",
         "data-[state=active]:bg-background data-[state=active]:text-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground",
-        "after:absolute after:bg-primary after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-3px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
+        // Segmented variant: primary-filled active pill (Pack Size style).
+        "group-data-[variant=segmented]/tabs-list:flex-1 group-data-[variant=segmented]/tabs-list:data-[state=active]:bg-primary group-data-[variant=segmented]/tabs-list:data-[state=active]:text-primary-foreground dark:group-data-[variant=segmented]/tabs-list:data-[state=active]:bg-primary dark:group-data-[variant=segmented]/tabs-list:data-[state=active]:text-primary-foreground",
+        "after:absolute after:bg-primary after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
         className
       )}
       {...props}

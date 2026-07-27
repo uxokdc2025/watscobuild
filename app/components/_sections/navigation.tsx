@@ -88,6 +88,41 @@ export function NavigationSection() {
             </TabsContent>
           </Tabs>
         </Block>
+
+        <Block label="Segmented — solid pill (Pack Size selector style)">
+          <Tabs defaultValue="each">
+            <TabsList variant="segmented">
+              <TabsTrigger value="each">Each</TabsTrigger>
+              <TabsTrigger value="12">12-Pk</TabsTrigger>
+              <TabsTrigger value="24">24-Pk</TabsTrigger>
+              <TabsTrigger value="36">36-Pk</TabsTrigger>
+            </TabsList>
+            <TabsContent
+              value="each"
+              className="pt-3 text-sm text-muted-foreground"
+            >
+              Priced per each.
+            </TabsContent>
+            <TabsContent
+              value="12"
+              className="pt-3 text-sm text-muted-foreground"
+            >
+              12-pack pricing.
+            </TabsContent>
+            <TabsContent
+              value="24"
+              className="pt-3 text-sm text-muted-foreground"
+            >
+              24-pack pricing.
+            </TabsContent>
+            <TabsContent
+              value="36"
+              className="pt-3 text-sm text-muted-foreground"
+            >
+              36-pack pricing.
+            </TabsContent>
+          </Tabs>
+        </Block>
       </Demo>
 
       {/* ── Breadcrumb ── */}

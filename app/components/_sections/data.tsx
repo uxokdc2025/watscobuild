@@ -42,6 +42,7 @@ const ROWS = [
   { id: "INV-001", status: "Paid", total: "$250.00" },
   { id: "INV-002", status: "Pending", total: "$150.00" },
   { id: "INV-003", status: "Unpaid", total: "$350.00" },
+  { id: "INV-004", status: "Paid", total: "$120.00" },
 ];
 
 export function DataSection() {
@@ -85,8 +86,8 @@ export function DataSection() {
 
       {/* ── Table ── */}
       <Demo name="Table" slug="table">
-        <Block label="Row states">
-          <Table>
+        <Block label="Row states + zebra striping (bg-muted/40)">
+          <Table className="[&_tbody_tr:nth-child(even)]:bg-muted/40">
             <TableHeader>
               <TableRow>
                 <TableHead>Invoice</TableHead>
