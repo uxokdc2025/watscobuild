@@ -26,8 +26,14 @@ export type FbtProduct = {
 /** A related part shown in the "Parts" section (mini product card). */
 export type PartItem = FbtProduct & { image?: string };
 
-/** A downloadable/linked asset shown in the Description's "Documents" block. */
-export type PdpDocument = { label: string; kind: "pdf" | "video"; href: string };
+/** A downloadable/linked asset shown in the "Product Documentation" tab. */
+export type PdpDocument = {
+  label: string;
+  kind: "pdf" | "video";
+  href: string;
+  /** Group heading in the documentation list (defaults to label). */
+  category?: string;
+};
 
 /** Rich description: a lead paragraph, optional bullet list, optional note pairs. */
 export type PdpDescription = {
@@ -64,10 +70,12 @@ export type PdpProduct = {
   /** Real product image URLs (first is the hero). Falls back to a placeholder. */
   images?: string[];
   description: PdpDescription;
-  /** Label for the specification tab, e.g. "Features and Specification". */
+  /** Label for the specification tab, e.g. "Equipment Specification". */
   specTabLabel: string;
   specGroupsLeft: SpecGroup[];
   specGroupsRight: SpecGroup[];
+  /** Flat spec rows — when present, rendered as a 4-column list (no groups). */
+  specsFlat?: SpecRow[];
   /** Extra tabs that are empty on the source (rendered as "coming soon"). */
   comingSoonTabs?: string[];
   /** Signed-in pricing/inventory. Omit for products we only have gated data for. */

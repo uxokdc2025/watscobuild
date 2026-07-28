@@ -4,7 +4,7 @@ import { ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "./auth";
-import type { PartItem, PdpProduct } from "./types";
+import type { PartItem } from "./types";
 
 function PartImage({ src, alt }: { src?: string; alt: string }) {
   if (src) {
@@ -72,16 +72,13 @@ function PartCard({ item }: { item: PartItem }) {
   );
 }
 
-export function PdpParts({ product }: { product: PdpProduct }) {
-  if (!product.parts?.length) return null;
+/** Grid of part cards, no heading — used inside the "Part Lists" tab. */
+export function PartsGrid({ parts }: { parts: PartItem[] }) {
   return (
-    <section aria-label="Parts" className="flex flex-col gap-4">
-      <h2 className="text-2xl font-bold tracking-tight">Parts</h2>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {product.parts.map((it) => (
-          <PartCard key={it.id} item={it} />
-        ))}
-      </div>
-    </section>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {parts.map((it) => (
+        <PartCard key={it.id} item={it} />
+      ))}
+    </div>
   );
 }

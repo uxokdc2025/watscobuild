@@ -1,14 +1,15 @@
-import { MapPin } from "lucide-react";
-
+import { cn } from "@/lib/utils";
 import { PdpGallery } from "../_components/gallery";
 import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
 import { FrequentlyBoughtTogether } from "./fbt";
-import { PdpParts } from "./parts";
 import { SiteFooter, SiteHeader } from "./chrome";
 import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
+
+/** Per-brand page canvas (some sites use a light-grey background, not white). */
+const PAGE_BG: Record<string, string> = { homans: "bg-brand-homans-bg" };
 
 /** Fallback when a product has no mapped brand chrome. */
 function LegacyShell({ label }: { label: string }) {
@@ -36,7 +37,12 @@ export function Pdp({
 
   return (
     <PdpAuthProvider initialSignedIn={signedIn}>
-      <div className="min-h-svh bg-background">
+      <div
+        className={cn(
+          "min-h-svh",
+          (brand && PAGE_BG[brand.key]) || "bg-background"
+        )}
+      >
         {brand ? (
           <SiteHeader brand={brand} signedIn={signedIn} />
         ) : (
@@ -44,24 +50,8 @@ export function Pdp({
         )}
 
         <main className="mx-auto max-w-6xl px-4 py-6 md:px-6">
-          {/* Store */}
-          {product.store ? (
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <MapPin className="size-4 shrink-0" />
-              <span className="font-medium text-foreground">
-                {product.store.name}
-              </span>
-              {product.store.hours ? (
-                <>
-                  <span aria-hidden>·</span>
-                  <span>{product.store.hours}</span>
-                </>
-              ) : null}
-            </div>
-          ) : null}
-
-          {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="mt-3 text-sm">
+          {/* Breadcrumb (store/location lives in the site header) */}
+          <nav aria-label="Breadcrumb" className="text-sm">
             <ol className="flex items-center gap-1.5">
               <li>
                 <a
@@ -97,14 +87,7 @@ export function Pdp({
             </div>
           ) : null}
 
-          {/* Parts (related parts — only if present) */}
-          {product.parts?.length ? (
-            <div className="mt-14">
-              <PdpParts product={product} />
-            </div>
-          ) : null}
-
-          {/* Description / specs / extra tabs */}
+          {/* Description / Part Lists / Equipment Spec / Documentation tabs */}
           <div className="mt-14">
             <PdpDetails product={product} />
           </div>

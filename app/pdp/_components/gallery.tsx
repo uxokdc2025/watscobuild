@@ -63,6 +63,8 @@ export function PdpGallery({
   const thumbs = hasImages
     ? images!
     : (Array.from({ length: thumbnailCount }) as undefined[]);
+  // A single image needs no thumbnail rail.
+  const showThumbs = thumbs.length > 1;
 
   return (
     <div className="flex flex-col gap-4">
@@ -98,7 +100,8 @@ export function PdpGallery({
         </div>
       </div>
 
-      {/* Thumbnail rail */}
+      {/* Thumbnail rail — hidden when there's only one image */}
+      {showThumbs ? (
       <ul
         className="flex gap-2 overflow-x-auto pb-1"
         aria-label="Product image thumbnails"
@@ -130,6 +133,7 @@ export function PdpGallery({
           );
         })}
       </ul>
+      ) : null}
     </div>
   );
 }

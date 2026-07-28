@@ -3,6 +3,7 @@ import type {
   PdpDocument,
   PdpProduct,
   SpecGroup,
+  SpecRow,
 } from "./types";
 
 /**
@@ -14,18 +15,44 @@ import type {
 const EC13_IMG =
   "https://cdn.gemaire.com/tradepro_tp-ec13-50_article_1111184500437961_en_normal?wid=700&hei=700&qlt=80";
 
-// Real TP-EC13 documents (Gemaire content CDN).
+// Real TP-EC13 documents (grouped under "Consumer Literature" per the source).
 const EC13_DOCUMENTS: PdpDocument[] = [
   {
-    label: "consumer literature",
+    label: "Consumer Literature",
     kind: "pdf",
+    category: "Consumer Literature",
     href: "https://resource.gemaire.com/is/content/Watscocom/Gemaire/tradepro_motor-brochure-2021_en_cl.pdf",
   },
-  {
-    label: "video",
-    kind: "video",
-    href: "https://resource.gemaire.com/is/content/Watscocom/Gemaire/tradepro_tp-ec13_en_vid1.mp4",
-  },
+];
+
+// Flat Equipment Specification rows (4-column list, per the source PDP).
+const EC13_SPECS_FLAT: SpecRow[] = [
+  { label: "amps", value: "3.8, 6.3" },
+  { label: "Basis Of Rotation View", value: "Lead End" },
+  { label: "Bearing Type", value: "Ball" },
+  { label: "brand", value: "TRADEPRO®" },
+  { label: "Country Of Origin", value: "MEX" },
+  { label: "Cycle Hertz", value: "60 Hz" },
+  { label: "duty", value: "(S1) Continuous Running Duty" },
+  { label: "Insulation Class", value: "B" },
+  { label: "Motor Enclosure", value: "Open Air Over (OPAO)" },
+  { label: "Motor Hp", value: "1/3 - 1/2" },
+  { label: "Motor Type", value: "ECM (Electronically Commutated Motor)" },
+  { label: "Mounting Type", value: "Belly Band" },
+  { label: "Nema Frame", value: "48Y" },
+  { label: "Number Of Speeds", value: "Variable" },
+  { label: "Online Only", value: "false" },
+  { label: "phase", value: "Single" },
+  { label: "poles", value: "10" },
+  { label: "Prop 65", value: "false" },
+  { label: "Reference Only", value: "false" },
+  { label: "rotation", value: "Reversible" },
+  { label: "rpm", value: "1075" },
+  { label: "Shaft Diameter", value: '0.5" (1/2")' },
+  { label: "Shaft Length", value: '5.0"' },
+  { label: "Status In Erp", value: "active" },
+  { label: "Substantial Commodity", value: "Steel, Copper" },
+  { label: "voltage", value: "115 VAC, 208-230 VAC" },
 ];
 
 // Related part shown in the "Parts" section — the 3/4 HP sibling (real image).
@@ -255,13 +282,15 @@ const tradeproEc13Homans: PdpProduct = {
     "TRADEPRO® TP-EC13-50 Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230 V, 6.3/4.0-3.8 Amps, 1/2-1/3 HP",
   item: "TPEC1350",
   mfg: "TP-EC13-50",
-  thumbnailCount: 2,
+  thumbnailCount: 1,
   images: [EC13_IMG],
   description: EC13_DESCRIPTION,
+  documents: EC13_DOCUMENTS,
+  parts: EC13_PARTS,
   specTabLabel: "Equipment Specification",
   specGroupsLeft: EC13_SPECS_LEFT,
   specGroupsRight: EC13_SPECS_RIGHT,
-  comingSoonTabs: ["Part Lists", "Product Documentation"],
+  specsFlat: EC13_SPECS_FLAT,
   // Homans signed-in: price hidden, fulfillment is call-based.
   commerce: { price: null, uom: "EA", fulfillmentNote: "Call for availability" },
 };
@@ -282,6 +311,7 @@ const tradeproEc13Gemaire: PdpProduct = {
   specTabLabel: "Equipment Specification",
   specGroupsLeft: EC13_SPECS_LEFT,
   specGroupsRight: EC13_SPECS_RIGHT,
+  specsFlat: EC13_SPECS_FLAT,
   // Gemaire signed-in: real price + branch availability.
   commerce: {
     price: 269.71,

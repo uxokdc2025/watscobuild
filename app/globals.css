@@ -69,6 +69,8 @@
   --color-brand-dcne-foreground: var(--brand-dcne-foreground);
   --color-brand-homans: var(--brand-homans);
   --color-brand-homans-foreground: var(--brand-homans-foreground);
+  --color-brand-homans-nav: var(--brand-homans-nav);
+  --color-brand-homans-bg: var(--brand-homans-bg);
 
   /* ── Colors — charts ── */
   --color-chart-1: var(--chart-1);
@@ -125,8 +127,10 @@
   --brand-ecmdi-foreground: #ffffff;
   --brand-dcne: #001056; /* DCNE dark-navy utility bar */
   --brand-dcne-foreground: #ffffff;
-  --brand-homans: #003874; /* Homans Associates navy category nav */
+  --brand-homans: #045ea9; /* Homans primary blue (main bar, footer bottom bar) */
   --brand-homans-foreground: #ffffff;
+  --brand-homans-nav: #003874; /* Homans darker category nav bar */
+  --brand-homans-bg: #f5f5f5; /* Homans light-grey page canvas (standard Watsco theme grey) */
 
   /* ══════════ COLORS — light mode (Intent values on shadcn names) ══════════ */
   --background: oklch(1 0 0);

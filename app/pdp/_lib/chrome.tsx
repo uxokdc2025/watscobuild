@@ -1,6 +1,8 @@
 import {
   ChevronDown,
+  ClipboardList,
   Facebook,
+  Home,
   Twitter,
   Instagram,
   Linkedin,
@@ -10,6 +12,7 @@ import {
   Search,
   ShoppingCart,
   User,
+  Video,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -830,102 +833,225 @@ function DcneFooter({ brand }: { brand: BrandChrome }) {
    with a gold Specials. Footer: white.
    ════════════════════════════════════════════════════════════════════════ */
 
+const HOMANS_LOGO = "https://www.homans.com/homansWhiteLogo-mER.png";
 const HOMANS_UTIL = [
   "AHRI Search",
-  "Branches",
-  "Documents",
   "Part Finder",
+  "Warranty Center",
   "Quick Order",
-  "Rebates",
-  "Training",
-  "Warranty",
-  "Contact",
+  "Help & Support",
 ];
+const HOMANS_CARET = /^(Products|Find A Local Dealer)$/i;
 
-function HomansHeader({ brand }: { brand: BrandChrome }) {
+function HomansHeader({
+  brand,
+  signedIn = false,
+}: {
+  brand: BrandChrome;
+  signedIn?: boolean;
+}) {
   return (
-    <header className="bg-background">
-      {/* Utility bar */}
-      <div className="border-b">
-        <div className="mx-auto flex max-w-6xl items-center justify-end gap-4 px-4 py-1.5 text-xs text-muted-foreground md:px-6">
+    <header>
+      {/* Utility bar (white, centered) */}
+      <div className="border-b bg-background">
+        <div className="mx-auto flex max-w-6xl items-center justify-center gap-6 px-4 py-2 text-xs text-muted-foreground md:px-6">
           {HOMANS_UTIL.map((l) => (
-            <a key={l} href="#" className="hidden whitespace-nowrap hover:text-foreground lg:inline">
+            <a key={l} href="#" className="whitespace-nowrap hover:text-foreground">
               {l}
             </a>
           ))}
         </div>
       </div>
 
-      {/* Main bar */}
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
-        <a href="#" className="shrink-0 leading-none text-brand-homans" aria-label="Homans Associates home">
-          <span className="block text-xl font-black tracking-tight">HOMANS</span>
-          <span className="block text-[10px] font-semibold tracking-[0.2em]">
-            ASSOCIATES
-          </span>
-        </a>
-        <div className="relative hidden min-w-0 flex-1 md:block">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            aria-label="Search"
-            placeholder="Enter keyword, item, model or part #"
-            className="h-10 w-full rounded border bg-background pr-3 pl-9 text-sm outline-none"
-          />
-        </div>
-        <div className="ml-auto flex items-center gap-4 text-sm">
-          <button type="button" className="inline-flex items-center gap-1.5">
-            <User className="size-5" />
-            <span className="hidden lg:inline">Account</span>
+      {/* Main bar (blue) */}
+      <div className="bg-brand-homans text-brand-homans-foreground">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+          <a href="#" className="shrink-0" aria-label="Homans Associates home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={HOMANS_LOGO} alt="Homans Associates" className="h-9 w-auto" />
+          </a>
+
+          {/* Your store */}
+          <div className="hidden items-center gap-2 text-xs leading-tight xl:flex">
+            <Home className="size-5 shrink-0" />
+            <span>
+              <span className="block opacity-90">Your store</span>
+              <span className="block font-bold underline underline-offset-2">
+                Manchester, NH - Homans, NH
+              </span>
+              <span className="block text-[11px] font-semibold text-green-300">
+                Open now
+              </span>
+            </span>
+          </div>
+
+          {/* Search */}
+          <div className="relative min-w-0 flex-1">
+            <input
+              aria-label="Search"
+              placeholder="Search item # or name"
+              className="h-11 w-full rounded-sm bg-white pr-11 pl-4 text-sm text-foreground outline-none"
+            />
+            <button
+              type="button"
+              aria-label="Search"
+              className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground"
+            >
+              <Search className="size-5" />
+            </button>
+          </div>
+
+          {/* Lists */}
+          <button type="button" className="hidden flex-col items-center text-[11px] lg:flex">
+            <ClipboardList className="size-5" />
+            Lists
           </button>
-          <button type="button" aria-label="Cart" className="inline-flex items-center gap-1.5">
-            <ShoppingCart className="size-5" />
-            <span className="hidden sm:inline">Cart</span>
+
+          {/* Account */}
+          <button type="button" className="hidden text-left text-xs leading-tight sm:block">
+            <span className="block opacity-90">{signedIn ? "Hello, David" : "Sign In"}</span>
+            <span className="block font-bold">My Account</span>
+          </button>
+
+          {/* Cart */}
+          <button type="button" aria-label="Cart" className="flex items-center gap-1.5 text-[11px] leading-tight">
+            <ShoppingCart className="size-6 shrink-0" />
+            <span className="hidden text-left sm:block">
+              {signedIn ? <span className="block font-semibold">1 Item</span> : null}
+              <span className="block">Cart</span>
+            </span>
           </button>
         </div>
       </div>
 
-      {/* Navy category nav */}
-      <nav aria-label="Primary" className="bg-brand-homans text-brand-homans-foreground">
-        <div className="mx-auto flex max-w-6xl items-stretch gap-1 overflow-x-auto px-4 md:px-6">
-          {brand.nav.map((n) => {
-            const isSpecials = /specials/i.test(n);
-            return (
-              <a
-                key={n}
-                href="#"
-                className={cn(
-                  "px-3 py-3 text-sm font-medium whitespace-nowrap",
-                  isSpecials
-                    ? "bg-amber-400 font-semibold text-amber-950"
-                    : "text-white/90 hover:text-white"
-                )}
-              >
-                {n}
-              </a>
-            );
-          })}
+      {/* Nav bar (darker navy) */}
+      <nav aria-label="Primary" className="bg-brand-homans-nav text-brand-homans-foreground">
+        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+          {brand.nav.map((n) => (
+            <button
+              key={n}
+              type="button"
+              className="inline-flex items-center gap-1 px-3 py-3 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white"
+            >
+              {n}
+              {HOMANS_CARET.test(n) ? <ChevronDown className="size-3.5" /> : null}
+            </button>
+          ))}
         </div>
       </nav>
     </header>
   );
 }
 
+const HOMANS_FOOTER_COLS: FooterColumn[][] = [
+  [
+    { title: "Company", links: ["About", "Branch Finder", "Careers", "Mobile Apps"] },
+    { title: "Resources", links: ["Credit Application", "Homans Pay", "Simple Proposal"] },
+  ],
+  [
+    { title: "Local", links: ["Brands", "Bryant Resources", "Mitsubishi Team"] },
+    { title: "Watsco Tools", links: ["Housecall Pro", "OnCall Air", "Amply Energy", "Coral"] },
+  ],
+];
+const HOMANS_SOCIAL = [
+  { label: "Facebook", Icon: Facebook },
+  { label: "X", Icon: Twitter },
+  { label: "LinkedIn", Icon: Linkedin },
+  { label: "Vimeo", Icon: Video },
+];
+
+function StoreBadge({ store }: { store: string }) {
+  return (
+    <span className="inline-flex items-center rounded bg-black px-3 py-1.5 text-white">
+      <span className="text-sm font-bold">{store}</span>
+    </span>
+  );
+}
+
 function HomansFooter({ brand }: { brand: BrandChrome }) {
   return (
     <footer className="mt-16 border-t bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-          {brand.footerColumns.map((col) => (
-            <FooterColumnBlock key={col.title} col={col} />
+      <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Columns 1 & 2: stacked link groups */}
+          {HOMANS_FOOTER_COLS.map((groups, i) => (
+            <div key={i} className="flex flex-col gap-8">
+              {groups.map((g) => (
+                <FooterColumnBlock key={g.title} col={g} />
+              ))}
+            </div>
           ))}
-        </div>
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs text-muted-foreground sm:flex-row">
-          <span>© {brand.copyright}</span>
-          <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-foreground">Privacy Policy</a>
-            <a href="#" className="hover:text-foreground">Terms of Use</a>
-            <a href="#" className="hover:text-foreground">Accessibility</a>
+
+          {/* Column 3: Follow Us + Mobile Apps */}
+          <div className="flex flex-col gap-8">
+            <div>
+              <h3 className="text-sm font-bold tracking-wide uppercase">Follow Us</h3>
+              <div className="mt-3 flex items-center gap-4">
+                {HOMANS_SOCIAL.map(({ label, Icon }) => (
+                  <a key={label} href="#" aria-label={label} className="text-brand-homans hover:opacity-70">
+                    <Icon className="size-5" />
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold tracking-wide uppercase">Mobile Apps</h3>
+              <p className="mt-2 text-sm font-semibold">HVAC Pro+</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Product info and time-saving tools for HVAC pros, on the go.
+              </p>
+              <a href="#" className="mt-2 inline-block text-sm font-semibold text-brand-homans hover:underline">
+                See Features →
+              </a>
+              <div className="mt-3 flex gap-2">
+                <StoreBadge store="App Store" />
+                <StoreBadge store="Google Play" />
+              </div>
+            </div>
           </div>
+
+          {/* Column 4: Customer Service + Subscribe */}
+          <div className="flex flex-col gap-8">
+            <div>
+              <h3 className="text-sm font-bold tracking-wide uppercase">Customer Service</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Our team is here to support your business across every branch.
+              </p>
+              <button
+                type="button"
+                className="mt-3 rounded-sm bg-brand-homans px-4 py-2 text-sm font-semibold text-white"
+              >
+                Contact Support →
+              </button>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold tracking-wide uppercase">Subscribe For Offers</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Sign up for exclusive promotions and product updates.
+              </p>
+              <button
+                type="button"
+                className="mt-3 rounded-sm bg-brand-homans px-4 py-2 text-sm font-semibold text-white"
+              >
+                Subscribe →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navy bottom bar */}
+      <div className="bg-brand-homans text-brand-homans-foreground">
+        <div className="mx-auto max-w-6xl px-4 py-5 text-center text-xs md:px-6">
+          <p>© {brand.copyright}</p>
+          <p className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            {["Privacy Policy", "Terms of Use", "Accessibility", "Help"].map((l, i) => (
+              <span key={l} className="inline-flex items-center gap-3">
+                {i > 0 ? <span aria-hidden className="opacity-60">|</span> : null}
+                <a href="#" className="hover:underline">{l}</a>
+              </span>
+            ))}
+          </p>
         </div>
       </div>
     </footer>
@@ -1109,7 +1235,7 @@ export function SiteHeader({
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
   if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} />;
   if (brand.key === "dcne") return <DcneHeader brand={brand} />;
-  if (brand.key === "homans") return <HomansHeader brand={brand} />;
+  if (brand.key === "homans") return <HomansHeader brand={brand} signedIn={signedIn} />;
   return <GenericHeader brand={brand} />;
 }
 
