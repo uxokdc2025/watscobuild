@@ -436,13 +436,20 @@ const CE_UTIL_LEFT = [
 const CE_UTIL_RIGHT = ["CE PATH", "CE Rewards", "CE Statements", "Contact"];
 
 function CeMonogram() {
+  // Real Carrier Enterprise CE mark (inline SVG from the live site), colored
+  // dark for the white header via currentColor.
   return (
-    <span
-      className="grid size-10 place-items-center rounded-full border-2 border-foreground text-base font-black tracking-tighter text-foreground"
-      aria-hidden
+    <svg
+      viewBox="0 0 40 30"
+      className="h-8 w-auto text-foreground"
+      role="img"
+      aria-label="Carrier Enterprise home"
     >
-      CE
-    </span>
+      <g fill="currentColor" fillRule="evenodd">
+        <path d="M28.498 14.243h-5.035c-.597-.81-1.308-1.417-2.133-1.822s-1.763-.608-2.813-.608c-.849 0-1.654.16-2.416.478a6.045 6.045 0 0 0-2.025 1.388 6.782 6.782 0 0 0-1.453 2.206 6.7 6.7 0 0 0-.515 2.567c0 1.93.62 3.547 1.86 4.854 1.239 1.306 2.755 1.959 4.549 1.959 1.032 0 1.96-.193 2.784-.578a4.954 4.954 0 0 0 2.004-1.678h5.048c-.984 2.15-2.295 3.766-3.935 4.845-1.64 1.08-3.597 1.62-5.872 1.62-1.582 0-3.04-.303-4.376-.91-1.336-.609-2.534-1.51-3.594-2.706a10.264 10.264 0 0 1-2.04-3.391c-.463-1.268-.694-2.626-.694-4.072 0-1.466.28-2.857.839-4.173.559-1.317 1.379-2.515 2.46-3.595 1.02-1.003 2.156-1.762 3.405-2.278 1.249-.516 2.592-.774 4.029-.774 2.304 0 4.274.55 5.908 1.65 1.635 1.099 2.973 2.772 4.015 5.018M39.369 29.475h-9.534V11.813h9.534v3.106h-6.114v4.027h6.114v3.057h-6.114v4.367h6.114v3.105" />
+        <path d="m33.653 7.717-.007.004a18.464 18.464 0 0 0-6.034-5.372l-.97-.502A18.644 18.644 0 0 0 18.752 0l-1.038.018c-2.398.11-4.816.69-7.12 1.788C2.824 5.504-1.195 13.896.312 21.971l.227 1.045a18.68 18.68 0 0 0 1.267 3.539 18.67 18.67 0 0 0 2.124 3.444L6.79 30l.975-2.677a13.949 13.949 0 0 1-1.745-2.774 13.933 13.933 0 0 1-.949-2.65l-.17-.783C3.773 15.071 6.783 8.788 12.598 6.02a13.861 13.861 0 0 1 5.332-1.34l.777-.013c2.066.021 4.095.504 5.937 1.396l.697.363a13.833 13.833 0 0 1 4.488 3.98h2.85l.974-2.677-.004-.004.004-.008" />
+      </g>
+    </svg>
   );
 }
 
@@ -1094,10 +1101,24 @@ const HOMANS_SOCIAL = [
   { label: "Vimeo", Icon: Video },
 ];
 
+const STORE_BADGES: Record<string, string> = {
+  "App Store":
+    "https://resource.gemaire.com/is/image/Watscocom/gemaire_content_app-store-logo?hei=40&fmt=png-alpha",
+  "Google Play":
+    "https://resource.gemaire.com/is/image/Watscocom/gemaire_content_google-play-logo?hei=40&fmt=png-alpha",
+};
+
 function StoreBadge({ store }: { store: string }) {
+  const src = STORE_BADGES[store];
+  if (src) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt={store} className="h-10 w-auto" />
+    );
+  }
   return (
-    <span className="inline-flex items-center rounded bg-black px-3 py-1.5 text-white">
-      <span className="text-sm font-bold">{store}</span>
+    <span className="inline-flex items-center rounded bg-black px-3 py-1.5 text-sm font-bold text-white">
+      {store}
     </span>
   );
 }

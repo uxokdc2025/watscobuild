@@ -21,10 +21,27 @@ export type FbtProduct = {
   branchQty: number;
   branchName: string;
   nearbyQty: number;
+  /** Rich-card fields (Carrier-style FBT): image, price, loyalty points, stock. */
+  image?: string;
+  price?: number;
+  points?: number;
+  stockStatus?: string;
+  stockBranch?: string;
 };
 
 /** A related part shown in the "Parts" section (mini product card). */
 export type PartItem = FbtProduct & { image?: string };
+
+/** A substitute product row ("May not be covered by warranty"). */
+export type SubstituteItem = {
+  id: string;
+  title: string;
+  item: string;
+  mfg: string;
+  image?: string;
+  price?: number;
+  points?: number;
+};
 
 /** A downloadable/linked asset shown in the "Product Documentation" tab. */
 export type PdpDocument = {
