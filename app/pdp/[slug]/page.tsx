@@ -21,11 +21,16 @@ export async function generateMetadata({
 
 export default async function PdpSlugPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ signedin?: string }>;
 }) {
   const { slug } = await params;
+  const { signedin } = await searchParams;
   const product = getPdp(slug);
   if (!product) notFound();
-  return <Pdp product={product} />;
+  return (
+    <Pdp product={product} signedIn={signedin === "1" || signedin === "true"} />
+  );
 }

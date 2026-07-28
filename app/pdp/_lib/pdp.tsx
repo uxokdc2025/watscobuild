@@ -18,11 +18,17 @@ function LegacyShell({ label }: { label: string }) {
   );
 }
 
-export function Pdp({ product }: { product: PdpProduct }) {
+export function Pdp({
+  product,
+  signedIn = false,
+}: {
+  product: PdpProduct;
+  signedIn?: boolean;
+}) {
   const brand = product.brandKey ? getBrand(product.brandKey) : undefined;
 
   return (
-    <PdpAuthProvider>
+    <PdpAuthProvider initialSignedIn={signedIn}>
       <div className="min-h-svh bg-background">
         {brand ? (
           <SiteHeader brand={brand} />
@@ -69,7 +75,11 @@ export function Pdp({ product }: { product: PdpProduct }) {
 
           {/* Gallery (third-party, boxed) + summary */}
           <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
-            <PdpGallery thumbnailCount={product.thumbnailCount} />
+            <PdpGallery
+              thumbnailCount={product.thumbnailCount}
+              images={product.images}
+              alt={product.title}
+            />
             <PdpSummary product={product} />
           </div>
 

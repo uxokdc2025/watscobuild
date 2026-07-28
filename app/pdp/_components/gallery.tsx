@@ -49,14 +49,35 @@ function ZoomButton({
   );
 }
 
-export function PdpGallery({ thumbnailCount = 7 }: { thumbnailCount?: number }) {
+export function PdpGallery({
+  thumbnailCount = 7,
+  images,
+  alt = "Product",
+}: {
+  thumbnailCount?: number;
+  images?: string[];
+  alt?: string;
+}) {
   const [active, setActive] = React.useState(0);
+  const hasImages = Boolean(images?.length);
+  const thumbs = hasImages
+    ? images!
+    : (Array.from({ length: thumbnailCount }) as undefined[]);
 
   return (
     <div className="flex flex-col gap-4">
       {/* Main image canvas — border only around the image itself */}
       <div className="relative overflow-hidden rounded-lg border bg-card">
-        <Placeholder className="aspect-square w-full rounded-none" />
+        {hasImages ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={images![active] ?? images![0]}
+            alt={alt}
+            className="aspect-square w-full bg-white object-contain"
+          />
+        ) : (
+          <Placeholder className="aspect-square w-full rounded-none" />
+        )}
 
         {/* Vendor zoom controls (visual) */}
         <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-md border bg-background/90 p-0.5 backdrop-blur">
@@ -82,7 +103,7 @@ export function PdpGallery({ thumbnailCount = 7 }: { thumbnailCount?: number }) 
         className="flex gap-2 overflow-x-auto pb-1"
         aria-label="Product image thumbnails"
       >
-        {Array.from({ length: thumbnailCount }).map((_, i) => {
+        {thumbs.map((src, i) => {
           const selected = i === active;
           return (
             <li key={i} className="shrink-0">
@@ -98,7 +119,12 @@ export function PdpGallery({ thumbnailCount = 7 }: { thumbnailCount?: number }) 
                     : "border-transparent hover:border-foreground/30"
                 )}
               >
-                <Placeholder className="size-14" />
+                {hasImages ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={src as string} alt="" className="size-14 bg-white object-contain" />
+                ) : (
+                  <Placeholder className="size-14" />
+                )}
               </button>
             </li>
           );

@@ -32,11 +32,14 @@ export type PdpDescription = {
 
 /** Present when we have real pricing/inventory (i.e. a signed-in experience). */
 export type PdpCommerce = {
-  price: number;
+  /** null when the brand hides price ("Price not available"). */
+  price: number | null;
   uom: string;
-  packSizes: string[];
-  yourBranch: { name: string; stock: number };
-  nearbyBranches: Branch[];
+  packSizes?: string[];
+  yourBranch?: { name: string; stock: number };
+  nearbyBranches?: Branch[];
+  /** Shown instead of branch inventory when fulfillment is call-based (Homans). */
+  fulfillmentNote?: string;
 };
 
 export type PdpProduct = {
@@ -52,6 +55,8 @@ export type PdpProduct = {
   item: string;
   mfg: string;
   thumbnailCount: number;
+  /** Real product image URLs (first is the hero). Falls back to a placeholder. */
+  images?: string[];
   description: PdpDescription;
   /** Label for the specification tab, e.g. "Features and Specification". */
   specTabLabel: string;

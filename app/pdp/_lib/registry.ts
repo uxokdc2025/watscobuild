@@ -1,9 +1,80 @@
-import type { PdpProduct } from "./types";
+import type { PdpProduct, SpecGroup } from "./types";
 
 /**
  * PDP registry. Add a product here and it gets a page at /pdp/<slug> and a
  * link on the Master index (/pdp). Each entry drives the same template.
  */
+
+// Real TRADEPRO TP-EC13-50 product image (Gemaire CDN, verified 200).
+const EC13_IMG =
+  "https://cdn.gemaire.com/tradepro_tp-ec13-50_article_1111184500437961_en_normal?wid=700&hei=700&qlt=80";
+
+// Shared TP-EC13-50 specs (same motor, sold by Homans, Gemaire, Carrier, ...).
+const EC13_SPECS_LEFT: SpecGroup[] = [
+  {
+    title: "Motor",
+    rows: [
+      { label: "Motor Type", value: "ECM (Electronically Commutated Motor)" },
+      { label: "Motor HP", value: "1/3 – 1/2" },
+      { label: "Number of Speeds", value: "Variable" },
+      { label: "RPM", value: "1075" },
+      { label: "Poles", value: "10" },
+      { label: "Duty", value: "(S1) Continuous Running Duty" },
+      { label: "Rotation", value: "Reversible" },
+      { label: "Basis of Rotation View", value: "Lead End" },
+    ],
+  },
+  {
+    title: "Electrical",
+    rows: [
+      { label: "Voltage", value: "115 VAC, 208–230 VAC" },
+      { label: "Amps", value: "3.8, 6.3" },
+      { label: "Phase", value: "Single" },
+      { label: "Cycle", value: "60 Hz" },
+      { label: "Insulation Class", value: "B" },
+    ],
+  },
+];
+const EC13_SPECS_RIGHT: SpecGroup[] = [
+  {
+    title: "Mechanical",
+    rows: [
+      { label: "NEMA Frame", value: "48Y" },
+      { label: "Motor Enclosure", value: "Open Air Over (OPAO)" },
+      { label: "Mounting Type", value: "Belly Band" },
+      { label: "Bearing Type", value: "Ball" },
+      { label: "Shaft Diameter", value: '0.5" (1/2")' },
+      { label: "Shaft Length", value: '5.0"' },
+    ],
+  },
+  {
+    title: "General",
+    rows: [
+      { label: "Brand", value: "TRADEPRO®" },
+      { label: "Country of Origin", value: "MEX" },
+      { label: "Substantial Commodity", value: "Steel, Copper" },
+      { label: "Prop 65", value: "No" },
+    ],
+  },
+];
+const EC13_DESCRIPTION = {
+  intro:
+    "Universal ECM replacement for furnaces and air handlers. Improved reliability with built-in 6,000-volt surge protection and industry-leading moisture protection.",
+  bullets: [
+    "Replaces X13, Endura Pro and SelecTech constant-torque ECM",
+    "Truck stock — universal replacement, ready to install",
+    "Replaces thousands of OEM models",
+    "Pre-programmed with Universal Program — no programming required",
+    "Up to 82% efficiency",
+  ],
+  notes: [
+    ["Inputs", "24 VAC, tap inputs"],
+    ["Rotation", "Auto-rotation sensing"],
+    ["Hertz", "60 & 50 Hz"],
+    ["Operation mode", "Constant torque"],
+    ["Construction", "NEMA 48 frame · Open Air Over (OAO) · belly-band mounting"],
+  ] as [string, string][],
+};
 
 const glasflossZlp: PdpProduct = {
   slug: "glasfloss-zlp17h211",
@@ -145,7 +216,7 @@ const glasflossZlp: PdpProduct = {
   ],
 };
 
-const tradeproEc13: PdpProduct = {
+const tradeproEc13Homans: PdpProduct = {
   slug: "tradepro-tp-ec13-50",
   brand: "TRADEPRO®",
   brandKey: "homans",
@@ -156,78 +227,52 @@ const tradeproEc13: PdpProduct = {
     "TRADEPRO® TP-EC13-50 Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230 V, 6.3/4.0-3.8 Amps, 1/2-1/3 HP",
   item: "TPEC1350",
   mfg: "TP-EC13-50",
-  thumbnailCount: 7,
-  description: {
-    intro:
-      "Universal ECM replacement for furnaces and air handlers. Improved reliability with built-in 6,000-volt surge protection and industry-leading moisture protection.",
-    bullets: [
-      "Replaces X13, Endura Pro and SelecTech constant-torque ECM",
-      "Truck stock — universal replacement, ready to install",
-      "Replaces thousands of OEM models",
-      "Pre-programmed with Universal Program — no programming required",
-      "Up to 82% efficiency",
-    ],
-    notes: [
-      ["Inputs", "24 VAC, tap inputs"],
-      ["Rotation", "Auto-rotation sensing"],
-      ["Hertz", "60 & 50 Hz"],
-      ["Operation mode", "Constant torque"],
-      ["Construction", "NEMA 48 frame · Open Air Over (OAO) · belly-band mounting"],
-    ],
-  },
+  thumbnailCount: 2,
+  images: [EC13_IMG],
+  description: EC13_DESCRIPTION,
   specTabLabel: "Equipment Specification",
-  specGroupsLeft: [
-    {
-      title: "Motor",
-      rows: [
-        { label: "Motor Type", value: "ECM (Electronically Commutated Motor)" },
-        { label: "Motor HP", value: "1/3 – 1/2" },
-        { label: "Number of Speeds", value: "Variable" },
-        { label: "RPM", value: "1075" },
-        { label: "Poles", value: "10" },
-        { label: "Duty", value: "(S1) Continuous Running Duty" },
-        { label: "Rotation", value: "Reversible" },
-        { label: "Basis of Rotation View", value: "Lead End" },
-      ],
-    },
-    {
-      title: "Electrical",
-      rows: [
-        { label: "Voltage", value: "115 VAC, 208–230 VAC" },
-        { label: "Amps", value: "3.8, 6.3" },
-        { label: "Phase", value: "Single" },
-        { label: "Cycle", value: "60 Hz" },
-        { label: "Insulation Class", value: "B" },
-      ],
-    },
-  ],
-  specGroupsRight: [
-    {
-      title: "Mechanical",
-      rows: [
-        { label: "NEMA Frame", value: "48Y" },
-        { label: "Motor Enclosure", value: "Open Air Over (OPAO)" },
-        { label: "Mounting Type", value: "Belly Band" },
-        { label: "Bearing Type", value: "Ball" },
-        { label: "Shaft Diameter", value: '0.5" (1/2")' },
-        { label: "Shaft Length", value: '5.0"' },
-      ],
-    },
-    {
-      title: "General",
-      rows: [
-        { label: "Brand", value: "TRADEPRO®" },
-        { label: "Country of Origin", value: "MEX" },
-        { label: "Substantial Commodity", value: "Steel, Copper" },
-        { label: "Prop 65", value: "No" },
-      ],
-    },
-  ],
+  specGroupsLeft: EC13_SPECS_LEFT,
+  specGroupsRight: EC13_SPECS_RIGHT,
   comingSoonTabs: ["Part Lists", "Product Documentation"],
-  // No `commerce`: source is sign-in gated, so signed-in also shows the gated state.
+  // Homans signed-in: price hidden, fulfillment is call-based.
+  commerce: { price: null, uom: "EA", fulfillmentNote: "Call for availability" },
 };
 
-export const pdps: PdpProduct[] = [glasflossZlp, tradeproEc13];
+const tradeproEc13Gemaire: PdpProduct = {
+  slug: "gemaire-tp-ec13-50",
+  brand: "TRADEPRO®",
+  brandKey: "gemaire",
+  title:
+    "TP-EC13-50 - Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230 V, 6.3/4.0-3.8 Amps, 1/2-1/3 HP",
+  item: "TP-EC13-50",
+  mfg: "TP-EC13-50",
+  thumbnailCount: 2,
+  images: [EC13_IMG],
+  description: EC13_DESCRIPTION,
+  specTabLabel: "Equipment Specification",
+  specGroupsLeft: EC13_SPECS_LEFT,
+  specGroupsRight: EC13_SPECS_RIGHT,
+  // Gemaire signed-in: real price + branch availability.
+  commerce: {
+    price: 269.71,
+    uom: "EA",
+    yourBranch: { name: "Mobile #251", stock: 1 },
+    nearbyBranches: [
+      { qty: 4, name: "New Port Richey #151" },
+      { qty: 1, name: "Ocala #206" },
+      { qty: 7, name: "Pensacola #253" },
+      { qty: 0, name: "Ft Walton #255" },
+      { qty: 37, name: "Panama City #257" },
+      { qty: 44, name: "Valdosta #263" },
+    ],
+  },
+};
+
+export const pdps: PdpProduct[] = [
+  glasflossZlp,
+  tradeproEc13Homans,
+  tradeproEc13Gemaire,
+];
 
 export function getPdp(slug: string): PdpProduct | undefined {
   return pdps.find((p) => p.slug === slug);

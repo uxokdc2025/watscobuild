@@ -15,8 +15,14 @@ const AuthContext = React.createContext<{
   setSignedIn: (v: boolean) => void;
 } | null>(null);
 
-export function PdpAuthProvider({ children }: { children: React.ReactNode }) {
-  const [signedIn, setSignedIn] = React.useState(false);
+export function PdpAuthProvider({
+  children,
+  initialSignedIn = false,
+}: {
+  children: React.ReactNode;
+  initialSignedIn?: boolean;
+}) {
+  const [signedIn, setSignedIn] = React.useState(initialSignedIn);
   return (
     <AuthContext.Provider value={{ signedIn, setSignedIn }}>
       {children}

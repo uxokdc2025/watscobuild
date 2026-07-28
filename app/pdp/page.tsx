@@ -29,27 +29,38 @@ export default function PdpMasterPage() {
 
         <ul className="mt-8 flex flex-col gap-3">
           {pdps.map((p) => (
-            <li key={p.slug}>
-              <Link
-                href={`/pdp/${p.slug}`}
-                className="group flex items-center justify-between gap-4 rounded-xl border bg-card p-5 outline-none transition-colors hover:border-primary/40 hover:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              >
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-semibold text-primary">
-                      {p.brand}
-                    </span>
-                    <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
-                      {p.commerce ? "priced + gated" : "gated"}
-                    </span>
-                  </div>
-                  <div className="mt-1 line-clamp-1 font-medium">{p.title}</div>
-                  <div className="mt-0.5 font-mono text-xs text-muted-foreground">
-                    Item {p.item} · /pdp/{p.slug}
-                  </div>
-                </div>
-                <ArrowUpRight className="size-5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
-              </Link>
+            <li
+              key={p.slug}
+              className="rounded-xl border bg-card p-5"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-semibold text-primary">
+                  {p.brand}
+                </span>
+                <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
+                  {p.commerce?.price != null ? "priced + gated" : "gated"}
+                </span>
+              </div>
+              <div className="mt-1 line-clamp-1 font-medium">{p.title}</div>
+              <div className="mt-0.5 font-mono text-xs text-muted-foreground">
+                Item {p.item} · /pdp/{p.slug}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link
+                  href={`/pdp/${p.slug}`}
+                  className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  Signed out
+                  <ArrowUpRight className="size-3.5" />
+                </Link>
+                <Link
+                  href={`/pdp/${p.slug}?signedin=1`}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  Signed in
+                  <ArrowUpRight className="size-3.5" />
+                </Link>
+              </div>
             </li>
           ))}
         </ul>

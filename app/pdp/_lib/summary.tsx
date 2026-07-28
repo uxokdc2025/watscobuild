@@ -56,34 +56,42 @@ function QtyStepper() {
 function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      <div className="rounded-lg border p-4">
-        <p className="text-sm font-semibold">Your Branch</p>
-        <p className="mt-1 text-sm text-muted-foreground">{commerce.yourBranch.name}</p>
-        <p className="mt-2 text-sm font-medium text-in-stock">
-          {commerce.yourBranch.stock} in stock today
-        </p>
-      </div>
-      <div className="rounded-lg border p-4">
-        <p className="text-sm font-semibold">Nearby Branches</p>
-        <ul className="mt-2 flex flex-col gap-1">
-          {commerce.nearbyBranches.map((b) => (
-            <li key={b.name} className="grid grid-cols-[2.5rem_1fr] items-center gap-3 text-sm">
-              <span
-                className={cn(
-                  "text-right tabular-nums",
-                  b.qty > 0 ? "font-medium text-in-stock" : "text-muted-foreground"
-                )}
-              >
-                {b.qty}
-              </span>
-              <span className="text-muted-foreground">{b.name}</span>
-            </li>
-          ))}
-        </ul>
-        <a href="#" className="mt-3 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline">
-          View All Branches
-        </a>
-      </div>
+      {commerce.yourBranch ? (
+        <div className="rounded-lg border p-4">
+          <p className="text-sm font-semibold">Your Branch</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {commerce.yourBranch.name}
+          </p>
+          <p className="mt-2 text-sm font-medium text-green-700 dark:text-green-400">
+            {commerce.yourBranch.stock} in stock today
+          </p>
+        </div>
+      ) : null}
+      {commerce.nearbyBranches?.length ? (
+        <div className="rounded-lg border p-4">
+          <p className="text-sm font-semibold">Nearby Branches</p>
+          <ul className="mt-2 flex flex-col gap-1">
+            {commerce.nearbyBranches.map((b) => (
+              <li key={b.name} className="grid grid-cols-[2.5rem_1fr] items-center gap-3 text-sm">
+                <span
+                  className={cn(
+                    "text-right tabular-nums",
+                    b.qty > 0
+                      ? "font-medium text-green-700 dark:text-green-400"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {b.qty}
+                </span>
+                <span className="text-muted-foreground">{b.name}</span>
+              </li>
+            ))}
+          </ul>
+          <a href="#" className="mt-3 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline">
+            View All Branches
+          </a>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -126,21 +134,51 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
 
       {showCommerce ? (
         <>
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Tag className="size-4 text-primary" />
-            Buy more and save
-          </div>
-          <div className="flex items-end gap-1">
-            <span className="text-3xl font-bold text-price">{formatUSD(product.commerce!.price)}</span>
-            <span className="pb-1 text-sm text-muted-foreground">/{product.commerce!.uom}</span>
-          </div>
+          {product.commerce!.price != null ? (
+            <>
+              {product.commerce!.packSizes?.length ? (
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Tag className="size-4 text-primary" />
+                  Buy more and save
+                </div>
+              ) : null}
+              <div className="flex items-end gap-1">
+                <span className="text-3xl font-bold text-price">
+                  {formatUSD(product.commerce!.price)}
+                </span>
+                <span className="pb-1 text-sm text-muted-foreground">
+                  /{product.commerce!.uom}
+                </span>
+              </div>
+            </>
+          ) : (
+            <div className="text-2xl font-bold text-muted-foreground">
+              Price not available
+            </div>
+          )}
 
-          <BranchAvailability commerce={product.commerce!} />
+          {product.commerce!.fulfillmentNote ? (
+            <div className="flex flex-col gap-3 text-sm">
+              {["Pickup", "Delivery"].map((m) => (
+                <div key={m}>
+                  <p className="font-semibold">{m}</p>
+                  <p className="text-low-stock">{product.commerce!.fulfillmentNote}</p>
+                </div>
+              ))}
+            </div>
+          ) : null}
 
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium">Pack Size</span>
-            <Segmented options={product.commerce!.packSizes} />
-          </div>
+          {product.commerce!.yourBranch ||
+          product.commerce!.nearbyBranches?.length ? (
+            <BranchAvailability commerce={product.commerce!} />
+          ) : null}
+
+          {product.commerce!.packSizes?.length ? (
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium">Pack Size</span>
+              <Segmented options={product.commerce!.packSizes} />
+            </div>
+          ) : null}
 
           <div className="flex flex-col gap-2">
             <span className="text-sm font-medium">Quantity</span>
