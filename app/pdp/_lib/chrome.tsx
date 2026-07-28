@@ -1,12 +1,27 @@
-import { Menu, Phone, Search, ShoppingCart, User } from "lucide-react";
+import {
+  ChevronDown,
+  Facebook,
+  Instagram,
+  Linkedin,
+  MapPin,
+  Menu,
+  Phone,
+  Search,
+  ShoppingCart,
+  User,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 /**
- * Config-driven brand chrome. We do NOT own the per-brand header/footer, so
- * this is a faithful *approximation* of each sub-company's current chrome —
- * enough for the client to see the shared content template sitting inside
- * their own header/footer. Swap for the real chrome when available.
+ * Per-brand chrome. Each brand's header/footer is rebuilt "as close to the
+ * original as possible" using OUR design system (Roboto, 4px radius, our
+ * tokens). Where a brand's real chrome uses a colored background, that exact
+ * color lives as a brand token in globals.css (e.g. --brand-gemaire) — never
+ * hardcoded here.
+ *
+ * SiteHeader/SiteFooter dispatch on brand.key: a faithful build where we have
+ * one, else the generic approximation below.
  */
 export type FooterColumn = { title: string; links: string[] };
 
@@ -14,7 +29,7 @@ export type BrandChrome = {
   key: string;
   /** Display name / wordmark text. */
   name: string;
-  /** Approximate brand accent (header/logo). */
+  /** Approximate brand accent (used by the generic fallback chrome). */
   accent: string;
   phone?: string;
   nav: string[];
@@ -22,9 +37,178 @@ export type BrandChrome = {
   copyright: string;
 };
 
-export function SiteHeader({ brand }: { brand: BrandChrome }) {
+/* ════════════════════════════════════════════════════════════════════════
+   GEMAIRE — faithful chrome (reference implementation)
+   Real header: blue bar (#0080df → --brand-gemaire) with white wordmark,
+   prominent centered search, branch selector, cart; then a white sub-bar
+   (Menu · Sign in / Register / Order Templates). Footer: light grey.
+   ════════════════════════════════════════════════════════════════════════ */
+
+function GemaireHeader({ brand }: { brand: BrandChrome }) {
   return (
-    <header className="border-b bg-background" style={{ ["--brand" as string]: brand.accent }}>
+    <header>
+      {/* Blue bar */}
+      <div className="bg-brand-gemaire text-brand-gemaire-foreground">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+          {/* Wordmark */}
+          <a href="#" className="shrink-0 text-2xl font-black tracking-tight">
+            GEMAIRE
+          </a>
+
+          {/* Prominent search */}
+          <div className="relative hidden min-w-0 flex-1 md:block">
+            <input
+              aria-label="Search for products"
+              placeholder="Search for products, categories, systems..."
+              className="h-10 w-full rounded bg-white pr-11 pl-3 text-sm text-foreground outline-none"
+            />
+            <button
+              type="button"
+              aria-label="Search"
+              className="absolute top-1/2 right-1 grid size-8 -translate-y-1/2 place-items-center rounded bg-brand-gemaire text-white"
+            >
+              <Search className="size-4" />
+            </button>
+          </div>
+
+          {/* Branch selector */}
+          <button
+            type="button"
+            className="ml-auto hidden items-center gap-1.5 text-left sm:inline-flex"
+          >
+            <MapPin className="size-5 shrink-0" />
+            <span className="leading-tight">
+              <span className="block text-[10px] tracking-wide uppercase opacity-90">
+                Your Branch
+              </span>
+              <span className="block text-sm font-semibold">Select ▾</span>
+            </span>
+          </button>
+
+          {/* Cart */}
+          <button
+            type="button"
+            aria-label="Cart"
+            className="inline-flex items-center gap-1.5 font-medium"
+          >
+            <ShoppingCart className="size-5" />
+            <span className="hidden sm:inline">Cart</span>
+          </button>
+        </div>
+      </div>
+
+      {/* White sub-bar */}
+      <div className="border-b bg-background">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 md:px-6">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 py-2.5 text-sm font-semibold text-brand-gemaire"
+          >
+            <Menu className="size-4" />
+            Menu
+          </button>
+          <div className="flex items-center gap-5 text-sm">
+            <a href="#" className="inline-flex items-center gap-1.5 hover:text-brand-gemaire">
+              <User className="size-4" />
+              Sign in
+            </a>
+            <a href="#" className="hidden hover:text-brand-gemaire sm:inline">
+              Register
+            </a>
+            <button
+              type="button"
+              className="hidden items-center gap-1 hover:text-brand-gemaire sm:inline-flex"
+            >
+              Order Templates
+              <ChevronDown className="size-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function GemaireFooter({ brand }: { brand: BrandChrome }) {
+  const social = [
+    { label: "LinkedIn", Icon: Linkedin },
+    { label: "Facebook", Icon: Facebook },
+    { label: "Instagram", Icon: Instagram },
+  ];
+  return (
+    <footer className="mt-16 border-t bg-muted/40">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {brand.footerColumns.map((col) => (
+            <FooterColumnBlock key={col.title} col={col} />
+          ))}
+        </div>
+
+        {/* Social */}
+        <div className="mt-8 flex items-center gap-3">
+          {social.map(({ label, Icon }) => (
+            <a
+              key={label}
+              href="#"
+              aria-label={label}
+              className="grid size-9 place-items-center rounded-full border text-muted-foreground hover:text-brand-gemaire"
+            >
+              <Icon className="size-4" />
+            </a>
+          ))}
+        </div>
+
+        <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs text-muted-foreground sm:flex-row">
+          <span>Copyright © {brand.copyright}</span>
+          <div className="flex items-center gap-4">
+            <a href="#" className="underline-offset-4 hover:text-foreground hover:underline">
+              Privacy Policy
+            </a>
+            <a href="#" className="underline-offset-4 hover:text-foreground hover:underline">
+              Terms &amp; Conditions
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Shared footer column
+   ════════════════════════════════════════════════════════════════════════ */
+
+function FooterColumnBlock({ col }: { col: FooterColumn }) {
+  return (
+    <div>
+      <h3 className="text-sm font-semibold tracking-wide uppercase">{col.title}</h3>
+      <ul className="mt-3 flex flex-col gap-2">
+        {col.links.map((l) => (
+          <li key={l}>
+            <a
+              href="#"
+              className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              {l}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   GENERIC fallback chrome — approximation for brands not yet rebuilt.
+   Paints brand.accent as the header background/wordmark.
+   ════════════════════════════════════════════════════════════════════════ */
+
+function GenericHeader({ brand }: { brand: BrandChrome }) {
+  return (
+    <header
+      className="border-b bg-background"
+      style={{ ["--brand" as string]: brand.accent }}
+    >
       {/* Utility strip */}
       <div className="text-white" style={{ backgroundColor: "var(--brand)" }}>
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-1.5 text-xs md:px-6">
@@ -46,7 +230,6 @@ export function SiteHeader({ brand }: { brand: BrandChrome }) {
         <button type="button" aria-label="Menu" className="md:hidden">
           <Menu className="size-5" />
         </button>
-        {/* Wordmark as an accent chip — white-on-accent stays AA in light + dark. */}
         <span
           className="rounded px-2 py-1 text-lg font-extrabold tracking-tight text-white"
           style={{ backgroundColor: "var(--brand)" }}
@@ -62,11 +245,7 @@ export function SiteHeader({ brand }: { brand: BrandChrome }) {
           />
         </div>
         <div className="ml-auto flex items-center gap-4 text-sm">
-          <button
-            type="button"
-            aria-label="Sign in"
-            className="inline-flex items-center gap-1.5"
-          >
+          <button type="button" aria-label="Sign in" className="inline-flex items-center gap-1.5">
             <User className="size-4" />
             <span className="hidden sm:inline">Sign in</span>
           </button>
@@ -78,7 +257,11 @@ export function SiteHeader({ brand }: { brand: BrandChrome }) {
       </div>
 
       {/* Primary nav */}
-      <nav aria-label="Primary" className="border-t" style={{ backgroundColor: "color-mix(in oklch, var(--brand) 6%, transparent)" }}>
+      <nav
+        aria-label="Primary"
+        className="border-t"
+        style={{ backgroundColor: "color-mix(in oklch, var(--brand) 6%, transparent)" }}
+      >
         <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
           {brand.nav.map((n) => (
             <a
@@ -95,7 +278,7 @@ export function SiteHeader({ brand }: { brand: BrandChrome }) {
   );
 }
 
-export function SiteFooter({ brand }: { brand: BrandChrome }) {
+function GenericFooter({ brand }: { brand: BrandChrome }) {
   return (
     <footer className="mt-16 border-t bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
@@ -106,23 +289,7 @@ export function SiteFooter({ brand }: { brand: BrandChrome }) {
           )}
         >
           {brand.footerColumns.map((col) => (
-            <div key={col.title}>
-              <h3 className="text-sm font-semibold tracking-wide uppercase">
-                {col.title}
-              </h3>
-              <ul className="mt-3 flex flex-col gap-2">
-                {col.links.map((l) => (
-                  <li key={l}>
-                    <a
-                      href="#"
-                      className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                    >
-                      {l}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <FooterColumnBlock key={col.title} col={col} />
           ))}
         </div>
         <div className="mt-10 border-t pt-6 text-center text-xs text-muted-foreground">
@@ -131,4 +298,18 @@ export function SiteFooter({ brand }: { brand: BrandChrome }) {
       </div>
     </footer>
   );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Dispatchers
+   ════════════════════════════════════════════════════════════════════════ */
+
+export function SiteHeader({ brand }: { brand: BrandChrome }) {
+  if (brand.key === "gemaire") return <GemaireHeader brand={brand} />;
+  return <GenericHeader brand={brand} />;
+}
+
+export function SiteFooter({ brand }: { brand: BrandChrome }) {
+  if (brand.key === "gemaire") return <GemaireFooter brand={brand} />;
+  return <GenericFooter brand={brand} />;
 }

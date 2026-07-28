@@ -47,6 +47,12 @@
   --color-out-of-stock: var(--out-of-stock);
   --color-rating-star: var(--rating-star);
 
+  /* ── Brand — real sub-company chrome colors (exact hex from each live site).
+        Used only for that brand's header/footer background; everything else
+        stays on the semantic tokens above. ── */
+  --color-brand-gemaire: var(--brand-gemaire);
+  --color-brand-gemaire-foreground: var(--brand-gemaire-foreground);
+
   /* ── Colors — charts ── */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -81,6 +87,12 @@
 :root {
   /* ══════════ RADIUS (base — 4px, flat across the system) ══════════ */
   --radius: 0.25rem;
+
+  /* ══════════ BRAND — real sub-company chrome hex (sampled from live sites).
+       Constant across light/dark: a brand's blue is its blue. Add one per
+       brand as its faithful chrome is built. ══════════ */
+  --brand-gemaire: #0080df; /* Gemaire header blue */
+  --brand-gemaire-foreground: #ffffff;
 
   /* ══════════ COLORS — light mode (Intent values on shadcn names) ══════════ */
   --background: oklch(1 0 0);
