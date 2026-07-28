@@ -4,6 +4,7 @@ import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
 import { FrequentlyBoughtTogether } from "./fbt";
+import { AboutThisProduct, RecentlyViewed, Substitutes } from "./about";
 import { SiteFooter, SiteHeader } from "./chrome";
 import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
@@ -87,10 +88,29 @@ export function Pdp({
             </div>
           ) : null}
 
-          {/* Description / Part Lists / Equipment Spec / Documentation tabs */}
-          <div className="mt-14">
-            <PdpDetails product={product} />
-          </div>
+          {product.detailsStyle === "about" ? (
+            <>
+              {/* Carrier "About This Product" + Substitutes + Recently Viewed */}
+              <div className="mt-14">
+                <AboutThisProduct product={product} />
+              </div>
+              {product.substitutes?.length ? (
+                <div className="mt-14">
+                  <Substitutes product={product} />
+                </div>
+              ) : null}
+              {product.recentlyViewed?.length ? (
+                <div className="mt-14">
+                  <RecentlyViewed product={product} />
+                </div>
+              ) : null}
+            </>
+          ) : (
+            /* Description / Part Lists / Equipment Spec / Documentation tabs */
+            <div className="mt-14">
+              <PdpDetails product={product} />
+            </div>
+          )}
         </main>
 
         {brand ? (

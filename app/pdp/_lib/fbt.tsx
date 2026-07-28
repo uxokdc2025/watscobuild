@@ -1,16 +1,26 @@
 "use client";
 
-import { ShoppingCart } from "lucide-react";
+import { Info, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "./auth";
-import type { FbtProduct, PdpProduct } from "./types";
+import { formatUSD, type FbtProduct, type PdpProduct } from "./types";
 
-function FbtImage() {
+function FbtImage({ src, alt }: { src?: string; alt: string }) {
+  if (src) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={alt}
+        className="aspect-square w-full rounded-md bg-white object-contain"
+      />
+    );
+  }
   return (
     <div
-      className="grid aspect-[4/3] w-full place-items-center rounded-md text-xs text-muted-foreground"
+      className="grid aspect-square w-full place-items-center rounded-md text-xs text-muted-foreground"
       style={{
         backgroundColor: "var(--muted)",
         backgroundImage:
@@ -25,49 +35,100 @@ function FbtImage() {
 
 function FbtCard({ item }: { item: FbtProduct }) {
   const { signedIn } = useAuth();
+  const rich = item.price != null;
+
   return (
-    <div className="flex flex-col gap-3 rounded-lg border p-4">
-      <FbtImage />
-      <h3 className="line-clamp-3 text-sm font-semibold">{item.title}</h3>
+    <div className="flex flex-col gap-2 rounded-lg border p-4">
+      <FbtImage src={item.image} alt={item.title} />
+      <a href="#" className="line-clamp-3 text-sm font-semibold text-primary hover:underline">
+        {item.title}
+      </a>
       <p className="text-xs text-muted-foreground">
         Item: {item.item}
         <br />
-        MFG: {item.mfg}
+        MFR: {item.mfg}
       </p>
-      <div className="text-sm">
-        <span className="font-medium text-in-stock">{item.branchQty}</span>{" "}
-        <span className="text-muted-foreground">{item.branchName}</span>
-      </div>
-      <div className="text-sm">
-        <span className="font-medium text-in-stock">{item.nearbyQty}</span>{" "}
-        <a href="#" className="text-primary underline-offset-4 hover:underline">
-          Check Nearby Branches
-        </a>
-      </div>
-      <div className="mt-auto pt-1">
-        {signedIn ? (
-          <Button size="sm" className="w-full">
-            <ShoppingCart />
-            Add to Cart
-          </Button>
-        ) : (
-          <a
-            href="#"
-            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-          >
-            Sign in to view pricing
-          </a>
-        )}
-      </div>
+
+      {rich ? (
+        <>
+          {signedIn ? (
+            <>
+              <p className="mt-1">
+                <span className="text-lg font-bold">{formatUSD(item.price!)}</span>{" "}
+                <span className="text-xs text-muted-foreground">/ EACH</span>
+              </p>
+              {item.points ? (
+                <p className="text-xs font-medium text-in-stock">
+                  Earn {item.points} point{item.points === 1 ? "" : "s"}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
+              >
+                <ShoppingCart className="size-4" />
+                Add To Cart
+              </button>
+              {item.stockStatus ? (
+                <p className="mt-1 flex items-center gap-1.5 text-xs">
+                  <Info className="size-3.5 text-muted-foreground" />
+                  <span className="font-semibold text-in-stock">{item.stockStatus}</span>
+                  <span className="text-muted-foreground">{item.stockBranch}</span>
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <a
+              href="#"
+              className="mt-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Sign in to view pricing
+            </a>
+          )}
+        </>
+      ) : (
+        <>
+          <div className="text-sm">
+            <span className="font-medium text-in-stock">{item.branchQty}</span>{" "}
+            <span className="text-muted-foreground">{item.branchName}</span>
+          </div>
+          <div className="mt-auto pt-1">
+            {signedIn ? (
+              <Button size="sm" className="w-full">
+                <ShoppingCart />
+                Add to Cart
+              </Button>
+            ) : (
+              <a
+                href="#"
+                className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Sign in to view pricing
+              </a>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
   if (!product.fbt?.length) return null;
+  const suggest = product.detailsStyle === "about";
   return (
     <section aria-label="Frequently bought together" className="flex flex-col gap-4">
-      <h2 className="text-2xl font-bold tracking-tight">Frequently Bought Together</h2>
+      <div className="flex flex-wrap items-center gap-3">
+        <h2 className="text-2xl font-bold tracking-tight">Frequently Bought Together</h2>
+        {suggest ? (
+          <button
+            type="button"
+            className="rounded bg-slate-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
+          >
+            Suggest Products
+          </button>
+        ) : null}
+      </div>
       <Tabs defaultValue={product.fbt[0].label}>
         <TabsList variant="line">
           {product.fbt.map((g) => (
@@ -78,7 +139,7 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
         </TabsList>
         {product.fbt.map((g) => (
           <TabsContent key={g.label} value={g.label} className="pt-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
               {g.items.map((it) => (
                 <FbtCard key={it.id} item={it} />
               ))}

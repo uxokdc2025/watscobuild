@@ -441,8 +441,23 @@ const carrierTpE50: PdpProduct = {
     (v) =>
       `https://resource.carrierenterprise.com/is/image/Watscocom/tradepro_tp-e50-3sp2_article_1418039133491_en_${v}?wid=700&hei=700&qlt=80`
   ),
+  detailsStyle: "about",
   description: {
-    intro: "TRADEPRO PSC direct-drive blower motor, 3-speed.",
+    intro:
+      "TRADEPRO® fixed fractional condenser motor — heavy-duty construction and rugged durability built for HVAC professionals.",
+    bullets: [
+      "Universal fixed fractional condenser motor",
+      "208 - 230V",
+      "Single phase",
+      "2.7 amp draw",
+      "Speeds - 800, 950, 1075",
+      "48Y frame",
+      '5" keyed shaft',
+      '1/2" diameter',
+      "10MF 370 or 440V capacitor",
+      "Side shell mount is pre-drilled to accept mount wings and resilient mount wings",
+      "Dynamic self-aligning bearing with reversible direction",
+    ],
   },
   specTabLabel: "Equipment Specification",
   specGroupsLeft: [
@@ -458,6 +473,75 @@ const carrierTpE50: PdpProduct = {
   ],
   specGroupsRight: [
     { title: "Electrical", rows: [{ label: "Voltage", value: "208-230 VAC" }] },
+  ],
+  productSpecs: [
+    {
+      title: "Dimensions",
+      rows: [
+        { label: "Length", value: "6.402 inches (in)" },
+        { label: "Width", value: "5.625 inches (in)" },
+        { label: "Height", value: "5.625 inches (in)" },
+        { label: "Weight", value: "17.38 pounds (lbs)" },
+      ],
+    },
+    {
+      title: "Attributes",
+      rows: [
+        { label: "Approvals", value: "UL Recognized" },
+        { label: "Basis Of Rotation View", value: "Lead End" },
+        { label: "Bearing Type", value: "Self Aligning (SAB)" },
+        { label: "Brand", value: "TRADEPRO®" },
+        { label: "Country of Origin", value: "MEX" },
+        { label: "Cubic Measurement", value: "0.1172" },
+        { label: "Cycle/Hertz", value: "60 Hz" },
+        { label: "Horsepower", value: "1/2" },
+        { label: "Phase", value: "Single" },
+        { label: "RPM", value: "1,075" },
+        { label: "Speeds", value: "3-Speed" },
+        { label: "Voltage", value: "208-230 VAC" },
+      ],
+    },
+  ],
+  documents: [
+    { label: "Consumer Literature", kind: "pdf", category: "Consumer Literature", href: "#" },
+    { label: "Product Data", kind: "pdf", category: "Product Data", href: "#" },
+  ],
+  fbt: [
+    {
+      label: "Best Sellers",
+      items: [
+        { id: "p251-0039", title: "TOTALINE® - 4 Leg Flexible Motor Mount Bracket Kit", item: "P251-0039", mfg: "P251-0039", branchQty: 0, branchName: "", nearbyQty: 0, price: 51.3, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "tp-cap-5-440", title: "TRADEPRO® - 5MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-5/440", mfg: "TP-CAP-5/440", branchQty: 0, branchName: "", nearbyQty: 0, price: 2.6, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-cap-5-440r", title: "TRADEPRO® - 5MFD 370/440 VAC Round Single Run Capacitor", item: "TP-CAP-5/440R", mfg: "TP-CAP-5/440R", branchQty: 0, branchName: "", nearbyQty: 0, price: 2.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "tp-e75-3sp2", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 3/4 HP 3-Speed", item: "TP-E75-3SP2", mfg: "TP-E75-3SP2", branchQty: 0, branchName: "", nearbyQty: 0, price: 130.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-cap-10-440-a", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-10/440-A", mfg: "TP-CAP-10/440-A", branchQty: 0, branchName: "", nearbyQty: 0, price: 3.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "p291-1004", title: "TOTALINE® - Run Capacitor Oval 370/440V Single 10MFD", item: "P291-1004", mfg: "P291-1004", branchQty: 0, branchName: "", nearbyQty: 0, price: 7.3, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+      ],
+    },
+    {
+      label: "Other",
+      items: [
+        { id: "tp-e75-3sp2-o", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 3/4 HP 3-Speed", item: "TP-E75-3SP2", mfg: "TP-E75-3SP2", branchQty: 0, branchName: "", nearbyQty: 0, price: 130.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-cap-10-440-a-o", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-10/440-A", mfg: "TP-CAP-10/440-A", branchQty: 0, branchName: "", nearbyQty: 0, price: 3.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+      ],
+    },
+  ],
+  substitutes: [
+    { id: "hc43ae200", title: "Factory Authorized Parts™ - HC43AE200 Blower Motor", item: "HC43AE200", mfg: "HC43AE200", price: 742.7, points: 14 },
+    { id: "p257-8588", title: "TOTALINE® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 1/2 HP 3-Speed", item: "P257-8588", mfg: "P257-8588", price: 272.4, points: 5 },
+  ],
+  recentlyViewed: [
+    {
+      id: "58mv660006",
+      title: "Factory Authorized Parts™ - Blower Motor - ECM 120/240 VAC 1,050 RPM 1/2 HP",
+      item: "58MV660006",
+      mfg: "58MV660006",
+      image:
+        "https://resource.peirce.com/is/image/Watscocom/factory-authorized-parts_58mv660006_article_1411645331538_en_normal?wid=400&hei=400&qlt=80",
+      branchQty: 0,
+      branchName: "",
+      nearbyQty: 0,
+    },
   ],
   commerce: {
     price: 110.1,

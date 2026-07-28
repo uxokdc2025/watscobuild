@@ -103,6 +103,19 @@ export type PdpProduct = {
   documents?: PdpDocument[];
   /** Related parts shown in the "Parts" section. */
   parts?: PartItem[];
+  /**
+   * Content layout for the details area:
+   *  - "tabs" (default): Description / Part Lists / Equipment Spec / Documentation
+   *  - "about": Carrier "About This Product" — Product Info / Documents /
+   *    Part List / Where Used, plus Substitutes + Recently Viewed sections.
+   */
+  detailsStyle?: "tabs" | "about";
+  /** Grouped specs for the Carrier "Product Info" panel (Dimensions, Attributes…). */
+  productSpecs?: SpecGroup[];
+  /** Substitute products ("May not be covered by warranty"). */
+  substitutes?: SubstituteItem[];
+  /** Recently-viewed product cards. */
+  recentlyViewed?: PartItem[];
 };
 
 export function formatUSD(value: number): string {
