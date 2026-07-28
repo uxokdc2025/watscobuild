@@ -419,6 +419,10 @@ const peirce58mv: PdpProduct = {
   },
 };
 
+// Carrier Scene7 image for a related product, by its "<slug>_article_<id>" key.
+const ceImg = (key: string) =>
+  `https://resource.carrierenterprise.com/is/image/Watscocom/${key}_en_normal?wid=400&hei=400&qlt=80`;
+
 const carrierTpE50: PdpProduct = {
   slug: "carrier-tp-e50-3sp2",
   brand: "TRADEPRO®",
@@ -510,24 +514,24 @@ const carrierTpE50: PdpProduct = {
     {
       label: "Best Sellers",
       items: [
-        { id: "p251-0039", title: "TOTALINE® - 4 Leg Flexible Motor Mount Bracket Kit", item: "P251-0039", mfg: "P251-0039", branchQty: 0, branchName: "", nearbyQty: 0, price: 51.3, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
-        { id: "tp-cap-5-440", title: "TRADEPRO® - 5MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-5/440", mfg: "TP-CAP-5/440", branchQty: 0, branchName: "", nearbyQty: 0, price: 2.6, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
-        { id: "tp-cap-5-440r", title: "TRADEPRO® - 5MFD 370/440 VAC Round Single Run Capacitor", item: "TP-CAP-5/440R", mfg: "TP-CAP-5/440R", branchQty: 0, branchName: "", nearbyQty: 0, price: 2.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
-        { id: "tp-e75-3sp2", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 3/4 HP 3-Speed", item: "TP-E75-3SP2", mfg: "TP-E75-3SP2", branchQty: 0, branchName: "", nearbyQty: 0, price: 130.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
-        { id: "tp-cap-10-440-a", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-10/440-A", mfg: "TP-CAP-10/440-A", branchQty: 0, branchName: "", nearbyQty: 0, price: 3.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "p251-0039", title: "TOTALINE® - 4 Leg Flexible Motor Mount Bracket Kit", item: "P251-0039", mfg: "P251-0039", image: ceImg("totaline_p251-0039_article_1585516906633815"), branchQty: 0, branchName: "", nearbyQty: 0, price: 51.3, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "tp-cap-5-440", title: "TRADEPRO® - 5MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-5/440", mfg: "TP-CAP-5/440", image: ceImg("tradepro_tp-cap-5-440_article_1366804065364"), branchQty: 0, branchName: "", nearbyQty: 0, price: 2.6, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-cap-5-440r", title: "TRADEPRO® - 5MFD 370/440 VAC Round Single Run Capacitor", item: "TP-CAP-5/440R", mfg: "TP-CAP-5/440R", image: ceImg("tradepro_tp-cap-5-440r_article_1452677534689"), branchQty: 0, branchName: "", nearbyQty: 0, price: 2.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "tp-e75-3sp2", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 3/4 HP 3-Speed", item: "TP-E75-3SP2", mfg: "TP-E75-3SP2", image: ceImg("tradepro_tp-e75-3sp2_article_1418039135749"), branchQty: 0, branchName: "", nearbyQty: 0, price: 130.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-cap-10-440-a", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-10/440-A", mfg: "TP-CAP-10/440-A", image: ceImg("tradepro_tp-cap-10440-a_article_1604089255985843"), branchQty: 0, branchName: "", nearbyQty: 0, price: 3.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
         { id: "p291-1004", title: "TOTALINE® - Run Capacitor Oval 370/440V Single 10MFD", item: "P291-1004", mfg: "P291-1004", branchQty: 0, branchName: "", nearbyQty: 0, price: 7.3, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
       ],
     },
     {
       label: "Other",
       items: [
-        { id: "tp-e75-3sp2-o", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 3/4 HP 3-Speed", item: "TP-E75-3SP2", mfg: "TP-E75-3SP2", branchQty: 0, branchName: "", nearbyQty: 0, price: 130.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
-        { id: "tp-cap-10-440-a-o", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-10/440-A", mfg: "TP-CAP-10/440-A", branchQty: 0, branchName: "", nearbyQty: 0, price: 3.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "tp-e75-3sp2-o", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 3/4 HP 3-Speed", item: "TP-E75-3SP2", mfg: "TP-E75-3SP2", image: ceImg("tradepro_tp-e75-3sp2_article_1418039135749"), branchQty: 0, branchName: "", nearbyQty: 0, price: 130.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-cap-10-440-a-o", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-10/440-A", mfg: "TP-CAP-10/440-A", image: ceImg("tradepro_tp-cap-10440-a_article_1604089255985843"), branchQty: 0, branchName: "", nearbyQty: 0, price: 3.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
       ],
     },
   ],
   substitutes: [
-    { id: "hc43ae200", title: "Factory Authorized Parts™ - HC43AE200 Blower Motor", item: "HC43AE200", mfg: "HC43AE200", price: 742.7, points: 14 },
+    { id: "hc43ae200", title: "Factory Authorized Parts™ - HC43AE200 Blower Motor", item: "HC43AE200", mfg: "HC43AE200", image: ceImg("factory-authorized-parts_hc43ae200_article_1411645327495"), price: 742.7, points: 14 },
     { id: "p257-8588", title: "TOTALINE® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 1/2 HP 3-Speed", item: "P257-8588", mfg: "P257-8588", price: 272.4, points: 5 },
   ],
   recentlyViewed: [
