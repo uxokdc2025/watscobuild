@@ -5,6 +5,7 @@ import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
 import { FrequentlyBoughtTogether } from "./fbt";
+import { PdpParts } from "./parts";
 import { SiteFooter, SiteHeader } from "./chrome";
 import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
@@ -93,6 +94,13 @@ export function Pdp({
           {product.fbt?.length ? (
             <div className="mt-14">
               <FrequentlyBoughtTogether product={product} />
+            </div>
+          ) : null}
+
+          {/* Parts (related parts — only if present) */}
+          {product.parts?.length ? (
+            <div className="mt-14">
+              <PdpParts product={product} />
             </div>
           ) : null}
 

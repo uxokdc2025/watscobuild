@@ -23,6 +23,12 @@ export type FbtProduct = {
   nearbyQty: number;
 };
 
+/** A related part shown in the "Parts" section (mini product card). */
+export type PartItem = FbtProduct & { image?: string };
+
+/** A downloadable/linked asset shown in the Description's "Documents" block. */
+export type PdpDocument = { label: string; kind: "pdf" | "video"; href: string };
+
 /** Rich description: a lead paragraph, optional bullet list, optional note pairs. */
 export type PdpDescription = {
   intro: string;
@@ -68,6 +74,10 @@ export type PdpProduct = {
   commerce?: PdpCommerce;
   /** Frequently-bought-together groups, keyed by tab label. */
   fbt?: { label: string; items: FbtProduct[] }[];
+  /** Documents shown at the bottom of the Description (literature, video). */
+  documents?: PdpDocument[];
+  /** Related parts shown in the "Parts" section. */
+  parts?: PartItem[];
 };
 
 export function formatUSD(value: number): string {

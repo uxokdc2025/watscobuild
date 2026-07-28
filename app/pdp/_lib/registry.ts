@@ -1,4 +1,9 @@
-import type { PdpProduct, SpecGroup } from "./types";
+import type {
+  PartItem,
+  PdpDocument,
+  PdpProduct,
+  SpecGroup,
+} from "./types";
 
 /**
  * PDP registry. Add a product here and it gets a page at /pdp/<slug> and a
@@ -8,6 +13,36 @@ import type { PdpProduct, SpecGroup } from "./types";
 // Real TRADEPRO TP-EC13-50 product image (Gemaire CDN, verified 200).
 const EC13_IMG =
   "https://cdn.gemaire.com/tradepro_tp-ec13-50_article_1111184500437961_en_normal?wid=700&hei=700&qlt=80";
+
+// Real TP-EC13 documents (Gemaire content CDN).
+const EC13_DOCUMENTS: PdpDocument[] = [
+  {
+    label: "consumer literature",
+    kind: "pdf",
+    href: "https://resource.gemaire.com/is/content/Watscocom/Gemaire/tradepro_motor-brochure-2021_en_cl.pdf",
+  },
+  {
+    label: "video",
+    kind: "video",
+    href: "https://resource.gemaire.com/is/content/Watscocom/Gemaire/tradepro_tp-ec13_en_vid1.mp4",
+  },
+];
+
+// Related part shown in the "Parts" section — the 3/4 HP sibling (real image).
+const EC13_PARTS: PartItem[] = [
+  {
+    id: "tp-ec13-75",
+    title:
+      "TP-EC13-75 - Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230 V, 9.3/5.8-5.4 Amps, 3/4 HP",
+    item: "TP-EC13-75",
+    mfg: "TP-EC13-75",
+    image:
+      "https://cdn.gemaire.com/tradepro_tp-ec13-75_article_1111184500437944_en_normal?wid=500&hei=500&qlt=80",
+    branchQty: 6,
+    branchName: "Mobile #251",
+    nearbyQty: 9,
+  },
+];
 
 // Shared TP-EC13-50 specs (same motor, sold by Homans, Gemaire, Carrier, ...).
 const EC13_SPECS_LEFT: SpecGroup[] = [
@@ -246,9 +281,11 @@ const tradeproEc13Gemaire: PdpProduct = {
     "TP-EC13-50 - Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230 V, 6.3/4.0-3.8 Amps, 1/2-1/3 HP",
   item: "TP-EC13-50",
   mfg: "TP-EC13-50",
-  thumbnailCount: 2,
+  thumbnailCount: 1,
   images: [EC13_IMG],
   description: EC13_DESCRIPTION,
+  documents: EC13_DOCUMENTS,
+  parts: EC13_PARTS,
   specTabLabel: "Equipment Specification",
   specGroupsLeft: EC13_SPECS_LEFT,
   specGroupsRight: EC13_SPECS_RIGHT,

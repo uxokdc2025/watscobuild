@@ -1,6 +1,40 @@
+import { FileText, Video } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { PdpDescription, PdpProduct, SpecGroup } from "./types";
+import type {
+  PdpDescription,
+  PdpDocument,
+  PdpProduct,
+  SpecGroup,
+} from "./types";
+
+function DocumentsBlock({ documents }: { documents: PdpDocument[] }) {
+  return (
+    <div className="mt-8 border-t pt-6">
+      <h3 className="text-base font-bold">Documents</h3>
+      <ul className="mt-3 flex flex-col gap-2.5">
+        {documents.map((d) => (
+          <li key={d.label}>
+            <a
+              href={d.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {d.kind === "video" ? (
+                <Video className="size-4 shrink-0" />
+              ) : (
+                <FileText className="size-4 shrink-0" />
+              )}
+              {d.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function SpecGroupBlock({ group }: { group: SpecGroup }) {
   return (
@@ -84,6 +118,9 @@ export function PdpDetails({ product }: { product: PdpProduct }) {
 
       <TabsContent value="description" className="pt-6">
         <DescriptionBody description={product.description} />
+        {product.documents?.length ? (
+          <DocumentsBlock documents={product.documents} />
+        ) : null}
       </TabsContent>
 
       <TabsContent value="specs" className="pt-6">
