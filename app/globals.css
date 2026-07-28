@@ -59,6 +59,9 @@
   --color-brand-carrier: var(--brand-carrier);
   --color-brand-carrier-foreground: var(--brand-carrier-foreground);
   --color-brand-carrier-cart: var(--brand-carrier-cart);
+  --color-brand-peirce: var(--brand-peirce);
+  --color-brand-peirce-foreground: var(--brand-peirce-foreground);
+  --color-brand-peirce-accent: var(--brand-peirce-accent);
 
   /* ── Colors — charts ── */
   --color-chart-1: var(--chart-1);
@@ -107,6 +110,9 @@
   --brand-carrier: #3d2762; /* Carrier Enterprise deep-purple nav */
   --brand-carrier-foreground: #ffffff;
   --brand-carrier-cart: #49a942; /* CE green cart accent */
+  --brand-peirce: #00539b; /* Peirce-Phelps blue (search, logo accent) */
+  --brand-peirce-foreground: #ffffff;
+  --brand-peirce-accent: #ea1336; /* Peirce red "Specials" highlight */
 
   /* ══════════ COLORS — light mode (Intent values on shadcn names) ══════════ */
   --background: oklch(1 0 0);

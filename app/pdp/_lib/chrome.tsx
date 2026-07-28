@@ -432,6 +432,140 @@ function CarrierFooter({ brand }: { brand: BrandChrome }) {
 }
 
 /* ════════════════════════════════════════════════════════════════════════
+   PEIRCE-PHELPS — faithful chrome
+   White header + footer with a blue logo (--brand-peirce) and a red "Specials"
+   accent (--brand-peirce-accent). Utility bar of tool links + branch; main bar
+   with real logo, blue search button, account, cart; white nav row.
+   ════════════════════════════════════════════════════════════════════════ */
+
+const PEIRCE_LOGO =
+  "https://www.peirce.com/static/version1784845039/frontend/Peirce/base/en_US/images/peirce-phelps-logo.png";
+const PEIRCE_UTIL = [
+  "AHRI Search",
+  "Part Finder",
+  "Warranty Center",
+  "Quick Order",
+  "My Lists",
+  "Help & Support",
+];
+
+function PeirceHeader({ brand }: { brand: BrandChrome }) {
+  return (
+    <header className="bg-background">
+      {/* Utility bar */}
+      <div className="border-b">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-1.5 text-xs text-muted-foreground md:px-6">
+          <div className="hidden items-center gap-4 lg:flex">
+            {PEIRCE_UTIL.map((l) => (
+              <a key={l} href="#" className="whitespace-nowrap hover:text-foreground">
+                {l}
+              </a>
+            ))}
+          </div>
+          <span className="ml-auto inline-flex items-center gap-1.5">
+            <MapPin className="size-3.5" />
+            You&apos;re Shopping · Norristown, PA
+            <ChevronDown className="size-3.5" />
+          </span>
+        </div>
+      </div>
+
+      {/* Main bar */}
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+        <a href="#" className="shrink-0" aria-label="Peirce-Phelps home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={PEIRCE_LOGO} alt="Peirce-Phelps" className="h-11 w-auto" />
+        </a>
+        <div className="relative hidden min-w-0 flex-1 md:block">
+          <input
+            aria-label="Search"
+            placeholder="Search item # or keyword"
+            className="h-10 w-full rounded border bg-background pr-11 pl-3 text-sm outline-none"
+          />
+          <button
+            type="button"
+            aria-label="Search"
+            className="absolute top-1/2 right-1 grid size-8 -translate-y-1/2 place-items-center rounded bg-brand-peirce text-white"
+          >
+            <Search className="size-4" />
+          </button>
+        </div>
+        <div className="ml-auto flex items-center gap-4 text-sm">
+          <a href="#" className="hidden text-left leading-tight sm:block">
+            <span className="font-semibold text-brand-peirce underline-offset-2 hover:underline">
+              Sign In
+            </span>{" "}
+            or{" "}
+            <span className="font-semibold text-brand-peirce underline-offset-2 hover:underline">
+              Register
+            </span>
+            <span className="block text-muted-foreground">My Account</span>
+          </a>
+          <button type="button" aria-label="Cart" className="inline-flex items-center gap-1.5">
+            <ShoppingCart className="size-5" />
+            <span className="hidden sm:inline">Cart</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Nav row */}
+      <nav aria-label="Primary" className="border-y">
+        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+          {brand.nav.map((n, i) => (
+            <a
+              key={n}
+              href="#"
+              className={cn(
+                "px-3 py-2.5 text-sm font-semibold whitespace-nowrap",
+                i === 0
+                  ? "text-brand-peirce-accent"
+                  : "text-foreground/80 hover:text-foreground"
+              )}
+            >
+              {n}
+            </a>
+          ))}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function PeirceFooter({ brand }: { brand: BrandChrome }) {
+  const social = [
+    { label: "LinkedIn", Icon: Linkedin },
+    { label: "Facebook", Icon: Facebook },
+    { label: "Instagram", Icon: Instagram },
+  ];
+  return (
+    <footer className="mt-16 border-t bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {brand.footerColumns.map((col) => (
+            <FooterColumnBlock key={col.title} col={col} />
+          ))}
+        </div>
+        <div className="mt-8 flex items-center gap-3">
+          {social.map(({ label, Icon }) => (
+            <a
+              key={label}
+              href="#"
+              aria-label={label}
+              className="grid size-9 place-items-center rounded-full border text-muted-foreground hover:text-brand-peirce"
+            >
+              <Icon className="size-4" />
+            </a>
+          ))}
+        </div>
+        <div className="mt-8 border-t pt-6 text-center text-xs text-muted-foreground">
+          © {brand.copyright}
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
    Shared footer column
    ════════════════════════════════════════════════════════════════════════ */
 
@@ -565,6 +699,7 @@ export function SiteHeader({ brand }: { brand: BrandChrome }) {
   if (brand.key === "gemaire") return <GemaireHeader brand={brand} />;
   if (brand.key === "baker") return <BakerHeader brand={brand} />;
   if (brand.key === "carrier") return <CarrierHeader brand={brand} />;
+  if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
   return <GenericHeader brand={brand} />;
 }
 
@@ -572,5 +707,6 @@ export function SiteFooter({ brand }: { brand: BrandChrome }) {
   if (brand.key === "gemaire") return <GemaireFooter brand={brand} />;
   if (brand.key === "baker") return <BakerFooter brand={brand} />;
   if (brand.key === "carrier") return <CarrierFooter brand={brand} />;
+  if (brand.key === "peirce") return <PeirceFooter brand={brand} />;
   return <GenericFooter brand={brand} />;
 }
