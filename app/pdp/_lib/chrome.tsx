@@ -44,7 +44,7 @@ export type BrandChrome = {
    (Menu · Sign in / Register / Order Templates). Footer: light grey.
    ════════════════════════════════════════════════════════════════════════ */
 
-function GemaireHeader({ brand }: { brand: BrandChrome }) {
+function GemaireHeader() {
   return (
     <header>
       {/* Blue bar */}
@@ -998,7 +998,7 @@ function GenericFooter({ brand }: { brand: BrandChrome }) {
    ════════════════════════════════════════════════════════════════════════ */
 
 export function SiteHeader({ brand }: { brand: BrandChrome }) {
-  if (brand.key === "gemaire") return <GemaireHeader brand={brand} />;
+  if (brand.key === "gemaire") return <GemaireHeader />;
   if (brand.key === "baker") return <BakerHeader brand={brand} />;
   if (brand.key === "carrier") return <CarrierHeader brand={brand} />;
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;

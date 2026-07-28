@@ -6,15 +6,6 @@ import type { BrandChrome } from "./chrome";
  * against real brand assets when available.
  */
 
-const WATSCO_NAV = [
-  "Products",
-  "Brands",
-  "Specials",
-  "Services",
-  "Resources",
-  "Training & Events",
-];
-
 export const BRANDS: Record<string, BrandChrome> = {
   carrier: {
     key: "carrier",
