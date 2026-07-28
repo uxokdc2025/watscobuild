@@ -184,7 +184,11 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
             <span className="text-sm font-medium">Quantity</span>
             <div className="flex items-stretch gap-3">
               <QtyStepper />
-              <Button size="lg" className="h-12 flex-1 text-base">
+              <Button
+                size="lg"
+                disabled={product.commerce!.price == null}
+                className="h-12 flex-1 text-base"
+              >
                 <ShoppingCart />
                 Add to Cart
               </Button>

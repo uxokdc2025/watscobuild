@@ -27,6 +27,12 @@ export function Pdp({
 }) {
   const brand = product.brandKey ? getBrand(product.brandKey) : undefined;
 
+  // Price/inventory is logged-in only — never serialize commerce to a
+  // signed-out client (not just hidden in the UI).
+  const summaryProduct = signedIn
+    ? product
+    : { ...product, commerce: undefined };
+
   return (
     <PdpAuthProvider initialSignedIn={signedIn}>
       <div className="min-h-svh bg-background">
@@ -80,7 +86,7 @@ export function Pdp({
               images={product.images}
               alt={product.title}
             />
-            <PdpSummary product={product} />
+            <PdpSummary product={summaryProduct} />
           </div>
 
           {/* Frequently bought together (only if present) */}
