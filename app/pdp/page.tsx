@@ -65,31 +65,52 @@ export default function PdpMasterPage() {
           ))}
         </ul>
 
-        {/* Brand chrome previews */}
+        {/* By brand — chrome + template combined */}
         <div className="mt-12">
-          <h2 className="text-lg font-semibold tracking-tight">Brand chrome</h2>
+          <h2 className="text-lg font-semibold tracking-tight">
+            By brand — chrome + template combined
+          </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            The content template inside each sub-company&apos;s current header /
-            footer. {Object.keys(BRANDS).length} brands.
+            The PDP content template rendered inside each sub-company&apos;s
+            current header / footer, so the client can approve it in context.{" "}
+            {Object.keys(BRANDS).length} brands.
           </p>
-          <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {Object.values(BRANDS).map((b) => (
-              <li key={b.key}>
-                <Link
-                  href={`/pdp/chrome/${b.key}`}
-                  className="flex items-center justify-between gap-2 rounded-lg border bg-card p-4 outline-none transition-colors hover:border-primary/40 hover:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                >
-                  <span className="min-w-0 truncate text-sm font-medium">
-                    {b.name}
-                  </span>
-                  <span
-                    aria-hidden
-                    className="size-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: b.accent }}
-                  />
-                </Link>
-              </li>
-            ))}
+          <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.values(BRANDS).map((b) => {
+              const product = pdps.find((p) => p.brandKey === b.key);
+              const hasPrice = product?.commerce?.price != null;
+              return (
+                <li key={b.key} className="rounded-lg border bg-card p-4">
+                  {/* Brand name above the link */}
+                  <div className="flex items-center gap-2">
+                    <span
+                      aria-hidden
+                      className="size-3 shrink-0 rounded-full"
+                      style={{ backgroundColor: b.accent }}
+                    />
+                    <span className="truncate text-sm font-semibold">
+                      {b.name}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <Link
+                      href={`/pdp/chrome/${b.key}`}
+                      className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                    >
+                      Signed out <ArrowUpRight className="size-3" />
+                    </Link>
+                    {hasPrice ? (
+                      <Link
+                        href={`/pdp/chrome/${b.key}?signedin=1`}
+                        className="inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                      >
+                        Signed in <ArrowUpRight className="size-3" />
+                      </Link>
+                    ) : null}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </main>
