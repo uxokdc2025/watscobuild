@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { stockTextClass } from "@/components/ui/label-badges";
 import { useAuth } from "./auth";
 import { formatUSD, type PdpCommerce, type PdpProduct } from "./types";
 
@@ -62,7 +63,7 @@ function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
           <p className="mt-1 text-sm text-muted-foreground">
             {commerce.yourBranch.name}
           </p>
-          <p className="mt-2 text-sm font-medium text-green-700 dark:text-green-400">
+          <p className={cn("mt-2 text-sm font-medium", stockTextClass(commerce.yourBranch.stock))}>
             {commerce.yourBranch.stock} in stock today
           </p>
         </div>

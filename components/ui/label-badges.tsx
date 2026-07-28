@@ -84,16 +84,35 @@ const STOCK_TONES = {
   slate: { dot: "bg-muted-foreground", text: "text-muted-foreground" },
 } as const;
 
+/**
+ * Design-system stock logic: a branch quantity is green when available and
+ * red when it hits zero. Reuse everywhere stock qty is shown so the color
+ * always follows the number.
+ */
+export function stockTone(qty: number): keyof typeof STOCK_TONES {
+  return qty > 0 ? "green" : "red";
+}
+
+/** Text-color class for a stock quantity (green > 0, red when 0). */
+export function stockTextClass(qty: number): string {
+  return STOCK_TONES[stockTone(qty)].text;
+}
+
 export function StockStatus({
-  tone = "slate",
+  tone,
+  qty,
   className,
   children,
 }: {
+  /** Explicit tone; ignored when `qty` is provided. */
   tone?: keyof typeof STOCK_TONES;
+  /** When set, tone is derived from the quantity (green > 0, red when 0). */
+  qty?: number;
   className?: string;
   children: React.ReactNode;
 }) {
-  const t = STOCK_TONES[tone];
+  const resolved = qty != null ? stockTone(qty) : (tone ?? "slate");
+  const t = STOCK_TONES[resolved];
   return (
     <span className={cn("inline-flex items-center gap-1.5 text-sm font-medium", t.text, className)}>
       <span className={cn("size-2 shrink-0 rounded-full", t.dot)} aria-hidden />

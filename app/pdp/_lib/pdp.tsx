@@ -10,7 +10,10 @@ import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
 
 /** Per-brand page canvas (some sites use a light-grey background, not white). */
-const PAGE_BG: Record<string, string> = { homans: "bg-brand-homans-bg" };
+const PAGE_BG: Record<string, string> = {
+  homans: "bg-brand-homans-bg",
+  carrier: "bg-brand-carrier-bg",
+};
 
 /** Fallback when a product has no mapped brand chrome. */
 function LegacyShell({ label }: { label: string }) {
@@ -81,6 +84,13 @@ export function Pdp({
             <PdpSummary product={summaryProduct} />
           </div>
 
+          {/* Substitutes — directly under the summary / Add to Cart */}
+          {product.substitutes?.length ? (
+            <div className="mt-10">
+              <Substitutes product={product} />
+            </div>
+          ) : null}
+
           {/* Frequently bought together (only if present) */}
           {product.fbt?.length ? (
             <div className="mt-14">
@@ -90,15 +100,10 @@ export function Pdp({
 
           {product.detailsStyle === "about" ? (
             <>
-              {/* Carrier "About This Product" + Substitutes + Recently Viewed */}
+              {/* Carrier "About This Product" + Recently Viewed */}
               <div className="mt-14">
                 <AboutThisProduct product={product} />
               </div>
-              {product.substitutes?.length ? (
-                <div className="mt-14">
-                  <Substitutes product={product} />
-                </div>
-              ) : null}
               {product.recentlyViewed?.length ? (
                 <div className="mt-14">
                   <RecentlyViewed product={product} />

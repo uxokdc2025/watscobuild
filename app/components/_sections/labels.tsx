@@ -108,6 +108,13 @@ export function LabelsSection() {
         <StockStatus tone="slate">Non-sellable</StockStatus>
       </Group>
 
+      {/* Quantity-driven color: green when available, red at zero. */}
+      <Group title="Branch quantity" note="Color follows the number — green when available, red at 0." className="!flex-col !items-start gap-2.5">
+        <StockStatus qty={12}>12 in stock today</StockStatus>
+        <StockStatus qty={1}>1 in stock today</StockStatus>
+        <StockStatus qty={0}>0 in stock today</StockStatus>
+      </Group>
+
       {/* Certification */}
       <Group title="Certification" note="Placeholder chip — swap for the real logo when provided.">
         <CertBadge>ENERGY STAR</CertBadge>

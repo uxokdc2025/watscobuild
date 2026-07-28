@@ -3,6 +3,13 @@
 import { Info, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "./auth";
 import { formatUSD, type FbtProduct, type PdpProduct } from "./types";
@@ -139,11 +146,20 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
         </TabsList>
         {product.fbt.map((g) => (
           <TabsContent key={g.label} value={g.label} className="pt-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
-              {g.items.map((it) => (
-                <FbtCard key={it.id} item={it} />
-              ))}
-            </div>
+            <Carousel opts={{ align: "start" }} className="mx-10">
+              <CarouselContent>
+                {g.items.map((it) => (
+                  <CarouselItem
+                    key={it.id}
+                    className="basis-full sm:basis-1/2 lg:basis-1/4 xl:basis-1/6"
+                  >
+                    <FbtCard item={it} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </TabsContent>
         ))}
       </Tabs>

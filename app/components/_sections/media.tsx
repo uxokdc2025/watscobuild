@@ -39,6 +39,25 @@ export function MediaSection() {
             </Carousel>
           </div>
         </Block>
+        <Block label="Multiple items per view (product rails)">
+          <div className="px-10">
+            <Carousel opts={{ align: "start" }} className="w-full">
+              <CarouselContent>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <CarouselItem key={i} className="basis-1/2 sm:basis-1/3 lg:basis-1/4">
+                    <Card>
+                      <CardContent className="flex aspect-square items-center justify-center p-6">
+                        <span className="text-2xl font-semibold">{i + 1}</span>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+        </Block>
       </Demo>
     </Category>
   );

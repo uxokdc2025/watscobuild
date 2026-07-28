@@ -514,25 +514,25 @@ const carrierTpE50: PdpProduct = {
     {
       label: "Best Sellers",
       items: [
-        { id: "p251-0039", title: "TOTALINE® - 4 Leg Flexible Motor Mount Bracket Kit", item: "P251-0039", mfg: "P251-0039", image: ceImg("totaline_p251-0039_article_1585516906633815"), branchQty: 0, branchName: "", nearbyQty: 0, price: 51.3, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
-        { id: "tp-cap-5-440", title: "TRADEPRO® - 5MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-5/440", mfg: "TP-CAP-5/440", image: ceImg("tradepro_tp-cap-5-440_article_1366804065364"), branchQty: 0, branchName: "", nearbyQty: 0, price: 2.6, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
-        { id: "tp-cap-5-440r", title: "TRADEPRO® - 5MFD 370/440 VAC Round Single Run Capacitor", item: "TP-CAP-5/440R", mfg: "TP-CAP-5/440R", image: ceImg("tradepro_tp-cap-5-440r_article_1452677534689"), branchQty: 0, branchName: "", nearbyQty: 0, price: 2.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
-        { id: "tp-e75-3sp2", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 3/4 HP 3-Speed", item: "TP-E75-3SP2", mfg: "TP-E75-3SP2", image: ceImg("tradepro_tp-e75-3sp2_article_1418039135749"), branchQty: 0, branchName: "", nearbyQty: 0, price: 130.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
-        { id: "tp-cap-10-440-a", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-10/440-A", mfg: "TP-CAP-10/440-A", image: ceImg("tradepro_tp-cap-10440-a_article_1604089255985843"), branchQty: 0, branchName: "", nearbyQty: 0, price: 3.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
-        { id: "p291-1004", title: "TOTALINE® - Run Capacitor Oval 370/440V Single 10MFD", item: "P291-1004", mfg: "P291-1004", branchQty: 0, branchName: "", nearbyQty: 0, price: 7.3, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-c25-1sp2", title: "TRADEPRO® - Condenser Motor - PSC 208-230 VAC 1,075 RPM 1/4 HP 1-Speed", item: "TP-C25-1SP2", mfg: "TP-C25-1SP2", image: ceImg("tradepro_tp-c25-1sp2_article_1418039133435"), branchQty: 0, branchName: "", nearbyQty: 0, price: 77.1, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-c33-1sp2", title: "TRADEPRO® - Condenser Motor - PSC 208-230 VAC 1,075 RPM 1/3 HP 1-Speed", item: "TP-C33-1SP2", mfg: "TP-C33-1SP2", image: ceImg("tradepro_tp-c33-1sp2_article_1418039132335"), branchQty: 0, branchName: "", nearbyQty: 0, price: 94.8, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "tp-e33-3sp2", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 1/3 HP 3-Speed", item: "TP-E33-3SP2", mfg: "TP-E33-3SP2", image: ceImg("tradepro_tp-e33-3sp2_article_1418039134489"), branchQty: 0, branchName: "", nearbyQty: 0, price: 90.3, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-cap-10-440usa", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor (Made in the USA)", item: "TP-CAP-10/440USA", mfg: "TP-CAP-10/440USA", image: ceImg("tradepro_tp-cap-10-440usa_article_2126576031128668"), branchQty: 0, branchName: "", nearbyQty: 0, price: 11.6, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-e33-3sp1", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 115 VAC 1,075 RPM 1/3 HP 3-Speed", item: "TP-E33-3SP1", mfg: "TP-E33-3SP1", image: ceImg("tradepro_tp-e33-3sp1_article_1418039136075"), branchQty: 0, branchName: "", nearbyQty: 0, price: 88.2, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-c50-1sp2", title: "TRADEPRO® - Condenser Motor - PSC 208-230 VAC 1,075 RPM 1/2 HP 1-Speed", item: "TP-C50-1SP2", mfg: "TP-C50-1SP2", image: ceImg("tradepro_tp-c50-1sp2_article_1418039136131"), branchQty: 0, branchName: "", nearbyQty: 0, price: 103.5, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
       ],
     },
     {
       label: "Other",
       items: [
-        { id: "tp-e75-3sp2-o", title: "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 3/4 HP 3-Speed", item: "TP-E75-3SP2", mfg: "TP-E75-3SP2", image: ceImg("tradepro_tp-e75-3sp2_article_1418039135749"), branchQty: 0, branchName: "", nearbyQty: 0, price: 130.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
-        { id: "tp-cap-10-440-a-o", title: "TRADEPRO® - 10MFD 370/440 VAC Oval Single Run Capacitor", item: "TP-CAP-10/440-A", mfg: "TP-CAP-10/440-A", image: ceImg("tradepro_tp-cap-10440-a_article_1604089255985843"), branchQty: 0, branchName: "", nearbyQty: 0, price: 3.7, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "all-access-83412", title: "ALL-ACCESS® - Overflow Shut Off Switch", item: "83412", mfg: "83412", image: ceImg("all-access_83412_article_3095504903732323"), branchQty: 0, branchName: "", nearbyQty: 0, price: 29.9, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "aquaguard-96100", title: "Aquaguard® - Leading Magnetic Float Switch", item: "AG-1100", mfg: "96100", image: ceImg("aquaguard_96100_article_1389111991663"), branchQty: 0, branchName: "", nearbyQty: 0, price: 24.6, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
       ],
     },
   ],
   substitutes: [
     { id: "hc43ae200", title: "Factory Authorized Parts™ - HC43AE200 Blower Motor", item: "HC43AE200", mfg: "HC43AE200", image: ceImg("factory-authorized-parts_hc43ae200_article_1411645327495"), price: 742.7, points: 14 },
-    { id: "p257-8588", title: "TOTALINE® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 1/2 HP 3-Speed", item: "P257-8588", mfg: "P257-8588", price: 272.4, points: 5 },
+    { id: "p257-8588", title: "TOTALINE® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 1/2 HP 3-Speed", item: "P257-8588", mfg: "P257-8588", image: ceImg("totaline_psc-direct-drive-blower"), price: 272.4, points: 5 },
   ],
   recentlyViewed: [
     {
