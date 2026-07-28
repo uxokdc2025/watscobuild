@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { getPdpSlugs, pdps } from "./_lib/registry";
 import { OpenAllButton } from "./_lib/open-all";
+import { BRANDS } from "./_lib/brands";
 
 export const metadata: Metadata = {
   title: "PDP Master — all brands",
@@ -52,6 +53,34 @@ export default function PdpMasterPage() {
             </li>
           ))}
         </ul>
+
+        {/* Brand chrome previews */}
+        <div className="mt-12">
+          <h2 className="text-lg font-semibold tracking-tight">Brand chrome</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The content template inside each sub-company&apos;s current header /
+            footer. {Object.keys(BRANDS).length} brands.
+          </p>
+          <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {Object.values(BRANDS).map((b) => (
+              <li key={b.key}>
+                <Link
+                  href={`/pdp/chrome/${b.key}`}
+                  className="flex items-center justify-between gap-2 rounded-lg border bg-card p-4 outline-none transition-colors hover:border-primary/40 hover:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  <span className="min-w-0 truncate text-sm font-medium">
+                    {b.name}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="size-3 shrink-0 rounded-full"
+                    style={{ backgroundColor: b.accent }}
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </main>
     </div>
   );

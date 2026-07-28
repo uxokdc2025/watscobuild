@@ -42,6 +42,8 @@ export type PdpCommerce = {
 export type PdpProduct = {
   slug: string;
   brand: string;
+  /** Key into the brand-chrome registry (renders that site's header/footer). */
+  brandKey?: string;
   /** Source URL this was modeled on (shown on the Master index). */
   sourceUrl?: string;
   store?: { name: string; hours?: string };

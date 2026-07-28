@@ -5,9 +5,11 @@ import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
 import { FrequentlyBoughtTogether } from "./fbt";
+import { SiteFooter, SiteHeader } from "./chrome";
+import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
 
-/** Thin stand-in for per-brand legacy chrome we don't own (buttons restyled). */
+/** Fallback when a product has no mapped brand chrome. */
 function LegacyShell({ label }: { label: string }) {
   return (
     <div className="border-y border-dashed bg-muted/40 py-3 text-center text-xs font-medium tracking-wide text-muted-foreground uppercase">
@@ -17,12 +19,16 @@ function LegacyShell({ label }: { label: string }) {
 }
 
 export function Pdp({ product }: { product: PdpProduct }) {
+  const brand = product.brandKey ? getBrand(product.brandKey) : undefined;
+
   return (
     <PdpAuthProvider>
       <div className="min-h-svh bg-background">
-        <LegacyShell
-          label={`Legacy header · ${product.brand} · unchanged (buttons restyled)`}
-        />
+        {brand ? (
+          <SiteHeader brand={brand} />
+        ) : (
+          <LegacyShell label={`Legacy header · ${product.brand}`} />
+        )}
 
         <main className="mx-auto max-w-6xl px-4 py-6 md:px-6">
           {/* Store */}
@@ -80,9 +86,11 @@ export function Pdp({ product }: { product: PdpProduct }) {
           </div>
         </main>
 
-        <LegacyShell
-          label={`Legacy footer · ${product.brand} · unchanged (buttons restyled)`}
-        />
+        {brand ? (
+          <SiteFooter brand={brand} />
+        ) : (
+          <LegacyShell label={`Legacy footer · ${product.brand}`} />
+        )}
       </div>
     </PdpAuthProvider>
   );

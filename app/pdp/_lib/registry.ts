@@ -8,6 +8,7 @@ import type { PdpProduct } from "./types";
 const glasflossZlp: PdpProduct = {
   slug: "glasfloss-zlp17h211",
   brand: "Glasfloss",
+  brandKey: "gemaire",
   badges: [
     { label: "Best Value", tone: "solid", color: "violet" },
     { label: "Pro Essentials", tone: "soft", color: "blue" },
@@ -147,6 +148,7 @@ const glasflossZlp: PdpProduct = {
 const tradeproEc13: PdpProduct = {
   slug: "tradepro-tp-ec13-50",
   brand: "TRADEPRO®",
+  brandKey: "homans",
   sourceUrl:
     "https://arrow-sw-homans.wsm.wsoecom.ninja/product/TRADEPRO-TP-EC13-50-Blower-Motor-X-13-ECM-Variable-Speed-1075-RPM-115-208-230-V-6.3-4.0-3.8-Amps-1-2-1-3-HP/1111184500437961",
   store: { name: "Manchester, NH — Homans", hours: "Opens at 06:00" },
