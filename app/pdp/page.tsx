@@ -1,69 +1,58 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
-import { product } from "./_data";
-import { PdpGallery } from "./_components/gallery";
-import { PdpSummary } from "./_components/summary";
-import { PdpDetails } from "./_components/details";
-import { FrequentlyBoughtTogether } from "./_components/frequently-bought-together";
+import { getPdpSlugs, pdps } from "./_lib/registry";
+import { OpenAllButton } from "./_lib/open-all";
 
 export const metadata: Metadata = {
-  title: `${product.item} — PDP v2`,
-  description: "Watsco B2B product-detail template (v2).",
+  title: "PDP Master — all brands",
+  description: "Directory of every data-driven PDP template.",
 };
 
-/** Thin stand-in for the per-brand legacy chrome we don't own. */
-function LegacyShell({ label }: { label: string }) {
-  return (
-    <div className="border-y border-dashed bg-muted/40 py-3 text-center text-xs font-medium tracking-wide text-muted-foreground uppercase">
-      {label}
-    </div>
-  );
-}
-
-export default function PdpPage() {
+export default function PdpMasterPage() {
   return (
     <div className="min-h-svh bg-background">
-      <LegacyShell label="Legacy header · per-brand · unchanged (buttons restyled)" />
+      <main className="mx-auto max-w-4xl px-4 py-10 md:px-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">PDP Templates</h1>
+            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+              One data-driven template · {pdps.length} products in the registry.
+              Each renders a signed-out and signed-in version — toggle it on the
+              page.
+            </p>
+          </div>
+          <OpenAllButton slugs={getPdpSlugs()} />
+        </div>
 
-      <main className="mx-auto max-w-6xl px-4 py-6 md:px-6">
-        {/* Breadcrumb (plain semantic markup — keeps this a Server Component) */}
-        <nav aria-label="Breadcrumb" className="text-sm">
-          <ol className="flex items-center gap-1.5">
-            <li>
-              <a
-                href="#"
-                className="rounded-sm text-muted-foreground underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        <ul className="mt-8 flex flex-col gap-3">
+          {pdps.map((p) => (
+            <li key={p.slug}>
+              <Link
+                href={`/pdp/${p.slug}`}
+                className="group flex items-center justify-between gap-4 rounded-xl border bg-card p-5 outline-none transition-colors hover:border-primary/40 hover:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50"
               >
-                Home
-              </a>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-semibold text-primary">
+                      {p.brand}
+                    </span>
+                    <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
+                      {p.commerce ? "priced + gated" : "gated"}
+                    </span>
+                  </div>
+                  <div className="mt-1 line-clamp-1 font-medium">{p.title}</div>
+                  <div className="mt-0.5 font-mono text-xs text-muted-foreground">
+                    Item {p.item} · /pdp/{p.slug}
+                  </div>
+                </div>
+                <ArrowUpRight className="size-5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+              </Link>
             </li>
-            <li aria-hidden className="text-muted-foreground/50">
-              /
-            </li>
-            <li aria-current="page" className="line-clamp-1 text-foreground">
-              {product.title}
-            </li>
-          </ol>
-        </nav>
-
-        {/* Gallery (third-party, boxed) + summary */}
-        <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
-          <PdpGallery thumbnailCount={product.thumbnailCount} />
-          <PdpSummary />
-        </div>
-
-        {/* Frequently bought together */}
-        <div className="mt-14">
-          <FrequentlyBoughtTogether />
-        </div>
-
-        {/* Description / specs */}
-        <div className="mt-14">
-          <PdpDetails />
-        </div>
+          ))}
+        </ul>
       </main>
-
-      <LegacyShell label="Legacy footer · per-brand · unchanged (buttons restyled)" />
     </div>
   );
 }
