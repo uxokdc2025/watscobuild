@@ -326,6 +326,9 @@ const peirce58mv: PdpProduct = {
   item: "58MV660006",
   mfg: "58MV660006",
   thumbnailCount: 1,
+  images: [
+    "https://resource.peirce.com/is/image/Watscocom/factory-authorized-parts_58mv660006_article_1411645331538_en_normal?wid=700&hei=700&qlt=80",
+  ],
   description: {
     intro: "Factory Authorized Parts blower motor, 1/2 HP, 1050 RPM.",
   },
@@ -404,7 +407,10 @@ const ecmdiProFlush: PdpProduct = {
   title: "Pro-Flush™ Flushing Solvent Refill Kit - 8 oz.",
   item: "80866",
   mfg: "PF-KIT",
-  thumbnailCount: 6,
+  thumbnailCount: 1,
+  images: [
+    "https://resource.ecmdi.com/is/image/Watscocom/diversitech_pf-kit_article_1375441854867_en_normal?wid=700&hei=700&qlt=80",
+  ],
   description: {
     intro:
       "Pro-Flush flushing solvent refill kit, 8 oz — for flushing A/C and refrigeration line sets.",
