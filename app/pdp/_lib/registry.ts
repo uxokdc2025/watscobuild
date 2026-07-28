@@ -428,10 +428,19 @@ const carrierTpE50: PdpProduct = {
     "TRADEPRO® - Blower Motor Direct Drive - PSC 208-230 VAC 1,075 RPM 1/2 HP 3-Speed",
   item: "TP-E50-3SP2",
   mfg: "TP-E50-3SP2",
-  thumbnailCount: 1,
+  thumbnailCount: 7,
   images: [
-    "https://resource.carrierenterprise.com/is/image/Watscocom/tradepro_tp-e50-3sp2_article_1418039133491_en_normal?wid=700&hei=700&qlt=80",
-  ],
+    "normal",
+    "ai1",
+    "ai2",
+    "ai3",
+    "ai4",
+    "spibs12r01c12",
+    "spis29r02c05",
+  ].map(
+    (v) =>
+      `https://resource.carrierenterprise.com/is/image/Watscocom/tradepro_tp-e50-3sp2_article_1418039133491_en_${v}?wid=700&hei=700&qlt=80`
+  ),
   description: {
     intro: "TRADEPRO PSC direct-drive blower motor, 3-speed.",
   },

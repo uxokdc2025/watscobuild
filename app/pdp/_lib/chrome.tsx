@@ -1,4 +1,5 @@
 import {
+  Bell,
   ChevronDown,
   ClipboardList,
   Facebook,
@@ -13,6 +14,7 @@ import {
   ShoppingCart,
   User,
   Video,
+  Youtube,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -424,19 +426,40 @@ const CE_UTIL_LEFT = [
   "AHRI Search",
   "Branches",
   "Cross-Reference",
+  "Documents",
   "Part Finder",
   "Quick Order",
+  "Supersedes",
   "System Builder",
   "Warranty",
 ];
-const CE_UTIL_RIGHT = ["CE PATH", "CE Rewards", "Contact"];
+const CE_UTIL_RIGHT = ["CE PATH", "CE Rewards", "CE Statements", "Contact"];
 
-function CarrierHeader({ brand }: { brand: BrandChrome }) {
+function CeMonogram() {
+  return (
+    <span
+      className="grid size-10 place-items-center rounded-full border-2 border-foreground text-base font-black tracking-tighter text-foreground"
+      aria-hidden
+    >
+      CE
+    </span>
+  );
+}
+
+function CarrierHeader({
+  brand,
+  signedIn = false,
+}: {
+  brand: BrandChrome;
+  signedIn?: boolean;
+}) {
+  const greyBtn =
+    "inline-flex items-center gap-2 rounded bg-slate-500 px-3 text-white hover:bg-slate-600";
   return (
     <header className="bg-background">
       {/* Utility bar */}
-      <div className="border-b">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-1.5 text-xs text-muted-foreground md:px-6">
+      <div>
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 pt-2 text-xs text-muted-foreground md:px-6">
           <div className="hidden items-center gap-4 lg:flex">
             {CE_UTIL_LEFT.map((l) => (
               <a key={l} href="#" className="whitespace-nowrap hover:text-foreground">
@@ -455,39 +478,47 @@ function CarrierHeader({ brand }: { brand: BrandChrome }) {
       </div>
 
       {/* Main bar */}
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
-        <a href="#" className="flex shrink-0 items-center gap-2" aria-label="Carrier Enterprise home">
-          <span className="grid size-9 place-items-center rounded-full bg-brand-carrier text-sm font-black text-white">
-            CE
-          </span>
-          <span className="hidden text-sm leading-tight font-semibold sm:block">
-            Carrier
-            <br />
-            Enterprise
-          </span>
+      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 md:px-6">
+        <a href="#" className="shrink-0" aria-label="Carrier Enterprise home">
+          <CeMonogram />
         </a>
-        <div className="relative hidden min-w-0 flex-1 md:block">
+        <div className="relative min-w-0 flex-1">
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             aria-label="Search"
-            placeholder="Search by keyword, model or part #"
+            placeholder="Search"
             className="h-10 w-full rounded border bg-background pr-3 pl-9 text-sm outline-none"
           />
         </div>
-        <div className="ml-auto flex items-center gap-3 text-sm">
-          <button type="button" className="inline-flex items-center gap-1.5">
-            <User className="size-5" />
-            <span className="hidden lg:inline">Account</span>
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded px-3 py-2 font-medium text-white"
-            style={{ backgroundColor: "var(--brand-carrier-cart)" }}
-          >
-            <ShoppingCart className="size-4" />
-            Cart
-          </button>
-        </div>
+        {/* Account */}
+        <button type="button" className={cn(greyBtn, "hidden py-1.5 text-left text-xs sm:inline-flex")}>
+          <User className="size-5 shrink-0" />
+          <span className="leading-tight">
+            <span className="block text-sm font-semibold">{signedIn ? "Dave" : "Sign In"}</span>
+            <span className="block opacity-90">{signedIn ? "234716 : 00" : "Account"}</span>
+          </span>
+        </button>
+        {/* Lists */}
+        <button type="button" className={cn(greyBtn, "hidden py-2 text-sm font-medium md:inline-flex")}>
+          <ClipboardList className="size-5" />
+          Lists
+        </button>
+        {/* Notifications */}
+        <button type="button" aria-label="Notifications" className={cn(greyBtn, "hidden py-2 lg:inline-flex")}>
+          <Bell className="size-5" />
+        </button>
+        {/* Cart */}
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded py-2 pr-1.5 pl-3 font-semibold text-white"
+          style={{ backgroundColor: "var(--brand-carrier-cart)" }}
+        >
+          <ShoppingCart className="size-5" />
+          <span className="hidden sm:inline">Cart</span>
+          <span className="rounded bg-black/20 px-2 py-0.5 text-sm tabular-nums">
+            {signedIn ? 26 : 0}
+          </span>
+        </button>
       </div>
 
       {/* Purple category nav */}
@@ -495,7 +526,7 @@ function CarrierHeader({ brand }: { brand: BrandChrome }) {
         aria-label="Primary"
         className="bg-brand-carrier text-brand-carrier-foreground"
       >
-        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+        <div className="mx-auto flex max-w-6xl justify-between gap-1 overflow-x-auto px-4 md:px-6">
           {brand.nav.map((n) => (
             <a
               key={n}
@@ -511,21 +542,124 @@ function CarrierHeader({ brand }: { brand: BrandChrome }) {
   );
 }
 
+const CE_SOCIAL = [
+  { label: "Facebook", Icon: Facebook, color: "#1877F2" },
+  { label: "Instagram", Icon: Instagram, color: "#E4405F" },
+  { label: "LinkedIn", Icon: Linkedin, color: "#0A66C2" },
+  { label: "YouTube", Icon: Youtube, color: "#FF0000" },
+];
+const CE_NEWS = [
+  { date: "Recent", title: "New product line now available at CE" },
+  { date: "Recent", title: "Seasonal promotions are now live" },
+];
+
 function CarrierFooter({ brand }: { brand: BrandChrome }) {
+  const greyBtn =
+    "inline-flex items-center rounded bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700";
   return (
-    <footer className="mt-16 border-t bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-          {brand.footerColumns.map((col) => (
-            <FooterColumnBlock key={col.title} col={col} />
-          ))}
+    <footer className="mt-16 bg-background">
+      {/* Purple PRO bar */}
+      <div className="bg-brand-carrier text-brand-carrier-foreground">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-4 px-4 py-4 md:px-6">
+          <span className="font-bold">Be a PRO on the GO</span>
+          <button type="button" className="rounded bg-white px-4 py-2 text-sm font-semibold text-brand-carrier">
+            Download Mobile App
+          </button>
         </div>
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs text-muted-foreground sm:flex-row">
-          <span>© {brand.copyright}</span>
-          <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-foreground">Accessibility</a>
-            <a href="#" className="hover:text-foreground">Privacy Policy</a>
-            <a href="#" className="hover:text-foreground">Terms &amp; Conditions</a>
+      </div>
+
+      {/* Top section */}
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Customer Service */}
+          <div>
+            <h3 className="text-lg font-bold">Customer Service</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Our teams across every location are here to support your business.
+            </p>
+            <button type="button" className={cn(greyBtn, "mt-4")}>Contact Support</button>
+          </div>
+          {/* Subscribe + social */}
+          <div>
+            <h3 className="text-lg font-bold">Subscribe For Offers</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Get exclusive promotions and product updates by email.
+            </p>
+            <button type="button" className={cn(greyBtn, "mt-4")}>Subscribe</button>
+            <p className="mt-6 font-bold">Follow Us</p>
+            <div className="mt-2 flex items-center gap-3">
+              {CE_SOCIAL.map(({ label, Icon, color }) => (
+                <a key={label} href="#" aria-label={label} style={{ color }} className="hover:opacity-80">
+                  <Icon className="size-6" />
+                </a>
+              ))}
+            </div>
+          </div>
+          {/* HVAC News */}
+          <div>
+            <h3 className="text-lg font-bold">HVAC News</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Stay current on new products, contractor tips, and special offers.
+            </p>
+            <ul className="mt-4 flex flex-col gap-3">
+              {CE_NEWS.map((n) => (
+                <li key={n.title} className="flex gap-3">
+                  <div
+                    className="size-14 shrink-0 rounded"
+                    style={{
+                      backgroundColor: "var(--muted)",
+                      backgroundImage:
+                        "repeating-linear-gradient(45deg, color-mix(in oklch, var(--muted-foreground) 12%, transparent) 0 6px, transparent 6px 12px)",
+                    }}
+                    aria-hidden
+                  />
+                  <span>
+                    <span className="block text-[11px] tracking-wide text-muted-foreground uppercase">{n.date}</span>
+                    <a href="#" className="text-sm font-semibold text-primary hover:underline">{n.title}</a>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <button type="button" className={cn(greyBtn, "mt-4")}>Read News</button>
+          </div>
+          {/* Mobile Apps */}
+          <div>
+            <h3 className="text-lg font-bold">Mobile Apps</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Product info and time-saving tools for HVAC pros, on the go.{" "}
+              <a href="#" className="font-semibold text-primary hover:underline">See Features</a>
+            </p>
+            <div className="mt-4 flex gap-2">
+              <StoreBadge store="App Store" />
+              <StoreBadge store="Google Play" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Lower link columns */}
+      <div className="border-t">
+        <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+          <div className="flex flex-col gap-10 lg:flex-row lg:justify-between">
+            <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
+              {brand.footerColumns.map((col) => (
+                <FooterColumnBlock key={col.title} col={col} />
+              ))}
+            </div>
+            <div className="shrink-0 text-sm lg:text-right">
+              <div className="flex items-center gap-2 lg:justify-end">
+                <span className="font-semibold">Language</span>
+                <span className="inline-flex items-center gap-1 rounded border px-3 py-1.5">
+                  English <ChevronDown className="size-4" />
+                </span>
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground">© {brand.copyright}</p>
+              <div className="mt-3 flex flex-col gap-1.5 text-sm text-primary lg:items-end">
+                {["Accessibility", "Privacy Policy", "Terms & Conditions", "Terms Of Use"].map((l) => (
+                  <a key={l} href="#" className="hover:underline">{l}</a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1231,7 +1365,7 @@ export function SiteHeader({
 }) {
   if (brand.key === "gemaire") return <GemaireHeader signedIn={signedIn} />;
   if (brand.key === "baker") return <BakerHeader brand={brand} />;
-  if (brand.key === "carrier") return <CarrierHeader brand={brand} />;
+  if (brand.key === "carrier") return <CarrierHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
   if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} />;
   if (brand.key === "dcne") return <DcneHeader brand={brand} />;
