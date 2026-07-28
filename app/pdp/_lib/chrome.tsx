@@ -50,9 +50,14 @@ function GemaireHeader({ brand }: { brand: BrandChrome }) {
       {/* Blue bar */}
       <div className="bg-brand-gemaire text-brand-gemaire-foreground">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
-          {/* Wordmark */}
-          <a href="#" className="shrink-0 text-2xl font-black tracking-tight">
-            GEMAIRE
+          {/* Real logo (white version served for the blue bar) */}
+          <a href="#" className="shrink-0" aria-label="Gemaire home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://www.gemaire.com/static/version1784840842/frontend/Gemaire/base/en_US/images/gemaire-logo-header-small.svg"
+              alt="Gemaire Distributors"
+              className="h-7 w-auto"
+            />
           </a>
 
           {/* Prominent search */}
@@ -168,6 +173,137 @@ function GemaireFooter({ brand }: { brand: BrandChrome }) {
               Terms &amp; Conditions
             </a>
           </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   BAKER — faithful chrome
+   Real header: dark utility strip (#3a3838 → --brand-baker-bar) with text
+   links; white main bar (red Baker logo, store selector, search, account);
+   white category nav with a red (#c8102e → --brand-baker) active underline.
+   Footer: white, 4 columns, red headings, dark copyright bar.
+   ════════════════════════════════════════════════════════════════════════ */
+
+const BAKER_LOGO =
+  "https://www.bakerdist.com/static/version1783616181/frontend/Baker/base/en_US/images/logo.svg";
+const BAKER_UTILITY = [
+  "Brands",
+  "Events",
+  "Specials",
+  "Careers",
+  "Resources",
+  "Open Account",
+  "BakerPay",
+];
+
+function BakerHeader({ brand }: { brand: BrandChrome }) {
+  return (
+    <header className="bg-background">
+      {/* Dark utility strip */}
+      <div className="bg-brand-baker-bar text-brand-baker-bar-foreground">
+        <div className="mx-auto flex max-w-6xl items-center gap-5 px-4 py-1.5 text-xs md:px-6">
+          {BAKER_UTILITY.map((l) => (
+            <a key={l} href="#" className="whitespace-nowrap opacity-90 hover:opacity-100">
+              {l}
+            </a>
+          ))}
+          {brand.phone ? (
+            <span className="ml-auto hidden items-center gap-1.5 opacity-90 sm:inline-flex">
+              <Phone className="size-3.5" />
+              {brand.phone}
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      {/* Main bar */}
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+        <a href="#" className="shrink-0" aria-label="Baker Distributing home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={BAKER_LOGO} alt="Baker Distributing" className="h-8 w-auto" />
+        </a>
+        <div className="hidden items-center gap-1.5 text-xs leading-tight lg:flex">
+          <MapPin className="size-4 shrink-0 text-brand-baker" />
+          <span>
+            <span className="block text-muted-foreground">You&apos;re shopping at store</span>
+            <span className="block font-semibold">Select branch ▾</span>
+          </span>
+        </div>
+        <div className="relative hidden min-w-0 flex-1 md:block">
+          <input
+            aria-label="Search"
+            placeholder="Search by Model, Item #, or Name..."
+            className="h-9 w-full rounded border bg-background pr-10 pl-3 text-sm outline-none"
+          />
+          <button
+            type="button"
+            aria-label="Search"
+            className="absolute top-1/2 right-1 grid size-7 -translate-y-1/2 place-items-center rounded bg-brand-baker text-white"
+          >
+            <Search className="size-4" />
+          </button>
+        </div>
+        <button type="button" aria-label="Account" className="ml-auto md:ml-0">
+          <User className="size-6 text-brand-baker" />
+        </button>
+      </div>
+
+      {/* Category nav */}
+      <nav aria-label="Primary" className="border-y">
+        <div className="mx-auto flex max-w-6xl gap-0 overflow-x-auto px-4 md:px-6">
+          {brand.nav.map((n, i) => (
+            <a
+              key={n}
+              href="#"
+              className={cn(
+                "border-b-2 px-3 py-2.5 text-sm font-medium whitespace-nowrap",
+                i === 0
+                  ? "border-brand-baker text-foreground"
+                  : "border-transparent text-foreground/80 hover:text-foreground"
+              )}
+            >
+              {n}
+            </a>
+          ))}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function BakerFooter({ brand }: { brand: BrandChrome }) {
+  return (
+    <footer className="mt-16 border-t bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {brand.footerColumns.map((col) => (
+            <div key={col.title}>
+              <h3 className="text-sm font-bold tracking-wide text-brand-baker uppercase">
+                {col.title}
+              </h3>
+              <ul className="mt-3 flex flex-col gap-2">
+                {col.links.map((l) => (
+                  <li key={l}>
+                    <a
+                      href="#"
+                      className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                    >
+                      {l}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Dark copyright bar */}
+      <div className="bg-brand-baker-bar text-brand-baker-bar-foreground">
+        <div className="mx-auto max-w-6xl px-4 py-4 text-center text-xs md:px-6">
+          Copyright © {brand.copyright}
         </div>
       </div>
     </footer>
@@ -306,10 +442,12 @@ function GenericFooter({ brand }: { brand: BrandChrome }) {
 
 export function SiteHeader({ brand }: { brand: BrandChrome }) {
   if (brand.key === "gemaire") return <GemaireHeader brand={brand} />;
+  if (brand.key === "baker") return <BakerHeader brand={brand} />;
   return <GenericHeader brand={brand} />;
 }
 
 export function SiteFooter({ brand }: { brand: BrandChrome }) {
   if (brand.key === "gemaire") return <GemaireFooter brand={brand} />;
+  if (brand.key === "baker") return <BakerFooter brand={brand} />;
   return <GenericFooter brand={brand} />;
 }

@@ -52,6 +52,10 @@
         stays on the semantic tokens above. ── */
   --color-brand-gemaire: var(--brand-gemaire);
   --color-brand-gemaire-foreground: var(--brand-gemaire-foreground);
+  --color-brand-baker: var(--brand-baker);
+  --color-brand-baker-foreground: var(--brand-baker-foreground);
+  --color-brand-baker-bar: var(--brand-baker-bar);
+  --color-brand-baker-bar-foreground: var(--brand-baker-bar-foreground);
 
   /* ── Colors — charts ── */
   --color-chart-1: var(--chart-1);
@@ -93,6 +97,10 @@
        brand as its faithful chrome is built. ══════════ */
   --brand-gemaire: #0080df; /* Gemaire header blue */
   --brand-gemaire-foreground: #ffffff;
+  --brand-baker: #c8102e; /* Baker red (logo, nav underline) */
+  --brand-baker-foreground: #ffffff;
+  --brand-baker-bar: #3a3838; /* Baker dark utility strip */
+  --brand-baker-bar-foreground: #ffffff;
 
   /* ══════════ COLORS — light mode (Intent values on shadcn names) ══════════ */
   --background: oklch(1 0 0);
