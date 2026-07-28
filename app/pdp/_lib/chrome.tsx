@@ -1,6 +1,7 @@
 import {
   ChevronDown,
   Facebook,
+  Twitter,
   Instagram,
   Linkedin,
   MapPin,
@@ -44,19 +45,27 @@ export type BrandChrome = {
    (Menu · Sign in / Register / Order Templates). Footer: light grey.
    ════════════════════════════════════════════════════════════════════════ */
 
-function GemaireHeader() {
+const GEMAIRE_SUBNAV: { label: string; caret?: boolean }[] = [
+  { label: "Shop for Products", caret: true },
+  { label: "Brands", caret: true },
+  { label: "Resources", caret: true },
+  { label: "Quick Order" },
+  { label: "Matched Systems" },
+];
+
+function GemaireHeader({ signedIn = false }: { signedIn?: boolean }) {
   return (
     <header>
       {/* Blue bar */}
       <div className="bg-brand-gemaire text-brand-gemaire-foreground">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-2.5 md:px-6">
           {/* Real logo (white version served for the blue bar) */}
           <a href="#" className="shrink-0" aria-label="Gemaire home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://www.gemaire.com/static/version1784840842/frontend/Gemaire/base/en_US/images/gemaire-logo-header-small.svg"
               alt="Gemaire Distributors"
-              className="h-7 w-auto"
+              className="h-8 w-auto"
             />
           </a>
 
@@ -65,65 +74,80 @@ function GemaireHeader() {
             <input
               aria-label="Search for products"
               placeholder="Search for products, categories, systems..."
-              className="h-10 w-full rounded bg-white pr-11 pl-3 text-sm text-foreground outline-none"
+              className="h-11 w-full rounded-sm bg-white pr-11 pl-4 text-sm text-foreground outline-none"
             />
             <button
               type="button"
               aria-label="Search"
-              className="absolute top-1/2 right-1 grid size-8 -translate-y-1/2 place-items-center rounded bg-brand-gemaire text-white"
+              className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground"
             >
-              <Search className="size-4" />
+              <Search className="size-5" />
             </button>
           </div>
 
           {/* Branch selector */}
           <button
             type="button"
-            className="ml-auto hidden items-center gap-1.5 text-left sm:inline-flex"
+            className="ml-auto hidden items-center gap-2 text-left lg:inline-flex"
           >
             <MapPin className="size-5 shrink-0" />
             <span className="leading-tight">
-              <span className="block text-[10px] tracking-wide uppercase opacity-90">
+              <span className="block text-[10px] font-medium tracking-wide uppercase opacity-90">
                 Your Branch
               </span>
-              <span className="block text-sm font-semibold">Select ▾</span>
+              <span className="block text-sm font-bold">
+                {signedIn ? "MOBILE #251" : "Select Branch"}
+              </span>
             </span>
+            <ChevronDown className="size-4 opacity-90" />
           </button>
 
-          {/* Cart */}
+          {/* Orange cart */}
           <button
             type="button"
-            aria-label="Cart"
-            className="inline-flex items-center gap-1.5 font-medium"
+            aria-label="Cart, 7 items"
+            className="relative inline-flex items-center gap-2 rounded-sm bg-brand-gemaire-cart px-4 py-2.5 font-semibold text-white"
           >
             <ShoppingCart className="size-5" />
             <span className="hidden sm:inline">Cart</span>
+            {signedIn ? (
+              <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-white text-[11px] font-bold text-brand-gemaire-cart">
+                7
+              </span>
+            ) : null}
           </button>
         </div>
       </div>
 
       {/* White sub-bar */}
       <div className="border-b bg-background">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 md:px-6">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 py-2.5 text-sm font-semibold text-brand-gemaire"
-          >
-            <Menu className="size-4" />
-            Menu
-          </button>
-          <div className="flex items-center gap-5 text-sm">
-            <a href="#" className="inline-flex items-center gap-1.5 hover:text-brand-gemaire">
-              <User className="size-4" />
-              Sign in
-            </a>
-            <a href="#" className="hidden hover:text-brand-gemaire sm:inline">
-              Register
-            </a>
-            <button
-              type="button"
-              className="hidden items-center gap-1 hover:text-brand-gemaire sm:inline-flex"
-            >
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 md:px-6">
+          <nav aria-label="Primary" className="flex items-center gap-5 overflow-x-auto">
+            {GEMAIRE_SUBNAV.map((n) => (
+              <button
+                key={n.label}
+                type="button"
+                className="inline-flex items-center gap-1 py-3 text-sm font-semibold whitespace-nowrap hover:text-brand-gemaire"
+              >
+                {n.label}
+                {n.caret ? <ChevronDown className="size-3.5" /> : null}
+              </button>
+            ))}
+          </nav>
+          <div className="hidden items-center gap-6 text-sm whitespace-nowrap md:flex">
+            {signedIn ? (
+              <button type="button" className="inline-flex items-center gap-1 font-medium hover:text-brand-gemaire">
+                David&apos;s Account #63352
+                <ChevronDown className="size-4" />
+              </button>
+            ) : (
+              <span>
+                <a href="#" className="font-medium text-brand-gemaire hover:underline">Sign In</a>
+                <span className="text-muted-foreground"> or </span>
+                <a href="#" className="font-medium text-brand-gemaire hover:underline">Register</a>
+              </span>
+            )}
+            <button type="button" className="inline-flex items-center gap-1 font-medium hover:text-brand-gemaire">
               Order Templates
               <ChevronDown className="size-4" />
             </button>
@@ -134,45 +158,120 @@ function GemaireHeader() {
   );
 }
 
+const GEMAIRE_SOCIAL = [
+  { label: "LinkedIn", Icon: Linkedin },
+  { label: "Facebook", Icon: Facebook },
+  { label: "X", Icon: Twitter },
+  { label: "Instagram", Icon: Instagram },
+];
+
 function GemaireFooter({ brand }: { brand: BrandChrome }) {
-  const social = [
-    { label: "LinkedIn", Icon: Linkedin },
-    { label: "Facebook", Icon: Facebook },
-    { label: "Instagram", Icon: Instagram },
-  ];
+  const [contact, ...cols] = [...brand.footerColumns].reverse();
+  const leftCols = cols.reverse(); // all but CONTACT US, original order
+
   return (
-    <footer className="mt-16 border-t bg-muted/40">
-      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+    <footer className="mt-16 bg-muted/40">
+      <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
+        {/* Link columns + contact/social */}
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-          {brand.footerColumns.map((col) => (
+          {leftCols.map((col) => (
             <FooterColumnBlock key={col.title} col={col} />
           ))}
-        </div>
-
-        {/* Social */}
-        <div className="mt-8 flex items-center gap-3">
-          {social.map(({ label, Icon }) => (
-            <a
-              key={label}
-              href="#"
-              aria-label={label}
-              className="grid size-9 place-items-center rounded-full border text-muted-foreground hover:text-brand-gemaire"
-            >
-              <Icon className="size-4" />
-            </a>
-          ))}
-        </div>
-
-        <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs text-muted-foreground sm:flex-row">
-          <span>Copyright © {brand.copyright}</span>
-          <div className="flex items-center gap-4">
-            <a href="#" className="underline-offset-4 hover:text-foreground hover:underline">
-              Privacy Policy
-            </a>
-            <a href="#" className="underline-offset-4 hover:text-foreground hover:underline">
-              Terms &amp; Conditions
-            </a>
+          <div>
+            <h3 className="text-sm font-bold tracking-wide uppercase">
+              {contact.title}
+            </h3>
+            <ul className="mt-3 flex flex-col gap-2">
+              {contact.links.map((l) => (
+                <li key={l}>
+                  <a
+                    href="#"
+                    className={cn(
+                      "text-sm underline-offset-4 hover:underline",
+                      l.includes("@") ? "text-brand-gemaire" : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {l}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-sm font-semibold">Follow Us</p>
+            <div className="mt-2 flex items-center gap-2">
+              {GEMAIRE_SOCIAL.map(({ label, Icon }) => (
+                <a
+                  key={label}
+                  href="#"
+                  aria-label={label}
+                  className="grid size-9 place-items-center rounded-full bg-background text-foreground shadow-sm hover:text-brand-gemaire"
+                >
+                  <Icon className="size-4" />
+                </a>
+              ))}
+            </div>
           </div>
+        </div>
+
+        {/* Subscribe + Mobile App cards */}
+        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="rounded-sm bg-background p-6 shadow-sm">
+            <h3 className="text-lg font-semibold">
+              Subscribe for Exclusive Deals and Promotions
+            </h3>
+            <div className="mt-4 flex gap-2">
+              <input
+                aria-label="Email address"
+                placeholder="Enter your email address"
+                className="h-10 flex-1 rounded-sm border px-3 text-sm outline-none"
+              />
+              <button
+                type="button"
+                className="rounded-sm bg-brand-gemaire px-5 text-sm font-semibold text-white"
+              >
+                Subscribe
+              </button>
+            </div>
+          </div>
+          <div className="rounded-sm bg-background p-6 shadow-sm">
+            <h3 className="text-lg font-semibold">Gemaire HVAC Pro+ Mobile App</h3>
+            <div className="mt-4 flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://resource.gemaire.com/is/image/Watscocom/gemaire_content_google-play-logo?hei=40&fmt=png-alpha"
+                alt="Get it on Google Play"
+                className="h-10 w-auto"
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://resource.gemaire.com/is/image/Watscocom/gemaire_content_app-store-logo?hei=40&fmt=png-alpha"
+                alt="Download on the App Store"
+                className="h-10 w-auto"
+              />
+              <a href="#" className="text-sm font-medium text-brand-gemaire hover:underline">
+                Learn more
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Centered distributor logo */}
+        <div className="mt-12 flex justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://www.gemaire.com/static/version1784840842/frontend/Gemaire/base/en_US/images/gemaire-distributor_blue.svg"
+            alt="Gemaire Distributors"
+            className="h-9 w-auto"
+          />
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-6 text-center text-xs text-muted-foreground">
+          <p>Copyright © {brand.copyright}</p>
+          <p className="mt-2">
+            <a href="#" className="hover:text-foreground hover:underline">Privacy Policy</a>
+            <span className="px-2">|</span>
+            <a href="#" className="hover:text-foreground hover:underline">Terms And Conditions</a>
+          </p>
         </div>
       </div>
     </footer>
@@ -997,8 +1096,14 @@ function GenericFooter({ brand }: { brand: BrandChrome }) {
    Dispatchers
    ════════════════════════════════════════════════════════════════════════ */
 
-export function SiteHeader({ brand }: { brand: BrandChrome }) {
-  if (brand.key === "gemaire") return <GemaireHeader />;
+export function SiteHeader({
+  brand,
+  signedIn = false,
+}: {
+  brand: BrandChrome;
+  signedIn?: boolean;
+}) {
+  if (brand.key === "gemaire") return <GemaireHeader signedIn={signedIn} />;
   if (brand.key === "baker") return <BakerHeader brand={brand} />;
   if (brand.key === "carrier") return <CarrierHeader brand={brand} />;
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;

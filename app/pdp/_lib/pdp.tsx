@@ -37,7 +37,7 @@ export function Pdp({
     <PdpAuthProvider initialSignedIn={signedIn}>
       <div className="min-h-svh bg-background">
         {brand ? (
-          <SiteHeader brand={brand} />
+          <SiteHeader brand={brand} signedIn={signedIn} />
         ) : (
           <LegacyShell label={`Legacy header · ${product.brand}`} />
         )}

@@ -52,6 +52,7 @@
         stays on the semantic tokens above. ── */
   --color-brand-gemaire: var(--brand-gemaire);
   --color-brand-gemaire-foreground: var(--brand-gemaire-foreground);
+  --color-brand-gemaire-cart: var(--brand-gemaire-cart);
   --color-brand-baker: var(--brand-baker);
   --color-brand-baker-foreground: var(--brand-baker-foreground);
   --color-brand-baker-bar: var(--brand-baker-bar);
@@ -109,6 +110,7 @@
        brand as its faithful chrome is built. ══════════ */
   --brand-gemaire: #0080df; /* Gemaire header blue */
   --brand-gemaire-foreground: #ffffff;
+  --brand-gemaire-cart: #f26522; /* Gemaire orange cart (approx from signed-in screenshot) */
   --brand-baker: #c8102e; /* Baker red (logo, nav underline) */
   --brand-baker-foreground: #ffffff;
   --brand-baker-bar: #3a3838; /* Baker dark utility strip */
