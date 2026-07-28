@@ -724,6 +724,115 @@ function DcneFooter({ brand }: { brand: BrandChrome }) {
   );
 }
 
+/* ════════════════════════════════════════════════════════════════════════
+   HOMANS ASSOCIATES — faithful chrome
+   Real header: white utility bar (tool links); white main bar (real blue
+   logo, search, account, cart); navy category nav (#003874 → --brand-homans)
+   with a gold Specials. Footer: white.
+   ════════════════════════════════════════════════════════════════════════ */
+
+const HOMANS_UTIL = [
+  "AHRI Search",
+  "Branches",
+  "Documents",
+  "Part Finder",
+  "Quick Order",
+  "Rebates",
+  "Training",
+  "Warranty",
+  "Contact",
+];
+
+function HomansHeader({ brand }: { brand: BrandChrome }) {
+  return (
+    <header className="bg-background">
+      {/* Utility bar */}
+      <div className="border-b">
+        <div className="mx-auto flex max-w-6xl items-center justify-end gap-4 px-4 py-1.5 text-xs text-muted-foreground md:px-6">
+          {HOMANS_UTIL.map((l) => (
+            <a key={l} href="#" className="hidden whitespace-nowrap hover:text-foreground lg:inline">
+              {l}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Main bar */}
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+        <a href="#" className="shrink-0 leading-none text-brand-homans" aria-label="Homans Associates home">
+          <span className="block text-xl font-black tracking-tight">HOMANS</span>
+          <span className="block text-[10px] font-semibold tracking-[0.2em]">
+            ASSOCIATES
+          </span>
+        </a>
+        <div className="relative hidden min-w-0 flex-1 md:block">
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            aria-label="Search"
+            placeholder="Enter keyword, item, model or part #"
+            className="h-10 w-full rounded border bg-background pr-3 pl-9 text-sm outline-none"
+          />
+        </div>
+        <div className="ml-auto flex items-center gap-4 text-sm">
+          <button type="button" className="inline-flex items-center gap-1.5">
+            <User className="size-5" />
+            <span className="hidden lg:inline">Account</span>
+          </button>
+          <button type="button" aria-label="Cart" className="inline-flex items-center gap-1.5">
+            <ShoppingCart className="size-5" />
+            <span className="hidden sm:inline">Cart</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Navy category nav */}
+      <nav aria-label="Primary" className="bg-brand-homans text-brand-homans-foreground">
+        <div className="mx-auto flex max-w-6xl items-stretch gap-1 overflow-x-auto px-4 md:px-6">
+          {brand.nav.map((n) => {
+            const isSpecials = /specials/i.test(n);
+            return (
+              <a
+                key={n}
+                href="#"
+                className={cn(
+                  "px-3 py-3 text-sm font-medium whitespace-nowrap",
+                  isSpecials
+                    ? "bg-amber-400 font-semibold text-amber-950"
+                    : "text-white/90 hover:text-white"
+                )}
+              >
+                {n}
+              </a>
+            );
+          })}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function HomansFooter({ brand }: { brand: BrandChrome }) {
+  return (
+    <footer className="mt-16 border-t bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {brand.footerColumns.map((col) => (
+            <FooterColumnBlock key={col.title} col={col} />
+          ))}
+        </div>
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs text-muted-foreground sm:flex-row">
+          <span>© {brand.copyright}</span>
+          <div className="flex items-center gap-4">
+            <a href="#" className="hover:text-foreground">Privacy Policy</a>
+            <a href="#" className="hover:text-foreground">Terms of Use</a>
+            <a href="#" className="hover:text-foreground">Accessibility</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 function PeirceFooter({ brand }: { brand: BrandChrome }) {
   const social = [
     { label: "LinkedIn", Icon: Linkedin },
@@ -895,6 +1004,7 @@ export function SiteHeader({ brand }: { brand: BrandChrome }) {
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
   if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} />;
   if (brand.key === "dcne") return <DcneHeader brand={brand} />;
+  if (brand.key === "homans") return <HomansHeader brand={brand} />;
   return <GenericHeader brand={brand} />;
 }
 
@@ -905,5 +1015,6 @@ export function SiteFooter({ brand }: { brand: BrandChrome }) {
   if (brand.key === "peirce") return <PeirceFooter brand={brand} />;
   if (brand.key === "ecmdi") return <EcmdiFooter brand={brand} />;
   if (brand.key === "dcne") return <DcneFooter brand={brand} />;
+  if (brand.key === "homans") return <HomansFooter brand={brand} />;
   return <GenericFooter brand={brand} />;
 }
