@@ -56,6 +56,9 @@
   --color-brand-baker-foreground: var(--brand-baker-foreground);
   --color-brand-baker-bar: var(--brand-baker-bar);
   --color-brand-baker-bar-foreground: var(--brand-baker-bar-foreground);
+  --color-brand-carrier: var(--brand-carrier);
+  --color-brand-carrier-foreground: var(--brand-carrier-foreground);
+  --color-brand-carrier-cart: var(--brand-carrier-cart);
 
   /* ── Colors — charts ── */
   --color-chart-1: var(--chart-1);
@@ -101,6 +104,9 @@
   --brand-baker-foreground: #ffffff;
   --brand-baker-bar: #3a3838; /* Baker dark utility strip */
   --brand-baker-bar-foreground: #ffffff;
+  --brand-carrier: #3d2762; /* Carrier Enterprise deep-purple nav */
+  --brand-carrier-foreground: #ffffff;
+  --brand-carrier-cart: #49a942; /* CE green cart accent */
 
   /* ══════════ COLORS — light mode (Intent values on shadcn names) ══════════ */
   --background: oklch(1 0 0);

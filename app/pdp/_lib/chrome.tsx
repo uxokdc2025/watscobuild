@@ -311,6 +311,127 @@ function BakerFooter({ brand }: { brand: BrandChrome }) {
 }
 
 /* ════════════════════════════════════════════════════════════════════════
+   CARRIER ENTERPRISE — faithful chrome
+   Real header: white utility bar (tool links); white main bar (CE monogram,
+   search, account, GREEN cart #49a942 → --brand-carrier-cart); deep-purple
+   category nav (#3d2762 → --brand-carrier) with white text. Footer: white.
+   Logo is an inline SVG on the live site (no asset URL) → clean CE wordmark.
+   ════════════════════════════════════════════════════════════════════════ */
+
+const CE_UTIL_LEFT = [
+  "AHRI Search",
+  "Branches",
+  "Cross-Reference",
+  "Part Finder",
+  "Quick Order",
+  "System Builder",
+  "Warranty",
+];
+const CE_UTIL_RIGHT = ["CE PATH", "CE Rewards", "Contact"];
+
+function CarrierHeader({ brand }: { brand: BrandChrome }) {
+  return (
+    <header className="bg-background">
+      {/* Utility bar */}
+      <div className="border-b">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-1.5 text-xs text-muted-foreground md:px-6">
+          <div className="hidden items-center gap-4 lg:flex">
+            {CE_UTIL_LEFT.map((l) => (
+              <a key={l} href="#" className="whitespace-nowrap hover:text-foreground">
+                {l}
+              </a>
+            ))}
+          </div>
+          <div className="ml-auto flex items-center gap-4">
+            {CE_UTIL_RIGHT.map((l) => (
+              <a key={l} href="#" className="whitespace-nowrap hover:text-foreground">
+                {l}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main bar */}
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+        <a href="#" className="flex shrink-0 items-center gap-2" aria-label="Carrier Enterprise home">
+          <span className="grid size-9 place-items-center rounded-full bg-brand-carrier text-sm font-black text-white">
+            CE
+          </span>
+          <span className="hidden text-sm leading-tight font-semibold sm:block">
+            Carrier
+            <br />
+            Enterprise
+          </span>
+        </a>
+        <div className="relative hidden min-w-0 flex-1 md:block">
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            aria-label="Search"
+            placeholder="Search by keyword, model or part #"
+            className="h-10 w-full rounded border bg-background pr-3 pl-9 text-sm outline-none"
+          />
+        </div>
+        <div className="ml-auto flex items-center gap-3 text-sm">
+          <button type="button" className="inline-flex items-center gap-1.5">
+            <User className="size-5" />
+            <span className="hidden lg:inline">Account</span>
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded px-3 py-2 font-medium text-white"
+            style={{ backgroundColor: "var(--brand-carrier-cart)" }}
+          >
+            <ShoppingCart className="size-4" />
+            Cart
+          </button>
+        </div>
+      </div>
+
+      {/* Purple category nav */}
+      <nav
+        aria-label="Primary"
+        className="bg-brand-carrier text-brand-carrier-foreground"
+      >
+        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+          {brand.nav.map((n) => (
+            <a
+              key={n}
+              href="#"
+              className="px-3 py-3 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white"
+            >
+              {n}
+            </a>
+          ))}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function CarrierFooter({ brand }: { brand: BrandChrome }) {
+  return (
+    <footer className="mt-16 border-t bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {brand.footerColumns.map((col) => (
+            <FooterColumnBlock key={col.title} col={col} />
+          ))}
+        </div>
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs text-muted-foreground sm:flex-row">
+          <span>© {brand.copyright}</span>
+          <div className="flex items-center gap-4">
+            <a href="#" className="hover:text-foreground">Accessibility</a>
+            <a href="#" className="hover:text-foreground">Privacy Policy</a>
+            <a href="#" className="hover:text-foreground">Terms &amp; Conditions</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
    Shared footer column
    ════════════════════════════════════════════════════════════════════════ */
 
@@ -443,11 +564,13 @@ function GenericFooter({ brand }: { brand: BrandChrome }) {
 export function SiteHeader({ brand }: { brand: BrandChrome }) {
   if (brand.key === "gemaire") return <GemaireHeader brand={brand} />;
   if (brand.key === "baker") return <BakerHeader brand={brand} />;
+  if (brand.key === "carrier") return <CarrierHeader brand={brand} />;
   return <GenericHeader brand={brand} />;
 }
 
 export function SiteFooter({ brand }: { brand: BrandChrome }) {
   if (brand.key === "gemaire") return <GemaireFooter brand={brand} />;
   if (brand.key === "baker") return <BakerFooter brand={brand} />;
+  if (brand.key === "carrier") return <CarrierFooter brand={brand} />;
   return <GenericFooter brand={brand} />;
 }
