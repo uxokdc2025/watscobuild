@@ -102,13 +102,6 @@ const EC13_DESCRIPTION = {
     "Pre-programmed with Universal Program — no programming required",
     "Up to 82% efficiency",
   ],
-  notes: [
-    ["Inputs", "24 VAC, tap inputs"],
-    ["Rotation", "Auto-rotation sensing"],
-    ["Hertz", "60 & 50 Hz"],
-    ["Operation mode", "Constant torque"],
-    ["Construction", "NEMA 48 frame · Open Air Over (OAO) · belly-band mounting"],
-  ] as [string, string][],
 };
 
 const glasflossZlp: PdpProduct = {
