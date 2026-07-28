@@ -626,6 +626,104 @@ function EcmdiFooter({ brand }: { brand: BrandChrome }) {
   );
 }
 
+/* ════════════════════════════════════════════════════════════════════════
+   DCNE — faithful chrome
+   Real header: dark-navy utility strip (#001056 → --brand-dcne) with text
+   links; white main bar (real DCNE logo, search, sign in, branch, cart);
+   white nav row. Footer: white.
+   ════════════════════════════════════════════════════════════════════════ */
+
+const DCNE_LOGO = "https://d36aiwq7h8e0h3.cloudfront.net/userfiles/dcne_logo.svg";
+
+function DcneHeader({ brand }: { brand: BrandChrome }) {
+  return (
+    <header className="bg-background">
+      {/* Navy utility strip */}
+      <div className="bg-brand-dcne text-brand-dcne-foreground">
+        <div className="mx-auto flex max-w-6xl items-center gap-5 px-4 py-2 text-xs md:px-6">
+          <a href="#" className="opacity-90 hover:opacity-100">About Us</a>
+          <a href="#" className="opacity-90 hover:opacity-100">Contact Us</a>
+          <div className="ml-auto flex items-center gap-5">
+            <a href="#" className="opacity-90 hover:opacity-100">Part Finder</a>
+            <a href="#" className="opacity-90 hover:opacity-100">Warranty</a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main bar */}
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+        <a href="#" className="shrink-0" aria-label="DCNE home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={DCNE_LOGO} alt="DCNE" className="h-8 w-auto" />
+        </a>
+        <div className="relative hidden min-w-0 flex-1 md:block">
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            aria-label="Search"
+            placeholder="Search"
+            className="h-10 w-full rounded border bg-background pr-3 pl-9 text-sm outline-none"
+          />
+        </div>
+        <div className="ml-auto flex items-center gap-4 text-sm">
+          <button type="button" className="inline-flex items-center gap-1.5">
+            <User className="size-5" />
+            <span className="hidden sm:inline">Sign In</span>
+          </button>
+          <button type="button" className="hidden text-left text-xs leading-tight lg:block">
+            <span className="inline-flex items-center gap-1.5">
+              <MapPin className="size-4 text-brand-dcne" />
+              <span>
+                <span className="block text-muted-foreground">You&apos;re shopping</span>
+                <span className="block font-semibold">Select branch ▾</span>
+              </span>
+            </span>
+          </button>
+          <button type="button" aria-label="Cart" className="inline-flex items-center gap-1.5">
+            <ShoppingCart className="size-5" />
+            <span className="hidden sm:inline">Cart</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Nav row */}
+      <nav aria-label="Primary" className="border-y">
+        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+          {brand.nav.map((n) => (
+            <a
+              key={n}
+              href="#"
+              className="px-3 py-2.5 text-sm font-semibold whitespace-nowrap text-foreground/80 hover:text-brand-dcne"
+            >
+              {n}
+            </a>
+          ))}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function DcneFooter({ brand }: { brand: BrandChrome }) {
+  return (
+    <footer className="mt-16 border-t bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {brand.footerColumns.map((col) => (
+            <FooterColumnBlock key={col.title} col={col} />
+          ))}
+        </div>
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs text-muted-foreground sm:flex-row">
+          <span>Copyright © {brand.copyright}</span>
+          <div className="flex items-center gap-4">
+            <a href="#" className="hover:text-foreground">Privacy Policy</a>
+            <a href="#" className="hover:text-foreground">Return Policy</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 function PeirceFooter({ brand }: { brand: BrandChrome }) {
   const social = [
     { label: "LinkedIn", Icon: Linkedin },
@@ -796,6 +894,7 @@ export function SiteHeader({ brand }: { brand: BrandChrome }) {
   if (brand.key === "carrier") return <CarrierHeader brand={brand} />;
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
   if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} />;
+  if (brand.key === "dcne") return <DcneHeader brand={brand} />;
   return <GenericHeader brand={brand} />;
 }
 
@@ -805,5 +904,6 @@ export function SiteFooter({ brand }: { brand: BrandChrome }) {
   if (brand.key === "carrier") return <CarrierFooter brand={brand} />;
   if (brand.key === "peirce") return <PeirceFooter brand={brand} />;
   if (brand.key === "ecmdi") return <EcmdiFooter brand={brand} />;
+  if (brand.key === "dcne") return <DcneFooter brand={brand} />;
   return <GenericFooter brand={brand} />;
 }

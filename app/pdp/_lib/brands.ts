@@ -55,7 +55,15 @@ export const BRANDS: Record<string, BrandChrome> = {
     name: "DCNE",
     accent: "#124b8f",
     phone: "781-322-8800",
-    nav: ["Residential", "Commercial", "Parts", "Supplies", "Line Card", "Resources"],
+    nav: [
+      "Shop Residential",
+      "Shop Commercial",
+      "Parts",
+      "Supplies",
+      "Scratch and Dent",
+      "Brands",
+      "Quick Order",
+    ],
     footerColumns: [
       { title: "Products", links: ["Residential", "Commercial", "Parts", "Supplies", "Line Card"] },
       { title: "Account", links: ["COD Application", "Line of Credit Application", "Rebate Calculator"] },
