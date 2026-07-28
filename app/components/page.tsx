@@ -4,6 +4,7 @@ import { Type } from "lucide-react";
 
 import { ThemeToggle } from "./_showcase";
 import { ActionsSection } from "./_sections/actions";
+import { LabelsSection } from "./_sections/labels";
 import { FormsSection } from "./_sections/forms";
 import { FeedbackSection } from "./_sections/feedback";
 import { OverlaysSection } from "./_sections/overlays";
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
 
 const NAV = [
   { id: "actions", label: "Actions" },
+  { id: "labels", label: "Badges" },
   { id: "forms", label: "Forms" },
   { id: "feedback", label: "Feedback" },
   { id: "overlays", label: "Overlays" },
@@ -68,6 +70,7 @@ export default function ComponentsPage() {
 
       <main className="mx-auto max-w-6xl space-y-16 px-4 py-10 md:px-6">
         <ActionsSection />
+        <LabelsSection />
         <FormsSection />
         <FeedbackSection />
         <OverlaysSection />

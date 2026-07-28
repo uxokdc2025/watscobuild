@@ -1,7 +1,7 @@
 import { MapPin } from "lucide-react";
 
 import { PdpGallery } from "../_components/gallery";
-import { AuthToggle, PdpAuthProvider } from "./auth";
+import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
 import { FrequentlyBoughtTogether } from "./fbt";
@@ -25,26 +25,21 @@ export function Pdp({ product }: { product: PdpProduct }) {
         />
 
         <main className="mx-auto max-w-6xl px-4 py-6 md:px-6">
-          {/* Store + auth-state toggle */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            {product.store ? (
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <MapPin className="size-4 shrink-0" />
-                <span className="font-medium text-foreground">
-                  {product.store.name}
-                </span>
-                {product.store.hours ? (
-                  <>
-                    <span aria-hidden>·</span>
-                    <span>{product.store.hours}</span>
-                  </>
-                ) : null}
-              </div>
-            ) : (
-              <span />
-            )}
-            <AuthToggle />
-          </div>
+          {/* Store */}
+          {product.store ? (
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <MapPin className="size-4 shrink-0" />
+              <span className="font-medium text-foreground">
+                {product.store.name}
+              </span>
+              {product.store.hours ? (
+                <>
+                  <span aria-hidden>·</span>
+                  <span>{product.store.hours}</span>
+                </>
+              ) : null}
+            </div>
+          ) : null}
 
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="mt-3 text-sm">
