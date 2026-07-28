@@ -67,8 +67,16 @@ export const BRANDS: Record<string, BrandChrome> = {
   ecmdi: {
     key: "ecmdi",
     name: "East Coast Metal Distributors",
-    accent: "#0b3d91",
-    nav: WATSCO_NAV,
+    accent: "#cb0015",
+    nav: [
+      "Categories",
+      "Brands",
+      "PRO Guides",
+      "About Us",
+      "Quick Order",
+      "Warranty Search",
+      "Parts List & Documents",
+    ],
     footerColumns: [
       { title: "Company", links: ["About Us", "Locations", "Careers", "Contact Us"] },
       { title: "Sales & Ordering", links: ["Payment & Delivery", "Credit App", "Quick Order", "Return Policy"] },

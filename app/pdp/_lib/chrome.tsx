@@ -531,6 +531,101 @@ function PeirceHeader({ brand }: { brand: BrandChrome }) {
   );
 }
 
+/* ════════════════════════════════════════════════════════════════════════
+   EAST COAST METAL DISTRIBUTORS — faithful chrome
+   Real header: solid red (#cb0015 → --brand-ecmdi) with white script wordmark,
+   search, account, branch selector, cart; red category nav. Footer: white.
+   Live logo is an inline data URI (no stable URL) → styled white wordmark.
+   ════════════════════════════════════════════════════════════════════════ */
+
+function EcmdiHeader({ brand }: { brand: BrandChrome }) {
+  return (
+    <header>
+      {/* Red main bar */}
+      <div className="bg-brand-ecmdi text-brand-ecmdi-foreground">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-2.5 md:px-6">
+          <a href="#" className="shrink-0 leading-none" aria-label="East Coast Metal Distributors home">
+            <span className="block text-lg font-black tracking-tight italic">
+              East Coast
+            </span>
+            <span className="block text-[9px] font-semibold tracking-[0.25em]">
+              METAL DISTRIBUTORS
+            </span>
+          </a>
+          <div className="relative hidden min-w-0 flex-1 md:block">
+            <input
+              aria-label="Search our site"
+              placeholder="Search our site..."
+              className="h-9 w-full rounded bg-white pr-10 pl-3 text-sm text-foreground outline-none"
+            />
+            <span className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground">
+              <Search className="size-4" />
+            </span>
+          </div>
+          <button type="button" className="ml-auto hidden text-left text-xs leading-tight sm:block">
+            <span className="inline-flex items-center gap-1.5">
+              <User className="size-4" />
+              <span>
+                Sign In <span className="opacity-90">or</span>
+                <br />
+                Create an Account
+              </span>
+            </span>
+          </button>
+          <button type="button" className="hidden text-left text-xs leading-tight lg:block">
+            <span className="inline-flex items-center gap-1.5">
+              <MapPin className="size-4" />
+              <span>
+                <span className="block opacity-90">Your Current Branch</span>
+                <span className="block font-semibold">Select ▾</span>
+              </span>
+            </span>
+          </button>
+          <button type="button" aria-label="Shopping Cart" className="inline-flex items-center gap-1.5 font-medium">
+            <ShoppingCart className="size-5" />
+            <span className="hidden sm:inline">Cart</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Red category nav (slightly deeper) */}
+      <nav
+        aria-label="Primary"
+        className="bg-brand-ecmdi text-brand-ecmdi-foreground brightness-90"
+      >
+        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+          {brand.nav.map((n) => (
+            <a
+              key={n}
+              href="#"
+              className="px-3 py-2.5 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white"
+            >
+              {n}
+            </a>
+          ))}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function EcmdiFooter({ brand }: { brand: BrandChrome }) {
+  return (
+    <footer className="mt-16 border-t bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {brand.footerColumns.map((col) => (
+            <FooterColumnBlock key={col.title} col={col} />
+          ))}
+        </div>
+        <div className="mt-10 border-t pt-6 text-center text-xs text-muted-foreground">
+          Copyright © {brand.copyright}
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 function PeirceFooter({ brand }: { brand: BrandChrome }) {
   const social = [
     { label: "LinkedIn", Icon: Linkedin },
@@ -700,6 +795,7 @@ export function SiteHeader({ brand }: { brand: BrandChrome }) {
   if (brand.key === "baker") return <BakerHeader brand={brand} />;
   if (brand.key === "carrier") return <CarrierHeader brand={brand} />;
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
+  if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} />;
   return <GenericHeader brand={brand} />;
 }
 
@@ -708,5 +804,6 @@ export function SiteFooter({ brand }: { brand: BrandChrome }) {
   if (brand.key === "baker") return <BakerFooter brand={brand} />;
   if (brand.key === "carrier") return <CarrierFooter brand={brand} />;
   if (brand.key === "peirce") return <PeirceFooter brand={brand} />;
+  if (brand.key === "ecmdi") return <EcmdiFooter brand={brand} />;
   return <GenericFooter brand={brand} />;
 }
