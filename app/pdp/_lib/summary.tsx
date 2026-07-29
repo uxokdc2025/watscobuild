@@ -9,32 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { BranchRow, stockTextClass } from "@/components/ui/label-badges";
 import { CompareButton } from "@/components/ui/compare-button";
+import { PackSizePills } from "@/components/ui/pack-size-pills";
 import { useAuth } from "./auth";
 import { formatUSD, type PdpCommerce, type PdpProduct } from "./types";
-
-function Segmented({ options }: { options: string[] }) {
-  const [active, setActive] = React.useState(0);
-  return (
-    <div className="inline-flex w-full rounded-md border bg-muted p-0.5">
-      {options.map((o, i) => (
-        <button
-          key={o}
-          type="button"
-          aria-pressed={i === active}
-          onClick={() => setActive(i)}
-          className={cn(
-            "h-9 flex-1 cursor-pointer rounded-sm px-3 text-sm font-medium transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
-            i === active
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          {o}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 function QtyStepper() {
   const [qty, setQty] = React.useState(1);
@@ -168,7 +145,7 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
           {product.commerce!.packSizes?.length ? (
             <div className="flex flex-col gap-2">
               <span className="text-sm font-medium">Pack Size</span>
-              <Segmented options={product.commerce!.packSizes} />
+              <PackSizePills options={product.commerce!.packSizes} />
             </div>
           ) : null}
 

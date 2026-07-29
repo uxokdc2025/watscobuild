@@ -79,12 +79,15 @@ function TemplateCard({
 export default function PdpMasterPage() {
   // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
   const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
-  const inScope = templates
+  // The v2 pack-size-pills demo is called out on its own, not in the main list.
+  const v2 = templates.find((p) => p.slug === "ecmdi-pro-flush-v2");
+  const rest = templates.filter((p) => p.slug !== "ecmdi-pro-flush-v2");
+  const inScope = rest
     .filter((p) => IN_SCOPE.includes(p.brandKey ?? ""))
     .sort(
       (a, b) => IN_SCOPE.indexOf(a.brandKey ?? "") - IN_SCOPE.indexOf(b.brandKey ?? "")
     );
-  const descoped = templates.filter((p) => !IN_SCOPE.includes(p.brandKey ?? ""));
+  const descoped = rest.filter((p) => !IN_SCOPE.includes(p.brandKey ?? ""));
 
   return (
     <div className="min-h-svh bg-background">
@@ -133,6 +136,47 @@ export default function PdpMasterPage() {
             reference only.
           </p>
         </div>
+
+        {/* v2 callout — pack-size pills */}
+        {v2 ? (
+          <div className="mt-6 rounded-xl border-2 border-primary bg-card p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+                v2 · Pack-size pills
+              </span>
+              <span className="text-sm font-semibold">East Coast Metal Distributors</span>
+              <span className="text-sm text-muted-foreground">{v2.brand}</span>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Demonstrates the pack-size selector as <span className="font-medium text-foreground">pills</span>{" "}
+              instead of a segmented control — shown here with the &ldquo;few
+              options&rdquo; case (Each / 12-Pk). One option renders as a single
+              static label; more options wrap cleanly. See it under{" "}
+              <span className="font-medium text-foreground">Pack Size</span> on the
+              signed-in view.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link
+                href={`/pdp/${v2.slug}?signedin=1`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              >
+                Signed in · see the pills
+                <ArrowUpRight className="size-3.5" />
+              </Link>
+              <Link
+                href={`/pdp/${v2.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              >
+                Signed out
+                <ArrowUpRight className="size-3.5" />
+              </Link>
+            </div>
+          </div>
+        ) : null}
 
         {/* In scope */}
         <h2 className="mt-8 text-sm font-semibold tracking-wide text-muted-foreground uppercase">

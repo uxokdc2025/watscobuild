@@ -663,6 +663,17 @@ const ecmdiProFlush: PdpProduct = {
   },
 };
 
+// v2 demo — East Coast Pro-Flush with the pack-size PILLS control (Each / 12-Pk,
+// the client's "few options" case). Everything else identical to v1.
+const ecmdiProFlushV2: PdpProduct = {
+  ...ecmdiProFlush,
+  slug: "ecmdi-pro-flush-v2",
+  commerce: {
+    ...ecmdiProFlush.commerce!,
+    packSizes: ["Each", "12-Pk"],
+  },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -671,6 +682,7 @@ export const pdps: PdpProduct[] = [
   usMotors9656Baker,
   peirce58mv,
   ecmdiProFlush,
+  ecmdiProFlushV2,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {
