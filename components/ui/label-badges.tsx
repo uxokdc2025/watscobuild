@@ -98,6 +98,29 @@ export function stockTextClass(qty: number): string {
   return STOCK_TONES[stockTone(qty)].text;
 }
 
+/**
+ * Branch availability row — a left-aligned quantity (colored by the stock
+ * logic) followed by the branch name. Reused for your-branch and nearby lists.
+ */
+export function BranchRow({
+  qty,
+  name,
+  className,
+}: {
+  qty: number;
+  name: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex items-center gap-3 text-sm", className)}>
+      <span className={cn("w-7 shrink-0 tabular-nums font-medium", stockTextClass(qty))}>
+        {qty}
+      </span>
+      <span className="text-muted-foreground">{name}</span>
+    </div>
+  );
+}
+
 export function StockStatus({
   tone,
   qty,

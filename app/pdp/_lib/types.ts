@@ -57,6 +57,8 @@ export type PdpDescription = {
   intro: string;
   bullets?: string[];
   notes?: [string, string][];
+  /** Shows the California Proposition 65 warning link under the description. */
+  prop65?: boolean;
 };
 
 /** Present when we have real pricing/inventory (i.e. a signed-in experience). */

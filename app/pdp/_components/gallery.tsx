@@ -63,8 +63,8 @@ export function PdpGallery({
   const thumbs = hasImages
     ? images!
     : (Array.from({ length: thumbnailCount }) as undefined[]);
-  // A single image needs no thumbnail rail.
-  const showThumbs = thumbs.length > 1;
+  // Thumbnails only for real, multi-image galleries — never placeholder tiles.
+  const showThumbs = hasImages && thumbs.length > 1;
 
   return (
     <div className="flex flex-col gap-4">

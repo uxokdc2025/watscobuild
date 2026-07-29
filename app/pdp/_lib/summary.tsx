@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { stockTextClass } from "@/components/ui/label-badges";
+import { BranchRow, stockTextClass } from "@/components/ui/label-badges";
 import { useAuth } from "./auth";
 import { formatUSD, type PdpCommerce, type PdpProduct } from "./types";
 
@@ -73,18 +73,8 @@ function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
           <p className="text-sm font-semibold">Nearby Branches</p>
           <ul className="mt-2 flex flex-col gap-1">
             {commerce.nearbyBranches.map((b) => (
-              <li key={b.name} className="grid grid-cols-[2.5rem_1fr] items-center gap-3 text-sm">
-                <span
-                  className={cn(
-                    "text-right tabular-nums",
-                    b.qty > 0
-                      ? "font-medium text-green-700 dark:text-green-400"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {b.qty}
-                </span>
-                <span className="text-muted-foreground">{b.name}</span>
+              <li key={b.name}>
+                <BranchRow qty={b.qty} name={b.name} />
               </li>
             ))}
           </ul>

@@ -5,6 +5,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
+  BranchRow,
   CertBadge,
   FlagBadge,
   HighlightBadge,
@@ -113,6 +114,13 @@ export function LabelsSection() {
         <StockStatus qty={12}>12 in stock today</StockStatus>
         <StockStatus qty={1}>1 in stock today</StockStatus>
         <StockStatus qty={0}>0 in stock today</StockStatus>
+      </Group>
+
+      {/* Branch availability row — left-aligned qty + name. */}
+      <Group title="Branch row" note="Left-aligned quantity (colored by stock) + branch name." className="!flex-col !items-start gap-1">
+        <BranchRow qty={107} name="Baker Jacksonville #301" />
+        <BranchRow qty={7} name="Baker Orange Park #358" />
+        <BranchRow qty={0} name="Baker St Augustine #367" />
       </Group>
 
       {/* Certification */}

@@ -11,8 +11,20 @@ import type {
   SpecRow,
 } from "./types";
 
+function Prop65Link() {
+  return (
+    <p className="text-sm text-muted-foreground">
+      California residents: see{" "}
+      <a href="#" className="font-medium text-primary underline-offset-4 hover:underline">
+        Proposition 65 Warning
+      </a>
+    </p>
+  );
+}
+
 function DescriptionBody({ description }: { description: PdpDescription }) {
-  const hasRich = description.bullets?.length || description.notes?.length;
+  const hasRich =
+    description.bullets?.length || description.notes?.length || description.prop65;
   if (!hasRich) {
     return (
       <p className="max-w-3xl text-sm text-muted-foreground">{description.intro}</p>
@@ -43,6 +55,7 @@ function DescriptionBody({ description }: { description: PdpDescription }) {
           ))}
         </dl>
       ) : null}
+      {description.prop65 ? <Prop65Link /> : null}
     </div>
   );
 }

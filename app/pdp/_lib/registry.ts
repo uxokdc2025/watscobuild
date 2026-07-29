@@ -337,32 +337,52 @@ const usMotors9656Baker: PdpProduct = {
     "U.S. Motors - 9656 - 1/15 HP, 1550 RPM, 230V, RESCUE® Direct Drive Refrigeration Fan Blower Motor (OAO) Stud Mount",
   item: "US9656",
   mfg: "9656",
-  thumbnailCount: 4,
+  thumbnailCount: 0,
   description: {
     intro:
-      "RESCUE® direct-drive refrigeration fan / blower motor. Open Air Over (OAO) enclosure, stud mount.",
+      "1/15 HP, 1550 RPM, 230V, RESCUE® Direct Drive Refrigeration Fan Blower Motor (OAO) Stud Mount",
+    prop65: true,
   },
-  specTabLabel: "Specifications",
-  specGroupsLeft: [
-    {
-      title: "Motor",
-      rows: [
-        { label: "Horsepower", value: "1/15 HP" },
-        { label: "RPM", value: "1550" },
-        { label: "Drive", value: "Direct Drive" },
-        { label: "Application", value: "Refrigeration Fan / Blower" },
-      ],
-    },
+  specTabLabel: "Features and Specifications",
+  specGroupsLeft: [],
+  specGroupsRight: [],
+  specsFlat: [
+    { label: "Weight", value: "5" },
+    { label: "Basis Of Rotation View", value: "Shaft End" },
+    { label: "Bearing Type", value: "Ball" },
+    { label: "Brand", value: "U.S. Motors" },
+    { label: "Cubic Measurement", value: "0.0251" },
+    { label: "Cycle/Hertz", value: "50/60 Hz" },
+    { label: "Dimensional Weight", value: "2" },
+    { label: "Duty", value: "(S1) Continuous Running Duty" },
+    { label: "EAN", value: "0786382010973" },
+    { label: "Height", value: "3.39" },
+    { label: "Insulation Class", value: "B" },
+    { label: "Length", value: "3.78" },
+    { label: "Motor Enclosure", value: "Open Air Over (OPAO)" },
+    { label: "Motor HP", value: "1/15" },
+    { label: "Motor Type", value: "PSC (Permanent Split Capacitor)" },
+    { label: "NEMA Frame", value: "3.3" },
+    { label: "Number of Speeds", value: "1" },
+    { label: "Phase", value: "Single" },
+    { label: "Poles", value: "4" },
+    { label: "Prop 65", value: "No" },
+    { label: "Rotation", value: "Clockwise (CW)" },
+    { label: "RPM", value: "1,550" },
+    { label: "Service Factor", value: "1" },
+    { label: "Shaft Diameter", value: '0.3125" (5/16")' },
+    { label: "Shaft Length", value: '3"' },
+    { label: "UOM", value: "EA" },
+    { label: "UPC", value: "786382010973" },
+    { label: "Voltage", value: "230 VAC" },
+    { label: "Width", value: "3.39" },
+    { label: "Country of Origin", value: "CHN" },
+    { label: "Substantial Commodity", value: "Steel; Copper" },
+    { label: "Approvals", value: "UL Recognized" },
   ],
-  specGroupsRight: [
-    { title: "Electrical", rows: [{ label: "Voltage", value: "230V" }] },
-    {
-      title: "Mechanical",
-      rows: [
-        { label: "Enclosure", value: "Open Air Over (OAO)" },
-        { label: "Mounting", value: "Stud Mount" },
-      ],
-    },
+  documents: [
+    { label: "specification sheet", kind: "pdf", href: "#" },
+    { label: "wiring diagrams", kind: "pdf", href: "#" },
   ],
   commerce: {
     price: 101.22,
@@ -374,6 +394,16 @@ const usMotors9656Baker: PdpProduct = {
       { qty: 1, name: "Baker St Augustine #367" },
     ],
   },
+  fbt: [
+    {
+      label: "Frequently Bought Together",
+      items: [
+        { id: "tmg-10acic", title: "Tmg Co. - 10ACIC - Acetylene (C2H2) Contents Only", item: "10ACIC", mfg: "10ACIC", price: 26.62, branchQty: 15, branchName: "Baker Jacksonville #301", nearbyQty: 76 },
+        { id: "heatcraft-5140c", title: "Interlink Heatcraft - 5140C - 12 CW, 5 Blade Fan, 5/16 Bore, 23° Pitch", item: "5140C", mfg: "5140C", image: "https://resource.bakerdist.com/is/image/Watscocom/heatcraft_5140c_article_1416399936833_en_normal?defaultImage=Baker_No_Image&wid=400&hei=400&qlt=80", price: 50.3, branchQty: 107, branchName: "Baker Jacksonville #301", nearbyQty: 7 },
+        { id: "tmg-40nic", title: "Tmg Co. - 40NIC - Industrial Nitrogen 40 Contents Only", item: "40NIC", mfg: "40NIC", price: 16.79, branchQty: 3, branchName: "Baker Jacksonville #301", nearbyQty: 56 },
+      ],
+    },
+  ],
 };
 
 const peirce58mv: PdpProduct = {
