@@ -3,6 +3,7 @@ import { Roboto, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { VercelToolbar } from "@vercel/toolbar/next";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -36,6 +37,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <VercelToolbar />
           <Toaster />
         </ThemeProvider>
       </body>

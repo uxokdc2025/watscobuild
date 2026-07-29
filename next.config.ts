@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createWithVercelToolbar from "@vercel/toolbar/plugins/next";
 
 const nextConfig: NextConfig = {
   // Hide the Next.js dev-tools indicator (the floating "N" badge). Dev-only;
@@ -6,4 +7,6 @@ const nextConfig: NextConfig = {
   devIndicators: false,
 };
 
-export default nextConfig;
+const withVercelToolbar = createWithVercelToolbar();
+
+export default withVercelToolbar(nextConfig);
