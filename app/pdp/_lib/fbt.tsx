@@ -56,6 +56,7 @@ function FbtCard({ item }: { item: FbtProduct }) {
         MFR: {item.mfg}
       </p>
 
+      <div className="mt-auto flex flex-col gap-2 pt-1">
       {rich ? (
         <>
           {signedIn ? (
@@ -96,7 +97,7 @@ function FbtCard({ item }: { item: FbtProduct }) {
             <span className="font-medium text-in-stock">{item.branchQty}</span>{" "}
             <span className="text-muted-foreground">{item.branchName}</span>
           </div>
-          <div className="mt-auto pt-1">
+          <div className="mt-1">
             {signedIn ? (
               <Button size="sm" className="w-full">
                 <ShoppingCart />
@@ -113,6 +114,7 @@ function FbtCard({ item }: { item: FbtProduct }) {
           </div>
         </>
       )}
+      </div>
     </div>
   );
 }
