@@ -337,7 +337,8 @@ const usMotors9656Baker: PdpProduct = {
     "U.S. Motors - 9656 - 1/15 HP, 1550 RPM, 230V, RESCUE® Direct Drive Refrigeration Fan Blower Motor (OAO) Stud Mount",
   item: "US9656",
   mfg: "9656",
-  thumbnailCount: 0,
+  thumbnailCount: 1,
+  images: ["/brand/baker/us-motors-9656.png"],
   description: {
     intro:
       "1/15 HP, 1550 RPM, 230V, RESCUE® Direct Drive Refrigeration Fan Blower Motor (OAO) Stud Mount",
@@ -398,9 +399,9 @@ const usMotors9656Baker: PdpProduct = {
     {
       label: "Frequently Bought Together",
       items: [
-        { id: "tmg-10acic", title: "Tmg Co. - 10ACIC - Acetylene (C2H2) Contents Only", item: "10ACIC", mfg: "10ACIC", price: 26.62, branchQty: 15, branchName: "Baker Jacksonville #301", nearbyQty: 76 },
+        { id: "tmg-10acic", title: "Tmg Co. - 10ACIC - Acetylene (C2H2) Contents Only", item: "10ACIC", mfg: "10ACIC", image: "/brand/baker/compressed-gas.webp", price: 26.62, branchQty: 15, branchName: "Baker Jacksonville #301", nearbyQty: 76 },
         { id: "heatcraft-5140c", title: "Interlink Heatcraft - 5140C - 12 CW, 5 Blade Fan, 5/16 Bore, 23° Pitch", item: "5140C", mfg: "5140C", image: "https://resource.bakerdist.com/is/image/Watscocom/heatcraft_5140c_article_1416399936833_en_normal?defaultImage=Baker_No_Image&wid=400&hei=400&qlt=80", price: 50.3, branchQty: 107, branchName: "Baker Jacksonville #301", nearbyQty: 7 },
-        { id: "tmg-40nic", title: "Tmg Co. - 40NIC - Industrial Nitrogen 40 Contents Only", item: "40NIC", mfg: "40NIC", price: 16.79, branchQty: 3, branchName: "Baker Jacksonville #301", nearbyQty: 56 },
+        { id: "tmg-40nic", title: "Tmg Co. - 40NIC - Industrial Nitrogen 40 Contents Only", item: "40NIC", mfg: "40NIC", image: "/brand/baker/compressed-gas.webp", price: 16.79, branchQty: 3, branchName: "Baker Jacksonville #301", nearbyQty: 56 },
       ],
     },
   ],
