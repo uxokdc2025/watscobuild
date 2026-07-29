@@ -12,6 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default function PdpMasterPage() {
+  // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
+  const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
   return (
     <div className="min-h-svh bg-background">
       <main className="mx-auto max-w-4xl px-4 py-10 md:px-6">
@@ -19,7 +21,7 @@ export default function PdpMasterPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">PDP Templates</h1>
             <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-              One data-driven template · {pdps.length} products, each rendered
+              One data-driven template · {templates.length} products, each rendered
               inside its own brand&apos;s header / footer. Open the signed-out or
               signed-in version.
             </p>
@@ -28,7 +30,7 @@ export default function PdpMasterPage() {
         </div>
 
         <ul className="mt-8 flex flex-col gap-3">
-          {pdps.map((p) => {
+          {templates.map((p) => {
             const b = p.brandKey ? BRANDS[p.brandKey] : undefined;
             return (
             <li
