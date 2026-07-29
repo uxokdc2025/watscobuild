@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { getPdpSlugs, pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { OpenAllButton } from "./_lib/open-all";
+import { OpenQuestions } from "./_lib/open-questions";
 import { BRANDS } from "./_lib/brands";
 
 export const metadata: Metadata = {
@@ -141,6 +142,8 @@ export default function PdpMasterPage() {
             </ul>
           </>
         ) : null}
+
+        <OpenQuestions />
       </main>
     </div>
   );
