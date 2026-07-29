@@ -117,9 +117,30 @@ function FbtCard({ item }: { item: FbtProduct }) {
   );
 }
 
+function FbtRail({ items }: { items: FbtProduct[] }) {
+  return (
+    <Carousel opts={{ align: "start" }} className="mx-10">
+      <CarouselContent>
+        {items.map((it) => (
+          <CarouselItem
+            key={it.id}
+            className="basis-full sm:basis-1/2 lg:basis-1/4 xl:basis-1/6"
+          >
+            <FbtCard item={it} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
+  );
+}
+
 export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
   if (!product.fbt?.length) return null;
   const suggest = product.detailsStyle === "about";
+  // A single group needs no tab bar — the h2 already names the section.
+  const multiGroup = product.fbt.length > 1;
   return (
     <section aria-label="Frequently bought together" className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
@@ -133,33 +154,26 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
           </button>
         ) : null}
       </div>
-      <Tabs defaultValue={product.fbt[0].label}>
-        <TabsList variant="line">
+      {multiGroup ? (
+        <Tabs defaultValue={product.fbt[0].label}>
+          <TabsList variant="line">
+            {product.fbt.map((g) => (
+              <TabsTrigger key={g.label} value={g.label}>
+                {g.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
           {product.fbt.map((g) => (
-            <TabsTrigger key={g.label} value={g.label}>
-              {g.label}
-            </TabsTrigger>
+            <TabsContent key={g.label} value={g.label} className="pt-6">
+              <FbtRail items={g.items} />
+            </TabsContent>
           ))}
-        </TabsList>
-        {product.fbt.map((g) => (
-          <TabsContent key={g.label} value={g.label} className="pt-6">
-            <Carousel opts={{ align: "start" }} className="mx-10">
-              <CarouselContent>
-                {g.items.map((it) => (
-                  <CarouselItem
-                    key={it.id}
-                    className="basis-full sm:basis-1/2 lg:basis-1/4 xl:basis-1/6"
-                  >
-                    <FbtCard item={it} />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </TabsContent>
-        ))}
-      </Tabs>
+        </Tabs>
+      ) : (
+        <div className="pt-2">
+          <FbtRail items={product.fbt[0].items} />
+        </div>
+      )}
     </section>
   );
 }
