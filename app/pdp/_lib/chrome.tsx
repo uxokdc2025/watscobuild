@@ -365,16 +365,38 @@ function BakerHeader({
   );
 }
 
+const BAKER_SOCIAL = [
+  { label: "LinkedIn", Icon: Linkedin },
+  { label: "Facebook", Icon: Facebook },
+  { label: "X", Icon: Twitter },
+  { label: "Instagram", Icon: Instagram },
+  { label: "YouTube", Icon: Youtube },
+];
+
 function BakerFooter({ brand }: { brand: BrandChrome }) {
   return (
-    <footer className="mt-16 border-t bg-background">
+    <footer className="mt-16 bg-background">
+      {/* Grey contact strip */}
+      <div className="bg-muted">
+        <div className="mx-auto max-w-6xl px-4 py-3 text-sm md:px-6">
+          <a href="#" className="font-medium text-primary hover:underline">
+            Contact Us
+          </a>
+          <span className="px-3 text-muted-foreground">|</span>
+          <span className="text-foreground">
+            After Hours Emergency Contact:{" "}
+            <a href="#" className="font-medium text-primary hover:underline">
+              {brand.phone}
+            </a>
+          </span>
+        </div>
+      </div>
+
       <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-[repeat(4,1fr)_auto]">
           {brand.footerColumns.map((col) => (
             <div key={col.title}>
-              <h3 className="text-sm font-bold tracking-wide text-brand-baker uppercase">
-                {col.title}
-              </h3>
+              <h3 className="text-sm font-bold text-foreground">{col.title}</h3>
               <ul className="mt-3 flex flex-col gap-2">
                 {col.links.map((l) => (
                   <li key={l}>
@@ -389,12 +411,55 @@ function BakerFooter({ brand }: { brand: BrandChrome }) {
               </ul>
             </div>
           ))}
+
+          {/* Rewards + social + app badges */}
+          <div className="flex flex-col items-start gap-5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://www.bakerdist.com/static/version1783616181/frontend/Baker/base/en_US/images/baker-online-rewards-badge.png"
+              alt="Baker Online Rewards"
+              className="h-10 w-auto"
+            />
+            <div className="flex items-center gap-2">
+              {BAKER_SOCIAL.map(({ label, Icon }) => (
+                <a
+                  key={label}
+                  href="#"
+                  aria-label={label}
+                  className="grid size-8 place-items-center rounded-full bg-brand-baker-bar text-white hover:opacity-90"
+                >
+                  <Icon className="size-4" />
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-col gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://resource.gemaire.com/is/image/Watscocom/gemaire_content_app-store-logo?hei=40&fmt=png-alpha"
+                alt="Download on the App Store"
+                className="h-10 w-auto"
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://resource.gemaire.com/is/image/Watscocom/gemaire_content_google-play-logo?hei=40&fmt=png-alpha"
+                alt="Get it on Google Play"
+                className="h-10 w-auto"
+              />
+            </div>
+          </div>
         </div>
-      </div>
-      {/* Dark copyright bar */}
-      <div className="bg-brand-baker-bar text-brand-baker-bar-foreground">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-center text-xs md:px-6">
-          Copyright © {brand.copyright}
+
+        {/* Centered corporate logo + copyright */}
+        <div className="mt-12 flex flex-col items-center gap-4 border-t pt-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://www.bakerdist.com/static/version1783616181/frontend/Baker/base/en_US/images/corporate-logo.svg"
+            alt="Baker Distributing Company"
+            className="h-12 w-auto"
+          />
+          <p className="text-center text-xs text-muted-foreground">
+            Copyright © {brand.copyright}
+          </p>
         </div>
       </div>
     </footer>
