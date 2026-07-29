@@ -116,6 +116,16 @@ export function LabelsSection() {
         <StockStatus qty={0}>0 in stock today</StockStatus>
       </Group>
 
+      {/* Ecommerce status text colors — all AA 4.5:1 on white. */}
+      <Group title="Status colors" note="Fulfillment & inventory text — all AA 4.5:1 on white." className="!flex-col !items-start gap-1.5">
+        <span className="text-sm font-bold text-price">
+          $1,548.95 <span className="text-xs font-normal text-muted-foreground">/ EA</span>
+        </span>
+        <span className="text-sm font-medium text-in-stock">In stock today</span>
+        <span className="text-sm font-medium text-low-stock">Call for availability</span>
+        <span className="text-sm font-medium text-out-of-stock">Out of stock</span>
+      </Group>
+
       {/* Branch availability row — left-aligned qty + name. */}
       <Group title="Branch row" note="Left-aligned quantity (colored by stock) + branch name." className="!flex-col !items-start gap-1">
         <BranchRow qty={107} name="Baker Jacksonville #301" />

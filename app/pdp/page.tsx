@@ -55,6 +55,8 @@ function TemplateCard({
       <div className="mt-3 flex flex-wrap gap-2">
         <Link
           href={`/pdp/${p.slug}`}
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           Signed out
@@ -62,6 +64,8 @@ function TemplateCard({
         </Link>
         <Link
           href={`/pdp/${p.slug}?signedin=1`}
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           Signed in
@@ -93,7 +97,18 @@ export default function PdpMasterPage() {
               each rendered inside its own header / footer.
             </p>
           </div>
-          <OpenAllButton slugs={getPdpSlugs()} />
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/components"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              Components
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <OpenAllButton slugs={getPdpSlugs()} />
+          </div>
         </div>
 
         {/* Scope callout */}
