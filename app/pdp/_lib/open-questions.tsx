@@ -28,32 +28,12 @@ const DEFAULTS: QA[] = [
   },
   {
     id: "packsize",
-    q: "Pack-size control — segmented control or pills? Some BUs only have 1–2 options (Each, 12-pk).",
-    a: "Client leaned pills for flexibility with few options — to be applied across all four in-scope BUs.",
-  },
-  {
-    id: "unify-depth",
-    q: "How unified should the PDP content be across the four BUs — identical layout with only data differences, or allow per-BU layout variation?",
-    a: "",
-  },
-  {
-    id: "branch-model",
-    q: "Branch inventory — confirm the models per BU (individual branches vs aggregated).",
-    a: 'Demonstrated: Peirce aggregates ("173 · All Branches"); Baker & East Coast list individual branches.',
-  },
-  {
-    id: "docs",
-    q: "Documents — need real PDF / asset links per BU (currently placeholder links).",
-    a: "",
-  },
-  {
-    id: "prices",
-    q: "Real signed-in prices for related items — some Frequently-Bought / substitute prices are estimates.",
+    q: "Pack-size control — segmented control or pills? Some BUs only have 1–2 options (Each, 12-pk). Consider pills.",
     a: "",
   },
   {
     id: "gating",
-    q: "Signed-out gating — confirm the gated CTA copy and behavior (no price shown; \"Sign in to view pricing\").",
+    q: 'Do we need "Sign in" copy on the button as well as inline?',
     a: "",
   },
 ];
