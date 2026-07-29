@@ -293,81 +293,68 @@ function GemaireFooter({ brand }: { brand: BrandChrome }) {
 
 const BAKER_LOGO =
   "https://www.bakerdist.com/static/version1783616181/frontend/Baker/base/en_US/images/logo.svg";
-const BAKER_UTILITY = [
-  "Brands",
-  "Events",
-  "Specials",
-  "Careers",
-  "Resources",
-  "Open Account",
-  "BakerPay",
-];
 
-function BakerHeader({ brand }: { brand: BrandChrome }) {
+function BakerHeader({
+  brand,
+  signedIn = false,
+}: {
+  brand: BrandChrome;
+  signedIn?: boolean;
+}) {
   return (
-    <header className="bg-background">
-      {/* Dark utility strip */}
-      <div className="bg-brand-baker-bar text-brand-baker-bar-foreground">
-        <div className="mx-auto flex max-w-6xl items-center gap-5 px-4 py-1.5 text-xs md:px-6">
-          {BAKER_UTILITY.map((l) => (
-            <a key={l} href="#" className="whitespace-nowrap opacity-90 hover:opacity-100">
-              {l}
-            </a>
-          ))}
-          {brand.phone ? (
-            <span className="ml-auto hidden items-center gap-1.5 opacity-90 sm:inline-flex">
-              <Phone className="size-3.5" />
-              {brand.phone}
-            </span>
-          ) : null}
-        </div>
-      </div>
-
-      {/* Main bar */}
+    <header className="bg-brand-baker text-brand-baker-foreground">
+      {/* Red main bar */}
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
         <a href="#" className="shrink-0" aria-label="Baker Distributing home">
+          {/* Real logo is white — shows on the red bar. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={BAKER_LOGO} alt="Baker Distributing" className="h-8 w-auto" />
+          <img src={BAKER_LOGO} alt="Baker Distributing" className="h-9 w-auto" />
         </a>
-        <div className="hidden items-center gap-1.5 text-xs leading-tight lg:flex">
-          <MapPin className="size-4 shrink-0 text-brand-baker" />
-          <span>
-            <span className="block text-muted-foreground">You&apos;re shopping at store</span>
-            <span className="block font-semibold">Select branch ▾</span>
+        <button type="button" className="hidden text-left text-xs leading-tight lg:block">
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin className="size-4 shrink-0" />
+            <span>
+              <span className="block opacity-90">You&apos;re shopping at store</span>
+              <span className="block font-semibold">
+                {signedIn ? "BAKER JACKSONVILLE #301 ▾" : "Select branch ▾"}
+              </span>
+            </span>
           </span>
-        </div>
+        </button>
         <div className="relative hidden min-w-0 flex-1 md:block">
           <input
             aria-label="Search"
             placeholder="Search by Model, Item #, or Name..."
-            className="h-9 w-full rounded border bg-background pr-10 pl-3 text-sm outline-none"
+            className="h-10 w-full rounded-sm bg-white pr-11 pl-3 text-sm text-foreground outline-none"
           />
-          <button
-            type="button"
-            aria-label="Search"
-            className="absolute top-1/2 right-1 grid size-7 -translate-y-1/2 place-items-center rounded bg-brand-baker text-white"
-          >
-            <Search className="size-4" />
-          </button>
+          <span className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground">
+            <Search className="size-5" />
+          </span>
         </div>
-        <button type="button" aria-label="Account" className="ml-auto md:ml-0">
-          <User className="size-6 text-brand-baker" />
+        <button type="button" className="inline-flex items-center gap-1.5 text-sm font-medium">
+          <User className="size-5" />
+          <span className="hidden sm:inline">
+            {signedIn ? "Hello, David ▾" : "Sign In"}
+          </span>
+        </button>
+        <button type="button" aria-label="Cart" className="relative inline-flex items-center">
+          <ShoppingCart className="size-6" />
+          {signedIn ? (
+            <span className="absolute -top-2 -right-2 grid min-w-5 place-items-center rounded-full bg-brand-baker-bar px-1 text-[11px] font-bold text-white">
+              36
+            </span>
+          ) : null}
         </button>
       </div>
 
-      {/* Category nav */}
-      <nav aria-label="Primary" className="border-y">
-        <div className="mx-auto flex max-w-6xl gap-0 overflow-x-auto px-4 md:px-6">
-          {brand.nav.map((n, i) => (
+      {/* Red category nav */}
+      <nav aria-label="Primary" className="border-t border-white/20">
+        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+          {brand.nav.map((n) => (
             <a
               key={n}
               href="#"
-              className={cn(
-                "border-b-2 px-3 py-2.5 text-sm font-medium whitespace-nowrap",
-                i === 0
-                  ? "border-brand-baker text-foreground"
-                  : "border-transparent text-foreground/80 hover:text-foreground"
-              )}
+              className="px-3 py-2.5 text-sm font-semibold whitespace-nowrap text-white/90 hover:text-white"
             >
               {n}
             </a>
@@ -1385,7 +1372,7 @@ export function SiteHeader({
   signedIn?: boolean;
 }) {
   if (brand.key === "gemaire") return <GemaireHeader signedIn={signedIn} />;
-  if (brand.key === "baker") return <BakerHeader brand={brand} />;
+  if (brand.key === "baker") return <BakerHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "carrier") return <CarrierHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
   if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} />;

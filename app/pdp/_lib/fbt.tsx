@@ -45,7 +45,7 @@ function FbtCard({ item }: { item: FbtProduct }) {
   const rich = item.price != null;
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border p-4">
+    <div className="flex h-full flex-col gap-2 rounded-lg border p-4">
       <FbtImage src={item.image} alt={item.title} />
       <a href="#" className="line-clamp-3 text-sm font-semibold text-primary hover:underline">
         {item.title}
@@ -69,13 +69,10 @@ function FbtCard({ item }: { item: FbtProduct }) {
                   Earn {item.points} point{item.points === 1 ? "" : "s"}
                 </p>
               ) : null}
-              <button
-                type="button"
-                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
-              >
+              <Button size="sm" className="mt-2 w-full">
                 <ShoppingCart className="size-4" />
                 Add To Cart
-              </button>
+              </Button>
               {item.stockStatus ? (
                 <p className="mt-1 flex items-center gap-1.5 text-xs">
                   <Info className="size-3.5 text-muted-foreground" />
