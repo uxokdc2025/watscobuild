@@ -66,6 +66,8 @@
   --color-brand-peirce-accent: var(--brand-peirce-accent);
   --color-brand-ecmdi: var(--brand-ecmdi);
   --color-brand-ecmdi-foreground: var(--brand-ecmdi-foreground);
+  --color-brand-ecmdi-footer: var(--brand-ecmdi-footer);
+  --color-brand-ecmdi-footer-foreground: var(--brand-ecmdi-footer-foreground);
   --color-brand-dcne: var(--brand-dcne);
   --color-brand-dcne-foreground: var(--brand-dcne-foreground);
   --color-brand-homans: var(--brand-homans);
@@ -127,6 +129,8 @@
   --brand-peirce-accent: #ea1336; /* Peirce red "Specials" highlight */
   --brand-ecmdi: #cb0015; /* East Coast Metal Distributors red header/nav */
   --brand-ecmdi-foreground: #ffffff;
+  --brand-ecmdi-footer: #636363; /* East Coast dark-charcoal footer (source-sampled) */
+  --brand-ecmdi-footer-foreground: #ffffff;
   --brand-dcne: #001056; /* DCNE dark-navy utility bar */
   --brand-dcne-foreground: #ffffff;
   --brand-homans: #045ea9; /* Homans primary blue (main bar, footer bottom bar) */

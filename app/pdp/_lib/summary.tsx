@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { BranchRow, stockTextClass } from "@/components/ui/label-badges";
+import { CompareButton } from "@/components/ui/compare-button";
 import { useAuth } from "./auth";
 import { formatUSD, type PdpCommerce, type PdpProduct } from "./types";
 
@@ -185,6 +186,7 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
               </Button>
               <SaveToList />
             </div>
+            <CompareButton className="-ml-1 self-start" />
           </div>
         </>
       ) : (
@@ -203,6 +205,7 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
             </Button>
             <SaveToList />
           </div>
+          <CompareButton className="-ml-1 self-start" />
         </>
       )}
     </div>

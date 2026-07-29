@@ -453,6 +453,9 @@ const peirce58mv: PdpProduct = {
 const ceImg = (key: string) =>
   `https://resource.carrierenterprise.com/is/image/Watscocom/${key}_en_normal?wid=400&hei=400&qlt=80`;
 
+const ecmImg = (key: string) =>
+  `https://resource.ecmdi.com/is/image/Watscocom/${key}_en_normal?wid=400&hei=400&qlt=80`;
+
 const carrierTpE50: PdpProduct = {
   slug: "carrier-tp-e50-3sp2",
   brand: "TRADEPRO®",
@@ -600,25 +603,49 @@ const ecmdiProFlush: PdpProduct = {
   ],
   description: {
     intro:
-      "Pro-Flush flushing solvent refill kit, 8 oz — for flushing A/C and refrigeration line sets.",
+      "Non-VOC, residue-free flushing solvent kit for R-410A retrofits, refrigerant conversions and compressor burnouts — compatible with all refrigerants and compressor oils. Makes servicing quick, easy and safe with all necessary hardware on hand for 1-stop servicing.",
+    bullets: [
+      "8 oz container of Pro-Flush™ solvent",
+      "Refillable Pro-Flush™ injector tool pressure tank",
+      "Pressure relief valve for added safety",
+      'Large rubber adapter that flushes up to 1-1/4" line sets',
+      "Service hose",
+    ],
+    prop65: true,
   },
-  specTabLabel: "Specifications",
-  specGroupsLeft: [
-    {
-      title: "Product",
-      rows: [
-        { label: "Type", value: "Flushing Solvent" },
-        { label: "Size", value: "8 oz." },
-        { label: "Brand", value: "DiversiTech®" },
-      ],
-    },
+  documents: [
+    { label: "Consumer Catalog", kind: "pdf", href: "#" },
+    { label: "Safety Data Sheet", kind: "pdf", href: "#" },
+    { label: "Installation Instructions", kind: "pdf", href: "#" },
   ],
-  specGroupsRight: [
+  specTabLabel: "Specifications",
+  specGroupsLeft: [],
+  specGroupsRight: [],
+  specsFlat: [
+    { label: "Weight", value: "3.65" },
+    { label: "Height", value: "12" },
+    { label: "Length", value: "3.6" },
+    { label: "Width", value: "6.75" },
+    { label: "Brand", value: "DiversiTech®" },
+    { label: "Cubic Measurement", value: "0.1688" },
+    { label: "Dimensional Weight", value: "3" },
+    { label: "EAN", value: "0095247128952" },
+    { label: "Prop 65", value: "No" },
+    { label: "Size", value: "16 Ounce" },
+    { label: "Type", value: "Flushing Solvent Kit" },
+    { label: "UOM", value: "EA" },
+    { label: "UPC", value: "095247128952" },
+  ],
+  fbt: [
     {
-      title: "Application",
-      rows: [
-        { label: "Use", value: "A/C & Refrigeration Systems" },
-        { label: "Kit", value: "Refill" },
+      label: "Frequently Bought Together",
+      items: [
+        { id: "diversitech-pf-16", title: "DiversiTech® - PF-16 Pro-Flush™ Flushing Solvent 16 oz.", item: "PF-16", mfg: "PF-16", image: ecmImg("diversitech_pf-16_article_1375441857788"), price: 34.9, branchQty: 12, branchName: "Durham NC #1", nearbyQty: 40 },
+        { id: "diversitech-750-rc841", title: "DiversiTech® - 750-RC841 Refrigerant Recovery Cylinder", item: "750-RC841", mfg: "750-RC841", image: ecmImg("diversitech_750-rc841_article_1379329921784"), price: 89.6, branchQty: 6, branchName: "Durham NC #1", nearbyQty: 18 },
+        { id: "southwark-6s120", title: "Southwark - 6S120 Sheet Metal Fitting", item: "6S120", mfg: "6S120", image: ecmImg("southwark_6s120_article_1386941903341"), price: 12.4, branchQty: 30, branchName: "Durham NC #1", nearbyQty: 120 },
+        { id: "southwark-97ls", title: "Southwark - 97LS Sheet Metal Fitting", item: "97LS", mfg: "97LS", image: ecmImg("southwark_97ls"), price: 9.8, branchQty: 22, branchName: "Durham NC #1", nearbyQty: 96 },
+        { id: "royce-plenum-box", title: "Royce® - Plenum Box", item: "PLENUM-BOX", mfg: "PLENUM-BOX", image: ecmImg("royce_plenum-box"), price: 46.2, branchQty: 8, branchName: "Durham NC #1", nearbyQty: 24 },
+        { id: "tutco-hk-heater-kits", title: "Tutco® - HK Heater Kit", item: "HK-HEATER-KIT", mfg: "HK-HEATER-KIT", image: ecmImg("tutco_hk-heater-kits"), price: 58.7, branchQty: 5, branchName: "Durham NC #1", nearbyQty: 15 },
       ],
     },
   ],

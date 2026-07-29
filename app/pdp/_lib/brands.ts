@@ -89,9 +89,9 @@ export const BRANDS: Record<string, BrandChrome> = {
     ],
     footerColumns: [
       { title: "Company", links: ["About Us", "Locations", "Careers", "Contact Us"] },
-      { title: "Sales & Ordering", links: ["Payment & Delivery", "Credit App", "Quick Order", "Return Policy"] },
-      { title: "Shopping Tools", links: ["Order Templates", "SimpleOrder", "SimpleStock", "SimpleProposal"] },
-      { title: "Resources", links: ["Promotions", "Our Blog", "PRO Training", "Contractor Tools"] },
+      { title: "Sales & Ordering", links: ["Payment & Delivery", "Credit App", "Dockside Pickup", "Return Policy", "Accessibility"] },
+      { title: "Shopping Tools", links: ["Order Templates", "Quick Order", "HVAC Pro+ Mobile App", "SimpleOrder", "SimpleStock", "SimpleProposal", "Promotions"] },
+      { title: "Resources", links: ["Our Blog", "Using Our Website", "Wingman", "PRO Training", "PRO Training Events", "Contractor Tools", "Homeowner Financing"] },
     ],
     copyright: "2026 East Coast Metal Distributors. All Rights Reserved.",
   },

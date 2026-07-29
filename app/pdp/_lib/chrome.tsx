@@ -1,6 +1,9 @@
 import {
+  Apple,
+  AtSign,
   Bell,
   ChevronDown,
+  Play,
   ClipboardList,
   Facebook,
   Home,
@@ -833,69 +836,103 @@ function PeirceHeader({ brand }: { brand: BrandChrome }) {
    Live logo is an inline data URI (no stable URL) → styled white wordmark.
    ════════════════════════════════════════════════════════════════════════ */
 
-function EcmdiHeader({ brand }: { brand: BrandChrome }) {
+function EcmdiWordmark({ className }: { className?: string }) {
   return (
-    <header>
+    <span className={cn("leading-none", className)} aria-label="East Coast Metal Distributors">
+      <span className="block text-lg font-black tracking-tight italic">East Coast</span>
+      <span className="block text-[9px] font-semibold tracking-[0.25em]">
+        METAL DISTRIBUTORS
+      </span>
+    </span>
+  );
+}
+
+function EcmdiHeader({
+  brand,
+  signedIn = false,
+}: {
+  brand: BrandChrome;
+  signedIn?: boolean;
+}) {
+  return (
+    <header className="bg-brand-ecmdi text-brand-ecmdi-foreground">
       {/* Red main bar */}
-      <div className="bg-brand-ecmdi text-brand-ecmdi-foreground">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-2.5 md:px-6">
-          <a href="#" className="shrink-0 leading-none" aria-label="East Coast Metal Distributors home">
-            <span className="block text-lg font-black tracking-tight italic">
-              East Coast
-            </span>
-            <span className="block text-[9px] font-semibold tracking-[0.25em]">
-              METAL DISTRIBUTORS
-            </span>
-          </a>
-          <div className="relative hidden min-w-0 flex-1 md:block">
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-2.5 md:px-6">
+        <a href="#" className="shrink-0" aria-label="East Coast Metal Distributors home">
+          <EcmdiWordmark />
+        </a>
+        <div className="hidden min-w-0 flex-1 items-stretch rounded bg-white md:flex">
+          <button
+            type="button"
+            className="flex items-center gap-1 rounded-l bg-muted px-3 text-xs font-medium text-foreground"
+          >
+            Website <ChevronDown className="size-3.5" />
+          </button>
+          <div className="relative min-w-0 flex-1">
             <input
               aria-label="Search our site"
               placeholder="Search our site..."
-              className="h-9 w-full rounded bg-white pr-10 pl-3 text-sm text-foreground outline-none"
+              className="h-9 w-full bg-transparent pr-10 pl-3 text-sm text-foreground outline-none"
             />
             <span className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground">
               <Search className="size-4" />
             </span>
           </div>
-          <button type="button" className="ml-auto hidden text-left text-xs leading-tight sm:block">
-            <span className="inline-flex items-center gap-1.5">
-              <User className="size-4" />
-              <span>
-                Sign In <span className="opacity-90">or</span>
-                <br />
-                Create an Account
-              </span>
-            </span>
-          </button>
-          <button type="button" className="hidden text-left text-xs leading-tight lg:block">
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="size-4" />
-              <span>
-                <span className="block opacity-90">Your Current Branch</span>
-                <span className="block font-semibold">Select ▾</span>
-              </span>
-            </span>
-          </button>
-          <button type="button" aria-label="Shopping Cart" className="inline-flex items-center gap-1.5 font-medium">
-            <ShoppingCart className="size-5" />
-            <span className="hidden sm:inline">Cart</span>
-          </button>
         </div>
+        <button type="button" className="ml-auto hidden text-left text-xs leading-tight sm:block">
+          <span className="inline-flex items-center gap-1.5">
+            <User className="size-5" />
+            <span>
+              {signedIn ? (
+                <>
+                  <span className="block opacity-90">Your Account</span>
+                  <span className="block font-semibold">231676 ▾</span>
+                </>
+              ) : (
+                <>
+                  Sign In <span className="opacity-90">or</span>
+                  <br />
+                  Create an Account
+                </>
+              )}
+            </span>
+          </span>
+        </button>
+        <button type="button" className="hidden text-left text-xs leading-tight lg:block">
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin className="size-5" />
+            <span>
+              <span className="block opacity-90">Your Current Branch</span>
+              <span className="block font-semibold">
+                {signedIn ? "Durham NC #1 ▾" : "Select ▾"}
+              </span>
+            </span>
+          </span>
+        </button>
+        <button type="button" aria-label="Shopping Cart" className="relative inline-flex items-center gap-1.5 font-medium">
+          <ShoppingCart className="size-6" />
+          <span className="hidden lg:inline">Shopping Cart</span>
+          {signedIn ? (
+            <span className="absolute -top-2 -right-2 grid size-5 place-items-center rounded-full bg-primary text-[11px] font-bold text-white lg:static lg:ml-1">
+              3
+            </span>
+          ) : null}
+        </button>
       </div>
 
-      {/* Red category nav (slightly deeper) */}
-      <nav
-        aria-label="Primary"
-        className="bg-brand-ecmdi text-brand-ecmdi-foreground brightness-90"
-      >
-        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+      {/* Red category nav */}
+      <nav aria-label="Primary" className="brightness-95">
+        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto border-t border-white/15 px-4 md:px-6">
           {brand.nav.map((n) => (
             <a
               key={n}
               href="#"
-              className="px-3 py-2.5 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white"
+              className="inline-flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white"
             >
               {n}
+              {/^(Categories|Brands|PRO Guides|About Us)$/.test(n) ? (
+                <ChevronDown className="size-3.5" />
+              ) : null}
             </a>
           ))}
         </div>
@@ -904,17 +941,77 @@ function EcmdiHeader({ brand }: { brand: BrandChrome }) {
   );
 }
 
+const ECMDI_SOCIAL = [
+  { label: "LinkedIn", Icon: Linkedin },
+  { label: "Instagram", Icon: Instagram },
+  { label: "Facebook", Icon: Facebook },
+  { label: "Threads", Icon: AtSign },
+];
+
 function EcmdiFooter({ brand }: { brand: BrandChrome }) {
   return (
-    <footer className="mt-16 border-t bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+    <footer className="mt-16 bg-brand-ecmdi-footer text-brand-ecmdi-footer-foreground">
+      <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-[repeat(4,1fr)_auto]">
           {brand.footerColumns.map((col) => (
-            <FooterColumnBlock key={col.title} col={col} />
+            <div key={col.title}>
+              <h3 className="text-sm font-bold text-white">{col.title}</h3>
+              <ul className="mt-3 flex flex-col gap-2">
+                {col.links.map((l) => (
+                  <li key={l}>
+                    <a href="#" className="text-sm text-white/75 underline-offset-4 hover:text-white hover:underline">
+                      {l}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
+          {/* Social + app badges */}
+          <div className="flex flex-col items-start gap-5">
+            <div className="flex items-center gap-2">
+              {ECMDI_SOCIAL.map(({ label, Icon }) => (
+                <a
+                  key={label}
+                  href="#"
+                  aria-label={label}
+                  className="grid size-8 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60"
+                >
+                  <Icon className="size-4" />
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-col gap-2">
+              <a href="#" className="inline-flex items-center gap-2 rounded-md border border-white/40 px-3 py-1.5 text-white hover:bg-white/10">
+                <Apple className="size-5" />
+                <span className="leading-tight">
+                  <span className="block text-[9px]">Download on the</span>
+                  <span className="block text-sm font-semibold">App Store</span>
+                </span>
+              </a>
+              <a href="#" className="inline-flex items-center gap-2 rounded-md border border-white/40 px-3 py-1.5 text-white hover:bg-white/10">
+                <Play className="size-5" />
+                <span className="leading-tight">
+                  <span className="block text-[9px]">Get it on</span>
+                  <span className="block text-sm font-semibold">Google Play</span>
+                </span>
+              </a>
+            </div>
+          </div>
         </div>
-        <div className="mt-10 border-t pt-6 text-center text-xs text-muted-foreground">
-          Copyright © {brand.copyright}
+
+        {/* Centered logo + copyright */}
+        <div className="mt-12 flex flex-col items-center gap-4 border-t border-white/15 pt-8">
+          <EcmdiWordmark className="text-center text-white" />
+          <p className="text-center text-xs text-white/75">
+            Copyright © {brand.copyright}
+            <span className="px-2">·</span>
+            <a href="#" className="hover:text-white hover:underline">Privacy Policy</a>
+            <span className="px-2">·</span>
+            <a href="#" className="hover:text-white hover:underline">Cookie Settings</a>
+            <span className="px-2">·</span>
+            <a href="#" className="hover:text-white hover:underline">Terms and Conditions</a>
+          </p>
         </div>
       </div>
     </footer>
@@ -1440,7 +1537,7 @@ export function SiteHeader({
   if (brand.key === "baker") return <BakerHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "carrier") return <CarrierHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
-  if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} />;
+  if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "dcne") return <DcneHeader brand={brand} />;
   if (brand.key === "homans") return <HomansHeader brand={brand} signedIn={signedIn} />;
   return <GenericHeader brand={brand} />;
