@@ -79,7 +79,7 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
   const showCommerce = signedIn && product.commerce;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       {/* Brand + badges + title */}
       <div className="flex flex-col gap-2">
         <a href="#" className="w-fit text-sm font-semibold text-primary underline-offset-4 hover:underline">
@@ -104,7 +104,7 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
       {showCommerce ? (
         <>
           {product.commerce!.price != null ? (
-            <>
+            <div className="flex flex-col gap-1.5">
               {product.commerce!.packSizes?.length ? (
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <Tag className="size-4 text-primary" />
@@ -119,7 +119,7 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
                   /{product.commerce!.uom}
                 </span>
               </div>
-            </>
+            </div>
           ) : (
             <div className="text-2xl font-bold text-muted-foreground">
               Price not available
