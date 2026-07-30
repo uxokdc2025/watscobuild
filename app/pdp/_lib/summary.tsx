@@ -76,7 +76,14 @@ function SaveToList() {
 
 export function PdpSummary({ product }: { product: PdpProduct }) {
   const { signedIn } = useAuth();
-  const showCommerce = signedIn && product.commerce;
+  const nonSellable = product.status != null;
+  const showCommerce = signedIn && product.commerce && !nonSellable;
+  const STATUS_COPY: Record<string, string> = {
+    replaced: "This item has been replaced. See the replacement product below.",
+    discontinued: "This item has been discontinued and is no longer available.",
+    "non-sellable": "This item is not available for online purchase.",
+    "requires-license": "A valid license is required to purchase this item.",
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -101,7 +108,22 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
         </div>
       </div>
 
-      {showCommerce ? (
+      {nonSellable ? (
+        <div className="rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
+          <p className="font-semibold text-amber-800 dark:text-amber-300">
+            {product.status === "replaced"
+              ? "Replacement Product Available"
+              : product.status === "requires-license"
+                ? "License Required"
+                : product.status === "discontinued"
+                  ? "Discontinued"
+                  : "Not Available for Purchase"}
+          </p>
+          <p className="mt-1 text-muted-foreground">
+            {STATUS_COPY[product.status!]}
+          </p>
+        </div>
+      ) : showCommerce ? (
         <>
           {product.commerce!.price != null ? (
             <div className="flex flex-col gap-1.5">

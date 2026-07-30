@@ -674,6 +674,58 @@ const ecmdiProFlushV2: PdpProduct = {
   },
 };
 
+// ── Use case: Replacement Products (discontinued item → replacement) ──
+const ucReplacement: PdpProduct = {
+  slug: "uc-replacement-products",
+  brand: "AmRad",
+  brandKey: "ecmdi",
+  useCase: "Replacement Products",
+  store: { name: "Durham NC #1" },
+  badges: [
+    { label: "Replacement Product Available", tone: "soft", color: "amber" },
+  ],
+  title: "CAB050400440CT Dual Round Capacitor - 40/5 MFD - 440V",
+  item: "366572A",
+  mfg: "CAB050400440CT",
+  thumbnailCount: 1,
+  status: "replaced",
+  description: {
+    intro:
+      "Dual round run capacitor — 40/5 MFD, 440V. This item has been superseded; see the replacement product for the current equivalent.",
+  },
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "Capacitor",
+      rows: [
+        { label: "Type", value: "Dual Run Capacitor" },
+        { label: "Shape", value: "Round" },
+        { label: "Capacitance", value: "40 / 5 MFD" },
+        { label: "Voltage", value: "440 VAC" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "General",
+      rows: [
+        { label: "Tolerance", value: "±6%" },
+        { label: "Frequency", value: "50 / 60 Hz" },
+      ],
+    },
+  ],
+  replacements: [
+    {
+      id: "cap050400440rtp",
+      title: "CAP050400440RTP Dual Round Capacitor - 40/5 MFD - 440V",
+      item: "379287A",
+      mfg: "CAP050400440RTP",
+      image:
+        "https://cdn.ecmdi.com/na_cap050400440rtp_article_16648380127855147_en_normal?wid=400&hei=400&qlt=80",
+    },
+  ],
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -683,6 +735,7 @@ export const pdps: PdpProduct[] = [
   peirce58mv,
   ecmdiProFlush,
   ecmdiProFlushV2,
+  ucReplacement,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {

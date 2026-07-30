@@ -4,7 +4,7 @@ import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
 import { FrequentlyBoughtTogether } from "./fbt";
-import { AboutThisProduct, RecentlyViewed, Substitutes } from "./about";
+import { AboutThisProduct, RecentlyViewed, Replacements, Substitutes } from "./about";
 import { SiteFooter, SiteHeader } from "./chrome";
 import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
@@ -83,6 +83,13 @@ export function Pdp({
             />
             <PdpSummary product={summaryProduct} />
           </div>
+
+          {/* Replacement products — directly under the summary when replaced */}
+          {product.replacements?.length ? (
+            <div className="mt-10">
+              <Replacements product={product} />
+            </div>
+          ) : null}
 
           {/* Substitutes — directly under the summary / Add to Cart */}
           {product.substitutes?.length ? (

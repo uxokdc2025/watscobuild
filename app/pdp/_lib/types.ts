@@ -118,6 +118,12 @@ export type PdpProduct = {
   substitutes?: SubstituteItem[];
   /** Recently-viewed product cards. */
   recentlyViewed?: PartItem[];
+  /** Labels this as a use-case demo (grouped under "Use Cases" on the Master). */
+  useCase?: string;
+  /** Special commerce state that replaces the normal price / Add-to-Cart block. */
+  status?: "replaced" | "non-sellable" | "requires-license" | "discontinued";
+  /** Replacement products, shown when this item is discontinued / replaced. */
+  replacements?: SubstituteItem[];
 };
 
 export function formatUSD(value: number): string {

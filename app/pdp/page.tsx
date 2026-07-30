@@ -38,7 +38,11 @@ function TemplateCard({
           </span>
         ) : null}
         <span className="text-sm text-muted-foreground">{p.brand}</span>
-        {descoped ? (
+        {p.useCase ? (
+          <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+            {p.useCase}
+          </span>
+        ) : descoped ? (
           <span className="rounded-full border border-amber-500/40 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">
             Descoped
           </span>
@@ -81,7 +85,11 @@ export default function PdpMasterPage() {
   const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
   // The v2 pack-size-pills demo is called out on its own, not in the main list.
   const v2 = templates.find((p) => p.slug === "ecmdi-pro-flush-v2");
-  const rest = templates.filter((p) => p.slug !== "ecmdi-pro-flush-v2");
+  // Use-case demo entries get their own section at the bottom.
+  const useCases = templates.filter((p) => p.useCase);
+  const rest = templates.filter(
+    (p) => p.slug !== "ecmdi-pro-flush-v2" && !p.useCase
+  );
   const inScope = rest
     .filter((p) => IN_SCOPE.includes(p.brandKey ?? ""))
     .sort(
@@ -187,6 +195,26 @@ export default function PdpMasterPage() {
             <TemplateCard key={p.slug} p={p} />
           ))}
         </ul>
+
+        {/* Use cases */}
+        {useCases.length ? (
+          <>
+            <h2 className="mt-10 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+              Use cases · content patterns &amp; new badges
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+              One PDP per pattern — each demonstrates a specific state or badge
+              (Replacement, AHRI matched system, pack size, bundle &amp; rebate,
+              points, non-sellable, requires-license, strike-thru pricing). Built
+              and reviewed one at a time.
+            </p>
+            <ul className="mt-3 flex flex-col gap-3">
+              {useCases.map((p) => (
+                <TemplateCard key={p.slug} p={p} />
+              ))}
+            </ul>
+          </>
+        ) : null}
 
         {/* Descoped */}
         {descoped.length ? (

@@ -232,6 +232,42 @@ export function Substitutes({ product }: { product: PdpProduct }) {
   );
 }
 
+/* ── Replacement Products (for a discontinued / superseded item) ── */
+export function Replacements({ product }: { product: PdpProduct }) {
+  if (!product.replacements?.length) return null;
+  return (
+    <section aria-label="Replacement products" className="flex flex-col gap-3">
+      <h2 className="text-lg font-bold tracking-tight">Replacement Products</h2>
+      <div className="overflow-hidden rounded-lg border bg-muted/30">
+        {product.replacements.map((s, i) => (
+          <div
+            key={s.id}
+            className={`grid grid-cols-[3.5rem_1fr_auto] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+          >
+            <div className="size-14">
+              <ProductThumb src={s.image} alt={s.title} />
+            </div>
+            <div>
+              <a href="#" className="text-sm font-semibold text-primary hover:underline">
+                {s.title}
+              </a>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Item: {s.item} &nbsp; MFR: {s.mfg}
+              </p>
+            </div>
+            <a
+              href="#"
+              className="rounded-md border px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              View Product
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* ── Recently Viewed ── */
 function RvCard({ item }: { item: PartItem }) {
   return (
