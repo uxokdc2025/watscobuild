@@ -775,6 +775,52 @@ const ucAhri: PdpProduct = {
   },
 };
 
+// ── Use case: Pack Size (segmented → pills; one or many options) ──
+const ucPackSize: PdpProduct = {
+  slug: "uc-pack-size",
+  brand: "RectorSeal",
+  brandKey: "gemaire",
+  useCase: "Pack Size",
+  title: "Safe-T-Switch® SS2 - Condensate Overflow Shutoff Switch",
+  item: "97087",
+  mfg: "97087",
+  thumbnailCount: 1,
+  description: {
+    intro:
+      "Safe-T-Switch SS2 condensate overflow shutoff switch — installs in the secondary drain line to shut down the system on overflow. Sold individually or by the 12-pack.",
+  },
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "General",
+      rows: [
+        { label: "Type", value: "Condensate Overflow Switch" },
+        { label: "Mount", value: "Secondary Drain Line" },
+        { label: "Contacts", value: "Normally Closed" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Electrical",
+      rows: [
+        { label: "Voltage", value: "24 VAC" },
+        { label: "Rating", value: "5 A" },
+      ],
+    },
+  ],
+  commerce: {
+    price: 16.9,
+    uom: "EA",
+    packSizes: ["Each", "12-Pk"],
+    yourBranch: { name: "Mobile #251", stock: 48 },
+    nearbyBranches: [
+      { qty: 120, name: "Pensacola #253" },
+      { qty: 64, name: "Panama City #257" },
+    ],
+  },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -786,6 +832,7 @@ export const pdps: PdpProduct[] = [
   ecmdiProFlushV2,
   ucReplacement,
   ucAhri,
+  ucPackSize,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {
