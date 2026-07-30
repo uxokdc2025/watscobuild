@@ -108,6 +108,17 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
         </div>
       </div>
 
+      {product.ahri ? (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+          <span className="font-semibold">
+            AHRI Matchup: {product.ahri.number}
+          </span>
+          <a href="#" className="font-medium text-primary underline-offset-4 hover:underline">
+            View System Details
+          </a>
+        </div>
+      ) : null}
+
       {nonSellable ? (
         <div className="rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
           <p className="font-semibold text-amber-800 dark:text-amber-300">

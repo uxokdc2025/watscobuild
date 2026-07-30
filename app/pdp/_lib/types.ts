@@ -124,6 +124,8 @@ export type PdpProduct = {
   status?: "replaced" | "non-sellable" | "requires-license" | "discontinued";
   /** Replacement products, shown when this item is discontinued / replaced. */
   replacements?: SubstituteItem[];
+  /** AHRI matched-system reference — renders a badge + "View System Details" link. */
+  ahri?: { number: string };
 };
 
 export function formatUSD(value: number): string {

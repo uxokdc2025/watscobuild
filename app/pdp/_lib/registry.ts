@@ -726,6 +726,55 @@ const ucReplacement: PdpProduct = {
   ],
 };
 
+// ── Use case: AHRI Matched System (badge + View System Details link) ──
+const ucAhri: PdpProduct = {
+  slug: "uc-ahri-matched-system",
+  brand: "Goodman",
+  brandKey: "ecmdi",
+  useCase: "AHRI Matched System",
+  store: { name: "Durham NC #1" },
+  badges: [{ label: "AHRI Matched System", tone: "soft", color: "blue" }],
+  title: "GLZS4B Series 3-1/2 Ton Split System Heat Pump - 14.3 SEER2 - R-32",
+  item: "378798A",
+  mfg: "GLZS4BA4210",
+  thumbnailCount: 1,
+  ahri: { number: "213895723" },
+  description: {
+    intro:
+      "3-1/2 ton split-system heat pump, 14.3 SEER2, R-32 refrigerant. Part of an AHRI certified matched system — see the AHRI reference for the matched indoor/outdoor combination.",
+  },
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "System",
+      rows: [
+        { label: "Nominal Capacity", value: "3-1/2 Ton (42,000 BTU)" },
+        { label: "Efficiency", value: "14.3 SEER2" },
+        { label: "System Type", value: "Split System Heat Pump" },
+        { label: "Refrigerant", value: "R-32" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Electrical",
+      rows: [
+        { label: "Voltage", value: "208/230V" },
+        { label: "Phase", value: "1" },
+      ],
+    },
+  ],
+  commerce: {
+    price: 2389.0,
+    uom: "EA",
+    yourBranch: { name: "Durham NC #1", stock: 3 },
+    nearbyBranches: [
+      { qty: 2, name: "Raleigh NC #5" },
+      { qty: 5, name: "Greensboro NC #6" },
+    ],
+  },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -736,6 +785,7 @@ export const pdps: PdpProduct[] = [
   ecmdiProFlush,
   ecmdiProFlushV2,
   ucReplacement,
+  ucAhri,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {
