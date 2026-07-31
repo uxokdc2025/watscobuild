@@ -1009,6 +1009,55 @@ const ucLicense: PdpProduct = {
   ],
 };
 
+// ── Use case: Strike-thru Pricing (sale — was / now) ──
+const ucStrikeThru: PdpProduct = {
+  slug: "uc-strike-thru",
+  brand: "CIRRA",
+  brandKey: "ecmdi",
+  useCase: "Strike-thru Pricing",
+  store: { name: "Durham NC #1" },
+  badges: [{ label: "Sale", tone: "solid", color: "red" }],
+  title:
+    "CIRRA 2-Port High-Efficiency Multi-Split Outdoor Heat Pump - 18,000 BTU",
+  item: "361067A",
+  mfg: "2MX18AXVJU",
+  thumbnailCount: 1,
+  images: [
+    "https://cdn.ecmdi.com/na_2mx18axvju_article_1604089103372235_en_normal?wid=700&hei=700&qlt=80",
+  ],
+  description: {
+    intro:
+      "CIRRA 2-port high-efficiency multi-split outdoor heat pump, 18,000 BTU. On promotion — was/now pricing shown.",
+  },
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "System",
+      rows: [
+        { label: "Capacity", value: "18,000 BTU" },
+        { label: "Ports", value: "2" },
+        { label: "Type", value: "Multi-Split Heat Pump" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Efficiency",
+      rows: [
+        { label: "Class", value: "High-Efficiency" },
+        { label: "Configuration", value: "Outdoor Condenser" },
+      ],
+    },
+  ],
+  commerce: {
+    price: 1349.0,
+    wasPrice: 1599.0,
+    uom: "EACH",
+    yourBranch: { name: "Durham NC #1", stock: 5 },
+    nearbyBranches: [{ qty: 14, name: "Raleigh NC #5" }],
+  },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -1025,6 +1074,7 @@ export const pdps: PdpProduct[] = [
   ucPoints,
   ucNonSellable,
   ucLicense,
+  ucStrikeThru,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {
