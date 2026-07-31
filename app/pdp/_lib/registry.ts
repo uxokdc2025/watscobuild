@@ -924,6 +924,48 @@ const ucPoints: PdpProduct = {
   },
 };
 
+// ── Use case: Non-Sellable (not available for online purchase) ──
+const ucNonSellable: PdpProduct = {
+  slug: "uc-non-sellable",
+  brand: "Empire",
+  brandKey: "peirce",
+  useCase: "Non-Sellable",
+  store: { name: "Norristown, PA" },
+  badges: [{ label: "Non-Sellable", tone: "soft", color: "slate" }],
+  title: "9 in. True Blue Professional Torpedo Level",
+  item: "EM819G",
+  mfg: "EM81.9G",
+  thumbnailCount: 1,
+  images: [
+    "https://resource.peirce.com/is/image/Watscocom/empire_em819g_article_1604089103823369_en_normal?wid=700&hei=700&qlt=80",
+  ],
+  status: "non-sellable",
+  description: {
+    intro:
+      "9 in. True Blue professional magnetic torpedo level. This item is catalog-reference only and is not available for online purchase.",
+  },
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "General",
+      rows: [
+        { label: "Length", value: "9 in." },
+        { label: "Vials", value: "3 (plumb, level, 45°)" },
+        { label: "Magnetic", value: "Yes" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Material",
+      rows: [
+        { label: "Frame", value: "Aluminum" },
+        { label: "Finish", value: "True Blue" },
+      ],
+    },
+  ],
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -938,6 +980,7 @@ export const pdps: PdpProduct[] = [
   ucPackSize,
   ucBundle,
   ucPoints,
+  ucNonSellable,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {
