@@ -833,6 +833,9 @@ const ucBundle: PdpProduct = {
   item: "CE-PA5-5-AC-D60",
   mfg: "CE-PA5SAN56000W-PF5MNXD60L00",
   thumbnailCount: 1,
+  images: [
+    "https://resource.carrierenterprise.com/is/image/Watscocom/payne_pa5san56000w_article_1604089257073958_en_normal?wid=700&hei=700&qlt=80",
+  ],
   description: {
     intro:
       "Matched 5-ton, 16 SEER2 straight-cool system bundle (R-454B) — condenser and fan coil sold together with a $200 instant rebate.",
@@ -864,6 +867,8 @@ const ucBundle: PdpProduct = {
       title: "5 Ton Up to 16 SEER2 Air Conditioner Condenser Unit (R-454B)",
       item: "PA5SAN56000W",
       mfg: "PA5SAN56000W",
+      image:
+        "https://resource.carrierenterprise.com/is/image/Watscocom/payne_pa5san56000w_article_1604089257073958_en_normal?wid=400&hei=400&qlt=80",
     },
     {
       id: "pf5mnxd60l00",
@@ -891,6 +896,9 @@ const ucPoints: PdpProduct = {
   item: "RCD6-2GAL",
   mfg: "106002",
   thumbnailCount: 1,
+  images: [
+    "https://resource.carrierenterprise.com/is/image/Watscocom/rcd-corporation_106002_article_1433770785444_en_normal?wid=700&hei=700&qlt=80",
+  ],
   description: {
     intro:
       "#6 Mastic water-based duct sealant, 2-gallon pail. Earns CE Rewards points on every purchase.",
