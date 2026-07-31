@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ListPlus, LogIn, Minus, Plus, ShoppingCart, Tag } from "lucide-react";
+import { Award, ListPlus, LogIn, Minus, Plus, ShoppingCart, Tag } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -144,14 +144,26 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
                   Buy more and save
                 </div>
               ) : null}
-              <div className="flex items-end gap-1">
+              <div className="flex items-end gap-2">
                 <span className="text-3xl font-bold text-price">
                   {formatUSD(product.commerce!.price)}
                 </span>
+                {product.commerce!.wasPrice != null ? (
+                  <span className="pb-1 text-lg font-medium text-muted-foreground line-through">
+                    {formatUSD(product.commerce!.wasPrice)}
+                  </span>
+                ) : null}
                 <span className="pb-1 text-sm text-muted-foreground">
                   /{product.commerce!.uom}
                 </span>
               </div>
+              {product.commerce!.points ? (
+                <p className="flex items-center gap-1.5 text-sm font-medium text-in-stock">
+                  <Award className="size-4" />
+                  Earn {product.commerce!.points} point
+                  {product.commerce!.points === 1 ? "" : "s"}
+                </p>
+              ) : null}
             </div>
           ) : (
             <div className="text-2xl font-bold text-muted-foreground">

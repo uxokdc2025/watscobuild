@@ -880,6 +880,50 @@ const ucBundle: PdpProduct = {
   },
 };
 
+// ── Use case: Earning Points (CE Rewards points on purchase) ──
+const ucPoints: PdpProduct = {
+  slug: "uc-earning-points",
+  brand: "RCD Corporation®",
+  brandKey: "carrier",
+  useCase: "Earning Points",
+  store: { name: "Ybor City #2541" },
+  title: "RCD Corporation® - 106002 #6 Mastic® - 2 gal. Pail",
+  item: "RCD6-2GAL",
+  mfg: "106002",
+  thumbnailCount: 1,
+  description: {
+    intro:
+      "#6 Mastic water-based duct sealant, 2-gallon pail. Earns CE Rewards points on every purchase.",
+  },
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "General",
+      rows: [
+        { label: "Type", value: "Water-Based Duct Mastic" },
+        { label: "Container", value: "2 gal. Pail" },
+        { label: "Color", value: "Gray" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Application",
+      rows: [
+        { label: "Use", value: "Duct Sealing" },
+        { label: "Coverage", value: "~110 lb/gal solids" },
+      ],
+    },
+  ],
+  commerce: {
+    price: 44.9,
+    uom: "EACH",
+    points: 1,
+    yourBranch: { name: "Ybor City #2541", stock: 26 },
+    nearbyBranches: [{ qty: 58, name: "Other Branches" }],
+  },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -893,6 +937,7 @@ export const pdps: PdpProduct[] = [
   ucAhri,
   ucPackSize,
   ucBundle,
+  ucPoints,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {

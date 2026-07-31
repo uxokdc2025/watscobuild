@@ -71,6 +71,10 @@ export type PdpCommerce = {
   nearbyBranches?: Branch[];
   /** Shown instead of branch inventory when fulfillment is call-based (Homans). */
   fulfillmentNote?: string;
+  /** CE Rewards points earned on purchase — shows an "Earn N points" line. */
+  points?: number;
+  /** Original price for strike-through ("was") pricing. */
+  wasPrice?: number;
 };
 
 export type PdpProduct = {
