@@ -966,6 +966,49 @@ const ucNonSellable: PdpProduct = {
   ],
 };
 
+// ── Use case: Requires License (EPA 608 refrigerant purchase gate) ──
+const ucLicense: PdpProduct = {
+  slug: "uc-requires-license",
+  brand: "Chemours",
+  brandKey: "baker",
+  useCase: "Requires License",
+  store: { name: "Baker Jacksonville #301" },
+  badges: [{ label: "License Required", tone: "soft", color: "amber" }],
+  title:
+    "Chemours - Freon™ HP62 (R-404A) 24 lb Disposable Cylinder Refrigerant (HFC)",
+  item: "D10118485",
+  mfg: "FCE1670",
+  thumbnailCount: 1,
+  images: [
+    "https://resource.bakerdist.com/is/image/Watscocom/freon_d10118485_article_1366804064532_en_normal?defaultImage=Baker_No_Image&qlt=80&resMode=sharp&op_usm=1.75%2C0.3%2C2%2C0&wid=700&hei=700",
+  ],
+  status: "requires-license",
+  description: {
+    intro:
+      "Freon™ HP62 (R-404A) HFC refrigerant, 24 lb disposable cylinder. A valid EPA Section 608 certification is required to purchase this item.",
+  },
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "Refrigerant",
+      rows: [
+        { label: "Type", value: "R-404A (HFC)" },
+        { label: "Net Weight", value: "24 lb" },
+        { label: "Container", value: "Disposable Cylinder" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Compliance",
+      rows: [
+        { label: "Purchase Gate", value: "EPA 608 Certification" },
+        { label: "ODP", value: "0" },
+      ],
+    },
+  ],
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -981,6 +1024,7 @@ export const pdps: PdpProduct[] = [
   ucBundle,
   ucPoints,
   ucNonSellable,
+  ucLicense,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {
