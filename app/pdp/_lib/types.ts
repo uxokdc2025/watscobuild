@@ -126,6 +126,8 @@ export type PdpProduct = {
   replacements?: SubstituteItem[];
   /** AHRI matched-system reference — renders a badge + "View System Details" link. */
   ahri?: { number: string };
+  /** Components included in a bundle ("Included In Bundle" section). */
+  bundleItems?: SubstituteItem[];
 };
 
 export function formatUSD(value: number): string {

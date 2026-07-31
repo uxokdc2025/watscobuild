@@ -821,6 +821,65 @@ const ucPackSize: PdpProduct = {
   },
 };
 
+// ── Use case: Bundle & $200 Rebate (promo badge + Included In Bundle) ──
+const ucBundle: PdpProduct = {
+  slug: "uc-bundle-rebate",
+  brand: "Bryant®",
+  brandKey: "carrier",
+  useCase: "Bundle & $200 Rebate",
+  store: { name: "Ybor City #2541" },
+  badges: [{ label: "$200 Instant Rebate", tone: "solid", color: "green" }],
+  title: "Bryant® - 5 Ton 16 SEER Straight Cool Bundle R-454B",
+  item: "CE-PA5-5-AC-D60",
+  mfg: "CE-PA5SAN56000W-PF5MNXD60L00",
+  thumbnailCount: 1,
+  description: {
+    intro:
+      "Matched 5-ton, 16 SEER2 straight-cool system bundle (R-454B) — condenser and fan coil sold together with a $200 instant rebate.",
+  },
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "System",
+      rows: [
+        { label: "Tonnage", value: "5 Ton" },
+        { label: "SEER2", value: "Up to 16" },
+        { label: "Refrigerant", value: "R-454B" },
+        { label: "Type", value: "Straight Cool" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Bundle",
+      rows: [
+        { label: "Condenser", value: "PA5SAN56000W" },
+        { label: "Fan Coil", value: "PF5MNXD60L00" },
+      ],
+    },
+  ],
+  bundleItems: [
+    {
+      id: "pa5san56000w",
+      title: "5 Ton Up to 16 SEER2 Air Conditioner Condenser Unit (R-454B)",
+      item: "PA5SAN56000W",
+      mfg: "PA5SAN56000W",
+    },
+    {
+      id: "pf5mnxd60l00",
+      title: "5 Ton Residential Fan Coil Multipoise R-454B (Aluminum Coil)",
+      item: "PF5MNXD60L00",
+      mfg: "PF5MNXD60L00",
+    },
+  ],
+  commerce: {
+    price: 6842.0,
+    uom: "EACH",
+    yourBranch: { name: "Ybor City #2541", stock: 3 },
+    nearbyBranches: [{ qty: 12, name: "Other Branches" }],
+  },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -833,6 +892,7 @@ export const pdps: PdpProduct[] = [
   ucReplacement,
   ucAhri,
   ucPackSize,
+  ucBundle,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {

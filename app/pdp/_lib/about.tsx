@@ -268,6 +268,37 @@ export function Replacements({ product }: { product: PdpProduct }) {
   );
 }
 
+/* ── Bundle components ("Included In Bundle") ── */
+export function BundleComponents({ product }: { product: PdpProduct }) {
+  if (!product.bundleItems?.length) return null;
+  return (
+    <section aria-label="Included in bundle" className="flex flex-col gap-3">
+      <h2 className="text-lg font-bold tracking-tight">Included In Bundle</h2>
+      <div className="overflow-hidden rounded-lg border bg-muted/30">
+        {product.bundleItems.map((s, i) => (
+          <div
+            key={s.id}
+            className={`grid grid-cols-[2rem_3.5rem_1fr] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+          >
+            <span className="text-sm font-semibold text-muted-foreground">1 &times;</span>
+            <div className="size-14">
+              <ProductThumb src={s.image} alt={s.title} />
+            </div>
+            <div>
+              <a href="#" className="text-sm font-semibold text-primary hover:underline">
+                {s.title}
+              </a>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Item: {s.item} &nbsp; MFR: {s.mfg}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* ── Recently Viewed ── */
 function RvCard({ item }: { item: PartItem }) {
   return (
