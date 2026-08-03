@@ -945,6 +945,7 @@ const ucPackSize: PdpProduct = {
   item: "97087",
   mfg: "97087",
   thumbnailCount: 1,
+  images: ["/uc/safe-t-switch.png"],
   description: {
     intro:
       "Shut-off switch for primary drain pan auxiliary outlet, Safe-T-Switch Model SS2, detects clogged A/C condensate drains and shuts off system to prevent water damage.",
