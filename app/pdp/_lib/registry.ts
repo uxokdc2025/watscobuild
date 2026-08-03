@@ -1094,6 +1094,19 @@ const ucBundle: PdpProduct = {
     yourBranch: { name: "Ybor City #2541", stock: 3 },
     nearbyBranches: [{ qty: 12, name: "Other Branches" }],
   },
+  fbt: [
+    {
+      label: "Best Sellers",
+      items: [
+        { id: "gf-20x20", title: "Glasfloss® - 20X20X1 Z-Line Standard Capacity Pleated Filter", item: "20X20X1PL40", mfg: "ZLP20201", price: 5.0, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "protreat-217", title: "DiversiTech® - Pro-Treat® 217 Economy Drain Pan Treatment - 200 Tablets/Jar", item: "PROTREAT-217", mfg: "PROTREAT-217", image: ceImg("diveristech_protreat-217_article_1375441858969"), price: 38.35, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "ws-1", title: "DiversiTech® - Wet Switch® Flood Detector", item: "WS-1", mfg: "WS-1", image: ceImg("diversitech_ws-1_article_1375441866006"), price: 120.8, points: 2, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "vinyl-7-38", title: 'DiversiTech® - Clear Vinyl Tube 3/8" ID x 100\'', item: "7-38", mfg: "7-38", image: ceImg("diversitech_7-38_article_1375441866577"), price: 62.1, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "ag-1200", title: "Aquaguard® - Magnetic Float Switch", item: "AG-1200", mfg: "96106", image: ceImg("aquaguard_96106_article_1389111991993"), price: 24.8, points: 1, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-p-705", title: "VIVE™ - 5+1+1 Large Screen Programmable Thermostat 1H/1C", item: "TP-P-705", mfg: "TP-P-705", image: ceImg("vive_tp-p-705color_article_1402659513167"), price: 57.0, points: 1, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+      ],
+    },
+  ],
 };
 
 // ── Use case: Earning Points (CE Rewards points on purchase) ──
