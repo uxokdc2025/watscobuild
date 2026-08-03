@@ -1128,23 +1128,21 @@ const ucPoints: PdpProduct = {
     intro:
       "#6 Mastic water-based duct sealant, 2-gallon pail. Earns CE Rewards points on every purchase.",
   },
+  detailsStyle: "about",
   specTabLabel: "Specifications",
-  specGroupsLeft: [
+  specGroupsLeft: [],
+  specGroupsRight: [],
+  productSpecs: [
     {
-      title: "General",
+      title: "Attributes",
       rows: [
-        { label: "Type", value: "Water-Based Duct Mastic" },
+        { label: "Brand", value: "RCD Corporation®" },
+        { label: "Type", value: "Water-Based Duct Mastic (#6 Mastic®)" },
         { label: "Container", value: "2 gal. Pail" },
         { label: "Color", value: "Gray" },
-      ],
-    },
-  ],
-  specGroupsRight: [
-    {
-      title: "Application",
-      rows: [
-        { label: "Use", value: "Duct Sealing" },
+        { label: "Application", value: "Duct Sealing" },
         { label: "Coverage", value: "~110 lb/gal solids" },
+        { label: "VOC Compliant", value: "Yes" },
       ],
     },
   ],
