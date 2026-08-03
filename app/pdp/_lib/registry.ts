@@ -1037,6 +1037,7 @@ const ucBundle: PdpProduct = {
   brandKey: "carrier",
   useCase: "Bundle & $200 Rebate",
   sourceUrl: "https://www.carrierenterprise.com/product/1604089267071832",
+  rebate: "Up to $200 rebate",
   store: { name: "Ybor City #2541" },
   badges: [{ label: "$200 Instant Rebate", tone: "solid", color: "green" }],
   title: "Bryant® - 5 Ton 16 SEER Straight Cool Bundle R-454B",

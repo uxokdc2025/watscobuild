@@ -145,6 +145,8 @@ export type PdpProduct = {
   customersAlsoPurchased?: FbtProduct[];
   /** Render the "No Image Available" placeholder instead of the hatched box. */
   noImage?: boolean;
+  /** Promo rebate message shown near the buy box (e.g. "Up to $200 rebate"). */
+  rebate?: string;
 };
 
 export function formatUSD(value: number): string {

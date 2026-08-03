@@ -10,9 +10,8 @@ import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
 
 /** Per-brand page canvas (some sites use a light-grey background, not white). */
+// All PDP pages use a white canvas across every brand.
 const PAGE_BG: Record<string, string> = {
-  homans: "bg-brand-homans-bg",
-  carrier: "bg-brand-carrier-bg",
 };
 
 /** Fallback when a product has no mapped brand chrome. */
@@ -87,27 +86,19 @@ export function Pdp({
                 product={summaryProduct}
                 showCompare={brand?.hasCompare ?? false}
               />
-              {/* Replacement products sit in the summary column (where the
-                  status callout used to be) when the item is replaced. */}
+              {/* New pattern: bundles + recommendations all sit under the buy
+                  box, in the summary column. */}
               {product.replacements?.length ? (
                 <Replacements product={product} />
               ) : null}
+              {product.bundleItems?.length ? (
+                <BundleComponents product={product} />
+              ) : null}
+              {product.substitutes?.length ? (
+                <Substitutes product={product} />
+              ) : null}
             </div>
           </div>
-
-          {/* Included in bundle — directly under the summary */}
-          {product.bundleItems?.length ? (
-            <div className="mt-10">
-              <BundleComponents product={product} />
-            </div>
-          ) : null}
-
-          {/* Substitutes — directly under the summary / Add to Cart */}
-          {product.substitutes?.length ? (
-            <div className="mt-10">
-              <Substitutes product={product} />
-            </div>
-          ) : null}
 
           {/* Frequently bought together (only if present) */}
           {product.fbt?.length ? (

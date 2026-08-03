@@ -214,16 +214,24 @@ export function Substitutes({ product }: { product: PdpProduct }) {
                 Item: {s.item} &nbsp; MFG: {s.mfg}
               </p>
             </div>
-            <div className="text-right">
-              {s.price != null ? (
-                <p className="text-sm">
-                  <span className="font-bold">{formatUSD(s.price)}</span>{" "}
-                  <span className="text-xs text-muted-foreground">/ EACH</span>
-                </p>
-              ) : null}
-              {s.points ? (
-                <p className="text-xs font-medium text-in-stock">Earn {s.points} points</p>
-              ) : null}
+            <div className="flex flex-col items-end gap-2 text-right">
+              <div>
+                {s.price != null ? (
+                  <p className="text-sm">
+                    <span className="font-bold">{formatUSD(s.price)}</span>{" "}
+                    <span className="text-xs text-muted-foreground">/ EACH</span>
+                  </p>
+                ) : null}
+                {s.points ? (
+                  <p className="text-xs font-medium text-in-stock">Earn {s.points} points</p>
+                ) : null}
+              </div>
+              <a
+                href="#"
+                className="rounded-md border px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              >
+                View Product
+              </a>
             </div>
           </div>
         ))}
@@ -278,7 +286,7 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
         {product.bundleItems.map((s, i) => (
           <div
             key={s.id}
-            className={`grid grid-cols-[2rem_3.5rem_1fr] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+            className={`grid grid-cols-[1.5rem_3.5rem_1fr_auto] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
           >
             <span className="text-sm font-semibold text-muted-foreground">1 &times;</span>
             <div className="size-14">
@@ -292,6 +300,12 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
                 Item: {s.item} &nbsp; MFG: {s.mfg}
               </p>
             </div>
+            <a
+              href="#"
+              className="rounded-md border px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              View Product
+            </a>
           </div>
         ))}
       </div>
