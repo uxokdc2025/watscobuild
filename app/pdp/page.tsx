@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 
 import { getPdpSlugs, pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
@@ -123,6 +123,13 @@ export default function PdpMasterPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <a
+              href="#use-cases"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              <ArrowDown className="size-3.5" />
+              Use cases
+            </a>
             <Link
               href="/components"
               target="_blank"
@@ -212,22 +219,31 @@ export default function PdpMasterPage() {
 
         {/* Use cases */}
         {useCases.length ? (
-          <>
-            <h2 className="mt-10 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-              Use cases · content patterns &amp; new badges
+          <section id="use-cases" className="scroll-mt-6">
+            {/* Noticeable divider */}
+            <div className="mt-12 flex items-center gap-4" aria-hidden>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/40" />
+              <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                Use Cases
+              </span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/40" />
+            </div>
+            <h2 className="mt-6 text-lg font-bold tracking-tight">
+              Content patterns &amp; new badges
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
               One PDP per pattern — each demonstrates a specific state or badge
               (Replacement, AHRI matched system, pack size, bundle &amp; rebate,
-              points, non-sellable, requires-license, strike-thru pricing). Built
-              and reviewed one at a time.
+              points, non-sellable, requires-license, strike-thru pricing). Open
+              ours (signed in) next to the <span className="font-medium text-foreground">reference</span>{" "}
+              link to compare.
             </p>
-            <ul className="mt-3 flex flex-col gap-3">
+            <ul className="mt-4 flex flex-col gap-3">
               {useCases.map((p) => (
                 <TemplateCard key={p.slug} p={p} signedInOnly />
               ))}
             </ul>
-          </>
+          </section>
         ) : null}
 
         {/* Descoped */}
