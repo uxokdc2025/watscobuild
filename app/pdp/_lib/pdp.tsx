@@ -82,15 +82,15 @@ export function Pdp({
               alt={product.title}
               noImage={product.noImage}
             />
-            <PdpSummary product={summaryProduct} />
-          </div>
-
-          {/* Replacement products — directly under the summary when replaced */}
-          {product.replacements?.length ? (
-            <div className="mt-10">
-              <Replacements product={product} />
+            <div className="flex flex-col gap-6">
+              <PdpSummary product={summaryProduct} />
+              {/* Replacement products sit in the summary column (where the
+                  status callout used to be) when the item is replaced. */}
+              {product.replacements?.length ? (
+                <Replacements product={product} />
+              ) : null}
             </div>
-          ) : null}
+          </div>
 
           {/* Included in bundle — directly under the summary */}
           {product.bundleItems?.length ? (

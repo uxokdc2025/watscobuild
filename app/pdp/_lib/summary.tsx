@@ -120,20 +120,21 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
       ) : null}
 
       {nonSellable ? (
-        <div className="rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
-          <p className="font-semibold text-amber-800 dark:text-amber-300">
-            {product.status === "replaced"
-              ? "Replacement Product Available"
-              : product.status === "requires-license"
+        // "replaced" shows the Replacement Products section in its place (no box).
+        product.status === "replaced" ? null : (
+          <div className="rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
+            <p className="font-semibold text-amber-800 dark:text-amber-300">
+              {product.status === "requires-license"
                 ? "License Required"
                 : product.status === "discontinued"
                   ? "Discontinued"
                   : "Not Available for Purchase"}
-          </p>
-          <p className="mt-1 text-muted-foreground">
-            {STATUS_COPY[product.status!]}
-          </p>
-        </div>
+            </p>
+            <p className="mt-1 text-muted-foreground">
+              {STATUS_COPY[product.status!]}
+            </p>
+          </div>
+        )
       ) : showCommerce ? (
         <>
           {product.commerce!.price != null ? (
