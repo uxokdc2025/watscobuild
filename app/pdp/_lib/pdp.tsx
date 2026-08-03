@@ -83,7 +83,10 @@ export function Pdp({
               noImage={product.noImage}
             />
             <div className="flex flex-col gap-6">
-              <PdpSummary product={summaryProduct} />
+              <PdpSummary
+                product={summaryProduct}
+                showCompare={brand?.hasCompare ?? false}
+              />
               {/* Replacement products sit in the summary column (where the
                   status callout used to be) when the item is replaced. */}
               {product.replacements?.length ? (

@@ -187,9 +187,39 @@ function ProductDocumentation({
   );
 }
 
+function SimpleDocs({ documents }: { documents: PdpDocument[] }) {
+  return (
+    <div>
+      <h3 className="text-lg font-bold">Documents</h3>
+      <ul className="mt-3 flex flex-col gap-2.5">
+        {documents.map((d) => (
+          <li key={d.label}>
+            <a
+              href={d.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {d.kind === "video" ? (
+                <Video className="size-4 shrink-0" />
+              ) : (
+                <FileText className="size-4 shrink-0" />
+              )}
+              {d.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function PdpDetails({ product }: { product: PdpProduct }) {
   const hasParts = Boolean(product.parts?.length);
   const hasDocs = Boolean(product.documents?.length);
+  const docsInline = hasDocs && product.docsInline;
+  const docsTab = hasDocs && !product.docsInline;
+  const coming = product.comingSoonTabs ?? [];
 
   return (
     <Tabs defaultValue="description">
@@ -197,13 +227,25 @@ export function PdpDetails({ product }: { product: PdpProduct }) {
         <TabsTrigger value="description">Description</TabsTrigger>
         {hasParts ? <TabsTrigger value="parts">Part Lists</TabsTrigger> : null}
         <TabsTrigger value="specs">{product.specTabLabel}</TabsTrigger>
-        {hasDocs ? (
+        {docsTab ? (
           <TabsTrigger value="docs">Product Documentation</TabsTrigger>
         ) : null}
+        {coming.map((t, i) => (
+          <TabsTrigger key={t} value={`cs-${i}`}>
+            {t}
+          </TabsTrigger>
+        ))}
       </TabsList>
 
       <TabsContent value="description" className="pt-6">
-        <DescriptionBody description={product.description} />
+        {docsInline ? (
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_18rem]">
+            <DescriptionBody description={product.description} />
+            <SimpleDocs documents={product.documents!} />
+          </div>
+        ) : (
+          <DescriptionBody description={product.description} />
+        )}
       </TabsContent>
 
       {hasParts ? (
@@ -231,11 +273,19 @@ export function PdpDetails({ product }: { product: PdpProduct }) {
         )}
       </TabsContent>
 
-      {hasDocs ? (
+      {docsTab ? (
         <TabsContent value="docs" className="pt-6">
           <ProductDocumentation item={product.item} documents={product.documents!} />
         </TabsContent>
       ) : null}
+
+      {coming.map((t, i) => (
+        <TabsContent key={t} value={`cs-${i}`} className="pt-6">
+          <div className="rounded-md border px-6 py-5 text-sm text-muted-foreground">
+            No results found.
+          </div>
+        </TabsContent>
+      ))}
     </Tabs>
   );
 }

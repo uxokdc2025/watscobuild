@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, ShoppingCart } from "lucide-react";
+import { Info, ListPlus, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -203,7 +203,14 @@ function CapCard({ item }: { item: FbtProduct }) {
         {signedIn ? (
           <>
             {item.price != null ? (
-              <p className="text-lg font-bold">{formatUSD(item.price)}</p>
+              <p className="flex items-baseline gap-1.5">
+                <span className="text-lg font-bold">{formatUSD(item.price)}</span>
+                {item.wasPrice != null ? (
+                  <span className="text-xs text-muted-foreground line-through">
+                    {formatUSD(item.wasPrice)}
+                  </span>
+                ) : null}
+              </p>
             ) : null}
             <div className="text-xs leading-relaxed">
               <span className="font-medium text-in-stock">
@@ -218,6 +225,13 @@ function CapCard({ item }: { item: FbtProduct }) {
               <ShoppingCart className="size-4" />
               Add To Cart
             </Button>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-muted-foreground hover:text-foreground"
+            >
+              <ListPlus className="size-3.5" />
+              Save to List
+            </button>
           </>
         ) : (
           <a href="#" className="text-sm font-medium text-primary underline-offset-4 hover:underline">

@@ -67,14 +67,33 @@ function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
 
 function SaveToList() {
   return (
-    <Button variant="outline" size="lg" className="h-12">
-      <ListPlus />
+    <button
+      type="button"
+      className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+    >
+      <ListPlus className="size-4" />
       Save to List
-    </Button>
+    </button>
   );
 }
 
-export function PdpSummary({ product }: { product: PdpProduct }) {
+/** Save to List + (optional) Compare — both links, Save to List first. */
+function SecondaryActions({ showCompare }: { showCompare: boolean }) {
+  return (
+    <div className="-ml-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+      <SaveToList />
+      {showCompare ? <CompareButton /> : null}
+    </div>
+  );
+}
+
+export function PdpSummary({
+  product,
+  showCompare = false,
+}: {
+  product: PdpProduct;
+  showCompare?: boolean;
+}) {
   const { signedIn } = useAuth();
   const nonSellable = product.status != null;
   const showCommerce = signedIn && product.commerce && !nonSellable;
@@ -207,9 +226,8 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
                 <ShoppingCart />
                 Add to Cart
               </Button>
-              <SaveToList />
             </div>
-            <CompareButton className="-ml-1 self-start" />
+            <SecondaryActions showCompare={showCompare} />
           </div>
         </>
       ) : (
@@ -221,14 +239,11 @@ export function PdpSummary({ product }: { product: PdpProduct }) {
             </a>
             <span className="text-muted-foreground"> to view pricing and inventory.</span>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" className="h-12 flex-1 text-base">
-              <LogIn />
-              Sign in to view pricing
-            </Button>
-            <SaveToList />
-          </div>
-          <CompareButton className="-ml-1 self-start" />
+          <Button size="lg" className="h-12 w-full text-base">
+            <LogIn />
+            Sign in to view pricing
+          </Button>
+          <SecondaryActions showCompare={showCompare} />
         </>
       )}
     </div>

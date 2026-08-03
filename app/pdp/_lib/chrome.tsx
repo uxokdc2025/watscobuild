@@ -44,6 +44,8 @@ export type BrandChrome = {
   nav: string[];
   footerColumns: FooterColumn[];
   copyright: string;
+  /** Whether this BU's real site has the "Compare" product feature. */
+  hasCompare?: boolean;
 };
 
 /* ════════════════════════════════════════════════════════════════════════

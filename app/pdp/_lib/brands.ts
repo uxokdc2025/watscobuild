@@ -11,6 +11,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     key: "carrier",
     name: "Carrier Enterprise",
     accent: "#3d2762",
+    hasCompare: true,
     nav: [
       "Residential Equipment",
       "Commercial Equipment",

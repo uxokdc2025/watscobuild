@@ -32,6 +32,8 @@ export type FbtProduct = {
   pct?: number;
   /** Aggregated all-branches qty (East Coast style: "52 All Branches"). */
   allBranchesQty?: number;
+  /** Original price for strike-thru ("was" price). */
+  wasPrice?: number;
 };
 
 /** A related part shown in the "Parts" section (mini product card). */
@@ -112,6 +114,8 @@ export type PdpProduct = {
   fbt?: { label: string; items: FbtProduct[] }[];
   /** Documents shown at the bottom of the Description (literature, video). */
   documents?: PdpDocument[];
+  /** Render documents inside the Description tab (right column) vs a separate tab. */
+  docsInline?: boolean;
   /** Related parts shown in the "Parts" section. */
   parts?: PartItem[];
   /**
