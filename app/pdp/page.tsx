@@ -79,6 +79,17 @@ function TemplateCard({
           <ArrowUpRight className="size-3.5" />
         </Link>
       </div>
+      {p.sourceUrl ? (
+        <a
+          href={p.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={p.sourceUrl}
+          className="mt-2 block truncate font-mono text-xs text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+        >
+          ↗ reference: {p.sourceUrl.replace(/^https?:\/\/(www\.)?/, "")}
+        </a>
+      ) : null}
     </li>
   );
 }

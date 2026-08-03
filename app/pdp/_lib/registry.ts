@@ -680,6 +680,8 @@ const ucReplacement: PdpProduct = {
   brand: "AmRad",
   brandKey: "ecmdi",
   useCase: "Replacement Products",
+  sourceUrl:
+    "https://www.ecmdi.com/cab050400440ct-dual-round-capacitor-40-5-mfd-440v-366572a",
   store: { name: "Durham NC #1" },
   badges: [
     { label: "Replacement Product Available", tone: "soft", color: "amber" },
@@ -732,6 +734,8 @@ const ucAhri: PdpProduct = {
   brand: "Goodman",
   brandKey: "ecmdi",
   useCase: "AHRI Matched System",
+  sourceUrl:
+    "https://www.ecmdi.com/glzs4b-series-3-1-2-ton-split-system-heat-pump-r-32-378798a",
   store: { name: "Durham NC #1" },
   badges: [{ label: "AHRI Matched System", tone: "soft", color: "blue" }],
   title: "GLZS4B Series 3-1/2 Ton Split System Heat Pump - 14.3 SEER2 - R-32",
@@ -781,6 +785,7 @@ const ucPackSize: PdpProduct = {
   brand: "RectorSeal",
   brandKey: "gemaire",
   useCase: "Pack Size",
+  sourceUrl: "https://www.gemaire.com/97087-safe-t-switch-ss2-97087",
   title: "Safe-T-Switch® SS2 - Condensate Overflow Shutoff Switch",
   item: "97087",
   mfg: "97087",
@@ -827,6 +832,7 @@ const ucBundle: PdpProduct = {
   brand: "Bryant®",
   brandKey: "carrier",
   useCase: "Bundle & $200 Rebate",
+  sourceUrl: "https://www.carrierenterprise.com/product/1604089267071832",
   store: { name: "Ybor City #2541" },
   badges: [{ label: "$200 Instant Rebate", tone: "solid", color: "green" }],
   title: "Bryant® - 5 Ton 16 SEER Straight Cool Bundle R-454B",
@@ -891,6 +897,7 @@ const ucPoints: PdpProduct = {
   brand: "RCD Corporation®",
   brandKey: "carrier",
   useCase: "Earning Points",
+  sourceUrl: "https://www.carrierenterprise.com/product/1433770785444",
   store: { name: "Ybor City #2541" },
   title: "RCD Corporation® - 106002 #6 Mastic® - 2 gal. Pail",
   item: "RCD6-2GAL",
@@ -938,6 +945,8 @@ const ucNonSellable: PdpProduct = {
   brand: "Empire",
   brandKey: "peirce",
   useCase: "Non-Sellable",
+  sourceUrl:
+    "https://www.peirce.com/9-in-true-blue-professional-torpedo-level--d10e885",
   store: { name: "Norristown, PA" },
   badges: [{ label: "Non-Sellable", tone: "soft", color: "slate" }],
   title: "9 in. True Blue Professional Torpedo Level",
@@ -980,6 +989,8 @@ const ucLicense: PdpProduct = {
   brand: "Chemours",
   brandKey: "baker",
   useCase: "Requires License",
+  sourceUrl:
+    "https://www.bakerdist.com/chemours-d10118485-freon-hp62-r-404a-24-lb-disposable-package-refrigerant-hfc---fce1670",
   store: { name: "Baker Jacksonville #301" },
   badges: [{ label: "License Required", tone: "soft", color: "amber" }],
   title:
@@ -1023,6 +1034,8 @@ const ucStrikeThru: PdpProduct = {
   brand: "CIRRA",
   brandKey: "ecmdi",
   useCase: "Strike-thru Pricing",
+  sourceUrl:
+    "https://www.ecmdi.com/cirra-series-2-port-high-efficiency-multi-split-outdoor-heat-pump-18-000-btu-361067a",
   store: { name: "Durham NC #1" },
   badges: [{ label: "Sale", tone: "solid", color: "red" }],
   title:
