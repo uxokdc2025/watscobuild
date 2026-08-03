@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Award, ListPlus, LogIn, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Award, Info, ListPlus, LogIn, Minus, Plus, ShoppingCart } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -95,14 +95,22 @@ export function PdpSummary({
   showCompare?: boolean;
 }) {
   const { signedIn } = useAuth();
-  const nonSellable = product.status != null;
-  const showCommerce = signedIn && product.commerce && !nonSellable;
-  const STATUS_COPY: Record<string, string> = {
-    replaced: "This item has been replaced. See the replacement product below.",
-    discontinued: "This item has been discontinued and is no longer available.",
-    "non-sellable": "This item is not available for online purchase.",
-    "requires-license": "A valid license is required to purchase this item.",
-  };
+  // ── Buy-box VALUE HIERARCHY (see project_pdp_value_hierarchy memory) ──
+  // Any price- or product-value message (rebate, sale, points, was-price)
+  // belongs in the high-value zone: the solid badge row up top or the price
+  // cluster — never demoted to a muted callout below the branch cards.
+  //
+  // Status taxonomy:
+  //  - blocksPurchase  → item can't be transacted online: hide price + cart,
+  //    show a status callout (red = hard stop for non-sellable).
+  //  - requires-license → fully purchasable once licensed: keep full commerce
+  //    and surface an amber info banner above the price cluster.
+  const blocksPurchase =
+    product.status === "non-sellable" ||
+    product.status === "replaced" ||
+    product.status === "discontinued";
+  const licenseGated = product.status === "requires-license";
+  const showCommerce = signedIn && product.commerce && !blocksPurchase;
 
   return (
     <div className="flex flex-col gap-4">
@@ -138,25 +146,56 @@ export function PdpSummary({
         </div>
       ) : null}
 
-      {nonSellable ? (
-        // "replaced" shows the Replacement Products section in its place (no box).
+      {blocksPurchase ? (
+        // "replaced" hands its column to the Replacement Products section (no box).
         product.status === "replaced" ? null : (
-          <div className="rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
-            <p className="font-semibold text-amber-800 dark:text-amber-300">
-              {product.status === "requires-license"
-                ? "License Required"
-                : product.status === "discontinued"
-                  ? "Discontinued"
-                  : "Not Available for Purchase"}
+          <div
+            className={cn(
+              "rounded-lg border p-4 text-sm",
+              product.status === "non-sellable"
+                ? "border-red-500/40 bg-red-50 dark:bg-red-950/30"
+                : "border-amber-500/40 bg-amber-50 dark:bg-amber-950/30",
+            )}
+          >
+            <p
+              className={cn(
+                "font-semibold",
+                product.status === "non-sellable"
+                  ? "text-red-700 dark:text-red-300"
+                  : "text-amber-800 dark:text-amber-300",
+              )}
+            >
+              {product.status === "discontinued"
+                ? "Discontinued"
+                : "Not Available for Purchase"}
             </p>
             <p className="mt-1 text-muted-foreground">
-              {STATUS_COPY[product.status!]}
+              {product.status === "discontinued"
+                ? "This item has been discontinued and is no longer available."
+                : "This item is not available for online purchase."}
             </p>
           </div>
         )
-      ) : showCommerce ? (
+      ) : (
         <>
-          {product.commerce!.price != null ? (
+          {/* License gate: purchasable once licensed — banner, not a block. */}
+          {licenseGated ? (
+            <div className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
+              <Info className="mt-0.5 size-4 shrink-0 text-amber-700 dark:text-amber-300" />
+              <div>
+                <p className="font-semibold text-amber-800 dark:text-amber-300">
+                  License Required
+                </p>
+                <p className="mt-0.5 text-muted-foreground">
+                  A valid license is required to purchase this item.
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {showCommerce ? (
+            <>
+              {product.commerce!.price != null ? (
             <div className="flex flex-col gap-1.5">
               <div className="flex items-end gap-2">
                 <span className="text-3xl font-bold text-price">
@@ -208,12 +247,6 @@ export function PdpSummary({
             </div>
           ) : null}
 
-          {product.rebate ? (
-            <div className="rounded-md border border-amber-500/40 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
-              {product.rebate}
-            </div>
-          ) : null}
-
           <div className="flex flex-col gap-2">
             <span className="text-sm font-medium">Quantity</span>
             <div className="flex items-stretch gap-3">
@@ -244,6 +277,8 @@ export function PdpSummary({
             Sign in to view pricing
           </Button>
           <SecondaryActions showCompare={showCompare} />
+        </>
+          )}
         </>
       )}
     </div>

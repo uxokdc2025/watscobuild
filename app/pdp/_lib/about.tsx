@@ -67,6 +67,28 @@ function ProductInfo({ product }: { product: PdpProduct }) {
             ))}
           </ul>
         ) : null}
+        {product.description.prop65 ? (
+          <div className="mt-4 flex items-start gap-3 text-sm text-muted-foreground">
+            <span className="grid shrink-0 place-items-center rounded border border-amber-500 px-1.5 py-1 text-[10px] leading-tight font-bold text-amber-600">
+              PROP
+              <br />
+              65
+            </span>
+            <p>
+              <span className="font-semibold text-foreground">Warning:</span> this
+              product contains a chemical known to the State of California to cause
+              cancer.{" "}
+              <a
+                href="https://www.p65warnings.ca.gov"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                P65Warnings.ca.gov
+              </a>
+            </p>
+          </div>
+        ) : null}
       </div>
       <div>
         <h3 className="text-lg font-bold">Specifications</h3>
@@ -156,6 +178,8 @@ function EmptyState({ label }: { label: string }) {
 
 export function AboutThisProduct({ product }: { product: PdpProduct }) {
   const hasDocs = Boolean(product.documents?.length);
+  // A bundle swaps the Part List / Where Used tabs for a Bundle Components tab.
+  const isBundle = Boolean(product.bundleItems?.length);
   return (
     <section aria-label="About this product" className="flex flex-col gap-4">
       <h2 className="text-2xl font-bold tracking-tight">About This Product</h2>
@@ -163,8 +187,14 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
         <TabsList variant="line">
           <TabsTrigger value="info">Product Info</TabsTrigger>
           {hasDocs ? <TabsTrigger value="docs">Documents</TabsTrigger> : null}
-          <TabsTrigger value="parts">Part List</TabsTrigger>
-          <TabsTrigger value="where">Where Used</TabsTrigger>
+          {isBundle ? (
+            <TabsTrigger value="bundle">Bundle Components</TabsTrigger>
+          ) : (
+            <>
+              <TabsTrigger value="parts">Part List</TabsTrigger>
+              <TabsTrigger value="where">Where Used</TabsTrigger>
+            </>
+          )}
         </TabsList>
 
         <TabsContent value="info" className="pt-6">
@@ -175,12 +205,42 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
             <Documents documents={product.documents!} />
           </TabsContent>
         ) : null}
-        <TabsContent value="parts" className="pt-6">
-          <EmptyState label="No models found." />
-        </TabsContent>
-        <TabsContent value="where" className="pt-6">
-          <EmptyState label="No results found." />
-        </TabsContent>
+        {isBundle ? (
+          <TabsContent value="bundle" className="pt-6">
+            <div className="overflow-hidden rounded-lg border">
+              {product.bundleItems!.map((s, i) => (
+                <div
+                  key={s.id}
+                  className={`grid grid-cols-[1.5rem_3.5rem_1fr] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+                >
+                  <span className="text-sm font-semibold text-muted-foreground">
+                    1 &times;
+                  </span>
+                  <div className="size-14">
+                    <ProductThumb src={s.image} alt={s.title} />
+                  </div>
+                  <div>
+                    <a href="#" className="text-sm font-semibold text-primary hover:underline">
+                      {s.title}
+                    </a>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Item: {s.item} &nbsp; MFG: {s.mfg}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+        ) : (
+          <>
+            <TabsContent value="parts" className="pt-6">
+              <EmptyState label="No models found." />
+            </TabsContent>
+            <TabsContent value="where" className="pt-6">
+              <EmptyState label="No results found." />
+            </TabsContent>
+          </>
+        )}
       </Tabs>
     </section>
   );

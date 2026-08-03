@@ -1037,7 +1037,6 @@ const ucBundle: PdpProduct = {
   brandKey: "carrier",
   useCase: "Bundle & $200 Rebate",
   sourceUrl: "https://www.carrierenterprise.com/product/1604089267071832",
-  rebate: "Up to $200 rebate",
   store: { name: "Ybor City #2541" },
   badges: [{ label: "$200 Instant Rebate", tone: "solid", color: "green" }],
   title: "Bryant® - 5 Ton 16 SEER Straight Cool Bundle R-454B",
@@ -1048,27 +1047,24 @@ const ucBundle: PdpProduct = {
     "https://resource.carrierenterprise.com/is/image/Watscocom/payne_pa5san56000w_article_1604089257073958_en_normal?wid=700&hei=700&qlt=80",
   ],
   description: {
-    intro:
-      "Matched 5-ton, 16 SEER2 straight-cool system bundle (R-454B) — condenser and fan coil sold together with a $200 instant rebate.",
+    intro: "Bryant® - 5 Ton 16 SEER Straight Cool Bundle R-454B",
+    prop65: true,
   },
+  detailsStyle: "about",
   specTabLabel: "Specifications",
-  specGroupsLeft: [
+  specGroupsLeft: [],
+  specGroupsRight: [],
+  productSpecs: [
     {
-      title: "System",
+      title: "Attributes",
       rows: [
-        { label: "Tonnage", value: "5 Ton" },
-        { label: "SEER2", value: "Up to 16" },
+        { label: "Brand", value: "Bryant®" },
+        { label: "Country of Origin", value: "Varies" },
+        { label: "Prop 65", value: "YES" },
         { label: "Refrigerant", value: "R-454B" },
-        { label: "Type", value: "Straight Cool" },
-      ],
-    },
-  ],
-  specGroupsRight: [
-    {
-      title: "Bundle",
-      rows: [
-        { label: "Condenser", value: "PA5SAN56000W" },
-        { label: "Fan Coil", value: "PF5MNXD60L00" },
+        { label: "SEER2", value: "16" },
+        { label: "Tonnage", value: "5" },
+        { label: "Voltage", value: "208-230 VAC" },
       ],
     },
   ],
@@ -1086,6 +1082,7 @@ const ucBundle: PdpProduct = {
       title: "5 Ton Residential Fan Coil Multipoise R-454B (Aluminum Coil)",
       item: "PF5MNXD60L00",
       mfg: "PF5MNXD60L00",
+      image: "/uc/fancoil-pf5mnx.avif",
     },
   ],
   commerce: {
@@ -1098,7 +1095,7 @@ const ucBundle: PdpProduct = {
     {
       label: "Best Sellers",
       items: [
-        { id: "gf-20x20", title: "Glasfloss® - 20X20X1 Z-Line Standard Capacity Pleated Filter", item: "20X20X1PL40", mfg: "ZLP20201", price: 5.0, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "gf-20x20", title: "Glasfloss® - 20X20X1 Z-Line Standard Capacity Pleated Filter", item: "20X20X1PL40", mfg: "ZLP20201", image: "/uc/glasfloss.avif", price: 5.0, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
         { id: "protreat-217", title: "DiversiTech® - Pro-Treat® 217 Economy Drain Pan Treatment - 200 Tablets/Jar", item: "PROTREAT-217", mfg: "PROTREAT-217", image: ceImg("diveristech_protreat-217_article_1375441858969"), price: 38.35, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
         { id: "ws-1", title: "DiversiTech® - Wet Switch® Flood Detector", item: "WS-1", mfg: "WS-1", image: ceImg("diversitech_ws-1_article_1375441866006"), price: 120.8, points: 2, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
         { id: "vinyl-7-38", title: 'DiversiTech® - Clear Vinyl Tube 3/8" ID x 100\'', item: "7-38", mfg: "7-38", image: ceImg("diversitech_7-38_article_1375441866577"), price: 62.1, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
@@ -1106,6 +1103,14 @@ const ucBundle: PdpProduct = {
         { id: "tp-p-705", title: "VIVE™ - 5+1+1 Large Screen Programmable Thermostat 1H/1C", item: "TP-P-705", mfg: "TP-P-705", image: ceImg("vive_tp-p-705color_article_1402659513167"), price: 57.0, points: 1, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
       ],
     },
+    { label: "Pads Mounts & Blocks", items: [] },
+    { label: "Electric Heaters", items: [] },
+    { label: "Line Sets & Copper", items: [] },
+    { label: "IAQ", items: [] },
+    { label: "Disconnects & Whips", items: [] },
+    { label: "Condensate Management", items: [] },
+    { label: "Thermostats & Zone Controls", items: [] },
+    { label: "Other", items: [] },
   ],
 };
 
@@ -1134,15 +1139,22 @@ const ucPoints: PdpProduct = {
   specGroupsRight: [],
   productSpecs: [
     {
+      title: "Dimensions",
+      rows: [
+        { label: "Length", value: "9.75 inches (in)" },
+        { label: "Width", value: "9.75 inches (in)" },
+        { label: "Height", value: "9.25 inches (in)" },
+        { label: "Weight", value: "23.16 pounds (lbs)" },
+      ],
+    },
+    {
       title: "Attributes",
       rows: [
+        { label: "Application Temperature", value: "38°F to 120°F (3.33°C to 48.89°C)" },
+        { label: "Approvals", value: "UL Listed" },
         { label: "Brand", value: "RCD Corporation®" },
-        { label: "Type", value: "Water-Based Duct Mastic (#6 Mastic®)" },
-        { label: "Container", value: "2 gal. Pail" },
-        { label: "Color", value: "Gray" },
-        { label: "Application", value: "Duct Sealing" },
-        { label: "Coverage", value: "~110 lb/gal solids" },
-        { label: "VOC Compliant", value: "Yes" },
+        { label: "Color", value: "White" },
+        { label: "Composition", value: "Fiber reinforced, water-borne, non-sagging, terpolymer dispersion" },
       ],
     },
   ],
@@ -1153,6 +1165,23 @@ const ucPoints: PdpProduct = {
     yourBranch: { name: "Ybor City #2541", stock: 26 },
     nearbyBranches: [{ qty: 58, name: "Other Branches" }],
   },
+  fbt: [
+    {
+      label: "Best Sellers",
+      items: [
+        { id: "tp-b21-2", title: 'TRADEPRO® - 2-1/2" Chip Brush', item: "TP-B21/2", mfg: "TP-B21/2", price: 0.7, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-acb2", title: 'TRADEPRO® - 2" Chip/Mastic Brush', item: "TP-ACB2", mfg: "TP-ACB2", price: 2.1, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "tp-b3", title: 'TRADEPRO® - 3" Chip Brush', item: "TP-B3", mfg: "TP-B3", price: 0.8, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "fcl12", title: 'Miami Tech - FCL12 12" Tab Collars for Fiberglass - R-4 or R-6', item: "FCL12", mfg: "FCL12", price: 2.9, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "fcl16", title: 'Miami Tech - FCL16 16" Tab Collars for Fiberglass - R-4 or R-6', item: "FCL16", mfg: "FCL16", price: 4.0, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "fcl10", title: 'Miami Tech - FCL10 10" Tab Collars for Fiberglass - R-4 or R-6', item: "FCL10", mfg: "FCL10", price: 2.3, branchQty: 0, branchName: "", nearbyQty: 0, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+      ],
+    },
+    { label: "Tools and Instruments", items: [] },
+    { label: "Air Distribution", items: [] },
+    { label: "Installation and Maintenance Supplies", items: [] },
+    { label: "Electrical", items: [] },
+  ],
 };
 
 // ── Use case: Non-Sellable (not available for online purchase) ──
@@ -1164,7 +1193,7 @@ const ucNonSellable: PdpProduct = {
   sourceUrl:
     "https://www.peirce.com/9-in-true-blue-professional-torpedo-level--d10e885",
   store: { name: "Norristown, PA" },
-  badges: [{ label: "Non-Sellable", tone: "soft", color: "slate" }],
+  badges: [{ label: "Non-Sellable", tone: "soft", color: "red" }],
   title: "9 in. True Blue Professional Torpedo Level",
   item: "EM819G",
   mfg: "EM81.9G",
@@ -1211,8 +1240,8 @@ const ucLicense: PdpProduct = {
   badges: [{ label: "License Required", tone: "soft", color: "amber" }],
   title:
     "Chemours - Freon™ HP62 (R-404A) 24 lb Disposable Cylinder Refrigerant (HFC)",
-  item: "D10118485",
-  mfg: "FCE1670",
+  item: "HP6224",
+  mfg: "D10118485",
   thumbnailCount: 1,
   images: [
     "https://resource.bakerdist.com/is/image/Watscocom/freon_d10118485_article_1366804064532_en_normal?defaultImage=Baker_No_Image&qlt=80&resMode=sharp&op_usm=1.75%2C0.3%2C2%2C0&wid=700&hei=700",
@@ -1222,6 +1251,57 @@ const ucLicense: PdpProduct = {
     intro:
       "Freon™ HP62 (R-404A) HFC refrigerant, 24 lb disposable cylinder. A valid EPA Section 608 certification is required to purchase this item.",
   },
+  commerce: {
+    price: 384.0,
+    uom: "CL",
+    yourBranch: { name: "Baker Jacksonville #301", stock: 11112 },
+    nearbyBranches: [
+      { qty: 504, name: "Baker Orange Park #358" },
+      { qty: 120, name: "Baker Jacksonville #314" },
+      { qty: 144, name: "Baker St Augustine #367" },
+      { qty: 312, name: "Baker/FCS Jax #306" },
+    ],
+  },
+  fbt: [
+    {
+      label: "Frequently Bought Together",
+      items: [
+        {
+          id: "d10363114",
+          brand: "Freon™",
+          title: "Chemours - D10363114 - Freon™ 9100 (R-410A) 25-lb. Disposable",
+          item: "D10363114",
+          mfg: "D10363114",
+          price: 225.75,
+          branchQty: 62,
+          branchName: "Baker Jacksonville #301",
+          nearbyQty: 4,
+        },
+        {
+          id: "40nic",
+          brand: "Varies",
+          title: "Tmg Co. - 40NIC - Industrial Nitrogen 40 Contents Only",
+          item: "40NIC",
+          mfg: "40NIC",
+          price: 16.79,
+          branchQty: 8,
+          branchName: "Baker Jacksonville #301",
+          nearbyQty: 53,
+        },
+        {
+          id: "10acic",
+          brand: "Varies",
+          title: "Tmg Co. - 10ACIC - Acetylene (C2H2) Contents Only",
+          item: "10ACIC",
+          mfg: "10ACIC",
+          price: 26.62,
+          branchQty: 9,
+          branchName: "Baker Jacksonville #301",
+          nearbyQty: 103,
+        },
+      ],
+    },
+  ],
   specTabLabel: "Specifications",
   specGroupsLeft: [
     {
@@ -1247,7 +1327,7 @@ const ucLicense: PdpProduct = {
 // ── Use case: Strike-thru Pricing (sale — was / now) ──
 const ucStrikeThru: PdpProduct = {
   slug: "uc-strike-thru",
-  brand: "CIRRA",
+  brand: "Daikin",
   brandKey: "ecmdi",
   useCase: "Strike-thru Pricing",
   sourceUrl:
@@ -1287,12 +1367,73 @@ const ucStrikeThru: PdpProduct = {
     },
   ],
   commerce: {
-    price: 1349.0,
-    wasPrice: 1599.0,
+    price: 300.0,
+    wasPrice: 1684.1,
     uom: "EACH",
-    yourBranch: { name: "Durham NC #1", stock: 5 },
-    nearbyBranches: [{ qty: 14, name: "Raleigh NC #5" }],
+    yourBranch: { name: "Durham NC #1", stock: 0 },
+    nearbyBranches: [
+      { qty: 0, name: "Raleigh NC #5" },
+      { qty: 0, name: "Greensboro NC #6" },
+      { qty: 3, name: "Fayetteville NC #38" },
+      { qty: 0, name: "Aberdeen NC #39" },
+    ],
   },
+  customersAlsoPurchased: [
+    {
+      id: "cl-79606",
+      brand: "Cambridge-Lee",
+      title:
+        '1/4" x 3/8" x 50\' Mini-Split Lineset - 1/2" Insulation and Flare Fittings',
+      item: "79606",
+      mfg: "366396",
+      pct: 25,
+      price: 274.14,
+      wasPrice: 660.29,
+      branchQty: 21,
+      branchName: "Durham NC #1",
+      nearbyQty: 286,
+      allBranchesQty: 286,
+    },
+    {
+      id: "dt-277028a",
+      brand: "DiversiTech®",
+      title: '18" x 38" x 3" E-Lite® Plastic Equipment Pad',
+      item: "277028A",
+      mfg: "EL1838-3",
+      pct: 25,
+      price: 36.9,
+      branchQty: 60,
+      branchName: "Durham NC #1",
+      nearbyQty: 1425,
+      allBranchesQty: 1425,
+    },
+    {
+      id: "dt-197214a",
+      brand: "DiversiTech®",
+      title: 'Nylon Adapter - 3/8" Barb x 3/4" MPT',
+      item: "197214A",
+      mfg: "701-043",
+      pct: 10,
+      price: 5.26,
+      branchQty: 28,
+      branchName: "Durham NC #1",
+      nearbyQty: 423,
+      allBranchesQty: 423,
+    },
+    {
+      id: "intermatic-288543a",
+      brand: "Intermatic",
+      title: "HVAC Surge Protector - 120/240 VAC",
+      item: "288543A",
+      mfg: "AG3000",
+      pct: 10,
+      price: 97.75,
+      branchQty: 9,
+      branchName: "Durham NC #1",
+      nearbyQty: 244,
+      allBranchesQty: 244,
+    },
+  ],
 };
 
 export const pdps: PdpProduct[] = [

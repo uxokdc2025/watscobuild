@@ -133,6 +133,13 @@ function FbtCard({ item }: { item: FbtProduct }) {
 }
 
 function FbtRail({ items }: { items: FbtProduct[] }) {
+  if (!items.length) {
+    return (
+      <div className="rounded-md border px-6 py-5 text-sm text-muted-foreground">
+        No featured products in this category.
+      </div>
+    );
+  }
   return (
     <Carousel opts={{ align: "start" }} className="mx-10">
       <CarouselContent>
