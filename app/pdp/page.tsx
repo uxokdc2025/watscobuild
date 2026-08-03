@@ -5,7 +5,6 @@ import { ArrowUpRight } from "lucide-react";
 import { getPdpSlugs, pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { OpenAllButton } from "./_lib/open-all";
-import { OpenQuestions } from "./_lib/open-questions";
 import { BRANDS } from "./_lib/brands";
 
 export const metadata: Metadata = {
@@ -19,9 +18,11 @@ const IN_SCOPE = ["ecmdi", "baker", "homans", "peirce"];
 function TemplateCard({
   p,
   descoped = false,
+  signedInOnly = false,
 }: {
   p: PdpProduct;
   descoped?: boolean;
+  signedInOnly?: boolean;
 }) {
   const b = p.brandKey ? BRANDS[p.brandKey] : undefined;
   return (
@@ -57,22 +58,24 @@ function TemplateCard({
         Item {p.item} · /pdp/{p.slug}
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Link
-          href={`/pdp/${p.slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
-          Signed out
-          <ArrowUpRight className="size-3.5" />
-        </Link>
+        {signedInOnly ? null : (
+          <Link
+            href={`/pdp/${p.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            Signed out
+            <ArrowUpRight className="size-3.5" />
+          </Link>
+        )}
         <Link
           href={`/pdp/${p.slug}?signedin=1`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
-          Signed in
+          {signedInOnly ? "Open (signed in)" : "Signed in"}
           <ArrowUpRight className="size-3.5" />
         </Link>
       </div>
@@ -210,7 +213,7 @@ export default function PdpMasterPage() {
             </p>
             <ul className="mt-3 flex flex-col gap-3">
               {useCases.map((p) => (
-                <TemplateCard key={p.slug} p={p} />
+                <TemplateCard key={p.slug} p={p} signedInOnly />
               ))}
             </ul>
           </>
@@ -229,8 +232,6 @@ export default function PdpMasterPage() {
             </ul>
           </>
         ) : null}
-
-        <OpenQuestions />
       </main>
     </div>
   );
