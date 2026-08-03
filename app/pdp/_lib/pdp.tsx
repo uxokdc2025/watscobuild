@@ -3,7 +3,7 @@ import { PdpGallery } from "../_components/gallery";
 import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
-import { FrequentlyBoughtTogether } from "./fbt";
+import { CustomersAlsoPurchased, FrequentlyBoughtTogether } from "./fbt";
 import { AboutThisProduct, BundleComponents, RecentlyViewed, Replacements, Substitutes } from "./about";
 import { SiteFooter, SiteHeader } from "./chrome";
 import { getBrand } from "./brands";
@@ -80,6 +80,7 @@ export function Pdp({
               thumbnailCount={product.thumbnailCount}
               images={product.images}
               alt={product.title}
+              noImage={product.noImage}
             />
             <PdpSummary product={summaryProduct} />
           </div>
@@ -130,6 +131,13 @@ export function Pdp({
               <PdpDetails product={product} />
             </div>
           )}
+
+          {/* Customers also purchased */}
+          {product.customersAlsoPurchased?.length ? (
+            <div className="mt-14">
+              <CustomersAlsoPurchased product={product} />
+            </div>
+          ) : null}
         </main>
 
         {brand ? (

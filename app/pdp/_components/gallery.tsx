@@ -4,6 +4,7 @@ import * as React from "react";
 import { Maximize2, Minus, Plus, RotateCcw } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { NoImage } from "@/components/ui/label-badges";
 
 /**
  * Represents the LOCKED third-party image gallery (still image + thumbnail
@@ -53,10 +54,12 @@ export function PdpGallery({
   thumbnailCount = 7,
   images,
   alt = "Product",
+  noImage = false,
 }: {
   thumbnailCount?: number;
   images?: string[];
   alt?: string;
+  noImage?: boolean;
 }) {
   const [active, setActive] = React.useState(0);
   const hasImages = Boolean(images?.length);
@@ -77,6 +80,8 @@ export function PdpGallery({
             alt={alt}
             className="aspect-square w-full bg-white object-contain"
           />
+        ) : noImage ? (
+          <NoImage className="aspect-square w-full rounded-none border-0" />
         ) : (
           <Placeholder className="aspect-square w-full rounded-none" />
         )}

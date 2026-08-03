@@ -27,6 +27,11 @@ export type FbtProduct = {
   points?: number;
   stockStatus?: string;
   stockBranch?: string;
+  /** Manufacturer/brand line + "% Also Purchased" (Customers Also Purchased). */
+  brand?: string;
+  pct?: number;
+  /** Aggregated all-branches qty (East Coast style: "52 All Branches"). */
+  allBranchesQty?: number;
 };
 
 /** A related part shown in the "Parts" section (mini product card). */
@@ -132,6 +137,10 @@ export type PdpProduct = {
   ahri?: { number: string };
   /** Components included in a bundle ("Included In Bundle" section). */
   bundleItems?: SubstituteItem[];
+  /** "Customers Also Purchased" cards (with % also-purchased). */
+  customersAlsoPurchased?: FbtProduct[];
+  /** Render the "No Image Available" placeholder instead of the hatched box. */
+  noImage?: boolean;
 };
 
 export function formatUSD(value: number): string {

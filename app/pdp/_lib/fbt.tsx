@@ -53,7 +53,7 @@ function FbtCard({ item }: { item: FbtProduct }) {
       <p className="text-xs text-muted-foreground">
         Item: {item.item}
         <br />
-        MFR: {item.mfg}
+        MFG: {item.mfg}
       </p>
 
       <div className="mt-auto flex flex-col gap-2 pt-1">
@@ -176,6 +176,69 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
           <FbtRail items={product.fbt[0].items} />
         </div>
       )}
+    </section>
+  );
+}
+
+function CapCard({ item }: { item: FbtProduct }) {
+  const { signedIn } = useAuth();
+  return (
+    <div className="flex h-full flex-col gap-2 rounded-lg border bg-card p-4">
+      <FbtImage src={item.image} alt={item.title} />
+      {item.brand ? (
+        <p className="text-xs text-muted-foreground">{item.brand}</p>
+      ) : null}
+      <a href="#" className="line-clamp-2 text-sm font-semibold text-primary hover:underline">
+        {item.title}
+      </a>
+      {item.pct != null ? (
+        <p className="text-xs text-muted-foreground italic">{item.pct}% Also Purchased</p>
+      ) : null}
+      <p className="text-xs text-muted-foreground">
+        Product: {item.item}
+        <br />
+        MFG: {item.mfg}
+      </p>
+      <div className="mt-auto flex flex-col gap-2 pt-1">
+        {signedIn ? (
+          <>
+            {item.price != null ? (
+              <p className="text-lg font-bold">{formatUSD(item.price)}</p>
+            ) : null}
+            <div className="text-xs leading-relaxed">
+              <span className="font-medium text-in-stock">
+                {item.branchQty} {item.branchName}
+              </span>
+              <br />
+              <span className="font-medium text-in-stock">
+                {item.allBranchesQty ?? item.nearbyQty} All Branches
+              </span>
+            </div>
+            <Button size="sm" className="w-full">
+              <ShoppingCart className="size-4" />
+              Add To Cart
+            </Button>
+          </>
+        ) : (
+          <a href="#" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
+            Sign in to view pricing
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function CustomersAlsoPurchased({ product }: { product: PdpProduct }) {
+  if (!product.customersAlsoPurchased?.length) return null;
+  return (
+    <section aria-label="Customers also purchased" className="flex flex-col gap-4">
+      <h2 className="text-2xl font-bold tracking-tight">Customers Also Purchased</h2>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {product.customersAlsoPurchased.map((it) => (
+          <CapCard key={it.id} item={it} />
+        ))}
+      </div>
     </section>
   );
 }

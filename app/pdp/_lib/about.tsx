@@ -211,7 +211,7 @@ export function Substitutes({ product }: { product: PdpProduct }) {
                 {s.title}
               </a>
               <p className="mt-1 text-xs text-muted-foreground">
-                Item: {s.item} &nbsp; MFR: {s.mfg}
+                Item: {s.item} &nbsp; MFG: {s.mfg}
               </p>
             </div>
             <div className="text-right">
@@ -252,7 +252,7 @@ export function Replacements({ product }: { product: PdpProduct }) {
                 {s.title}
               </a>
               <p className="mt-1 text-xs text-muted-foreground">
-                Item: {s.item} &nbsp; MFR: {s.mfg}
+                Item: {s.item} &nbsp; MFG: {s.mfg}
               </p>
             </div>
             <a
@@ -289,7 +289,7 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
                 {s.title}
               </a>
               <p className="mt-1 text-xs text-muted-foreground">
-                Item: {s.item} &nbsp; MFR: {s.mfg}
+                Item: {s.item} &nbsp; MFG: {s.mfg}
               </p>
             </div>
           </div>
@@ -312,7 +312,7 @@ function RvCard({ item }: { item: PartItem }) {
       <p className="mt-1 text-xs text-muted-foreground">
         Item: {item.item}
         <br />
-        MFR: {item.mfg}
+        MFG: {item.mfg}
       </p>
     </div>
   );
