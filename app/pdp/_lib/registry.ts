@@ -457,6 +457,10 @@ const ceImg = (key: string) =>
 const ecmImg = (key: string) =>
   `https://resource.ecmdi.com/is/image/Watscocom/${key}_en_normal?wid=400&hei=400&qlt=80`;
 
+// Gemaire CDN — the slug already omits the trailing "_en_normal".
+const gm = (slug: string) =>
+  `https://cdn.gemaire.com/${slug}_en_normal?wid=400&hei=400&qlt=80`;
+
 const carrierTpE50: PdpProduct = {
   slug: "carrier-tp-e50-3sp2",
   brand: "TRADEPRO®",
@@ -943,16 +947,29 @@ const ucPackSize: PdpProduct = {
   thumbnailCount: 1,
   description: {
     intro:
-      "Safe-T-Switch SS2 condensate overflow shutoff switch — installs in the secondary drain line to shut down the system on overflow. Sold individually or by the 12-pack.",
+      "Shut-off switch for primary drain pan auxiliary outlet, Safe-T-Switch Model SS2, detects clogged A/C condensate drains and shuts off system to prevent water damage.",
+    bullets: [
+      "Condensate overflow switch",
+      "Adjustable ratcheting float level",
+      "Magnetic reed switch",
+      "POP Blister packaged",
+    ],
   },
-  specTabLabel: "Specifications",
+  documents: [
+    { label: "consumer literature", kind: "pdf", href: "#" },
+    { label: "consumer literature", kind: "pdf", href: "#" },
+    { label: "specification sheet", kind: "pdf", href: "#" },
+  ],
+  docsInline: true,
+  specTabLabel: "Features and Specification",
   specGroupsLeft: [
     {
       title: "General",
       rows: [
         { label: "Type", value: "Condensate Overflow Switch" },
-        { label: "Mount", value: "Secondary Drain Line" },
-        { label: "Contacts", value: "Normally Closed" },
+        { label: "Mount", value: "Primary Drain Pan Auxiliary Outlet" },
+        { label: "Float", value: "Adjustable Ratcheting" },
+        { label: "Switch", value: "Magnetic Reed" },
       ],
     },
   ],
@@ -962,19 +979,54 @@ const ucPackSize: PdpProduct = {
       rows: [
         { label: "Voltage", value: "24 VAC" },
         { label: "Rating", value: "5 A" },
+        { label: "Packaging", value: "POP Blister" },
       ],
     },
   ],
   commerce: {
-    price: 16.9,
+    price: 24.49,
     uom: "EA",
-    packSizes: ["Each", "12-Pk"],
-    yourBranch: { name: "Mobile #251", stock: 48 },
+    packSizes: ["1 Item", "1 Pack (24)", "2 Packs (48)", "3 Packs (72)"],
+    yourBranch: { name: "Mobile #251", stock: 50 },
     nearbyBranches: [
-      { qty: 120, name: "Pensacola #253" },
-      { qty: 64, name: "Panama City #257" },
+      { qty: 0, name: "New Port Richey #151" },
+      { qty: 45, name: "Ocala #206" },
+      { qty: 0, name: "Pensacola #253" },
+      { qty: 0, name: "Ft Walton #255" },
+      { qty: 38, name: "Panama City #257" },
+      { qty: 154, name: "Valdosta #263" },
     ],
   },
+  fbt: [
+    {
+      label: "Equipment",
+      items: [
+        { id: "rxbh-c10j", title: "RXBH-1724C10J-B - Heater Kit, 10kW, 208-230/1/60 (Pullout Disconnect) With Smart Plug", item: "RXBH-1724C10J-B", mfg: "RXBH-1724C10J-B", image: gm("protech_rxbh-1724c10j-b_article_1604089117449335"), price: 161.97, branchQty: 0, branchName: "Mobile #251", nearbyQty: 20 },
+        { id: "rxbh-c05j", title: "RXBH-1724C05J-B - Heater Kit, 5kW, 208-230/1/60 (Pullout Disconnect) With Smart Plug", item: "RXBH-1724C05J-B", mfg: "RXBH-1724C05J-B", image: gm("protech_rxbh-1724c05j-b_article_1604089117449079"), price: 126.41, branchQty: 0, branchName: "Mobile #251", nearbyQty: 95 },
+        { id: "rxbh-c07j", title: "RXBH-1724C07J-B - Heater Kit, 7kW, 208-230/1/60 (Pullout Disconnect) With Smart Plug", item: "RXBH-1724C07J-B", mfg: "RXBH-1724C07J-B", image: gm("protech_rxbh-1724c07j-b_article_1604089117449029"), price: 157.71, branchQty: 0, branchName: "Mobile #251", nearbyQty: 74 },
+      ],
+    },
+    {
+      label: "Parts",
+      items: [
+        { id: "ss3-97089", title: "97089 - Safe-T-Switch SS3", item: "97089", mfg: "97089", image: gm("rectorseal_97089_article_218875118900300"), price: 15.55, branchQty: 22, branchName: "Mobile #251", nearbyQty: 217 },
+        { id: "rrcutdlk", title: "RRCUTDLK - Condenser Unit Tie Down, Galvanized, Slab Mount, Large Kit (In-land Installation)", item: "RRCUTDLK", mfg: "RRCUTDLK", image: gm("miami-tech_rrcutdlk_article_1427301038032"), price: 29.29, branchQty: 27, branchName: "Mobile #251", nearbyQty: 1 },
+        { id: "rrcutdsmk", title: "RRCUTDSMK - Condenser Unit Tie Down, Galvanized, Slab Mount, Small/Medium Kit (In-land Installation)", item: "RRCUTDSMK", mfg: "RRCUTDSMK", image: gm("miami-tech_rrcutdsmk_article_1427301038010"), price: 22.56, branchQty: 35, branchName: "Mobile #251", nearbyQty: 82 },
+        { id: "tp-pvc-elbow", title: 'TP-PVC-406007A - 3/4" Slip X Slip 90 Elbow PVC 40, Sold as 10 Per Bag, Priced Individually', item: "TP-PVC-406007A", mfg: "L85565W", image: gm("tradepro_tp-pvc-406007a_article_1404816227211"), price: 0.46, branchQty: 754, branchName: "Mobile #251", nearbyQty: 3205 },
+        { id: "tp-n-701", title: 'TP-N-701 - VIVE Non-Programmable Thermostat, 1H/1C With 4" Sq. In. Display', item: "TP-N-701", mfg: "TP-N-701", image: gm("vive_tp-n-701color_article_1402659513194"), price: 54.30, branchQty: 29, branchName: "Mobile #251", nearbyQty: 58 },
+      ],
+    },
+    {
+      label: "Supplies",
+      items: [
+        { id: "uv24-pro", title: "TP-VC-UV24-PRO - Germicidal UVC Light Kit", item: "TP-VC-UV24-PRO", mfg: "TP-VC-UV24-PRO", image: gm("vive_tp-vc-uv24-prob_article_1604089098662677"), price: 79.86, branchQty: 0, branchName: "Mobile #251", nearbyQty: 113 },
+        { id: "7pxl048078", title: '7PXL048078 - PE Lock Insulation Tube, Self-Seal, 7/8" X 1/2" W X 72", Black', item: "7PXL048078", mfg: "7PXL048078", image: gm("k-flex_7pxl048078_article_15784401951227360"), price: 4.87, branchQty: 0, branchName: "Mobile #251", nearbyQty: 0 },
+        { id: "7pxl048068", title: '7PXL048068 - PE Lock Insulation Tube, Self-Seal, 3/4" X 1/2" W X 72", Black', item: "7PXL048068", mfg: "7PXL048068", image: gm("k-flex_7pxl048068_article_15352432026464358"), price: 4.58, branchQty: 0, branchName: "Mobile #251", nearbyQty: 0 },
+        { id: "oc80011", title: 'OC80011/2SHEETQ - T0800 Duct Board Sheet 1-1/2" X 48" X 120"', item: "OC80011/2SHEETQ", mfg: "441743S", image: gm("owens-corning_oc800112sheetq_article_1489653145584"), price: 78.87, branchQty: 60, branchName: "Mobile #251", nearbyQty: 467 },
+        { id: "66926-pvc", title: '66926 - 3/4" PVC Pipe, Schedule 40 X 10\', Plain End', item: "66926", mfg: "66926", image: gm("ipex_66926_article_1461141050812"), price: 13.99, branchQty: 0, branchName: "Mobile #251", nearbyQty: 335 },
+      ],
+    },
+  ],
 };
 
 // ── Use case: Bundle & $200 Rebate (promo badge + Included In Bundle) ──

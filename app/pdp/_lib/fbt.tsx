@@ -61,6 +61,19 @@ function FbtCard({ item }: { item: FbtProduct }) {
         <>
           {signedIn ? (
             <>
+              {item.stockStatus == null && item.branchName ? (
+                <div className="text-xs leading-relaxed">
+                  <span className="font-medium text-in-stock">{item.branchQty}</span>{" "}
+                  <span className="text-muted-foreground">{item.branchName}</span>
+                  <br />
+                  <span className="font-medium text-in-stock">{item.nearbyQty}</span>{" "}
+                  <span className="text-muted-foreground">Nearby Branches</span>
+                  <br />
+                  <a href="#" className="text-primary underline-offset-4 hover:underline">
+                    Check Nearby Branches
+                  </a>
+                </div>
+              ) : null}
               <p className="mt-1">
                 <span className="text-lg font-bold">{formatUSD(item.price!)}</span>{" "}
                 <span className="text-xs text-muted-foreground">/ EACH</span>
