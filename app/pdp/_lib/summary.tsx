@@ -32,23 +32,25 @@ function QtyStepper() {
   );
 }
 
-// Single stacked card (your branch, then nearby branches below) — the branch
-// availability is never split into two side-by-side columns.
+// Two side-by-side boxes — Your Branch (col 1) + Nearby Branches (col 2).
+// This is the standard availability pattern on every PDP.
 function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
   return (
-    <div className="rounded-lg border p-4 text-sm">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {commerce.yourBranch ? (
-        <div>
-          <p className="font-semibold">Your Branch</p>
-          <p className="mt-1 text-muted-foreground">{commerce.yourBranch.name}</p>
-          <p className={cn("mt-2 font-medium", stockTextClass(commerce.yourBranch.stock))}>
+        <div className="rounded-lg border p-4">
+          <p className="text-sm font-semibold">Your Branch</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {commerce.yourBranch.name}
+          </p>
+          <p className={cn("mt-2 text-sm font-medium", stockTextClass(commerce.yourBranch.stock))}>
             {commerce.yourBranch.stock} in stock today
           </p>
         </div>
       ) : null}
       {commerce.nearbyBranches?.length ? (
-        <div className={commerce.yourBranch ? "mt-4 border-t pt-4" : undefined}>
-          <p className="font-semibold">Nearby Branches</p>
+        <div className="rounded-lg border p-4">
+          <p className="text-sm font-semibold">Nearby Branches</p>
           <ul className="mt-2 flex flex-col gap-1">
             {commerce.nearbyBranches.map((b) => (
               <li key={b.name}>
@@ -56,7 +58,7 @@ function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
               </li>
             ))}
           </ul>
-          <a href="#" className="mt-3 inline-block font-medium text-primary underline-offset-4 hover:underline">
+          <a href="#" className="mt-3 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline">
             View All Branches
           </a>
         </div>
