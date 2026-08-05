@@ -32,23 +32,23 @@ function QtyStepper() {
   );
 }
 
+// Single stacked card (your branch, then nearby branches below) — the branch
+// availability is never split into two side-by-side columns.
 function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div className="rounded-lg border p-4 text-sm">
       {commerce.yourBranch ? (
-        <div className="rounded-lg border p-4">
-          <p className="text-sm font-semibold">Your Branch</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {commerce.yourBranch.name}
-          </p>
-          <p className={cn("mt-2 text-sm font-medium", stockTextClass(commerce.yourBranch.stock))}>
+        <div>
+          <p className="font-semibold">Your Branch</p>
+          <p className="mt-1 text-muted-foreground">{commerce.yourBranch.name}</p>
+          <p className={cn("mt-2 font-medium", stockTextClass(commerce.yourBranch.stock))}>
             {commerce.yourBranch.stock} in stock today
           </p>
         </div>
       ) : null}
       {commerce.nearbyBranches?.length ? (
-        <div className="rounded-lg border p-4">
-          <p className="text-sm font-semibold">Nearby Branches</p>
+        <div className={commerce.yourBranch ? "mt-4 border-t pt-4" : undefined}>
+          <p className="font-semibold">Nearby Branches</p>
           <ul className="mt-2 flex flex-col gap-1">
             {commerce.nearbyBranches.map((b) => (
               <li key={b.name}>
@@ -56,7 +56,7 @@ function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
               </li>
             ))}
           </ul>
-          <a href="#" className="mt-3 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline">
+          <a href="#" className="mt-3 inline-block font-medium text-primary underline-offset-4 hover:underline">
             View All Branches
           </a>
         </div>
@@ -136,7 +136,7 @@ export function PdpSummary({
       </div>
 
       {product.ahri ? (
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2.5 text-sm">
           <span className="font-semibold">
             AHRI Matchup: {product.ahri.number}
           </span>
@@ -145,7 +145,7 @@ export function PdpSummary({
           </a>
         </div>
       ) : product.ahriEmpty ? (
-        <div className="grid place-items-center rounded-lg border p-6 text-sm text-muted-foreground">
+        <div className="rounded-lg border px-3 py-2.5 text-sm text-muted-foreground">
           No AHRI Matchups Found
         </div>
       ) : null}
@@ -187,18 +187,14 @@ export function PdpSummary({
         )
       ) : (
         <>
-          {/* License gate: purchasable once licensed — banner, not a block. */}
+          {/* License gate: purchasable once licensed — neutral info banner
+              matching the reference (no badge, no amber "required" box). */}
           {licenseGated ? (
-            <div className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
-              <Info className="mt-0.5 size-4 shrink-0 text-amber-700 dark:text-amber-300" />
-              <div>
-                <p className="font-semibold text-amber-800 dark:text-amber-300">
-                  License Required
-                </p>
-                <p className="mt-0.5 text-muted-foreground">
-                  A valid license is required to purchase this item.
-                </p>
-              </div>
+            <div className="flex items-start gap-2 rounded-lg border bg-muted/50 p-4 text-sm">
+              <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+              <p className="text-muted-foreground">
+                This item requires the necessary license in order to be purchased.
+              </p>
             </div>
           ) : null}
 

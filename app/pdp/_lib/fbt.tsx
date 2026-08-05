@@ -2,8 +2,14 @@
 
 import { Info, ListPlus, ShoppingCart } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { PointsBadge } from "@/components/ui/label-badges";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "./auth";
@@ -123,8 +129,9 @@ function FbtCard({ item }: { item: FbtProduct }) {
   );
 }
 
-// 4-up grid, identical to Customers Also Purchased. Fewer than 4 items fill the
-// row (min(count,4) columns); more than 4 wrap to the next row.
+// Cards are always sized 4-up (1/4 width), matching Customers Also Purchased.
+// ≤4 items simply show (fewer cards, same width — no stretching). >4 items hide
+// the overflow inside a carousel with prev/next arrows.
 function FbtRail({ items }: { items: FbtProduct[] }) {
   if (!items.length) {
     return (
@@ -133,21 +140,23 @@ function FbtRail({ items }: { items: FbtProduct[] }) {
       </div>
     );
   }
-  const cols = Math.min(items.length, 4);
-  const lgCols =
-    cols === 1
-      ? "lg:grid-cols-1"
-      : cols === 2
-        ? "lg:grid-cols-2"
-        : cols === 3
-          ? "lg:grid-cols-3"
-          : "lg:grid-cols-4";
+  const scrollable = items.length > 4;
   return (
-    <div className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2", lgCols)}>
-      {items.map((it) => (
-        <FbtCard key={it.id} item={it} />
-      ))}
-    </div>
+    <Carousel opts={{ align: "start" }} className={scrollable ? "mx-10" : ""}>
+      <CarouselContent>
+        {items.map((it) => (
+          <CarouselItem key={it.id} className="basis-full sm:basis-1/2 lg:basis-1/4">
+            <FbtCard item={it} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      {scrollable ? (
+        <>
+          <CarouselPrevious />
+          <CarouselNext />
+        </>
+      ) : null}
+    </Carousel>
   );
 }
 

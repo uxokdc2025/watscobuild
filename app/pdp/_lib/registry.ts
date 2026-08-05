@@ -1239,7 +1239,6 @@ const ucLicense: PdpProduct = {
   sourceUrl:
     "https://www.bakerdist.com/chemours-d10118485-freon-hp62-r-404a-24-lb-disposable-package-refrigerant-hfc---fce1670",
   store: { name: "Baker Jacksonville #301" },
-  badges: [{ label: "License Required", tone: "soft", color: "amber" }],
   title:
     "Chemours - Freon™ HP62 (R-404A) 24 lb Disposable Cylinder Refrigerant (HFC)",
   item: "HP6224",
