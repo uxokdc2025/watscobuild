@@ -1204,6 +1204,17 @@ const ucNonSellable: PdpProduct = {
   ],
   status: "non-sellable",
   nonSellableAllBranchesQty: 6,
+  commerce: {
+    price: null,
+    uom: "EACH",
+    yourBranch: { name: "Norristown, PA", stock: 0 },
+    nearbyBranches: [
+      { qty: 1, name: "Pennsauken Township" },
+      { qty: 1, name: "Bensalem" },
+      { qty: 3, name: "Pureland / Swedesboro (DC)" },
+      { qty: 1, name: "Pleasantville" },
+    ],
+  },
   description: {
     intro:
       "9 in. True Blue professional magnetic torpedo level. This item is catalog-reference only and is not available for online purchase.",

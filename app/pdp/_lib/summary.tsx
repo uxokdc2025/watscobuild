@@ -33,8 +33,15 @@ function QtyStepper() {
 }
 
 // Two side-by-side boxes — Your Branch (col 1) + Nearby Branches (col 2).
-// This is the standard availability pattern on every PDP.
-function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
+// This is the standard availability pattern on every PDP. `statusLabel`
+// (e.g. "Non-Sellable") replaces the stock line in the Your Branch box.
+function BranchAvailability({
+  commerce,
+  statusLabel,
+}: {
+  commerce: PdpCommerce;
+  statusLabel?: string;
+}) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {commerce.yourBranch ? (
@@ -43,9 +50,13 @@ function BranchAvailability({ commerce }: { commerce: PdpCommerce }) {
           <p className="mt-1 text-sm text-muted-foreground">
             {commerce.yourBranch.name}
           </p>
-          <p className={cn("mt-2 text-sm font-medium", stockTextClass(commerce.yourBranch.stock))}>
-            {commerce.yourBranch.stock} in stock today
-          </p>
+          {statusLabel ? (
+            <p className="mt-2 text-sm font-medium text-red-600">{statusLabel}</p>
+          ) : (
+            <p className={cn("mt-2 text-sm font-medium", stockTextClass(commerce.yourBranch.stock))}>
+              {commerce.yourBranch.stock} in stock today
+            </p>
+          )}
         </div>
       ) : null}
       {commerce.nearbyBranches?.length ? (
@@ -157,24 +168,23 @@ export function PdpSummary({
         product.status === "replaced" ? null : product.status ===
           "non-sellable" ? (
           // Non-sellable is store-specific: blocked here, may have stock elsewhere.
+          // Same 2-box availability — Your Branch carries the "Non-Sellable"
+          // message; Nearby Branches shows the branch list.
           <>
-            <div className="rounded-lg border p-4 text-sm">
-              <p className="font-semibold">Availability</p>
-              <p className="mt-2 font-medium text-red-600 dark:text-red-400">
-                Non-Sellable{product.store?.name ? ` at ${product.store.name}` : ""}
-              </p>
-              {product.nonSellableAllBranchesQty != null ? (
-                <p className="mt-1 font-medium text-in-stock">
-                  {product.nonSellableAllBranchesQty} at All Branches
+            {product.commerce?.yourBranch ||
+            product.commerce?.nearbyBranches?.length ? (
+              <BranchAvailability
+                commerce={product.commerce!}
+                statusLabel={`Non-Sellable${product.store?.name ? ` at ${product.store.name}` : ""}`}
+              />
+            ) : (
+              <div className="rounded-lg border p-4 text-sm">
+                <p className="font-semibold">Availability</p>
+                <p className="mt-2 font-medium text-red-600 dark:text-red-400">
+                  Non-Sellable{product.store?.name ? ` at ${product.store.name}` : ""}
                 </p>
-              ) : null}
-              <a
-                href="#"
-                className="mt-2 inline-block font-medium text-red-600 underline-offset-4 hover:underline dark:text-red-400"
-              >
-                View All Branches
-              </a>
-            </div>
+              </div>
+            )}
             <SecondaryActions showCompare={showCompare} />
           </>
         ) : (

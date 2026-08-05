@@ -749,7 +749,13 @@ const PEIRCE_UTIL = [
   "Help & Support",
 ];
 
-function PeirceHeader({ brand }: { brand: BrandChrome }) {
+function PeirceHeader({
+  brand,
+  signedIn = false,
+}: {
+  brand: BrandChrome;
+  signedIn?: boolean;
+}) {
   return (
     <header className="bg-background">
       {/* Utility bar */}
@@ -791,19 +797,35 @@ function PeirceHeader({ brand }: { brand: BrandChrome }) {
           </button>
         </div>
         <div className="ml-auto flex items-center gap-4 text-sm">
-          <a href="#" className="hidden text-left leading-tight sm:block">
-            <span className="font-semibold text-brand-peirce underline-offset-2 hover:underline">
-              Sign In
-            </span>{" "}
-            or{" "}
-            <span className="font-semibold text-brand-peirce underline-offset-2 hover:underline">
-              Register
-            </span>
-            <span className="block text-muted-foreground">My Account</span>
-          </a>
+          {signedIn ? (
+            <a href="#" className="hidden text-left leading-tight sm:block">
+              <span className="text-muted-foreground">Hello, David</span>
+              <span className="block font-semibold text-brand-peirce underline-offset-2 hover:underline">
+                My Account
+              </span>
+            </a>
+          ) : (
+            <a href="#" className="hidden text-left leading-tight sm:block">
+              <span className="font-semibold text-brand-peirce underline-offset-2 hover:underline">
+                Sign In
+              </span>{" "}
+              or{" "}
+              <span className="font-semibold text-brand-peirce underline-offset-2 hover:underline">
+                Register
+              </span>
+              <span className="block text-muted-foreground">My Account</span>
+            </a>
+          )}
           <button type="button" aria-label="Cart" className="inline-flex items-center gap-1.5">
-            <ShoppingCart className="size-5" />
-            <span className="hidden sm:inline">Cart</span>
+            <span className="relative">
+              <ShoppingCart className="size-5" />
+              {signedIn ? (
+                <span className="absolute -top-1.5 -right-1.5 grid min-w-4 place-items-center rounded-full bg-brand-peirce px-1 text-[10px] leading-4 font-semibold text-white">
+                  1
+                </span>
+              ) : null}
+            </span>
+            <span className="hidden sm:inline">{signedIn ? "1 Items Cart" : "Cart"}</span>
           </button>
         </div>
       </div>
@@ -1538,7 +1560,7 @@ export function SiteHeader({
   if (brand.key === "gemaire") return <GemaireHeader signedIn={signedIn} />;
   if (brand.key === "baker") return <BakerHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "carrier") return <CarrierHeader brand={brand} signedIn={signedIn} />;
-  if (brand.key === "peirce") return <PeirceHeader brand={brand} />;
+  if (brand.key === "peirce") return <PeirceHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} signedIn={signedIn} />;
   if (brand.key === "dcne") return <DcneHeader brand={brand} />;
   if (brand.key === "homans") return <HomansHeader brand={brand} signedIn={signedIn} />;
