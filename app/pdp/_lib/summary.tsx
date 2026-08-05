@@ -230,16 +230,23 @@ export function PdpSummary({
             <>
               {product.commerce!.price != null ? (
             <div className="flex flex-col gap-1.5">
-              {/* One-line sale treatment: red price, "Sale", then Reg. strikethrough.
-                  A was-price is what marks the item on sale. */}
+              {/* One-line sale treatment: on sale, the price + "Sale" turn red,
+                  followed by the strikethrough was-price. A was-price is what
+                  marks the item on sale. */}
               <div className="flex flex-wrap items-baseline gap-x-2">
-                <span className="text-3xl font-bold text-price">
+                <span
+                  className={cn(
+                    "text-3xl font-bold",
+                    product.commerce!.wasPrice != null ? "text-red-600 dark:text-red-500" : "text-price",
+                  )}
+                >
                   {formatUSD(product.commerce!.price)}
                 </span>
                 {product.commerce!.wasPrice != null ? (
                   <>
-                    <span className="text-xl font-bold text-price">Sale</span>
-                    <span className="text-sm font-bold text-foreground">Reg.</span>
+                    <span className="text-xl font-bold text-red-600 dark:text-red-500">
+                      Sale
+                    </span>
                     <span className="text-lg font-medium text-muted-foreground line-through">
                       {formatUSD(product.commerce!.wasPrice)}
                     </span>
