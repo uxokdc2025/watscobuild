@@ -13,8 +13,13 @@ import { PackSizePills } from "@/components/ui/pack-size-pills";
 import { useAuth } from "./auth";
 import { formatUSD, type PdpCommerce, type PdpProduct } from "./types";
 
-function QtyStepper() {
-  const [qty, setQty] = React.useState(1);
+function QtyStepper({
+  qty,
+  setQty,
+}: {
+  qty: number;
+  setQty: React.Dispatch<React.SetStateAction<number>>;
+}) {
   const btn =
     "grid h-full w-11 cursor-pointer place-items-center text-foreground transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
   return (
@@ -90,6 +95,17 @@ function SaveToList() {
   );
 }
 
+/** Amber inline info banner — the shared "License required" style, reused for
+ * any status message (license gate, replacement available, etc.). */
+function InfoBanner({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
+      <Info className="mt-0.5 size-4 shrink-0 text-amber-700 dark:text-amber-300" />
+      <p className="text-amber-800 dark:text-amber-300">{children}</p>
+    </div>
+  );
+}
+
 /** Save to List + (optional) Compare — both links, Save to List first. */
 function SecondaryActions({ showCompare }: { showCompare: boolean }) {
   return (
@@ -108,6 +124,9 @@ export function PdpSummary({
   showCompare?: boolean;
 }) {
   const { signedIn } = useAuth();
+  // Shared quantity: the stepper and the pack-size pills both drive it, so
+  // selecting "2 Packs (48)" sets the quantity box to 48.
+  const [qty, setQty] = React.useState(1);
   // ── Buy-box VALUE HIERARCHY (see project_pdp_value_hierarchy memory) ──
   // Any price- or product-value message (rebate, sale, points, was-price)
   // belongs in the high-value zone: the solid badge row up top or the price
@@ -157,16 +176,16 @@ export function PdpSummary({
             View System Details
           </a>
         </div>
-      ) : product.ahriEmpty ? (
-        <div className="rounded-lg border px-3 py-2.5 text-sm text-muted-foreground">
-          No AHRI Matchups Found
-        </div>
       ) : null}
 
       {blocksPurchase ? (
-        // "replaced" hands its column to the Replacement Products section (no box).
-        product.status === "replaced" ? null : product.status ===
-          "non-sellable" ? (
+        // "replaced" shows an inline amber banner; the Replacement Products
+        // section fills the rest of the column below.
+        product.status === "replaced" ? (
+          <InfoBanner>
+            A replacement product is available. See the replacement product below.
+          </InfoBanner>
+        ) : product.status === "non-sellable" ? (
           // Non-sellable is store-specific: blocked here, may have stock elsewhere.
           // Same 2-box availability — Your Branch carries the "Non-Sellable"
           // message; Nearby Branches shows the branch list.
@@ -199,31 +218,34 @@ export function PdpSummary({
         )
       ) : (
         <>
-          {/* License gate: purchasable once licensed — neutral info banner
-              matching the reference (no badge, no amber "required" box). */}
+          {/* License gate: purchasable once licensed — amber info banner
+              (reference text, no separate "License Required" badge/box). */}
           {licenseGated ? (
-            <div className="flex items-start gap-2 rounded-lg border bg-muted/50 p-4 text-sm">
-              <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-              <p className="text-muted-foreground">
-                This item requires the necessary license in order to be purchased.
-              </p>
-            </div>
+            <InfoBanner>
+              This item requires the necessary license in order to be purchased.
+            </InfoBanner>
           ) : null}
 
           {showCommerce ? (
             <>
               {product.commerce!.price != null ? (
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-end gap-2">
+              {/* One-line sale treatment: red price, "Sale", then Reg. strikethrough.
+                  A was-price is what marks the item on sale. */}
+              <div className="flex flex-wrap items-baseline gap-x-2">
                 <span className="text-3xl font-bold text-price">
                   {formatUSD(product.commerce!.price)}
                 </span>
                 {product.commerce!.wasPrice != null ? (
-                  <span className="pb-1 text-lg font-medium text-muted-foreground line-through">
-                    {formatUSD(product.commerce!.wasPrice)}
-                  </span>
+                  <>
+                    <span className="text-xl font-bold text-price">Sale</span>
+                    <span className="text-sm font-bold text-foreground">Reg.</span>
+                    <span className="text-lg font-medium text-muted-foreground line-through">
+                      {formatUSD(product.commerce!.wasPrice)}
+                    </span>
+                  </>
                 ) : null}
-                <span className="pb-1 text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground">
                   /{product.commerce!.uom}
                 </span>
               </div>
@@ -256,14 +278,17 @@ export function PdpSummary({
           {product.commerce!.packSizes?.length ? (
             <div className="flex flex-col gap-2">
               <span className="text-sm font-medium">Pack Size</span>
-              <PackSizePills options={product.commerce!.packSizes} />
+              <PackSizePills
+                options={product.commerce!.packSizes}
+                onSelect={setQty}
+              />
             </div>
           ) : null}
 
           <div className="flex flex-col gap-2">
             <span className="text-sm font-medium">Quantity</span>
             <div className="flex items-stretch gap-3">
-              <QtyStepper />
+              <QtyStepper qty={qty} setQty={setQty} />
               <Button
                 size="lg"
                 disabled={product.commerce!.price == null}

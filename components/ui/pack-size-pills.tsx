@@ -9,12 +9,24 @@ import { cn } from "@/lib/utils";
  * a better fit than a segmented control when a BU only stocks one or two
  * pack sizes (e.g. Each, 12-Pk). A single option renders as a static label.
  */
+/** Total item count a pack label represents: the parenthetical when present
+ * ("2 Packs (48)" → 48), else the leading number ("1 Item" → 1). */
+function packQuantity(label: string): number {
+  const paren = label.match(/\((\d+)\)/);
+  if (paren) return Number(paren[1]);
+  const lead = label.match(/\d+/);
+  return lead ? Number(lead[0]) : 1;
+}
+
 export function PackSizePills({
   options,
   className,
+  onSelect,
 }: {
   options: string[];
   className?: string;
+  /** Called with the total item count when a pill is selected. */
+  onSelect?: (qty: number) => void;
 }) {
   const [active, setActive] = React.useState(0);
 
@@ -33,7 +45,10 @@ export function PackSizePills({
           key={o}
           type="button"
           aria-pressed={i === active}
-          onClick={() => setActive(i)}
+          onClick={() => {
+            setActive(i);
+            onSelect?.(packQuantity(o));
+          }}
           className={cn(
             "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
             i === active

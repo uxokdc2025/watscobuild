@@ -168,7 +168,7 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
   return (
     <section aria-label="Frequently bought together" className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-2xl font-bold tracking-tight">Frequently Bought Together</h2>
+        <h2 className="text-xl font-bold tracking-tight">Frequently Bought Together</h2>
         {suggest ? (
           <button
             type="button"
@@ -270,7 +270,7 @@ export function CustomersAlsoPurchased({ product }: { product: PdpProduct }) {
   if (!product.customersAlsoPurchased?.length) return null;
   return (
     <section aria-label="Customers also purchased" className="flex flex-col gap-4">
-      <h2 className="text-2xl font-bold tracking-tight">Customers Also Purchased</h2>
+      <h2 className="text-xl font-bold tracking-tight">Customers Also Purchased</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {product.customersAlsoPurchased.map((it) => (
           <CapCard key={it.id} item={it} />

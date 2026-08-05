@@ -183,7 +183,7 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
   const isBundle = Boolean(product.bundleItems?.length);
   return (
     <section aria-label="About this product" className="flex flex-col gap-4">
-      <h2 className="text-2xl font-bold tracking-tight">About This Product</h2>
+      <h2 className="text-xl font-bold tracking-tight">About This Product</h2>
       <Tabs defaultValue="info">
         <TabsList variant="line">
           <TabsTrigger value="info">Product Info</TabsTrigger>
@@ -442,7 +442,7 @@ export function RecentlyViewed({ product }: { product: PdpProduct }) {
   if (!product.recentlyViewed?.length) return null;
   return (
     <section aria-label="Recently viewed" className="flex flex-col gap-4">
-      <h2 className="text-2xl font-bold tracking-tight">Recently Viewed</h2>
+      <h2 className="text-xl font-bold tracking-tight">Recently Viewed</h2>
       <div className="flex gap-4 overflow-x-auto pb-2">
         {product.recentlyViewed.map((it) => (
           <RvCard key={it.id} item={it} />

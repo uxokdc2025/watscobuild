@@ -687,9 +687,6 @@ const ucReplacement: PdpProduct = {
   sourceUrl:
     "https://www.ecmdi.com/cab050400440ct-dual-round-capacitor-40-5-mfd-440v-366572a",
   store: { name: "Durham NC #1" },
-  badges: [
-    { label: "Replacement Product Available", tone: "soft", color: "amber" },
-  ],
   title: "CAB050400440CT Dual Round Capacitor - 40/5 MFD - 440V",
   item: "366572A",
   mfg: "CAB050400440CT",
@@ -1348,7 +1345,6 @@ const ucStrikeThru: PdpProduct = {
   sourceUrl:
     "https://www.ecmdi.com/cirra-series-2-port-high-efficiency-multi-split-outdoor-heat-pump-18-000-btu-361067a",
   store: { name: "Durham NC #1" },
-  badges: [{ label: "Sale", tone: "solid", color: "red" }],
   title:
     "CIRRA 2-Port High-Efficiency Multi-Split Outdoor Heat Pump - 18,000 BTU",
   item: "361067A",
