@@ -1,4 +1,4 @@
-import { ChevronDown, FileText, Search, Share2 } from "lucide-react";
+import { ChevronDown, FileText, Search, Share2, ShoppingCart } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -365,6 +365,51 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
               className="rounded-md border px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
               View Product
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── PRO Picks (matched components with price + Add to Cart) ── */
+export function ProPicks({ product }: { product: PdpProduct }) {
+  if (!product.proPicks?.length) return null;
+  return (
+    <section aria-label="PRO Picks" className="rounded-lg border">
+      <h2 className="border-b px-4 py-3 text-sm font-bold tracking-tight">PRO Picks</h2>
+      <div>
+        {product.proPicks.map((p, i) => (
+          <div
+            key={p.id}
+            className={`flex flex-wrap items-center gap-3 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+          >
+            <span className="grid h-10 w-14 shrink-0 place-items-center rounded-md border text-sm tabular-nums">
+              1
+            </span>
+            <div className="min-w-40 flex-1">
+              <a href="#" className="text-sm font-semibold text-primary hover:underline">
+                {p.title}
+              </a>
+              <p className="mt-1 flex flex-wrap items-baseline gap-1.5">
+                <span className="text-base font-bold">{formatUSD(p.price)}</span>
+                {p.wasPrice != null ? (
+                  <span className="text-xs text-muted-foreground line-through">
+                    {formatUSD(p.wasPrice)}
+                  </span>
+                ) : null}
+              </p>
+              {p.availabilityNote ? (
+                <p className="mt-0.5 text-xs text-muted-foreground">{p.availabilityNote}</p>
+              ) : null}
+            </div>
+            <a
+              href="#"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              <ShoppingCart className="size-4" />
+              Add to Cart
             </a>
           </div>
         ))}

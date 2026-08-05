@@ -178,7 +178,8 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
       </div>
       {multiGroup ? (
         <Tabs defaultValue={product.fbt[0].label}>
-          <TabsList variant="line">
+          {/* Many categories → horizontal slider so no tab clips off-screen. */}
+          <TabsList variant="line" className="gap-4 overflow-x-auto">
             {product.fbt.map((g) => (
               <TabsTrigger key={g.label} value={g.label}>
                 {g.label}

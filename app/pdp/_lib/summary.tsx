@@ -144,6 +144,10 @@ export function PdpSummary({
             View System Details
           </a>
         </div>
+      ) : product.ahriEmpty ? (
+        <div className="grid place-items-center rounded-md border px-3 py-6 text-sm text-muted-foreground">
+          No AHRI Matchups Found
+        </div>
       ) : null}
 
       {blocksPurchase ? (

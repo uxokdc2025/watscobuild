@@ -4,7 +4,7 @@ import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
 import { CustomersAlsoPurchased, FrequentlyBoughtTogether } from "./fbt";
-import { AboutThisProduct, BundleComponents, RecentlyViewed, Replacements, Substitutes } from "./about";
+import { AboutThisProduct, BundleComponents, ProPicks, RecentlyViewed, Replacements, Substitutes } from "./about";
 import { SiteFooter, SiteHeader } from "./chrome";
 import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
@@ -88,6 +88,7 @@ export function Pdp({
               />
               {/* New pattern: bundles + recommendations all sit under the buy
                   box, in the summary column. */}
+              {product.proPicks?.length ? <ProPicks product={product} /> : null}
               {product.replacements?.length ? (
                 <Replacements product={product} />
               ) : null}

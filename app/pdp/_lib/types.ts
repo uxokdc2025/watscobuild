@@ -50,6 +50,17 @@ export type SubstituteItem = {
   points?: number;
 };
 
+/** A "PRO Picks" row — a matched component with its own price + Add to Cart. */
+export type ProPickItem = {
+  id: string;
+  title: string;
+  price: number;
+  wasPrice?: number;
+  uom?: string;
+  /** e.g. "0 available at: Durham NC #1" */
+  availabilityNote?: string;
+};
+
 /** A downloadable/linked asset shown in the "Product Documentation" tab. */
 export type PdpDocument = {
   label: string;
@@ -139,6 +150,10 @@ export type PdpProduct = {
   replacements?: SubstituteItem[];
   /** AHRI matched-system reference — renders a badge + "View System Details" link. */
   ahri?: { number: string };
+  /** Render an empty "No AHRI Matchups Found" box (ECMDI equipment PDPs). */
+  ahriEmpty?: boolean;
+  /** "PRO Picks" — matched components sold with the item (price + Add to Cart). */
+  proPicks?: ProPickItem[];
   /** Components included in a bundle ("Included In Bundle" section). */
   bundleItems?: SubstituteItem[];
   /** "Customers Also Purchased" cards (with % also-purchased). */
