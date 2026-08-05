@@ -1202,6 +1202,7 @@ const ucNonSellable: PdpProduct = {
     "https://resource.peirce.com/is/image/Watscocom/empire_em819g_article_1604089103823369_en_normal?wid=700&hei=700&qlt=80",
   ],
   status: "non-sellable",
+  nonSellableAllBranchesQty: 6,
   description: {
     intro:
       "9 in. True Blue professional magnetic torpedo level. This item is catalog-reference only and is not available for online purchase.",

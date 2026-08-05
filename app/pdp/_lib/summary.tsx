@@ -152,31 +152,36 @@ export function PdpSummary({
 
       {blocksPurchase ? (
         // "replaced" hands its column to the Replacement Products section (no box).
-        product.status === "replaced" ? null : (
-          <div
-            className={cn(
-              "rounded-lg border p-4 text-sm",
-              product.status === "non-sellable"
-                ? "border-red-500/40 bg-red-50 dark:bg-red-950/30"
-                : "border-amber-500/40 bg-amber-50 dark:bg-amber-950/30",
-            )}
-          >
-            <p
-              className={cn(
-                "font-semibold",
-                product.status === "non-sellable"
-                  ? "text-red-700 dark:text-red-300"
-                  : "text-amber-800 dark:text-amber-300",
-              )}
-            >
-              {product.status === "discontinued"
-                ? "Discontinued"
-                : "Not Available for Purchase"}
+        product.status === "replaced" ? null : product.status ===
+          "non-sellable" ? (
+          // Non-sellable is store-specific: blocked here, may have stock elsewhere.
+          <>
+            <div className="rounded-lg border p-4 text-sm">
+              <p className="font-semibold">Availability</p>
+              <p className="mt-2 font-medium text-red-600 dark:text-red-400">
+                Non-Sellable{product.store?.name ? ` at ${product.store.name}` : ""}
+              </p>
+              {product.nonSellableAllBranchesQty != null ? (
+                <p className="mt-1 font-medium text-in-stock">
+                  {product.nonSellableAllBranchesQty} at All Branches
+                </p>
+              ) : null}
+              <a
+                href="#"
+                className="mt-2 inline-block font-medium text-red-600 underline-offset-4 hover:underline dark:text-red-400"
+              >
+                View All Branches
+              </a>
+            </div>
+            <SecondaryActions showCompare={showCompare} />
+          </>
+        ) : (
+          <div className="rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
+            <p className="font-semibold text-amber-800 dark:text-amber-300">
+              Discontinued
             </p>
             <p className="mt-1 text-muted-foreground">
-              {product.status === "discontinued"
-                ? "This item has been discontinued and is no longer available."
-                : "This item is not available for online purchase."}
+              This item has been discontinued and is no longer available.
             </p>
           </div>
         )
