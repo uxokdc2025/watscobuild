@@ -73,14 +73,19 @@ export function Pdp({
             </ol>
           </nav>
 
-          {/* Gallery (third-party, boxed) + summary */}
-          <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
-            <PdpGallery
-              thumbnailCount={product.thumbnailCount}
-              images={product.images}
-              alt={product.title}
-              noImage={product.noImage}
-            />
+          {/* Gallery (third-party, boxed) + summary.
+              The image column pins (sticky) while the taller summary column
+              scrolls past it; once the summary ends, the sticky releases and
+              the page (Frequently Bought Together, etc.) scrolls as one. */}
+          <div className="mt-4 grid grid-cols-1 items-start gap-8 md:grid-cols-2 lg:gap-12">
+            <div className="md:sticky md:top-6">
+              <PdpGallery
+                thumbnailCount={product.thumbnailCount}
+                images={product.images}
+                alt={product.title}
+                noImage={product.noImage}
+              />
+            </div>
             <div className="flex flex-col gap-6">
               <PdpSummary
                 product={summaryProduct}
