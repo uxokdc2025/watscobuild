@@ -1,7 +1,33 @@
 import * as React from "react";
-import { ImageOff, Star } from "lucide-react";
+import { Award, ImageOff, Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+
+/* ─────────────── Loyalty points (violet badge) ───────────────
+ * CE Rewards points earned on purchase. Reused wherever points appear —
+ * buy box, FBT cards, substitutes — so the treatment is always identical.
+ * Mirrors the Badge `soft`/`violet` styling without importing Badge, so this
+ * file stays a plain (server-safe) shared module.
+ */
+export function PointsBadge({
+  points,
+  className,
+}: {
+  points: number;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex w-fit shrink-0 items-center gap-1 rounded-full border border-violet-200 bg-violet-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-violet-800 dark:border-violet-900 dark:bg-violet-950 dark:text-violet-200 [&>svg]:size-3",
+        className,
+      )}
+    >
+      <Award aria-hidden />
+      Earn {points} point{points === 1 ? "" : "s"}
+    </span>
+  );
+}
 
 /* ─────────────── Flag badge (folded-corner accent) ───────────────
  * White fill, dark text, a colored corner notch — Direct Ship, No Returns,

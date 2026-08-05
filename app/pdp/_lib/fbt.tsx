@@ -2,14 +2,9 @@
 
 import { Info, ListPlus, ShoppingCart } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { PointsBadge } from "@/components/ui/label-badges";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "./auth";
 import { formatUSD, type FbtProduct, type PdpProduct } from "./types";
@@ -78,11 +73,7 @@ function FbtCard({ item }: { item: FbtProduct }) {
                 <span className="text-lg font-bold">{formatUSD(item.price!)}</span>{" "}
                 <span className="text-xs text-muted-foreground">/ EACH</span>
               </p>
-              {item.points ? (
-                <p className="text-xs font-medium text-in-stock">
-                  Earn {item.points} point{item.points === 1 ? "" : "s"}
-                </p>
-              ) : null}
+              {item.points ? <PointsBadge points={item.points} /> : null}
               <Button size="sm" className="mt-2 w-full">
                 <ShoppingCart className="size-4" />
                 Add To Cart
@@ -132,6 +123,8 @@ function FbtCard({ item }: { item: FbtProduct }) {
   );
 }
 
+// 4-up grid, identical to Customers Also Purchased. Fewer than 4 items fill the
+// row (min(count,4) columns); more than 4 wrap to the next row.
 function FbtRail({ items }: { items: FbtProduct[] }) {
   if (!items.length) {
     return (
@@ -140,21 +133,21 @@ function FbtRail({ items }: { items: FbtProduct[] }) {
       </div>
     );
   }
+  const cols = Math.min(items.length, 4);
+  const lgCols =
+    cols === 1
+      ? "lg:grid-cols-1"
+      : cols === 2
+        ? "lg:grid-cols-2"
+        : cols === 3
+          ? "lg:grid-cols-3"
+          : "lg:grid-cols-4";
   return (
-    <Carousel opts={{ align: "start" }} className="mx-10">
-      <CarouselContent>
-        {items.map((it) => (
-          <CarouselItem
-            key={it.id}
-            className="basis-full sm:basis-1/2 lg:basis-1/4 xl:basis-1/6"
-          >
-            <FbtCard item={it} />
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
+    <div className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2", lgCols)}>
+      {items.map((it) => (
+        <FbtCard key={it.id} item={it} />
+      ))}
+    </div>
   );
 }
 

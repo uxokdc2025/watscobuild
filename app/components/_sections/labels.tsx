@@ -10,6 +10,7 @@ import {
   FlagBadge,
   HighlightBadge,
   NoImage,
+  PointsBadge,
   StockStatus,
 } from "@/components/ui/label-badges";
 import { Category } from "../_showcase";
@@ -53,6 +54,13 @@ export function LabelsSection() {
         <Badge variant="solid" color="orange">Online Only</Badge>
         <Badge variant="solid" color="red">Clearance / ESD</Badge>
         <Badge variant="solid" color="teal">Rebate</Badge>
+      </Group>
+
+      {/* Loyalty points */}
+      <Group title="Loyalty points" note="CE Rewards points earned on purchase — violet badge, shown in the price cluster and on recommendation cards.">
+        <PointsBadge points={1} />
+        <PointsBadge points={2} />
+        <PointsBadge points={25} />
       </Group>
 
       {/* Promo badges (colored outline) */}

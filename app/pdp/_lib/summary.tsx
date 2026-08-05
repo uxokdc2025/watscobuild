@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Award, Info, ListPlus, LogIn, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Info, ListPlus, LogIn, Minus, Plus, ShoppingCart } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { BranchRow, stockTextClass } from "@/components/ui/label-badges";
+import { BranchRow, PointsBadge, stockTextClass } from "@/components/ui/label-badges";
 import { CompareButton } from "@/components/ui/compare-button";
 import { PackSizePills } from "@/components/ui/pack-size-pills";
 import { useAuth } from "./auth";
@@ -136,7 +136,7 @@ export function PdpSummary({
       </div>
 
       {product.ahri ? (
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
           <span className="font-semibold">
             AHRI Matchup: {product.ahri.number}
           </span>
@@ -145,7 +145,7 @@ export function PdpSummary({
           </a>
         </div>
       ) : product.ahriEmpty ? (
-        <div className="grid place-items-center rounded-md border px-3 py-6 text-sm text-muted-foreground">
+        <div className="grid place-items-center rounded-lg border p-6 text-sm text-muted-foreground">
           No AHRI Matchups Found
         </div>
       ) : null}
@@ -220,11 +220,7 @@ export function PdpSummary({
                 </span>
               </div>
               {product.commerce!.points ? (
-                <p className="flex items-center gap-1.5 text-sm font-medium text-in-stock">
-                  <Award className="size-4" />
-                  Earn {product.commerce!.points} point
-                  {product.commerce!.points === 1 ? "" : "s"}
-                </p>
+                <PointsBadge points={product.commerce!.points} />
               ) : null}
             </div>
           ) : (

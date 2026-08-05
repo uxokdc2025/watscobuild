@@ -1,5 +1,6 @@
 import { ChevronDown, FileText, Search, Share2, ShoppingCart } from "lucide-react";
 
+import { PointsBadge } from "@/components/ui/label-badges";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   formatUSD,
@@ -282,9 +283,7 @@ export function Substitutes({ product }: { product: PdpProduct }) {
                     <span className="text-xs text-muted-foreground">/ EACH</span>
                   </p>
                 ) : null}
-                {s.points ? (
-                  <p className="text-xs font-medium text-in-stock">Earn {s.points} points</p>
-                ) : null}
+                {s.points ? <PointsBadge points={s.points} /> : null}
               </div>
               <a
                 href="#"
@@ -373,19 +372,21 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
   );
 }
 
-/* ── PRO Picks (matched components with price + Add to Cart) ── */
+/* ── PRO Picks (matched components with price + Add to Cart) ──
+   Same shell as Included In Bundle / Substitutes: heading above a
+   `rounded-lg border bg-muted/30` list with border-t between rows. */
 export function ProPicks({ product }: { product: PdpProduct }) {
   if (!product.proPicks?.length) return null;
   return (
-    <section aria-label="PRO Picks" className="rounded-lg border">
-      <h2 className="border-b px-4 py-3 text-sm font-bold tracking-tight">PRO Picks</h2>
-      <div>
+    <section aria-label="PRO Picks" className="flex flex-col gap-3">
+      <h2 className="text-lg font-bold tracking-tight">PRO Picks</h2>
+      <div className="overflow-hidden rounded-lg border bg-muted/30">
         {product.proPicks.map((p, i) => (
           <div
             key={p.id}
-            className={`flex flex-wrap items-center gap-3 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+            className={`flex flex-wrap items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
           >
-            <span className="grid h-10 w-14 shrink-0 place-items-center rounded-md border text-sm tabular-nums">
+            <span className="grid h-10 w-12 shrink-0 place-items-center rounded-md border bg-background text-sm tabular-nums">
               1
             </span>
             <div className="min-w-40 flex-1">
@@ -406,7 +407,7 @@ export function ProPicks({ product }: { product: PdpProduct }) {
             </div>
             <a
               href="#"
-              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="inline-flex items-center gap-1.5 rounded-md border bg-background px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
               <ShoppingCart className="size-4" />
               Add to Cart
