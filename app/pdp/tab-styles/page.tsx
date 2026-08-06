@@ -75,6 +75,25 @@ export default function TabStylesPage() {
         listClassName="h-auto rounded-full p-1"
         triggerClassName="h-auto flex-none rounded-full px-4 py-1.5 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
       />
+
+      {/* Boxed / tabbed card — content sits in a bordered box under the tabs */}
+      <Tabs defaultValue="description" className="gap-0 overflow-hidden rounded-xl border">
+        <TabsList
+          variant="line"
+          className="w-full justify-start gap-6 rounded-none border-b bg-muted/30 px-4"
+        >
+          {SECTIONS.map((s) => (
+            <TabsTrigger key={s.id} value={s.id}>
+              {s.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {SECTIONS.map((s) => (
+          <TabsContent key={s.id} value={s.id} className="bg-card p-6">
+            <s.Body />
+          </TabsContent>
+        ))}
+      </Tabs>
     </ShowcaseShell>
   );
 }
