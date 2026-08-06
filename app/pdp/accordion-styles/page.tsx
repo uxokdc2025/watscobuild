@@ -8,6 +8,11 @@ import {
 } from "@/components/ui/accordion";
 import { ShowcaseShell } from "../_lib/showcase";
 import { SECTIONS } from "../_lib/showcase-data";
+import {
+  AccentAccordion,
+  PlusAccordion,
+  StepAccordion,
+} from "../_lib/showcase-accordions";
 
 export const metadata: Metadata = {
   title: "Accordion styles — PDP showcase",
@@ -72,6 +77,15 @@ export default function AccordionStylesPage() {
           </AccordionItem>
         ))}
       </Accordion>
+
+      {/* 4 · Plus / minus separated cards */}
+      <PlusAccordion />
+
+      {/* 5 · Status-dot step cards */}
+      <StepAccordion />
+
+      {/* 6 · Circular chevron + left accent */}
+      <AccentAccordion />
     </ShowcaseShell>
   );
 }

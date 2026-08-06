@@ -372,7 +372,7 @@ function QtyAdd() {
   const step =
     "grid h-8 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex w-24 shrink-0 flex-col gap-2">
+    <div className="flex w-20 shrink-0 flex-col gap-2">
       <div className="inline-flex h-8 items-center justify-between rounded-md border" role="group" aria-label="Quantity">
         <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="Decrease quantity" className={cn(step, "rounded-l-md")}>
           <Minus className="size-3.5" />
@@ -382,8 +382,9 @@ function QtyAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" aria-label="Add to cart" title="Add to cart" className="h-8 w-full">
+      <Button size="sm" className="h-8 w-full px-2">
         <ShoppingCart className="size-4" />
+        Add
       </Button>
     </div>
   );
