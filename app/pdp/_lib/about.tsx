@@ -366,14 +366,14 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
 /* ── PRO Picks (matched components with price + Add to Cart) ──
    Same shell as Included In Bundle / Substitutes: heading above a
    `rounded-lg border bg-muted/30` list with border-t between rows. */
-/** Compact quantity stepper + Add to Cart, grouped as one control. */
+/** Mini quantity stepper + icon-only Add-to-Cart, grouped as one compact control. */
 function QtyAdd() {
   const [qty, setQty] = React.useState(1);
   const step =
-    "grid h-9 w-8 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+    "grid h-8 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex w-32 shrink-0 flex-col gap-2">
-      <div className="inline-flex h-9 items-center justify-between rounded-md border" role="group" aria-label="Quantity">
+    <div className="flex w-24 shrink-0 flex-col gap-2">
+      <div className="inline-flex h-8 items-center justify-between rounded-md border" role="group" aria-label="Quantity">
         <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="Decrease quantity" className={cn(step, "rounded-l-md")}>
           <Minus className="size-3.5" />
         </button>
@@ -382,9 +382,8 @@ function QtyAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" className="h-9 w-full">
+      <Button size="sm" aria-label="Add to cart" title="Add to cart" className="h-8 w-full">
         <ShoppingCart className="size-4" />
-        Add to Cart
       </Button>
     </div>
   );
