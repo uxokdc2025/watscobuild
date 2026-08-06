@@ -1477,6 +1477,133 @@ const ucStrikeThru: PdpProduct = {
   ],
 };
 
+// ── Use case: LIVO Mini-Split Heat Pump (AHRI match + accessories) ──
+const ucLivo: PdpProduct = {
+  slug: "uc-livo",
+  brand: "Gree",
+  brandKey: "ecmdi",
+  useCase: "Mini-Split Heat Pump",
+  sourceUrl:
+    "https://www.ecmdi.com/livo-outdoor-heat-pump-12-000-btu-21-seer2-208-230v-r-32-382128a",
+  store: { name: "Durham NC #1" },
+  title: "LIVO Outdoor Heat Pump - 12,000 BTU - 19 SEER2 - 208/230V - R-32",
+  item: "382128A",
+  mfg: "LIV12HP230V1R32AO",
+  thumbnailCount: 1,
+  images: [
+    "https://cdn.ecmdi.com/gree_livo-outdoor_en_normal?wid=700&hei=700&qlt=80",
+  ],
+  ahri: { number: "214779350" },
+  description: {
+    intro:
+      "Gree LIVO single-zone outdoor heat pump — 12,000 BTU, 19 SEER2, 208/230V, R-32 refrigerant. Pairs with a matched LIVO indoor air handler for a complete mini-split system.",
+  },
+  documents: [
+    {
+      label: "LIVO R-32 Product Literature",
+      kind: "pdf",
+      href: "https://resource.ecmdi.com/is/content/Watscocom/Gemaire/gree_livo32_en_pl.pdf",
+      category: "Literature",
+    },
+  ],
+  specTabLabel: "Specifications",
+  specGroupsLeft: [
+    {
+      title: "System",
+      rows: [
+        { label: "Capacity", value: "12,000 BTU" },
+        { label: "SEER2", value: "19" },
+        { label: "Type", value: "Outdoor Heat Pump (Single-Zone)" },
+        { label: "Refrigerant", value: "R-32" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Electrical",
+      rows: [
+        { label: "Voltage", value: "208/230V" },
+        { label: "Phase", value: "1" },
+        { label: "Frequency", value: "60 Hz" },
+      ],
+    },
+  ],
+  commerce: {
+    price: 799.0,
+    uom: "EACH",
+    yourBranch: { name: "Durham NC #1", stock: 4 },
+    nearbyBranches: [
+      { qty: 2, name: "Raleigh NC #5" },
+      { qty: 0, name: "Greensboro NC #6" },
+      { qty: 6, name: "Fayetteville NC #38" },
+      { qty: 3, name: "Aberdeen NC #39" },
+    ],
+  },
+  customersAlsoPurchased: [
+    {
+      id: "livo-pad",
+      brand: "DiversiTech®",
+      title: '18" x 38" x 3" E-Lite® Plastic Equipment Pad',
+      item: "277028A",
+      mfg: "EL1838-3",
+      pct: 67,
+      price: 36.9,
+      branchQty: 60,
+      branchName: "Durham NC #1",
+      nearbyQty: 1425,
+      allBranchesQty: 1425,
+      image:
+        "https://cdn.ecmdi.com/diversitech_el1838-3_article_1375441853604_en_normal?wid=400&hei=400&qlt=80",
+    },
+    {
+      id: "livo-lineset25",
+      brand: "Cambridge-Lee",
+      title:
+        '1/4" x 3/8" x 25\' Mini-Split Lineset - 1/2" Insulation and Flare Fittings',
+      item: "79603",
+      mfg: "366390",
+      pct: 44,
+      price: 198.5,
+      branchQty: 18,
+      branchName: "Durham NC #1",
+      nearbyQty: 240,
+      allBranchesQty: 240,
+      image:
+        "https://cdn.ecmdi.com/cambridge-lee_366390_article_1367841263812_en_normal?wid=400&hei=400&qlt=80",
+    },
+    {
+      id: "livo-surge",
+      brand: "TRADEPRO®",
+      title: "Single Phase Type 1 Surge Protector - 120/240 VAC",
+      item: "369307A",
+      mfg: "TP-SPD-50",
+      pct: 42,
+      price: 44.9,
+      branchQty: 30,
+      branchName: "Durham NC #1",
+      nearbyQty: 310,
+      allBranchesQty: 310,
+      image:
+        "https://cdn.ecmdi.com/tradepro_tp-spd-50_article_1604089125126822_en_normal?wid=400&hei=400&qlt=80",
+    },
+    {
+      id: "livo-sleeve",
+      brand: "SpeediChannel™",
+      title: '4" SpeediChannel™ Wall Penetration Sleeve',
+      item: "81818",
+      mfg: "230-WC4",
+      pct: 28,
+      price: 12.4,
+      branchQty: 44,
+      branchName: "Durham NC #1",
+      nearbyQty: 520,
+      allBranchesQty: 520,
+      image:
+        "https://cdn.ecmdi.com/speedichannel_230-wc4_article_1381924789776_en_normal?wid=400&hei=400&qlt=80",
+    },
+  ],
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -1492,6 +1619,7 @@ export const pdps: PdpProduct[] = [
   ucBundle,
   ucPoints,
   ucNonSellable,
+  ucLivo,
   ucLicense,
   ucStrikeThru,
 ];
