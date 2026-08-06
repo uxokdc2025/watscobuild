@@ -83,9 +83,9 @@ export function ShowcaseShell({
   intro,
   children,
 }: {
-  eyebrow: string;
-  heading: string;
-  intro: string;
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
   children: React.ReactNode;
 }) {
   const [qty, setQty] = React.useState(1);
@@ -119,13 +119,19 @@ export function ShowcaseShell({
           PDP Master
         </Link>
 
-        <div className="mt-4">
-          <span className="text-xs font-bold tracking-wide text-primary uppercase">
-            {eyebrow}
-          </span>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight">{heading}</h1>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{intro}</p>
-        </div>
+        {heading ? (
+          <div className="mt-4">
+            {eyebrow ? (
+              <span className="text-xs font-bold tracking-wide text-primary uppercase">
+                {eyebrow}
+              </span>
+            ) : null}
+            <h1 className="mt-1 text-2xl font-bold tracking-tight">{heading}</h1>
+            {intro ? (
+              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{intro}</p>
+            ) : null}
+          </div>
+        ) : null}
 
         {/* Product hero */}
         <div className="mt-6 grid grid-cols-1 items-start gap-8 md:grid-cols-2 lg:gap-12">
