@@ -11,7 +11,7 @@ import { BranchRow, PointsBadge, stockTextClass } from "@/components/ui/label-ba
 import { CompareButton } from "@/components/ui/compare-button";
 import { PackSizePills } from "@/components/ui/pack-size-pills";
 import { useAuth } from "./auth";
-import { formatUSD, type PdpCommerce, type PdpProduct } from "./types";
+import { formatUSD, formatUom, type PdpCommerce, type PdpProduct } from "./types";
 
 function QtyStepper({
   qty,
@@ -253,7 +253,7 @@ export function PdpSummary({
                   </>
                 ) : null}
                 <span className="text-sm text-muted-foreground">
-                  /{product.commerce!.uom}
+                  / {formatUom(product.commerce!.uom)}
                 </span>
               </div>
               {product.commerce!.points ? (

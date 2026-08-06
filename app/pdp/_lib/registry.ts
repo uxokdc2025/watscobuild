@@ -801,7 +801,6 @@ const ucAhri: PdpProduct = {
   sourceUrl:
     "https://www.ecmdi.com/glzs4b-series-3-1-2-ton-split-system-heat-pump-r-32-378798a",
   store: { name: "Durham NC #1" },
-  badges: [{ label: "AHRI Matched System", tone: "soft", color: "blue" }],
   title: "GLZS4B Series 3-1/2 Ton Split System Heat Pump - 14.3 SEER2 - R-32",
   item: "378798A",
   mfg: "GLZS4BA4210",
@@ -1191,7 +1190,6 @@ const ucNonSellable: PdpProduct = {
   sourceUrl:
     "https://www.peirce.com/9-in-true-blue-professional-torpedo-level--d10e885",
   store: { name: "Norristown, PA" },
-  badges: [{ label: "Non-Sellable", tone: "soft", color: "red" }],
   title: "9 in. True Blue Professional Torpedo Level",
   item: "EM819G",
   mfg: "EM81.9G",
@@ -1394,6 +1392,7 @@ const ucStrikeThru: PdpProduct = {
     {
       id: "cirra-7k",
       title: "CIRRA Indoor Heat Pump - 7,000 BTU",
+      image: "/uc/propick-cirra-indoor.avif",
       price: 100.0,
       wasPrice: 394.1,
       availabilityNote: "0 available at: Durham NC #1",
@@ -1401,6 +1400,7 @@ const ucStrikeThru: PdpProduct = {
     {
       id: "cirra-9k",
       title: "CIRRA Indoor Heat Pump - 9,000 BTU",
+      image: "/uc/propick-cirra-indoor.avif",
       price: 403.77,
       wasPrice: 638.52,
       availabilityNote: "0 available at: Durham NC #1",
@@ -1408,6 +1408,7 @@ const ucStrikeThru: PdpProduct = {
     {
       id: "cirra-12k",
       title: "CIRRA Indoor Heat Pump - 12,000 BTU",
+      image: "/uc/propick-cirra-indoor.avif",
       price: 412.8,
       wasPrice: 652.8,
       availabilityNote: "0 available at: Durham NC #1",

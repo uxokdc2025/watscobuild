@@ -1,5 +1,10 @@
-import { ChevronDown, FileText, Search, Share2, ShoppingCart } from "lucide-react";
+"use client";
 
+import * as React from "react";
+import { ChevronDown, FileText, Minus, Plus, Search, Share2, ShoppingCart } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { PointsBadge } from "@/components/ui/label-badges";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -69,26 +74,12 @@ function ProductInfo({ product }: { product: PdpProduct }) {
           </ul>
         ) : null}
         {product.description.prop65 ? (
-          <div className="mt-4 flex items-start gap-3 text-sm text-muted-foreground">
-            <span className="grid shrink-0 place-items-center rounded border border-amber-500 px-1.5 py-1 text-[10px] leading-tight font-bold text-amber-600">
-              PROP
-              <br />
-              65
-            </span>
-            <p>
-              <span className="font-semibold text-foreground">Warning:</span> this
-              product contains a chemical known to the State of California to cause
-              cancer.{" "}
-              <a
-                href="https://www.p65warnings.ca.gov"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline-offset-4 hover:underline"
-              >
-                P65Warnings.ca.gov
-              </a>
-            </p>
-          </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            California residents: see{" "}
+            <a href="#" className="font-medium text-primary underline-offset-4 hover:underline">
+              Proposition 65 Warning
+            </a>
+          </p>
         ) : null}
       </div>
       <div>
@@ -375,6 +366,31 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
 /* ── PRO Picks (matched components with price + Add to Cart) ──
    Same shell as Included In Bundle / Substitutes: heading above a
    `rounded-lg border bg-muted/30` list with border-t between rows. */
+/** Compact quantity stepper + Add to Cart, grouped as one control. */
+function QtyAdd() {
+  const [qty, setQty] = React.useState(1);
+  const step =
+    "grid h-9 w-8 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+  return (
+    <div className="flex w-32 shrink-0 flex-col gap-2">
+      <div className="inline-flex h-9 items-center justify-between rounded-md border" role="group" aria-label="Quantity">
+        <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="Decrease quantity" className={cn(step, "rounded-l-md")}>
+          <Minus className="size-3.5" />
+        </button>
+        <span aria-live="polite" className="text-sm font-medium tabular-nums">{qty}</span>
+        <button type="button" onClick={() => setQty((q) => Math.min(99, q + 1))} aria-label="Increase quantity" className={cn(step, "rounded-r-md")}>
+          <Plus className="size-3.5" />
+        </button>
+      </div>
+      <Button size="sm" className="h-9 w-full">
+        <ShoppingCart className="size-4" />
+        Add to Cart
+      </Button>
+    </div>
+  );
+}
+
+/** PRO Picks — thumbnail-left rows (like Substitutes) + a grouped qty/cart control. */
 export function ProPicks({ product }: { product: PdpProduct }) {
   if (!product.proPicks?.length) return null;
   return (
@@ -384,12 +400,12 @@ export function ProPicks({ product }: { product: PdpProduct }) {
         {product.proPicks.map((p, i) => (
           <div
             key={p.id}
-            className={`flex flex-wrap items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+            className={`grid grid-cols-[3.5rem_1fr_auto] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
           >
-            <span className="grid h-10 w-12 shrink-0 place-items-center rounded-md border bg-background text-sm tabular-nums">
-              1
-            </span>
-            <div className="min-w-40 flex-1">
+            <div className="size-14">
+              <ProductThumb src={p.image} alt={p.title} />
+            </div>
+            <div className="min-w-0">
               <a href="#" className="text-sm font-semibold text-primary hover:underline">
                 {p.title}
               </a>
@@ -405,13 +421,7 @@ export function ProPicks({ product }: { product: PdpProduct }) {
                 <p className="mt-0.5 text-xs text-muted-foreground">{p.availabilityNote}</p>
               ) : null}
             </div>
-            <a
-              href="#"
-              className="inline-flex items-center gap-1.5 rounded-md border bg-background px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              <ShoppingCart className="size-4" />
-              Add to Cart
-            </a>
+            <QtyAdd />
           </div>
         ))}
       </div>

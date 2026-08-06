@@ -54,6 +54,7 @@ export type SubstituteItem = {
 export type ProPickItem = {
   id: string;
   title: string;
+  image?: string;
   price: number;
   wasPrice?: number;
   uom?: string;
@@ -165,6 +166,14 @@ export type PdpProduct = {
   /** Promo rebate message shown near the buy box (e.g. "Up to $200 rebate"). */
   rebate?: string;
 };
+
+/** Display form of a unit-of-measure: EA/Each → EACH; else upper-cased.
+ * Pair with a leading "/ " (space after the slash) everywhere it's shown. */
+export function formatUom(uom: string): string {
+  const u = uom.trim().toUpperCase();
+  if (u === "EA" || u === "EACH") return "EACH";
+  return u;
+}
 
 export function formatUSD(value: number): string {
   return new Intl.NumberFormat("en-US", {
