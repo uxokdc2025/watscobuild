@@ -104,7 +104,6 @@ export default function PdpMasterPage() {
   // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
   const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
   // The v2 pack-size-pills demo is called out on its own, not in the main list.
-  const v2 = templates.find((p) => p.slug === "ecmdi-pro-flush-v2");
   // Use-case demo entries get their own section at the bottom.
   const useCases = templates.filter((p) => p.useCase);
   const rest = templates.filter(
@@ -184,47 +183,6 @@ export default function PdpMasterPage() {
             reference only.
           </p>
         </div>
-
-        {/* v2 callout — pack-size pills */}
-        {v2 ? (
-          <div className="mt-6 rounded-xl border-2 border-primary bg-card p-5">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
-                v2 · Pack-size pills
-              </span>
-              <span className="text-sm font-semibold">East Coast Metal Distributors</span>
-              <span className="text-sm text-muted-foreground">{v2.brand}</span>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Demonstrates the pack-size selector as <span className="font-medium text-foreground">pills</span>{" "}
-              instead of a segmented control — shown here with the &ldquo;few
-              options&rdquo; case (Each / 12-Pk). One option renders as a single
-              static label; more options wrap cleanly. See it under{" "}
-              <span className="font-medium text-foreground">Pack Size</span> on the
-              signed-in view.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Link
-                href={`/pdp/${v2.slug}?signedin=1`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              >
-                Signed in · see the pills
-                <ArrowUpRight className="size-3.5" />
-              </Link>
-              <Link
-                href={`/pdp/${v2.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              >
-                Signed out
-                <ArrowUpRight className="size-3.5" />
-              </Link>
-            </div>
-          </div>
-        ) : null}
 
         {/* Each section is its own accordion panel. Use Cases opens by default;
             the in-scope list and Descoped start collapsed. */}
