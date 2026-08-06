@@ -1,7 +1,9 @@
 "use client";
 
-import { Info, ListPlus, ShoppingCart } from "lucide-react";
+import * as React from "react";
+import { ListPlus, Minus, Plus, ShoppingCart } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -10,6 +12,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { PointsBadge } from "@/components/ui/label-badges";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "./auth";
@@ -41,97 +51,165 @@ function FbtImage({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-function FbtCard({ item }: { item: FbtProduct }) {
-  const { signedIn } = useAuth();
-  const rich = item.price != null;
-
+/** "Nearby Branches" — a link that opens a branch-availability drawer. */
+function NearbyBranchesLink({ item }: { item: FbtProduct }) {
+  const nearby = item.allBranchesQty ?? item.nearbyQty;
+  const storeName = item.branchName || item.stockBranch;
   return (
-    <div className="flex h-full flex-col gap-2 rounded-lg border p-4">
-      <FbtImage src={item.image} alt={item.title} />
-      <a href="#" className="line-clamp-3 text-sm font-semibold text-primary hover:underline">
-        {item.title}
-      </a>
-      <p className="text-xs text-muted-foreground">
-        Item: {item.item}
-        <br />
-        MFG: {item.mfg}
-      </p>
-
-      <div className="mt-auto flex flex-col gap-2 pt-1">
-      {rich ? (
-        <>
-          {signedIn ? (
-            <>
-              {item.stockStatus == null && item.branchName ? (
-                <div className="text-xs leading-relaxed">
-                  <span className="font-medium text-in-stock">{item.branchQty}</span>{" "}
-                  <span className="text-muted-foreground">{item.branchName}</span>
-                  <br />
-                  <span className="font-medium text-in-stock">{item.nearbyQty}</span>{" "}
-                  <span className="text-muted-foreground">Nearby Branches</span>
-                  <br />
-                  <a href="#" className="text-primary underline-offset-4 hover:underline">
-                    Check Nearby Branches
-                  </a>
-                </div>
-              ) : null}
-              <p className="mt-1">
-                <span className="text-lg font-bold">{formatUSD(item.price!)}</span>{" "}
-                <span className="text-xs text-muted-foreground">/ EACH</span>
-              </p>
-              {item.points ? <PointsBadge points={item.points} /> : null}
-              <Button size="sm" className="mt-2 w-full">
-                <ShoppingCart className="size-4" />
-                Add To Cart
-              </Button>
-              {item.stockStatus ? (
-                <p className="mt-1 flex items-center gap-1.5 text-xs">
-                  <Info className="size-3.5 text-muted-foreground" />
-                  <span className="font-semibold text-in-stock">{item.stockStatus}</span>
-                  <span className="text-muted-foreground">{item.stockBranch}</span>
-                </p>
-              ) : null}
-            </>
-          ) : (
+    <Sheet>
+      <SheetTrigger asChild>
+        <button
+          type="button"
+          className="block text-left font-medium text-primary underline-offset-4 hover:underline"
+        >
+          {nearby} Nearby Branches
+        </button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Branch Availability</SheetTitle>
+          <SheetDescription className="line-clamp-2">{item.title}</SheetDescription>
+        </SheetHeader>
+        <div className="flex flex-col gap-3 text-sm">
+          <div className="rounded-lg border p-3">
+            <p className="font-semibold">Your Branch</p>
+            <p className="mt-0.5 text-muted-foreground">{storeName}</p>
+            <p className="mt-1 font-medium text-in-stock">{item.branchQty} in stock</p>
+          </div>
+          <div className="rounded-lg border p-3">
+            <p className="font-semibold">Nearby Branches</p>
+            <p className="mt-1 font-medium text-in-stock">
+              {nearby} available across nearby branches
+            </p>
             <a
               href="#"
-              className="mt-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+              className="mt-2 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
             >
-              Sign in to view pricing
+              View all branches
             </a>
-          )}
-        </>
-      ) : (
-        <>
-          <div className="text-sm">
-            <span className="font-medium text-in-stock">{item.branchQty}</span>{" "}
-            <span className="text-muted-foreground">{item.branchName}</span>
           </div>
-          <div className="mt-1">
-            {signedIn ? (
-              <Button size="sm" className="w-full">
-                <ShoppingCart />
-                Add to Cart
-              </Button>
-            ) : (
-              <a
-                href="#"
-                className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-              >
-                Sign in to view pricing
-              </a>
-            )}
-          </div>
-        </>
-      )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+/** Compact quantity box + mini (icon-only) Add-to-Cart, side by side. */
+function QtyMiniAdd() {
+  const [qty, setQty] = React.useState(1);
+  const step =
+    "grid h-9 w-8 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+  return (
+    <div className="flex items-stretch gap-2">
+      <div className="inline-flex h-9 shrink-0 items-center rounded-md border" role="group" aria-label="Quantity">
+        <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="Decrease quantity" className={cn(step, "rounded-l-md")}>
+          <Minus className="size-3.5" />
+        </button>
+        <span aria-live="polite" className="w-7 text-center text-sm font-medium tabular-nums">{qty}</span>
+        <button type="button" onClick={() => setQty((q) => Math.min(99, q + 1))} aria-label="Increase quantity" className={cn(step, "rounded-r-md")}>
+          <Plus className="size-3.5" />
+        </button>
+      </div>
+      <Button size="sm" aria-label="Add to cart" title="Add to cart" className="h-9 flex-1">
+        <ShoppingCart className="size-4" />
+      </Button>
+    </div>
+  );
+}
+
+/**
+ * GLOBAL product card (Frequently Bought Together + Customers Also Purchased).
+ * Order: image → brand → title (≤3 lines) → Product/MFG → your store +
+ * Nearby Branches (drawer link) → price/sale → qty + mini add → Save to List.
+ * Everything from Product/MFG down is pinned (mt-auto) so it aligns across cards.
+ */
+function ProductCard({ item }: { item: FbtProduct }) {
+  const { signedIn } = useAuth();
+  const onSale = item.wasPrice != null;
+  const nearby = item.allBranchesQty ?? item.nearbyQty;
+
+  return (
+    <div className="flex h-full flex-col gap-2 rounded-lg border bg-card p-4">
+      <FbtImage src={item.image} alt={item.title} />
+      {item.brand ? (
+        <p className="text-xs text-muted-foreground">{item.brand}</p>
+      ) : null}
+      <a
+        href="#"
+        className="line-clamp-3 text-sm font-semibold text-primary hover:underline"
+      >
+        {item.title}
+      </a>
+
+      {/* Pinned block — aligns across every card in the row */}
+      <div className="mt-auto flex flex-col gap-2 pt-1">
+        {/* Product / MFG — always together */}
+        <div className="text-xs text-muted-foreground">
+          <p>Product: <span className="text-foreground">{item.item}</span></p>
+          <p>MFG: <span className="text-foreground">{item.mfg}</span></p>
+        </div>
+
+        {signedIn ? (
+          <>
+            {/* Stock: line 1 = your store, line 2 = Nearby Branches (drawer) */}
+            <div className="text-xs leading-relaxed">
+              {item.branchName ? (
+                <p className="font-medium text-in-stock">
+                  {item.branchQty} {item.branchName}
+                </p>
+              ) : item.stockBranch ? (
+                <p className="font-medium text-in-stock">
+                  {item.stockStatus} · {item.stockBranch}
+                </p>
+              ) : null}
+              {nearby ? <NearbyBranchesLink item={item} /> : null}
+            </div>
+
+            {/* Price / sale / strikethrough */}
+            {item.price != null ? (
+              <p className="flex flex-wrap items-baseline gap-1.5">
+                <span className={cn("text-base font-bold", onSale && "text-red-600 dark:text-red-500")}>
+                  {formatUSD(item.price)}
+                </span>
+                {onSale ? (
+                  <>
+                    <span className="text-xs font-bold text-red-600 dark:text-red-500">Sale</span>
+                    <span className="text-xs text-muted-foreground line-through">
+                      {formatUSD(item.wasPrice!)}
+                    </span>
+                  </>
+                ) : null}
+              </p>
+            ) : null}
+            {item.points ? <PointsBadge points={item.points} /> : null}
+
+            {/* Qty + mini add */}
+            <QtyMiniAdd />
+
+            {/* Save to List */}
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ListPlus className="size-3.5" />
+              Save to List
+            </button>
+          </>
+        ) : (
+          <a
+            href="#"
+            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+          >
+            Sign in to view pricing
+          </a>
+        )}
       </div>
     </div>
   );
 }
 
-// Cards are always sized 4-up (1/4 width), matching Customers Also Purchased.
-// ≤4 items simply show (fewer cards, same width — no stretching). >4 items hide
-// the overflow inside a carousel with prev/next arrows.
+// Cards are always sized 4-up (1/4 width). ≤4 items just show; >4 hide the
+// overflow inside a carousel with prev/next arrows.
 function FbtRail({ items }: { items: FbtProduct[] }) {
   if (!items.length) {
     return (
@@ -146,7 +224,7 @@ function FbtRail({ items }: { items: FbtProduct[] }) {
       <CarouselContent>
         {items.map((it) => (
           <CarouselItem key={it.id} className="basis-full sm:basis-1/2 lg:basis-1/4">
-            <FbtCard item={it} />
+            <ProductCard item={it} />
           </CarouselItem>
         ))}
       </CarouselContent>
@@ -163,7 +241,6 @@ function FbtRail({ items }: { items: FbtProduct[] }) {
 export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
   if (!product.fbt?.length) return null;
   const suggest = product.detailsStyle === "about";
-  // A single group needs no tab bar — the h2 already names the section.
   const multiGroup = product.fbt.length > 1;
   return (
     <section aria-label="Frequently bought together" className="flex flex-col gap-4">
@@ -180,7 +257,6 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
       </div>
       {multiGroup ? (
         <Tabs defaultValue={product.fbt[0].label}>
-          {/* Many categories → horizontal slider so no tab clips off-screen. */}
           <TabsList variant="line" className="gap-4 overflow-x-auto">
             {product.fbt.map((g) => (
               <TabsTrigger key={g.label} value={g.label}>
@@ -203,69 +279,6 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
   );
 }
 
-function CapCard({ item }: { item: FbtProduct }) {
-  const { signedIn } = useAuth();
-  return (
-    <div className="flex h-full flex-col gap-2 rounded-lg border bg-card p-4">
-      <FbtImage src={item.image} alt={item.title} />
-      {item.brand ? (
-        <p className="text-xs text-muted-foreground">{item.brand}</p>
-      ) : null}
-      <a href="#" className="line-clamp-2 text-sm font-semibold text-primary hover:underline">
-        {item.title}
-      </a>
-      {item.pct != null ? (
-        <p className="text-xs text-muted-foreground italic">{item.pct}% Also Purchased</p>
-      ) : null}
-      <p className="text-xs text-muted-foreground">
-        Product: {item.item}
-        <br />
-        MFG: {item.mfg}
-      </p>
-      <div className="mt-auto flex flex-col gap-2 pt-1">
-        {signedIn ? (
-          <>
-            {item.price != null ? (
-              <p className="flex items-baseline gap-1.5">
-                <span className="text-lg font-bold">{formatUSD(item.price)}</span>
-                {item.wasPrice != null ? (
-                  <span className="text-xs text-muted-foreground line-through">
-                    {formatUSD(item.wasPrice)}
-                  </span>
-                ) : null}
-              </p>
-            ) : null}
-            <div className="text-xs leading-relaxed">
-              <span className="font-medium text-in-stock">
-                {item.branchQty} {item.branchName}
-              </span>
-              <br />
-              <span className="font-medium text-in-stock">
-                {item.allBranchesQty ?? item.nearbyQty} All Branches
-              </span>
-            </div>
-            <Button size="sm" className="w-full">
-              <ShoppingCart className="size-4" />
-              Add To Cart
-            </Button>
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-muted-foreground hover:text-foreground"
-            >
-              <ListPlus className="size-3.5" />
-              Save to List
-            </button>
-          </>
-        ) : (
-          <a href="#" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
-            Sign in to view pricing
-          </a>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export function CustomersAlsoPurchased({ product }: { product: PdpProduct }) {
   if (!product.customersAlsoPurchased?.length) return null;
   return (
@@ -273,7 +286,7 @@ export function CustomersAlsoPurchased({ product }: { product: PdpProduct }) {
       <h2 className="text-xl font-bold tracking-tight">Customers Also Purchased</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {product.customersAlsoPurchased.map((it) => (
-          <CapCard key={it.id} item={it} />
+          <ProductCard key={it.id} item={it} />
         ))}
       </div>
     </section>
