@@ -110,8 +110,9 @@ function QtyMiniAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" aria-label="Add to cart" title="Add to cart" className="h-9 flex-1">
+      <Button size="sm" className="h-9 flex-1">
         <ShoppingCart className="size-4" />
+        Add
       </Button>
     </div>
   );
