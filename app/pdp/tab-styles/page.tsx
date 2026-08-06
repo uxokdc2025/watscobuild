@@ -14,16 +14,19 @@ function TabDemo({
   variant,
   listClassName,
   triggerClassName,
+  showIcons = false,
 }: {
   variant?: "default" | "line" | "segmented";
   listClassName?: string;
   triggerClassName?: string;
+  showIcons?: boolean;
 }) {
   return (
     <Tabs defaultValue="description">
       <TabsList variant={variant} className={listClassName}>
         {SECTIONS.map((s) => (
           <TabsTrigger key={s.id} value={s.id} className={triggerClassName}>
+            {showIcons ? <s.Icon className="size-4" /> : null}
             {s.label}
           </TabsTrigger>
         ))}
@@ -46,8 +49,9 @@ export default function TabStylesPage() {
       {/* Full-width segmented */}
       <TabDemo variant="segmented" listClassName="h-10 w-full max-w-2xl" />
 
-      {/* Soft active — tinted blue background on the active tab */}
+      {/* Soft active — tinted blue background on the active tab (with icons) */}
       <TabDemo
+        showIcons
         listClassName="h-auto flex-wrap justify-start gap-1 bg-transparent p-0"
         triggerClassName="h-auto flex-none rounded-lg px-4 py-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none"
       />

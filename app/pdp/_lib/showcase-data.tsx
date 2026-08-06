@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Check, FileText } from "lucide-react";
+import { Check, FileText, Files, Sparkles, Table2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -115,12 +115,13 @@ export function DocumentsBody() {
 export const SECTIONS: {
   id: string;
   label: string;
+  Icon: React.ComponentType<{ className?: string }>;
   Body: React.ComponentType;
 }[] = [
-  { id: "description", label: "Description", Body: DescriptionBody },
-  { id: "documents", label: "Documents", Body: DocumentsBody },
-  { id: "features", label: "Features", Body: FeaturesBody },
-  { id: "specifications", label: "Specifications", Body: SpecificationsBody },
+  { id: "description", label: "Description", Icon: FileText, Body: DescriptionBody },
+  { id: "documents", label: "Documents", Icon: Files, Body: DocumentsBody },
+  { id: "features", label: "Features", Icon: Sparkles, Body: FeaturesBody },
+  { id: "specifications", label: "Specifications", Icon: Table2, Body: SpecificationsBody },
 ];
 
 /** Small labelled wrapper around each design variant. */

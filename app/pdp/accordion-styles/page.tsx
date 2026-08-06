@@ -22,11 +22,16 @@ export const metadata: Metadata = {
 export default function AccordionStylesPage() {
   return (
     <ShowcaseShell>
-      {/* 1 · Default (shadcn) */}
+      {/* 1 · Default (shadcn) — with section icons */}
       <Accordion type="single" collapsible defaultValue="description" className="w-full">
         {SECTIONS.map((s) => (
           <AccordionItem key={s.id} value={s.id}>
-            <AccordionTrigger className="text-base">{s.label}</AccordionTrigger>
+            <AccordionTrigger className="text-base">
+              <span className="flex items-center gap-2.5">
+                <s.Icon className="size-4 text-primary" />
+                {s.label}
+              </span>
+            </AccordionTrigger>
             <AccordionContent>
               <s.Body />
             </AccordionContent>
