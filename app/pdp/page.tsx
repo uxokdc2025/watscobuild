@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Rows3, PanelTop } from "lucide-react";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { getPdpSlugs, pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { OpenAllButton } from "./_lib/open-all";
@@ -123,13 +129,26 @@ export default function PdpMasterPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <a
-              href="#use-cases"
+            <Link
+              href="/pdp/accordion-styles"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
-              <ArrowDown className="size-3.5" />
-              Use cases
-            </a>
+              <Rows3 className="size-3.5" />
+              Accordion styles
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <Link
+              href="/pdp/tab-styles"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              <PanelTop className="size-3.5" />
+              Tab styles
+              <ArrowUpRight className="size-3.5" />
+            </Link>
             <Link
               href="/components"
               target="_blank"
@@ -207,58 +226,81 @@ export default function PdpMasterPage() {
           </div>
         ) : null}
 
-        {/* In scope */}
-        <h2 className="mt-8 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-          In scope · unifying the PDP content
-        </h2>
-        <ul className="mt-3 flex flex-col gap-3">
-          {inScope.map((p) => (
-            <TemplateCard key={p.slug} p={p} />
-          ))}
-        </ul>
+        {/* Each section is its own accordion panel. Use Cases opens by default;
+            the in-scope list and Descoped start collapsed. */}
+        <Accordion
+          type="multiple"
+          defaultValue={["use-cases"]}
+          className="mt-8 flex flex-col gap-3"
+        >
+          <AccordionItem
+            value="in-scope"
+            className="rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="text-sm font-semibold tracking-wide text-muted-foreground uppercase hover:no-underline">
+              In scope · unifying the PDP content ({inScope.length})
+            </AccordionTrigger>
+            <AccordionContent>
+              <ul className="flex flex-col gap-3 pb-2">
+                {inScope.map((p) => (
+                  <TemplateCard key={p.slug} p={p} />
+                ))}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
 
-        {/* Use cases */}
-        {useCases.length ? (
-          <section id="use-cases" className="scroll-mt-6">
-            {/* Noticeable divider */}
-            <div className="mt-12 flex items-center gap-4" aria-hidden>
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/40" />
-              <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
-                Use Cases
-              </span>
-              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/40" />
-            </div>
-            <h2 className="mt-6 text-lg font-bold tracking-tight">
-              Content patterns &amp; new badges
-            </h2>
-            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-              One PDP per pattern — each demonstrates a specific state or badge
-              (Replacement, AHRI matched system, pack size, bundle &amp; rebate,
-              points, non-sellable, requires-license, strike-thru pricing). Open
-              ours (signed in) next to the <span className="font-medium text-foreground">reference</span>{" "}
-              link to compare.
-            </p>
-            <ul className="mt-4 flex flex-col gap-3">
-              {useCases.map((p) => (
-                <TemplateCard key={p.slug} p={p} signedInOnly />
-              ))}
-            </ul>
-          </section>
-        ) : null}
+          {useCases.length ? (
+            <AccordionItem
+              value="use-cases"
+              id="use-cases"
+              className="scroll-mt-6 rounded-xl border-2 border-primary/40 bg-card px-5"
+            >
+              <AccordionTrigger className="hover:no-underline">
+                <span className="flex items-center gap-3">
+                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                    Use Cases
+                  </span>
+                  <span className="text-lg font-bold tracking-tight">
+                    Content patterns &amp; new badges ({useCases.length})
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="max-w-2xl text-sm text-muted-foreground">
+                  One PDP per pattern — each demonstrates a specific state or badge
+                  (Replacement, AHRI matched system, pack size, bundle &amp; rebate,
+                  points, non-sellable, requires-license, strike-thru pricing). Open
+                  ours (signed in) next to the{" "}
+                  <span className="font-medium text-foreground">reference</span> link
+                  to compare.
+                </p>
+                <ul className="mt-4 flex flex-col gap-3 pb-2">
+                  {useCases.map((p) => (
+                    <TemplateCard key={p.slug} p={p} signedInOnly />
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ) : null}
 
-        {/* Descoped */}
-        {descoped.length ? (
-          <>
-            <h2 className="mt-10 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-              Descoped · building independently
-            </h2>
-            <ul className="mt-3 flex flex-col gap-3">
-              {descoped.map((p) => (
-                <TemplateCard key={p.slug} p={p} descoped />
-              ))}
-            </ul>
-          </>
-        ) : null}
+          {descoped.length ? (
+            <AccordionItem
+              value="descoped"
+              className="rounded-xl border bg-card px-5"
+            >
+              <AccordionTrigger className="text-sm font-semibold tracking-wide text-muted-foreground uppercase hover:no-underline">
+                Descoped · building independently ({descoped.length})
+              </AccordionTrigger>
+              <AccordionContent>
+                <ul className="flex flex-col gap-3 pb-2">
+                  {descoped.map((p) => (
+                    <TemplateCard key={p.slug} p={p} descoped />
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ) : null}
+        </Accordion>
       </main>
     </div>
   );
