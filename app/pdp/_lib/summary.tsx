@@ -178,14 +178,15 @@ export function PdpSummary({
     product.status === "discontinued";
   const licenseGated = product.status === "requires-license";
   const showCommerce = signedIn && product.commerce && !blocksPurchase;
-  // AHRI discovery link is a "help me find a match" CTA. Only surfaces when
-  // the page calls for discovery — i.e. AHRI is relevant to the SKU AND a
-  // matched system hasn't already been shown. When `ahri.matchedProduct` is
-  // wired, the AhriMatchup section below Add-to-Cart already IS the answer,
-  // so the CTA would be redundant.
-  const showFindAhri =
-    (Boolean(product.ahri) && !product.ahri?.matchedProduct) ||
-    product.ahriEmpty === true;
+  // AHRI discovery link — the "help me find a match" CTA. Only surfaces on
+  // PDPs that are explicitly *asking the shopper to discover a match*: the
+  // product carries an `ahri` object (matchup number is known / expected)
+  // but no `matchedProduct` is wired yet. If a matched system is already
+  // wired, the AhriMatchup section below Add-to-Cart is the answer — no
+  // discovery needed. If a page has `ahriEmpty: true` alone (no `ahri`), it's
+  // just flagging the empty-state UI on the source page — not calling for
+  // the CTA. Ref: registry-badged "AHRI Matched System" use case.
+  const showFindAhri = Boolean(product.ahri) && !product.ahri?.matchedProduct;
 
   return (
     <div className="flex flex-col gap-4">
