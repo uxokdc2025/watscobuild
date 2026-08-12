@@ -134,102 +134,13 @@ function SecondaryActions({ showCompare }: { showCompare: boolean }) {
   );
 }
 
-/**
- * AHRI Matchup section. Header row = number + "View System Details" link.
- * When `matchedProduct` is present, a PRO-Picks-style row (image + title +
- * price + qty + Add to Cart) renders below the header — reference pattern:
- * ecmdi.com LIVO outdoor heat pump (matched LIVO indoor). See
- * docs/design-system.md §14 "AHRI matched / AHRI empty". */
-function AhriMatchup({
-  ahri,
-}: {
-  ahri: NonNullable<PdpProduct["ahri"]>;
-}) {
-  const [qty, setQty] = React.useState(1);
-  const match = ahri.matchedProduct;
-  return (
-    <div className="flex flex-col gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="font-semibold">
-          AHRI Matchup: {ahri.number}
-        </span>
-        <a
-          href="#"
-          className="font-medium text-primary underline-offset-4 hover:underline"
-        >
-          View System Details
-        </a>
-      </div>
-      {match ? (
-        <div className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-3 rounded-md border bg-background p-3">
-          <div className="grid aspect-square size-14 place-items-center overflow-hidden rounded-md border bg-muted/40">
-            {match.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={match.image}
-                alt={match.title}
-                loading="lazy"
-                className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
-              />
-            ) : null}
-          </div>
-          <div className="min-w-0">
-            <a href="#" className="text-sm font-semibold text-primary hover:underline">
-              {match.title}
-            </a>
-            <p className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
-              <span className="text-base font-bold text-price">
-                {formatUSD(match.price)}
-              </span>
-              {match.wasPrice != null ? (
-                <span className="text-xs text-muted-foreground line-through">
-                  {formatUSD(match.wasPrice)}
-                </span>
-              ) : null}
-            </p>
-            {match.availabilityNote ? (
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {match.availabilityNote}
-              </p>
-            ) : null}
-          </div>
-          <div className="flex w-20 shrink-0 flex-col gap-2">
-            <div
-              className="inline-flex h-8 items-center justify-between rounded-md border"
-              role="group"
-              aria-label="Matched system quantity"
-            >
-              <button
-                type="button"
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                disabled={qty <= 1}
-                aria-label="Decrease quantity"
-                className="grid h-8 w-7 place-items-center rounded-l-md text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40"
-              >
-                <Minus className="size-3.5" />
-              </button>
-              <span aria-live="polite" className="text-sm font-medium tabular-nums">
-                {qty}
-              </span>
-              <button
-                type="button"
-                onClick={() => setQty((q) => Math.min(99, q + 1))}
-                aria-label="Increase quantity"
-                className="grid h-8 w-7 place-items-center rounded-r-md text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-              >
-                <Plus className="size-3.5" />
-              </button>
-            </div>
-            <Button size="sm" className="h-8 w-full px-2">
-              <ShoppingCart className="size-4" />
-              Add
-            </Button>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-}
+// AHRI Matchup banner (deprecated 2026-08-12 per David — no longer a
+// legitimate pattern). The buy-box no longer surfaces an "AHRI Matchup:
+// {number} · View System Details" callout under the brand/title. Deep AHRI
+// exploration lives in the About This Product → AHRI Matches tab; the
+// "Find an AHRI Matched System" discovery link in SecondaryActions stays.
+// If a matched product needs to surface as a companion buy, add it via
+// `proPicks` (same shape) rather than reviving this component.
 
 export function PdpSummary({
   product,
@@ -282,7 +193,6 @@ export function PdpSummary({
         </div>
       </div>
 
-      {product.ahri ? <AhriMatchup ahri={product.ahri} /> : null}
 
       {blocksPurchase ? (
         // "replaced" shows an inline amber banner; the Replacement Products
