@@ -80,6 +80,8 @@ type SearchBodyProps = {
   storeName?: string;
   /** Renders the branch-scoped facet count first. */
   branchName?: string;
+  /** Brand key — picks the correct image manifest for product cards. */
+  brandKey: string;
 };
 
 export function SearchBody({
@@ -92,6 +94,7 @@ export function SearchBody({
   hiddenSearchFields = [],
   storeName = "Manchester, NH - Homans",
   branchName,
+  brandKey,
 }: SearchBodyProps) {
   const [view, setView] = React.useState<"grid" | "list">("grid");
   const [stockLocation, setStockLocation] = React.useState<typeof STOCK_LOCATIONS[number]["value"]>("all");
@@ -379,17 +382,17 @@ export function SearchBody({
           <section aria-label="Search results">
             {view === "grid" ? (
               <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {results.map((r) => (
+                {results.map((r, i) => (
                   <li key={r.id}>
-                    <ProductCard result={r} signedIn={signedIn} />
+                    <ProductCard result={r} signedIn={signedIn} index={i} brandKey={brandKey} />
                   </li>
                 ))}
               </ul>
             ) : (
               <ul className="divide-y rounded-lg border bg-card">
-                {results.map((r) => (
+                {results.map((r, i) => (
                   <li key={r.id}>
-                    <ProductRow result={r} signedIn={signedIn} />
+                    <ProductRow result={r} signedIn={signedIn} index={i} brandKey={brandKey} />
                   </li>
                 ))}
               </ul>
@@ -486,13 +489,72 @@ function FacetGroup({
  * Product cards (grid + list)
  * ------------------------------------------------------------------ */
 
-function ProductCard({ result, signedIn }: { result: SearchResult; signedIn: boolean }) {
+/** Product photos captured from each distributor's search page. Per-brand list
+ *  because extensions and counts differ (Homans: 26× webp; Peirce: 28× avif + 1× webp). */
+const IMAGES_BY_BRAND: Record<string, string[]> = {
+  homans: Array.from({ length: 26 }, (_, i) => `/homans-search/blower-motor-${(i + 1).toString().padStart(2, "0")}.webp`),
+  peirce: [
+    "/peirce-search/blower-motor-01.avif",
+    "/peirce-search/blower-motor-02.avif",
+    "/peirce-search/blower-motor-03.avif",
+    "/peirce-search/blower-motor-04.avif",
+    "/peirce-search/blower-motor-05.avif",
+    "/peirce-search/blower-motor-06.avif",
+    "/peirce-search/blower-motor-07.avif",
+    "/peirce-search/blower-motor-08.avif",
+    "/peirce-search/blower-motor-09.avif",
+    "/peirce-search/blower-motor-10.avif",
+    "/peirce-search/blower-motor-11.avif",
+    "/peirce-search/blower-motor-12.avif",
+    "/peirce-search/blower-motor-13.avif",
+    "/peirce-search/blower-motor-14.avif",
+    "/peirce-search/blower-motor-15.avif",
+    "/peirce-search/blower-motor-16.avif",
+    "/peirce-search/blower-motor-17.avif",
+    "/peirce-search/blower-motor-18.avif",
+    "/peirce-search/blower-motor-19.avif",
+    "/peirce-search/blower-motor-20.avif",
+    "/peirce-search/blower-motor-21.avif",
+    "/peirce-search/blower-motor-22.avif",
+    "/peirce-search/blower-motor-23.avif",
+    "/peirce-search/blower-motor-24.avif",
+    "/peirce-search/blower-motor-25.avif",
+    "/peirce-search/blower-motor-26.avif",
+    "/peirce-search/blower-motor-27.webp",
+    "/peirce-search/blower-motor-28.avif",
+    "/peirce-search/blower-motor-29.avif",
+  ],
+};
+
+function productImageFor(brandKey: string, index: number, explicit?: string): string {
+  if (explicit) return explicit;
+  const list = IMAGES_BY_BRAND[brandKey] ?? IMAGES_BY_BRAND.homans;
+  return list[index % list.length];
+}
+
+function ProductCard({
+  result,
+  signedIn,
+  index,
+  brandKey,
+}: {
+  result: SearchResult;
+  signedIn: boolean;
+  index: number;
+  brandKey: string;
+}) {
+  const imageSrc = productImageFor(brandKey, index, result.image);
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-lg border bg-card transition-shadow hover:shadow-md">
-      <div className="grid aspect-[4/3] place-items-center bg-muted/40 text-muted-foreground">
-        {result.image ? (
+      <div className="grid aspect-[4/3] place-items-center bg-muted/40 p-4 text-muted-foreground">
+        {imageSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={result.image} alt={result.title} className="max-h-full max-w-full object-contain" />
+          <img
+            src={imageSrc}
+            alt={result.title}
+            loading="lazy"
+            className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
+          />
         ) : (
           <ImageOff className="size-8 opacity-40" aria-hidden />
         )}
@@ -528,11 +590,32 @@ function ProductCard({ result, signedIn }: { result: SearchResult; signedIn: boo
   );
 }
 
-function ProductRow({ result, signedIn }: { result: SearchResult; signedIn: boolean }) {
+function ProductRow({
+  result,
+  signedIn,
+  index,
+  brandKey,
+}: {
+  result: SearchResult;
+  signedIn: boolean;
+  index: number;
+  brandKey: string;
+}) {
+  const imageSrc = productImageFor(brandKey, index, result.image);
   return (
     <article className="grid gap-4 p-4 sm:grid-cols-[80px_1fr_auto] sm:items-center">
-      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 text-muted-foreground">
-        <ImageOff className="size-6 opacity-40" aria-hidden />
+      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+        {imageSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imageSrc}
+            alt={result.title}
+            loading="lazy"
+            className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
+          />
+        ) : (
+          <ImageOff className="size-6 opacity-40" aria-hidden />
+        )}
       </div>
       <div>
         <p className="text-xs font-medium text-primary">{result.brand}</p>

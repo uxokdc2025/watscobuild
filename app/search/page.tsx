@@ -66,6 +66,7 @@ export default async function SearchPage({
             searchAction={searchAction}
             hiddenSearchFields={hiddenSearchFields}
             storeName={storeName}
+            brandKey={brandKey}
           />
         </main>
         <SiteFooter brand={brand} />

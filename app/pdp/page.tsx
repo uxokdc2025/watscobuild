@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Rows3, PanelTop } from "lucide-react";
+import { ArrowUpRight, Rows3, PanelTop, Search } from "lucide-react";
 
 import {
   Accordion,
@@ -12,6 +12,97 @@ import { getPdpSlugs, pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { OpenAllButton } from "./_lib/open-all";
 import { BRANDS } from "./_lib/brands";
+
+/** Product Listing Page (PLP) entries — /search route rendered inside a brand's chrome. */
+type PlpEntry = {
+  brandKey: string;
+  brand: string;
+  title: string;
+  query: string;
+  pageSize?: number;
+  sourceUrl: string;
+};
+
+const PLP_ENTRIES: PlpEntry[] = [
+  {
+    brandKey: "homans",
+    brand: "Homans Associates",
+    title: "Search Results — Blower Motor (Homans)",
+    query: "blower motor",
+    sourceUrl: "https://arrow-sw-homans.wsm.wsoecom.ninja/search?q=blower%20motor",
+  },
+  {
+    brandKey: "peirce",
+    brand: "Peirce-Phelps",
+    title: "Search Results — Blower Motor (Peirce-Phelps)",
+    query: "blower motor",
+    pageSize: 18,
+    sourceUrl: "https://www.peirce.com/search?q=blower+motor&page_size=18",
+  },
+];
+
+function PlpCard({ p }: { p: PlpEntry }) {
+  const b = BRANDS[p.brandKey];
+  const params = new URLSearchParams({ q: p.query, brand: p.brandKey });
+  if (p.pageSize) params.set("page_size", String(p.pageSize));
+  const signedOutHref = `/search?${params.toString()}`;
+  const signedInHref = `/search?${params.toString()}&signedin=1`;
+  const routeLabel = `/search?q=${encodeURIComponent(p.query)}&brand=${p.brandKey}${p.pageSize ? `&page_size=${p.pageSize}` : ""}`;
+
+  return (
+    <li className="rounded-xl border bg-card p-5">
+      <div className="flex flex-wrap items-center gap-2">
+        {b ? (
+          <span className="inline-flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className="size-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: b.accent }}
+            />
+            <span className="text-sm font-semibold">{b.name}</span>
+          </span>
+        ) : null}
+        <span className="text-sm text-muted-foreground">{p.brand}</span>
+        <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+          Search Results
+        </span>
+      </div>
+      <div className="mt-1 line-clamp-1 font-medium">{p.title}</div>
+      <div className="mt-0.5 font-mono text-xs text-muted-foreground">
+        Query &ldquo;{p.query}&rdquo; · {routeLabel}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Link
+          href={signedOutHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          Signed out
+          <ArrowUpRight className="size-3.5" />
+        </Link>
+        <Link
+          href={signedInHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          Signed in
+          <ArrowUpRight className="size-3.5" />
+        </Link>
+      </div>
+      <a
+        href={p.sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={p.sourceUrl}
+        className="mt-2 block truncate font-mono text-xs text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+      >
+        ↗ reference: {p.sourceUrl.replace(/^https?:\/\/(www\.)?/, "")}
+      </a>
+    </li>
+  );
+}
 
 export const metadata: Metadata = {
   title: "PDP Master — all brands",
@@ -149,6 +240,16 @@ export default function PdpMasterPage() {
               <ArrowUpRight className="size-3.5" />
             </Link>
             <Link
+              href={`/search?q=${encodeURIComponent("blower motor")}&brand=homans`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              <Search className="size-3.5" />
+              Product Listing Page
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <Link
               href="/components"
               target="_blank"
               rel="noopener noreferrer"
@@ -240,6 +341,39 @@ export default function PdpMasterPage() {
               </AccordionContent>
             </AccordionItem>
           ) : null}
+
+          <AccordionItem
+            value="plp"
+            id="plp"
+            className="scroll-mt-6 rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  Product Listing Page
+                </span>
+                <span className="text-lg font-bold tracking-tight">
+                  Search results (PLP) ({PLP_ENTRIES.length})
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                One shared &ldquo;search results&rdquo; template rendered inside each
+                distributor&apos;s chrome. Same skeleton (breadcrumb · results
+                toolbar · facet sidebar · product grid · pagination); brand
+                switches the header, footer, accent, and store name. Signed-out
+                shows the gated commerce state; signed-in reveals price, points,
+                stock, and Add to Cart. Compare against the reference URL below
+                each card.
+              </p>
+              <ul className="mt-4 flex flex-col gap-3 pb-2">
+                {PLP_ENTRIES.map((p) => (
+                  <PlpCard key={p.brandKey} p={p} />
+                ))}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
 
           {descoped.length ? (
             <AccordionItem
