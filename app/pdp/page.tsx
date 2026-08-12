@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Github, Rows3, PanelTop, Search } from "lucide-react";
+import { ArrowUpRight, Github, LayoutList, Rows3, PanelTop, Search } from "lucide-react";
 
 import {
   Accordion,
@@ -195,9 +195,18 @@ export default function PdpMasterPage() {
   const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
   // The v2 pack-size-pills demo is called out on its own, not in the main list.
   // Use-case demo entries get their own section at the bottom.
-  const useCases = templates.filter((p) => p.useCase);
+  // "Tabs & Accordions" is its own section on the master (per David) — pulled
+  // out of the general Use-Cases list so both surfaces stay clean.
+  const tabsAccordionsSlugs = ["uc-tabs-accordions"];
+  const tabsAccordions = templates.filter((p) => tabsAccordionsSlugs.includes(p.slug));
+  const useCases = templates.filter(
+    (p) => p.useCase && !tabsAccordionsSlugs.includes(p.slug),
+  );
   const rest = templates.filter(
-    (p) => p.slug !== "ecmdi-pro-flush-v2" && !p.useCase
+    (p) =>
+      p.slug !== "ecmdi-pro-flush-v2" &&
+      !p.useCase &&
+      !tabsAccordionsSlugs.includes(p.slug),
   );
   const inScope = rest
     .filter((p) => IN_SCOPE.includes(p.brandKey ?? ""))
@@ -246,6 +255,16 @@ export default function PdpMasterPage() {
             >
               <Search className="size-3.5" />
               Product Listing Page
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <Link
+              href="/pdp/uc-tabs-accordions?signedin=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              <LayoutList className="size-3.5" />
+              Tabs &amp; Accordions
               <ArrowUpRight className="size-3.5" />
             </Link>
             <Link
@@ -328,6 +347,43 @@ export default function PdpMasterPage() {
                 </p>
                 <ul className="mt-4 flex flex-col gap-3 pb-2">
                   {useCases.map((p) => (
+                    <TemplateCard key={p.slug} p={p} signedInOnly />
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ) : null}
+
+          {tabsAccordions.length ? (
+            <AccordionItem
+              value="tabs-accordions"
+              id="tabs-accordions"
+              className="scroll-mt-6 rounded-xl border bg-card px-5"
+            >
+              <AccordionTrigger className="hover:no-underline">
+                <span className="flex items-center gap-3">
+                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                    Product Details Page
+                  </span>
+                  <span className="text-lg font-bold tracking-tight">
+                    Tabs &amp; Accordions ({tabsAccordions.length})
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="max-w-2xl text-sm text-muted-foreground">
+                  About-This-Product pattern (Carrier Enterprise reference):
+                  tabbed content strip (Product Info · Documents · Part List ·
+                  AHRI Matches) on top of grouped-section accordions
+                  (Dimensions · Attributes · …) inside Product Info&apos;s
+                  right column. Same template as the Baseline PDPs — swap
+                  <code className="mx-1 rounded bg-muted px-1 font-mono text-xs">detailsStyle: &quot;tabs&quot;</code>
+                  for
+                  <code className="mx-1 rounded bg-muted px-1 font-mono text-xs">detailsStyle: &quot;about&quot;</code>
+                  to opt in. Compare against the reference URL below each card.
+                </p>
+                <ul className="mt-4 flex flex-col gap-3 pb-2">
+                  {tabsAccordions.map((p) => (
                     <TemplateCard key={p.slug} p={p} signedInOnly />
                   ))}
                 </ul>

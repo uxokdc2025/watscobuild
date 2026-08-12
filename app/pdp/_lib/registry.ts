@@ -1617,6 +1617,144 @@ const ucLivo: PdpProduct = {
   ],
 };
 
+// ── Pattern: Tabs & Accordions (Carrier Enterprise style — About This Product
+//   with a tabbed content strip on top of grouped-section accordions on the right) ──
+const ucTabsAccordions: PdpProduct = {
+  slug: "uc-tabs-accordions",
+  brand: "Carrier®",
+  brandKey: "carrier",
+  useCase: "Tabs & Accordions",
+  sourceUrl: "https://www.carrierenterprise.com/product/1604089243320928",
+  store: { name: "Ybor City #2541" },
+  title:
+    "2.5 Ton 14.3 SEER2 Residential Heat Pump Condensing Unit (R-454B)",
+  item: "GH5SAN53000A",
+  mfg: "GH5SAN53000A",
+  thumbnailCount: 1,
+  images: [
+    "https://resource.carrierenterprise.com/is/image/Watscocom/carrier_gh5san53000a_article_1604089243320928_en_normal?wid=700&hei=700&qlt=80",
+  ],
+  detailsStyle: "about",
+  description: {
+    intro:
+      "This unit has been designed utilizing non-ozone depleting and low global warming potential Puron Advance™ refrigerant. Heat pumps with Puron Advance™ refrigerant provide a collection of features unmatched by any other family of equipment.",
+    bullets: [
+      "14.3 – 16.0 SEER2 / 10.0 – 12.5 EER2 / 7.5 – 7.8 HSPF2 (depending on unit size and indoor combination installed)",
+      "Microtube technology refrigeration system",
+      "Indoor air quality accessories available",
+      "System supports programmable or standard thermostat controls",
+      "Sound levels as low as 70 dBA",
+      "Non-ozone depleting and low global warming potential Puron Advance™ refrigerant",
+      "Scroll compressor",
+      "Internal pressure relief valve",
+      "Internal thermal overload",
+      "Loss of charge switch",
+      "Filter drier",
+      "Balanced refrigeration system for maximum reliability",
+      "Solid, durable sheet metal construction",
+      "Dense wire coil guard",
+      "Long-line — up to 250 feet (76.20 m) total equivalent length; up to 200 feet (60.96 m) condenser above evaporator, or up to 80 ft. (24.38 m) evaporator above condenser",
+      "Low ambient cooling (down to 0°F/-17.8°C) with approved low ambient accessory kits",
+      "5-year parts limited warranty (including compressor and coil); 10-year with timely registration",
+    ],
+  },
+  specTabLabel: "Equipment Specification",
+  specGroupsLeft: [
+    {
+      title: "System",
+      rows: [
+        { label: "Nominal Capacity", value: "2.5 Tons (30,000 BTUH)" },
+        { label: "SEER2", value: "14.3" },
+        { label: "EER2", value: "10 – 12.5" },
+        { label: "HSPF2", value: "7.5 – 7.8" },
+        { label: "Refrigerant", value: "R-454B" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Electrical",
+      rows: [
+        { label: "Voltage", value: "208-230-1" },
+        { label: "Cycle/Hertz", value: "60 Hz" },
+        { label: "Full Load Amps", value: "0.7" },
+        { label: "Locked Rotor Amps (LRA)", value: "67" },
+      ],
+    },
+  ],
+  // Grouped-section accordions — the right column inside the About/Product Info tab.
+  productSpecs: [
+    {
+      title: "Dimensions",
+      rows: [
+        { label: "Length", value: "31.1875 inches (in)" },
+        { label: "Width", value: "31.1875 inches (in)" },
+        { label: "Height", value: "38.4375 inches (in)" },
+        { label: "Weight", value: "167 pounds (lbs)" },
+      ],
+    },
+    {
+      title: "Attributes",
+      rows: [
+        { label: "Approvals", value: "UL Listed" },
+        { label: "Brand", value: "Carrier®, Bryant®" },
+        { label: "CFM", value: "3,000" },
+        { label: "Color", value: "Gray" },
+        { label: "Compressor Type", value: "Scroll" },
+        { label: "Condenser Coil Fins per Inch (FPI)", value: "20" },
+        { label: "Condenser Fan CFM", value: "3000" },
+        { label: "Condenser Fan Discharge", value: "Vertical" },
+        { label: "Condenser Fan Motor Qty", value: "1" },
+        { label: "Condenser Motor HP", value: "1/10" },
+        { label: "Condenser Motor RPM", value: "825" },
+        { label: "Condenser Motor Speeds", value: "1" },
+        { label: "Condenser Motor Type", value: "PSC (Permanent Split Capacitor)" },
+        { label: "Cooling Capacity", value: "30,000" },
+        { label: "Cooling Rated Capacity (Btu/h)", value: "30000" },
+        { label: "Country of Origin", value: "MEX" },
+        { label: "EER2", value: "10-12.5" },
+        { label: "Energy Star Rated", value: "YES" },
+        { label: "HSPF2", value: "7.5-7.8" },
+        { label: "Inverter", value: "NO" },
+        { label: "Liquid Line Fitting Type", value: "Sweat or Braze" },
+        { label: "Liquid Line Size (OD)", value: '3/8"' },
+      ],
+    },
+  ],
+  documents: [
+    { label: "Consumer Literature", kind: "pdf", category: "Consumer Literature", href: "#" },
+    { label: "Product Data", kind: "pdf", category: "Product Data", href: "#" },
+    { label: "Installation Instructions", kind: "pdf", category: "Installation", href: "#" },
+  ],
+  fbt: [
+    {
+      label: "Best Sellers",
+      items: [
+        { id: "dt-ht4040-4-t", title: 'DiversiTech®- HT4040-4 Hurricane T Class Concrete Equipment Pad™ 40" x 40" x 4"', item: "EP-40X40X4-T", mfg: "HT4040-4", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 193.2, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "dt-ht3636-4-t", title: 'DiversiTech®- HT3636-4 Hurricane T Class Concrete Equipment Pad™ 36" x 36" x 4"', item: "EP-36X36X4-T", mfg: "HT3636-4", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 153.4, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "dt-el3636-3", title: 'DiversiTech®- E Lite® Gray Plastic Equipment Pad 36" x 36" x 3"', item: "EP-36X36X3-P", mfg: "EL3636-3", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 54.3, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "dt-h3636-4-h", title: 'DiversiTech®- H3636-4 The Hurricane Concrete Equipment Pad 36" x 36" x 4"', item: "EP-36X36X4-H", mfg: "H3636-4", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 106.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "dt-h4040-4-h", title: 'DiversiTech®- H4040-4 The Hurricane Concrete Equipment Pad 40" x 40" x 4"', item: "EP-40X40X4-H", mfg: "H4040-4", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 129.3, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
+        { id: "dt-hmd4040-4", title: 'DiversiTech®- HMD4040-4 The Hurricane Miami-Dade Pad™ 40" x 40" x 4"', item: "HMD4040-4", mfg: "HMD4040-4", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 163.9, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+      ],
+    },
+    { label: "Pads Mounts & Blocks", items: [] },
+    { label: "Disconnects & Whips", items: [] },
+    { label: "Thermostats & Zone Controls", items: [] },
+    { label: "Refrigerant & Oils", items: [] },
+    { label: "Other", items: [] },
+  ],
+  commerce: {
+    // Signed-in state on this reference is "Contact for pricing" — expose one
+    // representative price so the shared summary block still renders. Real
+    // gating (price hidden) is covered by the ucPoints / ucNonSellable states.
+    price: null,
+    uom: "EACH",
+    yourBranch: { name: "Ybor City #2541", stock: 353 },
+    nearbyBranches: [{ qty: 1082, name: "Other Branches" }],
+  },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   tradeproEc13Homans,
@@ -1635,6 +1773,7 @@ export const pdps: PdpProduct[] = [
   ucLivo,
   ucLicense,
   ucStrikeThru,
+  ucTabsAccordions,
 ];
 
 export function getPdp(slug: string): PdpProduct | undefined {
