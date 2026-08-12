@@ -342,11 +342,11 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
             <div className="size-14">
               <ProductThumb src={s.image} alt={s.title} />
             </div>
-            <div>
-              <a href="#" className="text-sm font-semibold text-primary hover:underline">
+            <div className="min-w-0">
+              <a href="#" className={CARD_TITLE_CLS}>
                 {s.title}
               </a>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className={CARD_DESC_CLS}>
                 Item: {s.item} &nbsp; MFG: {s.mfg}
               </p>
             </div>
