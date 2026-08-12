@@ -372,7 +372,7 @@ function QtyAdd() {
   const step =
     "grid h-8 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex w-20 shrink-0 flex-col gap-2">
+    <div className="flex w-20 shrink-0 flex-col gap-3">
       <div className="inline-flex h-8 items-center justify-between rounded-md border" role="group" aria-label="Quantity">
         <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="Decrease quantity" className={cn(step, "rounded-l-md")}>
           <Minus className="size-3.5" />
@@ -389,6 +389,15 @@ function QtyAdd() {
     </div>
   );
 }
+
+// Shared title link — reserves 2 lines of height so 1-line titles align
+// vertically with 2-line titles across cards in the same section (and across
+// sections: Bundle / PRO Picks / AHRI Matchup all now share the same anchor).
+const CARD_TITLE_CLS =
+  "block text-sm font-semibold text-primary line-clamp-2 min-h-[2lh] leading-snug hover:underline";
+// Shared "description" block below the title — tight leading so multi-line
+// item/mfg or price/availability doesn't push the card taller than needed.
+const CARD_DESC_CLS = "mt-1 text-xs text-muted-foreground leading-tight";
 
 /** AHRI Matchup — mirrors the PRO Picks shape: H2 heading + single-row card,
  *  no wrapping "box within a box". Reference: ecmdi.com LIVO outdoor (matched
@@ -407,10 +416,10 @@ export function AhriMatchup({ product }: { product: PdpProduct }) {
             <ProductThumb src={match.image} alt={match.title} />
           </div>
           <div className="min-w-0">
-            <a href="#" className="text-sm font-semibold text-primary hover:underline">
+            <a href="#" className={CARD_TITLE_CLS}>
               {match.title}
             </a>
-            <p className="mt-1 flex flex-wrap items-baseline gap-1.5">
+            <p className="mt-1 flex flex-wrap items-baseline gap-1.5 leading-tight">
               <span className="text-base font-bold">{formatUSD(match.price)}</span>
               {match.wasPrice != null ? (
                 <span className="text-xs text-muted-foreground line-through">
@@ -419,7 +428,7 @@ export function AhriMatchup({ product }: { product: PdpProduct }) {
               ) : null}
             </p>
             {match.availabilityNote ? (
-              <p className="mt-0.5 text-xs text-muted-foreground">{match.availabilityNote}</p>
+              <p className={CARD_DESC_CLS}>{match.availabilityNote}</p>
             ) : null}
           </div>
           <QtyAdd />
@@ -445,10 +454,10 @@ export function ProPicks({ product }: { product: PdpProduct }) {
               <ProductThumb src={p.image} alt={p.title} />
             </div>
             <div className="min-w-0">
-              <a href="#" className="text-sm font-semibold text-primary hover:underline">
+              <a href="#" className={CARD_TITLE_CLS}>
                 {p.title}
               </a>
-              <p className="mt-1 flex flex-wrap items-baseline gap-1.5">
+              <p className="mt-1 flex flex-wrap items-baseline gap-1.5 leading-tight">
                 <span className="text-base font-bold">{formatUSD(p.price)}</span>
                 {p.wasPrice != null ? (
                   <span className="text-xs text-muted-foreground line-through">
@@ -457,7 +466,7 @@ export function ProPicks({ product }: { product: PdpProduct }) {
                 ) : null}
               </p>
               {p.availabilityNote ? (
-                <p className="mt-0.5 text-xs text-muted-foreground">{p.availabilityNote}</p>
+                <p className={CARD_DESC_CLS}>{p.availabilityNote}</p>
               ) : null}
             </div>
             <QtyAdd />
