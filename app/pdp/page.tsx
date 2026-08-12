@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Rows3, PanelTop, Search } from "lucide-react";
+import { ArrowUpRight, Github, Rows3, PanelTop, Search } from "lucide-react";
 
 import {
   Accordion,
@@ -105,7 +105,7 @@ function PlpCard({ p }: { p: PlpEntry }) {
 }
 
 export const metadata: Metadata = {
-  title: "PDP Master — all brands",
+  title: "Watsco Design Templates",
   description: "Directory of every data-driven PDP template.",
 };
 
@@ -212,7 +212,7 @@ export default function PdpMasterPage() {
       <main className="mx-auto max-w-4xl px-4 py-10 md:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">PDP Templates</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Watsco Design Templates</h1>
             <p className="mt-1 max-w-xl text-sm text-muted-foreground">
               One data-driven template · {inScope.length} in-scope business units,
               each rendered inside its own header / footer.
@@ -259,30 +259,18 @@ export default function PdpMasterPage() {
               <ArrowUpRight className="size-3.5" />
             </Link>
             <OpenAllButton slugs={getPdpSlugs()} />
+            <a
+              href="https://github.com/uxokdc2025/watscobuild"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              <Github className="size-3.5" />
+              GitHub
+              <ArrowUpRight className="size-3.5" />
+            </a>
           </div>
-        </div>
-
-        {/* Scope callout */}
-        <div className="mt-6 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm">
-          <p className="font-semibold">What we&apos;re designing</p>
-          <p className="mt-1 text-muted-foreground">
-            The shared <span className="font-medium text-foreground">PDP content</span>{" "}
-            — gallery, pricing, branch inventory, tabs, related products — unified
-            across the in-scope business units (East Coast, Baker, Homans,
-            Peirce). Each keeps its own header / footer. The template flexes to
-            each unit&apos;s data model — e.g. Peirce aggregates branch inventory
-            (&ldquo;173 · All Branches&rdquo;) while Baker and East Coast list
-            individual branches.
-          </p>
-          <p className="mt-2 text-muted-foreground">
-            <span className="font-medium text-foreground">Carrier Enterprise</span>{" "}
-            and <span className="font-medium text-foreground">Gemaire</span> are{" "}
-            <span className="font-medium text-amber-700 dark:text-amber-400">
-              descoped
-            </span>{" "}
-            — their front-end teams are building independently. Kept below for
-            reference only.
-          </p>
         </div>
 
         {/* Each section is its own accordion panel. Use Cases opens by default;
