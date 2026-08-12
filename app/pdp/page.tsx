@@ -38,6 +38,13 @@ const PLP_ENTRIES: PlpEntry[] = [
     pageSize: 18,
     sourceUrl: "https://www.peirce.com/search?q=blower+motor&page_size=18",
   },
+  {
+    brandKey: "ecmdi",
+    brand: "East Coast Metal Distributors",
+    title: "Search Results — Blower (ECMDI)",
+    query: "blower",
+    sourceUrl: "https://www.ecmdi.com/search?q=blower",
+  },
 ];
 
 function PlpCard({ p }: { p: PlpEntry }) {
