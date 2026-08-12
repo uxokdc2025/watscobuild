@@ -1631,9 +1631,7 @@ const ucTabsAccordions: PdpProduct = {
   item: "GH5SAN53000A",
   mfg: "GH5SAN53000A",
   thumbnailCount: 1,
-  images: [
-    "https://resource.carrierenterprise.com/is/image/Watscocom/carrier_gh5san53000a_article_1604089243320928_en_normal?wid=700&hei=700&qlt=80",
-  ],
+  images: ["/uc-tabs-accordions/gh5san.avif"],
   detailsStyle: "about",
   description: {
     intro:
@@ -1730,19 +1728,58 @@ const ucTabsAccordions: PdpProduct = {
     {
       label: "Best Sellers",
       items: [
-        { id: "dt-ht4040-4-t", title: 'DiversiTech®- HT4040-4 Hurricane T Class Concrete Equipment Pad™ 40" x 40" x 4"', item: "EP-40X40X4-T", mfg: "HT4040-4", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 193.2, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
-        { id: "dt-ht3636-4-t", title: 'DiversiTech®- HT3636-4 Hurricane T Class Concrete Equipment Pad™ 36" x 36" x 4"', item: "EP-36X36X4-T", mfg: "HT3636-4", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 153.4, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
-        { id: "dt-el3636-3", title: 'DiversiTech®- E Lite® Gray Plastic Equipment Pad 36" x 36" x 3"', item: "EP-36X36X3-P", mfg: "EL3636-3", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 54.3, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
-        { id: "dt-h3636-4-h", title: 'DiversiTech®- H3636-4 The Hurricane Concrete Equipment Pad 36" x 36" x 4"', item: "EP-36X36X4-H", mfg: "H3636-4", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 106.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
-        { id: "dt-h4040-4-h", title: 'DiversiTech®- H4040-4 The Hurricane Concrete Equipment Pad 40" x 40" x 4"', item: "EP-40X40X4-H", mfg: "H4040-4", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 129.3, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541" },
-        { id: "dt-hmd4040-4", title: 'DiversiTech®- HMD4040-4 The Hurricane Miami-Dade Pad™ 40" x 40" x 4"', item: "HMD4040-4", mfg: "HMD4040-4", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 163.9, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches" },
+        { id: "dt-ht4040-4-t", title: 'DiversiTech®- HT4040-4 Hurricane T Class Concrete Equipment Pad™ 40" x 40" x 4"', item: "EP-40X40X4-T", mfg: "HT4040-4", image: "/uc-tabs-accordions/ht4040-4.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 193.2, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
+        { id: "dt-ht3636-4-t", title: 'DiversiTech®- HT3636-4 Hurricane T Class Concrete Equipment Pad™ 36" x 36" x 4"', item: "EP-36X36X4-T", mfg: "HT3636-4", image: "/uc-tabs-accordions/ht3636-4.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 153.4, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
+        { id: "dt-el3636-3", title: 'DiversiTech®- E Lite® Gray Plastic Equipment Pad 36" x 36" x 3"', item: "EP-36X36X3-P", mfg: "EL3636-3", image: "/uc-tabs-accordions/el3636-3.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 54.3, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
+        { id: "dt-h3636-4-h", title: 'DiversiTech®- H3636-4 The Hurricane Concrete Equipment Pad 36" x 36" x 4"', item: "EP-36X36X4-H", mfg: "H3636-4", image: "/uc-tabs-accordions/h3636-4.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 106.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "dt-h4040-4-h", title: 'DiversiTech®- H4040-4 The Hurricane Concrete Equipment Pad 40" x 40" x 4"', item: "EP-40X40X4-H", mfg: "H4040-4", image: "/uc-tabs-accordions/h4040-4.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 129.3, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "dt-hmd4040-4", title: 'DiversiTech®- HMD4040-4 The Hurricane Miami-Dade Pad™ 40" x 40" x 4"', item: "HMD4040-4", mfg: "HMD4040-4", image: "/uc-tabs-accordions/hmd4040-4.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 163.9, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
       ],
     },
-    { label: "Pads Mounts & Blocks", items: [] },
-    { label: "Disconnects & Whips", items: [] },
-    { label: "Thermostats & Zone Controls", items: [] },
-    { label: "Refrigerant & Oils", items: [] },
-    { label: "Other", items: [] },
+    {
+      label: "Pads Mounts & Blocks",
+      items: [
+        { id: "pmb-el3636-3", title: 'DiversiTech®- E Lite® Gray Plastic Equipment Pad 36" x 36" x 3"', item: "EP-36X36X3-P", mfg: "EL3636-3", image: "/uc-tabs-accordions/el3636-3.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 54.3, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
+        { id: "pmb-ht3636-4-t", title: 'DiversiTech®- HT3636-4 Hurricane T Class Concrete Equipment Pad™ 36" x 36" x 4"', item: "EP-36X36X4-T", mfg: "HT3636-4", image: "/uc-tabs-accordions/ht3636-4.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 153.4, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
+        { id: "pmb-ht4040-4-t", title: 'DiversiTech®- HT4040-4 Hurricane T Class Concrete Equipment Pad™ 40" x 40" x 4"', item: "EP-40X40X4-T", mfg: "HT4040-4", image: "/uc-tabs-accordions/ht4040-4.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 193.2, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
+        { id: "pmb-h3636-4-h", title: 'DiversiTech®- H3636-4 The Hurricane Concrete Equipment Pad 36" x 36" x 4"', item: "EP-36X36X4-H", mfg: "H3636-4", image: "/uc-tabs-accordions/h3636-4.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 106.2, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "pmb-h4040-4-h", title: 'DiversiTech®- H4040-4 The Hurricane Concrete Equipment Pad 40" x 40" x 4"', item: "EP-40X40X4-H", mfg: "H4040-4", image: "/uc-tabs-accordions/h4040-4.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 129.3, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "pmb-hmd4040-4", title: 'DiversiTech®- HMD4040-4 The Hurricane Miami-Dade Pad™ 40" x 40" x 4"', item: "HMD4040-4", mfg: "HMD4040-4", image: "/uc-tabs-accordions/hmd4040-4.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 163.9, points: 3, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
+      ],
+    },
+    {
+      label: "Disconnects & Whips",
+      items: [
+        { id: "dw-tp-60amp", title: "TRADEPRO® - 60 AMP Fusible Disconnect", item: "TP-60AMP", mfg: "TP-60AMP", image: "/uc-tabs-accordions/tp-60amp.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 28.10, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "dw-tp-60amp-nf", title: "TRADEPRO® - Non-Fusible Disconnect 60 amp", item: "TP-60AMP-NF", mfg: "TP-60AMP-NF", image: "/uc-tabs-accordions/tp-60amp-nf.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 24.40, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "dw-tp-whip-34", title: 'TRADEPRO® - Non-Metallic Connector Whip 3/4" x 6\'', item: "TP-WHIP-3/4X6NM", mfg: "TP-WHIP-3/4X6NM", image: "/uc-tabs-accordions/tp-whip-34.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 27.60, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "dw-tp-whip-12", title: 'TRADEPRO® - Non-Metallic Connector Whip 1/2" x 6\'', item: "TP-WHIP-1/2X6NM", mfg: "TP-WHIP-1/2X6NM", image: "/uc-tabs-accordions/tp-whip-12.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 21.20, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "dw-tp-30amp", title: "TRADEPRO® - 30 AMP Fusible Disconnect", item: "TP-30AMP", mfg: "TP-30AMP", image: "/uc-tabs-accordions/tp-30amp.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 26.70, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+      ],
+    },
+    {
+      label: "Thermostats & Zone Controls",
+      items: [
+        { id: "tz-bryant-tstat", title: "Bryant® - Smart Thermostat - Programmable 2H/2C Standard or 3H/2C Heat Pump", item: "TSTATBBEWF-01", mfg: "TSTATBBEWF-01", image: "/uc-tabs-accordions/bryant-tstat.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 65.00, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "tz-vive-855c", title: "VIVE™ - 5+1+1 or 7 Day Programmable Or Non-Programmable Thermostat 2H/2C", item: "TP-S-855C", mfg: "TP-S-855C", image: "/uc-tabs-accordions/vive-855c.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 117.60, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "tz-vive-721", title: "VIVE™ - Non-Programmable Large Display Heat Pump Thermostat 2H/1C", item: "TP-N-721", mfg: "TP-N-721", image: "/uc-tabs-accordions/vive-721.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 65.60, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "tz-vive-855crh", title: "VIVE™ - T800 Platform - 7D, 5+1+1 or Non-Programmable, 5H/3C Heat Pump", item: "TP-S-855CRH", mfg: "TP-S-855CRH", image: "/uc-tabs-accordions/vive-855crh.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 141.20, points: 2, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+      ],
+    },
+    {
+      label: "Refrigerant & Oils",
+      items: [
+        { id: "ro-r454b-20lb", title: "R-454B Refrigerant - 20 lb. Cylinder", item: "R454B-0020", mfg: "R454B-0020", image: "/uc-tabs-accordions/r454b-20lb.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 475.00, points: 9, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+      ],
+    },
+    {
+      label: "Other",
+      items: [
+        { id: "ot-tp-spd-50", title: "TRADEPRO® - Surge Protective Device (SPD) for Single-Phase System 50kA", item: "TP-SPD-50", mfg: "TP-SPD-50", image: "/uc-tabs-accordions/tp-spd-50.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 55.70, points: 1, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+        { id: "ot-nu-calgon", title: "Nu-Calgon - Rx11® Flush 1 lb. (3 - 4T)", item: "4300-09", mfg: "4300-09", image: "/uc-tabs-accordions/nu-calgon-4300-09.avif", branchQty: 0, branchName: "Other Branches", nearbyQty: 0, price: 74.50, points: 1, stockStatus: "AVAILABLE", stockBranch: "Other Branches", allBranchesQty: 0 },
+        { id: "ot-harris-silv", title: 'Harris - Stay-Silv® 15% Brazing Alloy .050 x 1/8" x 20" - 28 Stick Tube', item: "SIL15", mfg: "15620F1", image: "/uc-tabs-accordions/harris-15620f1.avif", branchQty: 0, branchName: "Ybor City #2541", nearbyQty: 0, price: 310.60, points: 6, stockStatus: "IN STOCK", stockBranch: "Ybor City #2541", allBranchesQty: 0 },
+      ],
+    },
   ],
   commerce: {
     // Signed-in state on this reference is "Contact for pricing" — expose one

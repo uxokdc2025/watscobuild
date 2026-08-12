@@ -55,48 +55,47 @@ function SpecGroupTable({ group }: { group: SpecGroup }) {
   );
 }
 
-function ProductInfo({ product }: { product: PdpProduct }) {
+function Description({ product }: { product: PdpProduct }) {
   return (
-    <div className="grid grid-cols-1 gap-x-12 gap-y-8 lg:grid-cols-2">
-      <div>
-        <h3 className="text-lg font-bold">Description</h3>
-        <p className="mt-3 max-w-prose text-sm text-muted-foreground">
-          {product.description.intro}
-        </p>
-        {product.description.bullets?.length ? (
-          <ul className="mt-3 flex flex-col gap-1.5">
-            {product.description.bullets.map((b) => (
-              <li key={b} className="flex gap-2 text-sm text-muted-foreground">
-                <span aria-hidden className="text-primary">•</span>
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-        {product.description.prop65 ? (
-          <p className="mt-4 text-sm text-muted-foreground">
-            California residents: see{" "}
-            <a href="#" className="font-medium text-primary underline-offset-4 hover:underline">
-              Proposition 65 Warning
-            </a>
-          </p>
-        ) : null}
-      </div>
-      <div>
-        <h3 className="text-lg font-bold">Specifications</h3>
-        <div className="relative mt-3">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            aria-label="Filter specifications"
-            placeholder="Filter by name or value..."
-            className="h-11 w-full rounded-md border bg-background pr-3 pl-9 text-sm outline-none"
-          />
-        </div>
-        <div className="mt-4 overflow-hidden rounded-lg border">
-          {(product.productSpecs ?? []).map((g) => (
-            <SpecGroupTable key={g.title} group={g} />
+    <div className="max-w-prose">
+      <p className="text-sm text-muted-foreground">{product.description.intro}</p>
+      {product.description.bullets?.length ? (
+        <ul className="mt-4 flex flex-col gap-1.5">
+          {product.description.bullets.map((b) => (
+            <li key={b} className="flex gap-2 text-sm text-muted-foreground">
+              <span aria-hidden className="text-primary">•</span>
+              <span>{b}</span>
+            </li>
           ))}
-        </div>
+        </ul>
+      ) : null}
+      {product.description.prop65 ? (
+        <p className="mt-4 text-sm text-muted-foreground">
+          California residents: see{" "}
+          <a href="#" className="font-medium text-primary underline-offset-4 hover:underline">
+            Proposition 65 Warning
+          </a>
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function Specifications({ product }: { product: PdpProduct }) {
+  return (
+    <div>
+      <div className="relative max-w-lg">
+        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          aria-label="Filter specifications"
+          placeholder="Filter by name or value..."
+          className="h-11 w-full rounded-md border bg-background pr-3 pl-9 text-sm outline-none"
+        />
+      </div>
+      <div className="mt-4 overflow-hidden rounded-lg border">
+        {(product.productSpecs ?? []).map((g) => (
+          <SpecGroupTable key={g.title} group={g} />
+        ))}
       </div>
     </div>
   );
@@ -170,6 +169,7 @@ function EmptyState({ label }: { label: string }) {
 
 export function AboutThisProduct({ product }: { product: PdpProduct }) {
   const hasDocs = Boolean(product.documents?.length);
+  const hasSpecs = Boolean(product.productSpecs?.length);
   // A bundle swaps the Part List / Where Used tabs for a Bundle Components tab.
   const isBundle = Boolean(product.bundleItems?.length);
   return (
@@ -177,7 +177,8 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
       <h2 className="text-xl font-bold tracking-tight">About This Product</h2>
       <Tabs defaultValue="info">
         <TabsList variant="line">
-          <TabsTrigger value="info">Product Info</TabsTrigger>
+          <TabsTrigger value="info">Description</TabsTrigger>
+          {hasSpecs ? <TabsTrigger value="specs">Specifications</TabsTrigger> : null}
           {hasDocs ? <TabsTrigger value="docs">Documents</TabsTrigger> : null}
           {isBundle ? (
             <TabsTrigger value="bundle">Bundle Components</TabsTrigger>
@@ -190,8 +191,13 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
         </TabsList>
 
         <TabsContent value="info" className="pt-6">
-          <ProductInfo product={product} />
+          <Description product={product} />
         </TabsContent>
+        {hasSpecs ? (
+          <TabsContent value="specs" className="pt-6">
+            <Specifications product={product} />
+          </TabsContent>
+        ) : null}
         {hasDocs ? (
           <TabsContent value="docs" className="pt-6">
             <Documents documents={product.documents!} />
