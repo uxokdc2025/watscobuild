@@ -9,7 +9,7 @@
 **Source files this doc was extracted from** (read order per spec):
 - `app/globals.css` — all `--*` tokens, light + dark
 - `postcss.config.mjs`, `tsconfig.json`, `next.config.ts`, `components.json` — build config
-- `components/ui/*.tsx` — 30 primitives (New York style)
+- `components/ui/*.tsx` — 31 primitives (New York style)
 - `app/components/page.tsx`, `app/components/_sections/*.tsx`, `app/components/_showcase.tsx` — assembled showcase (David's source of truth)
 - `app/pdp/_lib/brands.ts`, `app/pdp/_lib/chrome.tsx` — 7 distributor chromes
 - `app/pdp/_lib/summary.tsx`, `fbt.tsx`, `about.tsx`, `details.tsx`, `parts.tsx`, `pdp.tsx`, `showcase*.tsx`, `types.ts`, `registry.ts`
@@ -346,7 +346,7 @@ PDP title uses a nearby variant: `text-xl`–`text-2xl font-semibold` depending 
 
 ## 4. Component Inventory
 
-All files in `components/ui/` (30). Style: **shadcn New York** (`components.json: "style": "new-york"`, `baseColor: "neutral"`, `cssVariables: true`), Tailwind v4 via `postcss.config.mjs: ["@tailwindcss/postcss"]`, path aliases `@/* → ./*`, icon library `lucide`.
+All files in `components/ui/` (31). Style: **shadcn New York** (`components.json: "style": "new-york"`, `baseColor: "neutral"`, `cssVariables: true`), Tailwind v4 via `postcss.config.mjs: ["@tailwindcss/postcss"]`, path aliases `@/* → ./*`, icon library `lucide`.
 
 Each entry: file, import, CVA variants (if present), "use when" / "don't use when" inferred from `/components` showcase placement, canonical example.
 
@@ -568,7 +568,7 @@ Extraction of what is **actually written** in the PDPs and supporting copy (not 
 
 Source: `components/ui/*.tsx` imports + `app/pdp/_lib/chrome.tsx` + `lib/utils.ts`.
 
-**Library:** `lucide-react` (`^0.487.0`) is the **only** icon source in this repo (declared in `components.json: "iconLibrary": "lucide"`). No custom SVG sprite in the repo.
+**Library:** `lucide-react` (`^0.487.0`) is the **only** icon source in this repo (declared in `components.json: "iconLibrary": "lucide"`). No custom SVG icon sprite in the repo — brand *logo marks* are a separate category and are inline SVG in `app/pdp/_lib/chrome.tsx` (e.g. `CeMonogram` for Carrier Enterprise). See §12 for brand-mark treatment.
 
 **Sizing convention in this codebase:**
 
@@ -642,34 +642,39 @@ One subsection per distributor. Source: `app/pdp/_lib/brands.ts` (nav, footerCol
 
 Source: `app/pdp/tab-styles/page.tsx` + `app/pdp/_lib/showcase-data.tsx` (`SECTIONS`) + `components/ui/tabs.tsx` (`tabsListVariants`) + `app/pdp/_lib/showcase.tsx`.
 
-The `/pdp/tab-styles` page renders `SECTIONS` (label + Icon + Body) through `TabDemo` in 6 style wrappers. Each variant is a different `TabsList` / `TabsTrigger` class set — same content, different chrome.
+The `/pdp/tab-styles` page renders `SECTIONS` (label + Icon + Body) through `TabDemo` in **8 style presentations** — same content, different chrome. Each is a different `TabsList` / `TabsTrigger` class set, built on top of the 3 formal CVA variants in `tabs.tsx` (`default`, `line`, `segmented`) plus custom overrides for the other 5. Comments in `app/pdp/tab-styles/page.tsx` are the authoritative label for each render.
 
-| Variant | Where defined | Visual | When to use |
-|---|---|---|---|
-| **line (underline)** | `tabs.tsx variant="line"` → `w-full border-b bg-transparent gap-6`; triggers `flex-none` left-aligned, active `text-primary` + `after:` underline (`bg-primary after:opacity-100`) | Left-aligned tabs on a full-width grey rule; brand-blue active text + 2px blue underline | PDP details area (product Description / Spec / Documentation). Default for product detail. |
-| **segmented (full-width muted)** | `tabs.tsx variant="segmented"` → `bg-muted` track; triggers `flex-1` with `data-[state=active]: bg-primary text-primary-foreground` pill | Grey track with primary-filled active pill, evenly spaced | FBT group tabs, Pack Size alternative — when every option is equal weight and the control should read as a single segmented unit |
-| **soft active (tinted)** | `TabDemo` custom: `list gap-1 bg-transparent p-0` + `trigger h-auto rounded-lg px-4 py-2 data-[state=active]: bg-primary/10 data-[state=active]: text-primary` + icons | Tinted blue background on active, icon + label | PDP when tabs carry icons/mixed content and active should be gentle tint, not solid fill |
-| **solid filled active** | `TabDemo` custom: `list gap-1 bg-transparent p-0` + `trigger rounded-lg px-4 py-2 data-[state=active]: bg-primary data-[state=active]: text-primary-foreground` | Solid primary fill on active, rounded-lg | When the tab bar is not a segmented track but a loose row of pills that fill solid on select |
-| **bordered segmented (outlined boxes)** | `TabDemo` custom: `max-w-3xl` list with bordered box, active filled | Outlined segmented boxes, active filled primary | Alternative segmented look with stronger box affordance |
-| **boxed-card (blue accent card)** | `TabDemo` custom + `ShowcaseShell` card chrome | Tabs rendered inside a `rounded-xl border bg-card` shell with blue accent treatment | When tabs are secondary inside a card/boxed section rather than full-width page chrome |
+| # | Variant (source comment) | Where defined | Visual | When to use |
+|---|---|---|---|---|
+| 1 | **Underline (line)** — `{/* Underline (line) */}` | `tabs.tsx variant="line"` → `w-full border-b bg-transparent gap-6`; triggers `flex-none` left-aligned, active `text-primary` + `after:` underline | Left-aligned tabs on a full-width grey rule; brand-blue active text + 2px blue underline | PDP details area (product Description / Spec / Documentation). Default for product detail. |
+| 2 | **Full-width segmented** — `{/* Full-width segmented */}` | `tabs.tsx variant="segmented"` → `bg-muted` track; triggers `flex-1` with `data-[state=active]:bg-primary text-primary-foreground` pill | Grey track with primary-filled active pill, evenly spaced across full width | FBT group tabs, Pack Size alternative — when every option is equal weight and the control should read as a single segmented unit |
+| 3 | **Soft active (tinted with icons)** — `{/* Soft active — tinted blue background on the active tab (with icons) */}` | Custom `TabDemo`: `list gap-1 bg-transparent p-0` + `trigger h-auto rounded-lg px-4 py-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary` + `showIcons` | Tinted blue background on active, icon + label | PDP when tabs carry icons/mixed content and active should be a gentle tint, not solid fill |
+| 4 | **Solid filled active** — `{/* Solid filled active */}` | Custom: `list gap-1 bg-transparent p-0` + `trigger rounded-lg px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground` | Solid primary fill on active, rounded-lg | When the tab bar is not a segmented track but a loose row of pills that fill solid on select |
+| 5 | **Bordered segmented (outlined boxes)** — `{/* Bordered segmented — outlined boxes, active filled */}` | Custom: `max-w-3xl` list with `rounded-md border`, triggers `flex-1 rounded-none border-r`, active filled primary | Outlined segmented boxes, active filled primary | Alternative segmented look with stronger box affordance |
+| 6 | **Pill track · solid active pill** — `{/* Pill track · solid active pill */}` | Custom: `list h-auto rounded-full p-1` + `trigger rounded-full px-4 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground` | Fully-rounded pill track; active pill fills solid primary | When the control is a loose pill row (not full-width) and needs solid emphasis on active |
+| 7 | **Pill track · white active pill** — `{/* Pill track · white active pill */}` | Custom: `list h-auto rounded-full p-1` + `trigger rounded-full px-4 py-1.5 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm` | Fully-rounded pill track; active pill is white/background with primary text + soft shadow (raised) | Same as #6 but for muted/dark tracks where a raised white pill reads better than a solid brand fill |
+| 8 | **Boxed / tabbed card** — `{/* Boxed / tabbed card — content sits in a bordered box under the tabs */}` | Direct `<Tabs>` + `variant="line"` list inside `rounded-xl border overflow-hidden` shell; content in `p-6` | Tabs sit above a bordered card; body content lives inside the card, not in the page flow | When tabs are secondary inside a card/boxed section rather than full-width page chrome |
 
-Note: `tabs.tsx` formally exposes **3** CVA variants (`default`, `line`, `segmented`). The other 3 "variants" are custom `TabsList`/`TabsTrigger` class overrides demonstrated on `/pdp/tab-styles`. All use `SECTIONS` fixture for consistent labels.
+Note: `tabs.tsx` formally exposes **3** CVA `variant` values (`default`, `line`, `segmented`). Presentations 3–7 are custom `TabsList` / `TabsTrigger` class overrides; presentation 8 wraps a formal `variant="line"` inside a bordered card. All use the `SECTIONS` fixture for consistent labels.
 
 **Screenshots:** `docs/design-system-refs/tab-styles__<variant>__<viewport>.png` — one per variant at 1280 + 375.
 
-### 13.2 Accordion styles (3+ variants)
+### 13.2 Accordion styles (6 variants)
 
 Source: `app/pdp/accordion-styles/page.tsx` + `app/pdp/_lib/showcase-data.tsx` + `components/ui/accordion.tsx`.
 
-The `/pdp/accordion-styles` page renders accordion demos through `ShowcaseShell`. The base `Accordion` is Radix single-collapsible with `ChevronDownIcon` that rotates 180° on `data-state=open` (`[&[data-state=open]>svg]:rotate-180`).
+The `/pdp/accordion-styles` page renders **6** accordion demos through `ShowcaseShell`. The base `Accordion` is Radix single-collapsible with `ChevronDownIcon` that rotates 180° on `data-state=open` (`[&[data-state=open]>svg]:rotate-180`). Comments in the source (`{/* 1 · Default … */}` through `{/* 6 · Circular chevron + left accent */}`) are the authoritative label for each render.
 
-| Variant | Visual | When to use |
-|---|---|---|
-| **plus-minus** | Trigger shows `+` / `−` glyph (collapsed/expanded) instead of chevron | PDP parts/spec lists where expand is additive context |
-| **status-dot (steps)** | Dot/step indicator to the left of trigger; active/completed states carry green/blue dot | Multi-step or status-driven expansions |
-| **circular-chevron (accent)** | Chevron in a circular badge (colored or bordered), rotates on open | When the accordion itself should carry brand accent emphasis |
+| # | Variant (source comment) | Visual | When to use |
+|---|---|---|---|
+| 1 | **Default (shadcn) — with section icons** — `{/* 1 · Default (shadcn) — with section icons */}` | Vanilla shadcn accordion; each item's trigger carries the section `Icon` (from `SECTIONS`) + label; chevron on the right rotates 180° on open | Base pattern for any content-list expansion where category iconography is helpful (Description / Spec / Docs) |
+| 2 | **Separated cards** — `{/* 2 · Separated cards */}` | Each item is its own `rounded-lg border` card with `gap-2` vertical spacing between items (visually detached, no shared borders) | When each expansion is a distinct topic and cards should breathe apart |
+| 3 | **Filled bars · left accent** — `{/* 3 · Filled bars · left accent */}` | Triggers rendered as filled bar rows with a left-edge brand-accent stripe; open state carries a stronger accent | Product detail category rows where the trigger IS the affordance (no card chrome around it) |
+| 4 | **Plus / minus separated cards** — `{/* 4 · Plus / minus separated cards */}` | Separated-card layout with the chevron replaced by a `+` / `−` glyph (`Plus` collapsed → `Minus` expanded) | PDP parts/spec lists where expand is additive context and `+/−` reads clearer than a chevron |
+| 5 | **Status-dot step cards** — `{/* 5 · Status-dot step cards */}` | Separated cards with a colored dot/step indicator to the left of the trigger; active/completed states carry different dot colors (green/blue) | Multi-step or status-driven expansions (e.g. install steps, checkout stages) |
+| 6 | **Circular chevron + left accent** — `{/* 6 · Circular chevron + left accent */}` | Chevron rendered inside a circular badge on the right + a left-edge brand-accent stripe, both rotate/highlight on open | When the accordion itself should carry brand accent emphasis and the trigger reads as a stronger CTA |
 
-Base animation: `data-[state=closed]:animate-accordion-up` / `data-[state=open]:animate-accordion-down` (`overflow-hidden text-sm` content).
+Base animation for all 6: `data-[state=closed]:animate-accordion-up` / `data-[state=open]:animate-accordion-down` (`overflow-hidden text-sm` content).
 
 **Screenshots:** `docs/design-system-refs/accordion-styles__<variant>__<viewport>.png` at 1280 + 375.
 
@@ -729,8 +734,8 @@ Verbatim from `~/Developer/ClaudeCode/watsco/docs/handoff/state-2026-08-09.md` �
 - **Real imagery:** product images are real, wired from Watsco **Scene7 CDN** article IDs (scraped). Example: `https://cdn.gemaire.com/tradepro_tp-ec13-50_article_…_en_normal?wid=700&hei=700&qlt=80`. First `images[0]` is the hero; additional `images` are gallery thumbnails; count held in `thumbnailCount`.
 - **A11y:** low-stock orange darkened to hit **AA** contrast — `globals.css` comment on `--low-stock`: `AA 4.55:1 on white (was 3.20:1)`.
 - **Two content layouts:** `detailsStyle: "tabs"` (default) vs `"about"` (Carrier "About This Product" with Product Info / Documents / Part List / Where Used).
-- **Tab styles:** soft / solid / bordered / pill-solid / pill-white / boxed-card (blue accent) — see §13.
-- **Accordion styles:** plus-minus / status-dot steps / circular-chevron accent — see §13.
+- **Tab styles (8):** underline (line) / full-width segmented / soft active (tinted, icons) / solid filled / bordered segmented / pill · solid active / pill · white active / boxed-card — see §13.1 for the source-authoritative comment for each.
+- **Accordion styles (6):** default with section icons / separated cards / filled bars · left accent / plus-minus separated cards / status-dot step cards / circular chevron + left accent — see §13.2.
 
 ---
 
@@ -760,7 +765,7 @@ Everywhere the code disagrees with Design System v2 (`~/Documents/Watsco/Watsco 
 | 8 | **Motion slow 300ms vs 350ms + spring** | `globals.css` slow is `300ms`; DS v2 `motion.card.html` + `fig-tokens.css` slow is `350ms`. Code adds `--ease-spring: 0.34,1.56,0.64,1` and `--duration-slower 500ms` which have no DS v2 counterpart. | DS v2 motion: fast 100 / base 200 / slow 350 + standard/enter/exit easings, no spring. | **Code wins.** Spring should be used sparingly if at all; document that `ease-spring` is non-canonical vs DS v2. |
 | 9 | **Focus ring** | `focus-visible:ring-[3px] focus-visible:ring-ring/50` (~1.5px effective light ring at 50% opacity) + Tailwind `dark:` bump + component-level `ring-[3px]`. | DS v2 `elevation/card`: `elevation/focus 0 0 0 3px rgba(0,87,168,0.25)` (3px at 25% opacity). | Visually similar — both are a soft 3px blue ring. No blocking fix; unify opacity if strict equality is desired. |
 | 10 | **Reduced-motion** | No global `prefers-reduced-motion: reduce` media query found in `globals.css`. Components animate with `tw-animate-css` and `transition-all` without a reduced-motion fallback. | `accessibility.md` requires reduced-motion support; `motion.card.html` should note it. | **Gap.** Add a `@media (prefers-reduced-motion: reduce)` block that collapses durations / disables `tw-animate-css` animations, or add per-component `motion-reduce:` variants. |
-| 11 | **Component coverage vs DS v2** | This repo has 30 components in `components/ui/` (shadcn New York). DS v2 has 103 components across Forms/Badges/Navigation/Product/Feedback plus guideline cards (see `readme.md` §Components). DS v2 components like `FormQuantityStepper`, `StoreSelector`, `AHRIMatchedSystemTable`, `ProductGridCard`, `ToastToast`, `SegmentedControl*`, `BadgeStatus*` have no 1:1 in this repo's `components/ui/` — their equivalents are bespoke in `app/pdp/_lib/*.tsx` (e.g. `QtyStepper` in `summary.tsx`, `PackSizePills`). | `_ds_manifest.json` lists the DS v2 component inventory. | **Code wins.** This repo is not a mirror of DS v2 — it's a PDP prototype with PDP-specific patterns. A future `audit-and-align-to-design-system` Muse job should map each DS v2 component to its closest ship counterpart and note gaps (see §18). |
+| 11 | **Component coverage vs DS v2** | This repo has 31 components in `components/ui/` (shadcn New York). DS v2 has 103 components across Forms/Badges/Navigation/Product/Feedback plus guideline cards (see `readme.md` §Components). DS v2 components like `FormQuantityStepper`, `StoreSelector`, `AHRIMatchedSystemTable`, `ProductGridCard`, `ToastToast`, `SegmentedControl*`, `BadgeStatus*` have no 1:1 in this repo's `components/ui/` — their equivalents are bespoke in `app/pdp/_lib/*.tsx` (e.g. `QtyStepper` in `summary.tsx`, `PackSizePills`). | `_ds_manifest.json` lists the DS v2 component inventory. | **Code wins.** This repo is not a mirror of DS v2 — it's a PDP prototype with PDP-specific patterns. A future `audit-and-align-to-design-system` Muse job should map each DS v2 component to its closest ship counterpart and note gaps (see §18). |
 | 12 | **Badge color vocabulary** | `badge.tsx` colors are `blue, violet, green, amber, orange, red, teal, slate` (8). `types.ts` `PdpBadge` restricts to `blue | violet | green | amber | red | slate` (6) — no `orange`/`teal` in PDP badges. | DS v2 status palette is `statusBlue/statusGreen/statusOrange/statusRed` + primitive green/blue/orange/red ramps; `teal`/`violet` are not primitive names in DS v2. | `teal`/`violet` in `badge.tsx` are extended beyond DS v2 primitives; PDP `BadgeColor` intentionally narrows. No fix — document the split. |
 | 13 | **Dark mode brand tokens constant** | Brand tokens (hex) are constant across `.dark` ("a brand's blue is its blue"). | DS v2 `tokens/fig-tokens.css` has a separate wireframe mode + dark token overrides, but no brand-chip dark variant. | No conflict — brand chrome is light-only by policy. |
 
@@ -798,7 +803,7 @@ muse exec \
 Per spec, coverage required:
 - Per component group (Actions, Badges, Forms, Feedback, Overlays, Data, Navigation, Media) from `/components` at 1280.
 - Per brand chrome (7 distributors) — header + footer at 1280 (and 375 for nav wrapping).
-- Per tab style (6 variants) + accordion style (3+ variants) at 1280 + 375.
+- Per tab style (8 variants) + accordion style (6 variants) at 1280 + 375.
 - Per PDP composition pattern (§14) at 1280 + 375.
 - Type scale at 1280.
 - Product card pattern (`/product`) at 1280 + 375.
