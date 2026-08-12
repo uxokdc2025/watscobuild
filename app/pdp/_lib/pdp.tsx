@@ -4,7 +4,7 @@ import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { PdpDetails } from "./details";
 import { CustomersAlsoPurchased, FrequentlyBoughtTogether } from "./fbt";
-import { AboutThisProduct, BundleComponents, ProPicks, RecentlyViewed, Replacements, Substitutes } from "./about";
+import { AboutThisProduct, AhriMatchup, BundleComponents, ProPicks, RecentlyViewed, Replacements, Substitutes } from "./about";
 import { SiteFooter, SiteHeader } from "./chrome";
 import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
@@ -92,7 +92,10 @@ export function Pdp({
                 showCompare={brand?.hasCompare ?? false}
               />
               {/* New pattern: bundles + recommendations all sit under the buy
-                  box, in the summary column. */}
+                  box, in the summary column. AHRI Matchup renders in this same
+                  band using the PRO-Picks shape (H2 + single card, no nested
+                  box) — reference: ecmdi.com LIVO outdoor / matched LIVO indoor. */}
+              {product.ahri?.matchedProduct ? <AhriMatchup product={product} /> : null}
               {product.proPicks?.length ? <ProPicks product={product} /> : null}
               {product.replacements?.length ? (
                 <Replacements product={product} />

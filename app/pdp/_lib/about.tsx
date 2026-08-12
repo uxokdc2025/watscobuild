@@ -390,6 +390,51 @@ function QtyAdd() {
   );
 }
 
+/** AHRI Matchup — mirrors the PRO Picks shape: H2 heading + single-row card,
+ *  no wrapping "box within a box". Reference: ecmdi.com LIVO outdoor (matched
+ *  LIVO indoor). Only renders when `product.ahri?.matchedProduct` is present. */
+export function AhriMatchup({ product }: { product: PdpProduct }) {
+  const match = product.ahri?.matchedProduct;
+  if (!product.ahri || !match) return null;
+  return (
+    <section aria-label="AHRI Matchup" className="flex flex-col gap-3">
+      <h2 className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-lg font-bold tracking-tight">
+        <span>AHRI Matchup: {product.ahri.number}</span>
+        <a
+          href="#"
+          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+        >
+          View System Details
+        </a>
+      </h2>
+      <div className="overflow-hidden rounded-lg border bg-muted/30">
+        <div className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-4 px-4 py-4">
+          <div className="size-14">
+            <ProductThumb src={match.image} alt={match.title} />
+          </div>
+          <div className="min-w-0">
+            <a href="#" className="text-sm font-semibold text-primary hover:underline">
+              {match.title}
+            </a>
+            <p className="mt-1 flex flex-wrap items-baseline gap-1.5">
+              <span className="text-base font-bold">{formatUSD(match.price)}</span>
+              {match.wasPrice != null ? (
+                <span className="text-xs text-muted-foreground line-through">
+                  {formatUSD(match.wasPrice)}
+                </span>
+              ) : null}
+            </p>
+            {match.availabilityNote ? (
+              <p className="mt-0.5 text-xs text-muted-foreground">{match.availabilityNote}</p>
+            ) : null}
+          </div>
+          <QtyAdd />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** PRO Picks — thumbnail-left rows (like Substitutes) + a grouped qty/cart control. */
 export function ProPicks({ product }: { product: PdpProduct }) {
   if (!product.proPicks?.length) return null;

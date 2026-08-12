@@ -122,13 +122,22 @@ function InfoBanner({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Save to List + Find AHRI + (optional) Compare — Save to List first, then
- *  the AHRI discovery link (purple), then Compare where applicable. */
-function SecondaryActions({ showCompare }: { showCompare: boolean }) {
+/** Save to List + (optional) Find AHRI + (optional) Compare. The AHRI
+ *  discovery link only shows on PDPs where AHRI is relevant to the product
+ *  (i.e. `product.ahri` is present — either matchup-only or matched-product).
+ *  It stays hidden on refrigerants, capacitors, blower motors, etc., where
+ *  the page never "calls for" AHRI matching. */
+function SecondaryActions({
+  showCompare,
+  showFindAhri,
+}: {
+  showCompare: boolean;
+  showFindAhri: boolean;
+}) {
   return (
     <div className="-ml-1 flex flex-wrap items-center gap-x-3 gap-y-1">
       <SaveToList />
-      <FindAhriMatchedSystem />
+      {showFindAhri ? <FindAhriMatchedSystem /> : null}
       {showCompare ? <CompareButton /> : null}
     </div>
   );
@@ -169,6 +178,10 @@ export function PdpSummary({
     product.status === "discontinued";
   const licenseGated = product.status === "requires-license";
   const showCommerce = signedIn && product.commerce && !blocksPurchase;
+  // AHRI discovery link is opt-in per product — presence of `product.ahri`
+  // (matchup number known, matched product wired, or empty-state slot flagged)
+  // is the signal that AHRI is relevant to this SKU.
+  const showFindAhri = Boolean(product.ahri) || product.ahriEmpty === true;
 
   return (
     <div className="flex flex-col gap-4">
@@ -220,7 +233,7 @@ export function PdpSummary({
                 </p>
               </div>
             )}
-            <SecondaryActions showCompare={showCompare} />
+            <SecondaryActions showCompare={showCompare} showFindAhri={showFindAhri} />
           </>
         ) : (
           <div className="rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
@@ -313,7 +326,7 @@ export function PdpSummary({
                 Add to Cart
               </Button>
             </div>
-            <SecondaryActions showCompare={showCompare} />
+            <SecondaryActions showCompare={showCompare} showFindAhri={showFindAhri} />
           </div>
         </>
       ) : (
@@ -329,7 +342,7 @@ export function PdpSummary({
             <LogIn />
             Sign in to view pricing
           </Button>
-          <SecondaryActions showCompare={showCompare} />
+          <SecondaryActions showCompare={showCompare} showFindAhri={showFindAhri} />
         </>
           )}
         </>
