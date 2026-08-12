@@ -398,14 +398,8 @@ export function AhriMatchup({ product }: { product: PdpProduct }) {
   if (!product.ahri || !match) return null;
   return (
     <section aria-label="AHRI Matchup" className="flex flex-col gap-3">
-      <h2 className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-lg font-bold tracking-tight">
-        <span>AHRI Matchup: {product.ahri.number}</span>
-        <a
-          href="#"
-          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-        >
-          View System Details
-        </a>
+      <h2 className="text-lg font-bold tracking-tight">
+        AHRI Matchup: {product.ahri.number}
       </h2>
       <div className="overflow-hidden rounded-lg border bg-muted/30">
         <div className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-4 px-4 py-4">
