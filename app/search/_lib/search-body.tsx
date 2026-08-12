@@ -490,9 +490,10 @@ function FacetGroup({
  * ------------------------------------------------------------------ */
 
 /** Product photos captured from each distributor's search page. Per-brand list
- *  because extensions and counts differ (Homans: 26× webp; Peirce: 28× avif + 1× webp). */
+ *  because extensions and counts differ (Homans: 24× webp — logo + spacer dropped;
+ *  Peirce: 28× avif + 1× webp). */
 const IMAGES_BY_BRAND: Record<string, string[]> = {
-  homans: Array.from({ length: 26 }, (_, i) => `/homans-search/blower-motor-${(i + 1).toString().padStart(2, "0")}.webp`),
+  homans: Array.from({ length: 24 }, (_, i) => `/homans-search/blower-motor-${(i + 1).toString().padStart(2, "0")}.webp`),
   peirce: [
     "/peirce-search/blower-motor-01.avif",
     "/peirce-search/blower-motor-02.avif",
