@@ -195,13 +195,16 @@ export function PdpSummary({
         <a href="#" className="w-fit text-sm font-semibold text-primary underline-offset-4 hover:underline">
           {product.brand}
         </a>
-        {product.badges?.length ? (
+        {(product.badges?.length || (signedIn && product.commerce?.points)) ? (
           <div className="flex flex-wrap gap-2">
-            {product.badges.map((b) => (
+            {product.badges?.map((b) => (
               <Badge key={b.label} variant={b.tone} color={b.color}>
                 {b.label}
               </Badge>
             ))}
+            {signedIn && product.commerce?.points ? (
+              <PointsBadge points={product.commerce.points} />
+            ) : null}
           </div>
         ) : null}
         <h1 className="text-2xl font-bold tracking-tight text-balance">{product.title}</h1>
@@ -282,9 +285,6 @@ export function PdpSummary({
                   / {formatUom(product.commerce!.uom)}
                 </span>
               </div>
-              {product.commerce!.points ? (
-                <PointsBadge points={product.commerce!.points} />
-              ) : null}
             </div>
           ) : (
             <div className="text-2xl font-bold text-muted-foreground">
