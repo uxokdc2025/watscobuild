@@ -178,10 +178,14 @@ export function PdpSummary({
     product.status === "discontinued";
   const licenseGated = product.status === "requires-license";
   const showCommerce = signedIn && product.commerce && !blocksPurchase;
-  // AHRI discovery link is opt-in per product — presence of `product.ahri`
-  // (matchup number known, matched product wired, or empty-state slot flagged)
-  // is the signal that AHRI is relevant to this SKU.
-  const showFindAhri = Boolean(product.ahri) || product.ahriEmpty === true;
+  // AHRI discovery link is a "help me find a match" CTA. Only surfaces when
+  // the page calls for discovery — i.e. AHRI is relevant to the SKU AND a
+  // matched system hasn't already been shown. When `ahri.matchedProduct` is
+  // wired, the AhriMatchup section below Add-to-Cart already IS the answer,
+  // so the CTA would be redundant.
+  const showFindAhri =
+    (Boolean(product.ahri) && !product.ahri?.matchedProduct) ||
+    product.ahriEmpty === true;
 
   return (
     <div className="flex flex-col gap-4">
