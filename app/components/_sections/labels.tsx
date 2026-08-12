@@ -47,6 +47,28 @@ export function LabelsSection() {
       title="Badges & Labels"
       description="Watsco merchandising badges and status labels. Color intents: blue = new, green = sale/promo, orange = online only, red = clearance/ESD, teal = rebate."
     >
+      {/* Position pattern — canonical placement on any product surface */}
+      <Group
+        title="Badge position pattern"
+        note='Every product surface — PDP buy-box, PLP card — places badges in one slot: directly under the brand line, above the title. Same slot regardless of tone or intent. Source: `app/pdp/_lib/summary.tsx` "Brand + badges + title" block. See docs/design-system.md §4 Badges/Labels.'
+        className="flex-col items-stretch gap-3"
+      >
+        <div className="flex max-w-md flex-col gap-2 rounded-lg border bg-background p-4">
+          <a href="#" className="w-fit text-sm font-semibold text-primary underline-offset-4 hover:underline">
+            Daikin
+          </a>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="solid" color="red">Sale</Badge>
+          </div>
+          <h4 className="text-lg font-bold tracking-tight">
+            CIRRA 2-Port High-Efficiency Multi-Split Outdoor Heat Pump - 18,000 BTU
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            Item #: 361067A · MFG #: 2MX18AXVJU
+          </p>
+        </div>
+      </Group>
+
       {/* Color intents (solid) */}
       <Group title="Color intents" note="Solid badges mapped to the merchandising legend.">
         <Badge variant="solid" color="blue">New</Badge>

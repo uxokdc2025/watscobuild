@@ -151,8 +151,24 @@ export type PdpProduct = {
   replacements?: SubstituteItem[];
   /** Non-sellable item that still has stock elsewhere: qty across all branches. */
   nonSellableAllBranchesQty?: number;
-  /** AHRI matched-system reference — renders a badge + "View System Details" link. */
-  ahri?: { number: string };
+  /**
+   * AHRI matched-system reference. `number` alone renders a header row with
+   * "AHRI Matchup: {number}" + "View System Details" link. When
+   * `matchedProduct` is present, the section also renders a PRO-Picks-style
+   * row (image + title + price + qty + Add to Cart) — see the reference at
+   * https://www.ecmdi.com/livo-outdoor-heat-pump-… (LIVO indoor matches).
+   */
+  ahri?: {
+    number: string;
+    matchedProduct?: {
+      id: string;
+      title: string;
+      image?: string;
+      price: number;
+      wasPrice?: number;
+      availabilityNote?: string;
+    };
+  };
   /** Render an empty "No AHRI Matchups Found" box (ECMDI equipment PDPs). */
   ahriEmpty?: boolean;
   /** "PRO Picks" — matched components sold with the item (price + Add to Cart). */

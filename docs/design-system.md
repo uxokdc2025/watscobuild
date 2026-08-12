@@ -360,9 +360,20 @@ Each entry: file, import, CVA variants (if present), "use when" / "don't use whe
 
 ### Badges / Labels
 
+**Position rule (canonical, applies to every PDP + PLP card):** badges render
+directly **under the brand line, above the title**, as a horizontal row (wrap
+allowed at narrow widths). Same slot regardless of tone (solid/soft/outline)
+or intent (Sale, Best Value, Pro Essentials, Replacement Products, AHRI
+Matched System, Non-Sellable, Requires License, etc.). Source of truth:
+`app/pdp/_lib/summary.tsx` "Brand + badges + title" block — do NOT compose
+another badge slot elsewhere in the buy-box. Reference example: the "Sale"
+badge on `/pdp/uc-strike-thru?signedin=1` sits under "Daikin", above the CIRRA
+title. `/components` `Badges & Labels` section renders the same pattern under
+"Badge position pattern".
+
 | File | Import | Variants / props | Use when | Don't use when | Example |
 |---|---|---|---|---|---|
-| `badge.tsx` | `import { Badge } from "@/components/ui/badge"` | `variant: default / secondary / destructive / outline / ghost / link / soft / solid / outline-color` · `color: blue / violet / green / amber / orange / red / teal / slate` (compound variants: soft = tinted, solid = filled, outline-color = transparent) | Compact status/label chips. Promo/attribute chips use `outline-color`. | Don't use for inline stock text — that is `BranchRow` / `stockTextClass` (text, not badge). Statuses in PDP render inline per §15. | `<Badge variant="soft" color="blue"><Shield /> Pro Essentials</Badge>` |
+| `badge.tsx` | `import { Badge } from "@/components/ui/badge"` | `variant: default / secondary / destructive / outline / ghost / link / soft / solid / outline-color` · `color: blue / violet / green / amber / orange / red / teal / slate` (compound variants: soft = tinted, solid = filled, outline-color = transparent) | Compact status/label chips. Promo/attribute chips use `outline-color`. **Always** placed in the badges slot under brand line, per position rule above. | Don't use for inline stock text — that is `BranchRow` / `stockTextClass` (text, not badge). Statuses in PDP render inline per §15. Never place a Badge outside the badges slot. | `<Badge variant="solid" color="red">Sale</Badge>` in `PdpProduct.badges` |
 | `label-badges.tsx` | `import { PointsBadge, FlagBadge, BranchRow, stockTextClass } from "@/components/ui/label-badges"` | `PointsBadge: points:number` · `FlagBadge: tone red/orange/green/blue` · `BranchRow: qty, name` · `stockTextClass(qty)` → `text-in-stock / low-stock / out-of-stock` | Loyalty points (violet badge w/ `<Award>`), flag chips (folded-corner), branch stock rows. | Don't roll your own points treatment — import `PointsBadge`. | `<PointsBadge points={12} />` · `<BranchRow qty={3} name="Durham NC #1" />` |
 | `label.tsx` | `import { Label } from "@/components/ui/label"` | Radix `LabelPrimitive.Root`; `peer-disabled:opacity-50` dims when control is disabled | Form labels paired with `Input` / `Checkbox`. | Don't use for non-form captions. | `<Label htmlFor="lbl-1">Full name</Label>` |
 
@@ -726,7 +737,7 @@ Verbatim from `~/Developer/ClaudeCode/watsco/docs/handoff/state-2026-08-09.md` �
 
 - **Price is gated to logged-in.** Signed-out shows a gated state; `commerce` omitted → no price/inventory. Toggle is `useAuth().signedIn`; gated copy is "Sign in to see price and availability" with "Sign in" `text-primary` link.
 - **Statuses render inline, not as badges.** Prop 65 is text-only. UoM shows as `/ EACH` (space after slash). See `formatUom` in `types.ts`.
-- **Sale/strike-thru:** price + "Sale" turn **red** (`text-sale-price` / `text-destructive`); dropped the "Reg." prefix; one-line sale (was-price `line-through` + sale price on one row).
+- **Sale/strike-thru (updated 2026-08-12):** Sale is signaled by the **`Sale` badge** in the badges row (solid red) — see Badge position rule under §4 Badges/Labels. The price cluster stays neutral: sale price in `text-price` (foreground black), was-price in muted grey `line-through`, UoM as `/ EACH`. **No** red price and **no** "Sale" label next to the price — the badge carries the message. Reference: `/pdp/uc-strike-thru?signedin=1` (Daikin CIRRA).
 - **Buy-box:** sticky image/gallery column pins while the buy-box column scrolls (see `pdp.tsx` gallery).
 - **Branch availability:** 2-column (Your Branch | Nearby); Homans uses a call-based `fulfillmentNote` instead of branch stock.
 - **FBT (Frequently Bought Together):** 4-across grid (`lg:grid-cols-4`); rich Carrier-style cards (image, price, points, stock); "Customers Also Purchased" carries a `% also purchased` badge.

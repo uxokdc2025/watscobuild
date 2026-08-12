@@ -242,32 +242,6 @@ export function SearchBody({
               <ListIcon /> List
             </button>
           </div>
-          <label className="flex items-center gap-2 text-sm text-muted-foreground">
-            Show
-            <select
-              defaultValue={pageSize}
-              aria-label="Results per page"
-              className="rounded-md border bg-background px-2 py-1 text-sm text-foreground"
-              onChange={(e) => {
-                const params = new URLSearchParams(
-                  hiddenSearchFields.reduce<Record<string, string>>((acc, f) => {
-                    acc[f.name] = f.value;
-                    return acc;
-                  }, {}),
-                );
-                if (query) params.set("q", query);
-                params.set("page_size", e.target.value);
-                window.location.href = `${searchAction}?${params.toString()}`;
-              }}
-            >
-              {[12, 18, 24, 36, 48].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-            per page
-          </label>
         </div>
       </div>
 

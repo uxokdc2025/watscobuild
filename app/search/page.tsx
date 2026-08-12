@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { getBrand } from "../pdp/_lib/brands";
 import { SiteFooter, SiteHeader } from "../pdp/_lib/chrome";
 import { PdpAuthProvider } from "../pdp/_lib/auth";
-import { AuthToggle } from "../pdp/_lib/auth";
 import { SearchBody } from "./_lib/search-body";
 import { MOCK_RESULTS, TOTAL_RESULT_COUNT } from "./_lib/mock-data";
 
@@ -70,10 +69,6 @@ export default async function SearchPage({
           />
         </main>
         <SiteFooter brand={brand} />
-        {/* Preview toggle so David can flip signed-in state without editing the URL. */}
-        <div className="fixed right-4 bottom-4 z-50">
-          <AuthToggle />
-        </div>
       </div>
     </PdpAuthProvider>
   );

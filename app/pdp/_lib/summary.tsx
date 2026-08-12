@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Info, ListPlus, LogIn, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Info, ListPlus, LogIn, Minus, Plus, Search, ShoppingCart } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -95,6 +95,22 @@ function SaveToList() {
   );
 }
 
+/**
+ * Discovery CTA for the AHRI Matched System tool. Present on every PDP —
+ * purple text link with a hover underline, matching the "AHRI" brand
+ * association in the badges scale. Placed next to Save to List. */
+function FindAhriMatchedSystem() {
+  return (
+    <a
+      href="#"
+      className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-violet-700 underline-offset-4 outline-none transition-colors hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:text-violet-300"
+    >
+      <Search className="size-4" />
+      Find an AHRI Matched System
+    </a>
+  );
+}
+
 /** Amber inline info banner — the shared "License required" style, reused for
  * any status message (license gate, replacement available, etc.). */
 function InfoBanner({ children }: { children: React.ReactNode }) {
@@ -106,12 +122,111 @@ function InfoBanner({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Save to List + (optional) Compare — both links, Save to List first. */
+/** Save to List + Find AHRI + (optional) Compare — Save to List first, then
+ *  the AHRI discovery link (purple), then Compare where applicable. */
 function SecondaryActions({ showCompare }: { showCompare: boolean }) {
   return (
     <div className="-ml-1 flex flex-wrap items-center gap-x-3 gap-y-1">
       <SaveToList />
+      <FindAhriMatchedSystem />
       {showCompare ? <CompareButton /> : null}
+    </div>
+  );
+}
+
+/**
+ * AHRI Matchup section. Header row = number + "View System Details" link.
+ * When `matchedProduct` is present, a PRO-Picks-style row (image + title +
+ * price + qty + Add to Cart) renders below the header — reference pattern:
+ * ecmdi.com LIVO outdoor heat pump (matched LIVO indoor). See
+ * docs/design-system.md §14 "AHRI matched / AHRI empty". */
+function AhriMatchup({
+  ahri,
+}: {
+  ahri: NonNullable<PdpProduct["ahri"]>;
+}) {
+  const [qty, setQty] = React.useState(1);
+  const match = ahri.matchedProduct;
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span className="font-semibold">
+          AHRI Matchup: {ahri.number}
+        </span>
+        <a
+          href="#"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          View System Details
+        </a>
+      </div>
+      {match ? (
+        <div className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-3 rounded-md border bg-background p-3">
+          <div className="grid aspect-square size-14 place-items-center overflow-hidden rounded-md border bg-muted/40">
+            {match.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={match.image}
+                alt={match.title}
+                loading="lazy"
+                className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
+              />
+            ) : null}
+          </div>
+          <div className="min-w-0">
+            <a href="#" className="text-sm font-semibold text-primary hover:underline">
+              {match.title}
+            </a>
+            <p className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
+              <span className="text-base font-bold text-price">
+                {formatUSD(match.price)}
+              </span>
+              {match.wasPrice != null ? (
+                <span className="text-xs text-muted-foreground line-through">
+                  {formatUSD(match.wasPrice)}
+                </span>
+              ) : null}
+            </p>
+            {match.availabilityNote ? (
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {match.availabilityNote}
+              </p>
+            ) : null}
+          </div>
+          <div className="flex w-20 shrink-0 flex-col gap-2">
+            <div
+              className="inline-flex h-8 items-center justify-between rounded-md border"
+              role="group"
+              aria-label="Matched system quantity"
+            >
+              <button
+                type="button"
+                onClick={() => setQty((q) => Math.max(1, q - 1))}
+                disabled={qty <= 1}
+                aria-label="Decrease quantity"
+                className="grid h-8 w-7 place-items-center rounded-l-md text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40"
+              >
+                <Minus className="size-3.5" />
+              </button>
+              <span aria-live="polite" className="text-sm font-medium tabular-nums">
+                {qty}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQty((q) => Math.min(99, q + 1))}
+                aria-label="Increase quantity"
+                className="grid h-8 w-7 place-items-center rounded-r-md text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                <Plus className="size-3.5" />
+              </button>
+            </div>
+            <Button size="sm" className="h-8 w-full px-2">
+              <ShoppingCart className="size-4" />
+              Add
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -167,16 +282,7 @@ export function PdpSummary({
         </div>
       </div>
 
-      {product.ahri ? (
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2.5 text-sm">
-          <span className="font-semibold">
-            AHRI Matchup: {product.ahri.number}
-          </span>
-          <a href="#" className="font-medium text-primary underline-offset-4 hover:underline">
-            View System Details
-          </a>
-        </div>
-      ) : null}
+      {product.ahri ? <AhriMatchup ahri={product.ahri} /> : null}
 
       {blocksPurchase ? (
         // "replaced" shows an inline amber banner; the Replacement Products
@@ -230,27 +336,19 @@ export function PdpSummary({
             <>
               {product.commerce!.price != null ? (
             <div className="flex flex-col gap-1.5">
-              {/* One-line sale treatment: on sale, the price + "Sale" turn red,
-                  followed by the strikethrough was-price. A was-price is what
-                  marks the item on sale. */}
+              {/* Sale treatment: the "Sale" status lives in the `badges` row
+                  below the brand line (docs/design-system.md §Badges). The
+                  price cluster stays neutral — sale price in foreground
+                  black, was-price struck through in muted. Pattern reference:
+                  ecmdi.com CIRRA sale rows. */}
               <div className="flex flex-wrap items-baseline gap-x-2">
-                <span
-                  className={cn(
-                    "text-3xl font-bold",
-                    product.commerce!.wasPrice != null ? "text-red-600 dark:text-red-500" : "text-price",
-                  )}
-                >
+                <span className="text-3xl font-bold text-price">
                   {formatUSD(product.commerce!.price)}
                 </span>
                 {product.commerce!.wasPrice != null ? (
-                  <>
-                    <span className="text-xl font-bold text-red-600 dark:text-red-500">
-                      Sale
-                    </span>
-                    <span className="text-lg font-medium text-muted-foreground line-through">
-                      {formatUSD(product.commerce!.wasPrice)}
-                    </span>
-                  </>
+                  <span className="text-lg font-medium text-muted-foreground line-through">
+                    {formatUSD(product.commerce!.wasPrice)}
+                  </span>
                 ) : null}
                 <span className="text-sm text-muted-foreground">
                   / {formatUom(product.commerce!.uom)}

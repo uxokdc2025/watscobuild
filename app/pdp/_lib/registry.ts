@@ -1343,6 +1343,9 @@ const ucStrikeThru: PdpProduct = {
   sourceUrl:
     "https://www.ecmdi.com/cirra-series-2-port-high-efficiency-multi-split-outdoor-heat-pump-18-000-btu-361067a",
   store: { name: "Durham NC #1" },
+  // Sale is a status the buyer needs to see fast — badges render directly
+  // under the brand line, above the title. See docs/design-system.md §Badges.
+  badges: [{ label: "Sale", tone: "solid", color: "red" }],
   title:
     "CIRRA 2-Port High-Efficiency Multi-Split Outdoor Heat Pump - 18,000 BTU",
   item: "361067A",
@@ -1493,7 +1496,17 @@ const ucLivo: PdpProduct = {
   images: [
     "https://cdn.ecmdi.com/gree_livo-outdoor_en_normal?wid=700&hei=700&qlt=80",
   ],
-  ahri: { number: "214779350" },
+  ahri: {
+    number: "214779350",
+    matchedProduct: {
+      id: "livo-indoor-12k",
+      title:
+        "LIVO Indoor Heat Pump - 12,000 BTU - 19 SEER2 - 208/230V - R-32",
+      image: "https://cdn.ecmdi.com/gree_livo-indoor_en_normal?wid=400&hei=400&qlt=80",
+      price: 305.27,
+      availabilityNote: "1 available at: Durham NC #1",
+    },
+  },
   description: {
     intro:
       "Gree LIVO single-zone outdoor heat pump — 12,000 BTU, 19 SEER2, 208/230V, R-32 refrigerant. Pairs with a matched LIVO indoor air handler for a complete mini-split system.",
