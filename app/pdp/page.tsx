@@ -8,9 +8,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { getPdpSlugs, pdps } from "./_lib/registry";
+import { pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
-import { OpenAllButton } from "./_lib/open-all";
 import { BRANDS } from "./_lib/brands";
 
 /** Product Listing Page (PLP) entries — /search route rendered inside a brand's chrome. */
@@ -258,13 +257,12 @@ export default function PdpMasterPage() {
               Components
               <ArrowUpRight className="size-3.5" />
             </Link>
-            <OpenAllButton slugs={getPdpSlugs()} />
             <a
               href="https://github.com/uxokdc2025/watscobuild"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View source on GitHub"
-              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white outline-none transition-colors hover:bg-neutral-800 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-neutral-800 dark:hover:bg-neutral-700"
             >
               <Github className="size-3.5" />
               GitHub
@@ -284,8 +282,15 @@ export default function PdpMasterPage() {
             value="in-scope"
             className="rounded-xl border bg-card px-5"
           >
-            <AccordionTrigger className="text-sm font-semibold tracking-wide text-muted-foreground uppercase hover:no-underline">
-              In scope · unifying the PDP content ({inScope.length})
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  Product Details Page
+                </span>
+                <span className="text-lg font-bold tracking-tight">
+                  Baseline ({inScope.length})
+                </span>
+              </span>
             </AccordionTrigger>
             <AccordionContent>
               <ul className="flex flex-col gap-3 pb-2">
@@ -305,10 +310,10 @@ export default function PdpMasterPage() {
               <AccordionTrigger className="hover:no-underline">
                 <span className="flex items-center gap-3">
                   <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
-                    Use Cases
+                    Product Details Page
                   </span>
                   <span className="text-lg font-bold tracking-tight">
-                    Content patterns &amp; new badges ({useCases.length})
+                    Content patterns &amp; badges ({useCases.length})
                   </span>
                 </span>
               </AccordionTrigger>
