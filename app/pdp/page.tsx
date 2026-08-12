@@ -361,18 +361,7 @@ export default function PdpMasterPage() {
                 </span>
               </AccordionTrigger>
               <AccordionContent>
-                <p className="max-w-2xl text-sm text-muted-foreground">
-                  About-This-Product pattern (Carrier Enterprise reference):
-                  tabbed content strip (Product Info · Documents · Part List ·
-                  AHRI Matches) on top of grouped-section accordions
-                  (Dimensions · Attributes · …) inside Product Info&apos;s
-                  right column. Same template as the Baseline PDPs — swap
-                  <code className="mx-1 rounded bg-muted px-1 font-mono text-xs">detailsStyle: &quot;tabs&quot;</code>
-                  for
-                  <code className="mx-1 rounded bg-muted px-1 font-mono text-xs">detailsStyle: &quot;about&quot;</code>
-                  to opt in. Compare against the reference URL below each card.
-                </p>
-                <ul className="mt-4 flex flex-col gap-3 pb-2">
+                <ul className="flex flex-col gap-3 pb-2">
                   {tabsAccordions.map((p) => (
                     <TemplateCard key={p.slug} p={p} signedInOnly />
                   ))}
@@ -397,16 +386,7 @@ export default function PdpMasterPage() {
               </span>
             </AccordionTrigger>
             <AccordionContent>
-              <p className="max-w-2xl text-sm text-muted-foreground">
-                One shared &ldquo;search results&rdquo; template rendered inside each
-                distributor&apos;s chrome. Same skeleton (breadcrumb · results
-                toolbar · facet sidebar · product grid · pagination); brand
-                switches the header, footer, accent, and store name. Signed-out
-                shows the gated commerce state; signed-in reveals price, points,
-                stock, and Add to Cart. Compare against the reference URL below
-                each card.
-              </p>
-              <ul className="mt-4 flex flex-col gap-3 pb-2">
+              <ul className="flex flex-col gap-3 pb-2">
                 {PLP_ENTRIES.map((p) => (
                   <PlpCard key={p.brandKey} p={p} />
                 ))}
