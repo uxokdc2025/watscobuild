@@ -5,20 +5,13 @@ import { Category } from "../_showcase";
 
 /** One demo card + a short label so use cases can be compared side by side. */
 function Case({
-  title,
   data,
   signedIn,
 }: {
-  title: string;
   data: ProductCardData;
   signedIn: boolean;
 }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm font-semibold">{title}</p>
-      <ProductCard data={data} signedIn={signedIn} />
-    </div>
-  );
+  return <ProductCard data={data} signedIn={signedIn} />;
 }
 
 const BASE: ProductCardData = {
@@ -61,28 +54,23 @@ export function ProductCardsSection() {
     >
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Case
-          title="Frame 6 — badges only"
           signedIn={true}
           data={BASE}
         />
         <Case
-          title="Frame 3 — with 42% Also Purchased"
           signedIn={true}
           data={{ ...BASE, pct: 42 }}
         />
         <Case
-          title="Frame 4 — no badges, no %"
           signedIn={true}
           data={{ ...BASE, badges: undefined }}
         />
         <Case
-          title="Frame 5 — same as Frame 4"
           signedIn={true}
           data={{ ...BASE, badges: undefined }}
         />
-        <Case title="Signed out" signedIn={false} data={BASE} />
+        <Case signedIn={false} data={BASE} />
         <Case
-          title="On sale"
           signedIn={true}
           data={{
             ...BASE,
@@ -91,9 +79,8 @@ export function ProductCardsSection() {
             badges: [{ label: "Sale", tone: "solid", color: "red" }],
           }}
         />
-        <Case title="Long title (3-line clamp)" signedIn={true} data={LONG_TITLE} />
+        <Case signedIn={true} data={LONG_TITLE} />
         <Case
-          title="Kitchen sink"
           signedIn={true}
           data={{
             ...LONG_TITLE,

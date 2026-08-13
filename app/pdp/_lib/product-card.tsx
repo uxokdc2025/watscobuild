@@ -115,20 +115,19 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-/** Qty stepper (self-start) on top, full-width "Add to Cart" button below.
- *  Stacked because inline layouts consistently clipped the button at 4-across
- *  card widths (~250px). Stacking gives the CTA the full card width and
- *  works at every breakpoint. Reference frame's inline treatment stays as
- *  the shape guide; the implementation prioritizes the button label being
- *  legible. */
+/** Inline qty stepper + Add button — matches the reference frame layout.
+ *  Uses a raw <button> for the Add CTA (not the shadcn Button primitive)
+ *  because shadcn Button's default `inline-flex` was resisting `flex-1`
+ *  growth inside a flex container; a plain button with `flex-1 min-w-0`
+ *  stretches reliably. */
 function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
   const step =
-    "grid h-9 w-8 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+    "grid h-9 w-7 shrink-0 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-full items-stretch gap-2">
       <div
-        className="inline-flex h-9 items-center self-start rounded-md border"
+        className="inline-flex h-9 shrink-0 items-center rounded-md border"
         role="group"
         aria-label="Quantity"
       >
@@ -143,7 +142,7 @@ function QtyPlusAdd() {
         </button>
         <span
           aria-live="polite"
-          className="w-8 text-center text-sm font-medium tabular-nums"
+          className="w-6 text-center text-sm font-medium tabular-nums"
         >
           {qty}
         </span>
@@ -156,10 +155,13 @@ function QtyPlusAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" className="h-9 w-full px-2 text-xs">
-        <ShoppingCart className="size-3.5" />
-        Add to Cart
-      </Button>
+      <button
+        type="button"
+        className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+      >
+        <ShoppingCart className="size-4 shrink-0" />
+        Add
+      </button>
     </div>
   );
 }
