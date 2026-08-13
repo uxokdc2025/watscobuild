@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Github, Rows3, PanelTop } from "lucide-react";
+import { ArrowUpRight, Github } from "lucide-react";
 
 import {
   Accordion,
@@ -234,26 +234,6 @@ export default function PdpMasterPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/pdp/accordion-styles"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              <Rows3 className="size-3.5" />
-              Accordion styles
-              <ArrowUpRight className="size-3.5" />
-            </Link>
-            <Link
-              href="/pdp/tab-styles"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              <PanelTop className="size-3.5" />
-              Tab styles
-              <ArrowUpRight className="size-3.5" />
-            </Link>
             <Link
               href="/components"
               target="_blank"
