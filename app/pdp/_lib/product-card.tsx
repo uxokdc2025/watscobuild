@@ -55,7 +55,6 @@ import * as React from "react";
 import { ImageOff, ListPlus, Minus, Plus, ShoppingCart } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { PointsBadge } from "@/components/ui/label-badges";
 import { cn } from "@/lib/utils";
 import { formatUSD, type PdpBadge } from "./types";
