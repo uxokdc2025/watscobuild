@@ -114,15 +114,16 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-/** Inline qty stepper + Add-to-Cart, side by side. */
+/** Qty stepper on top, Add-to-Cart below — stacked so the CTA gets the
+ *  full card width and never gets clipped at narrow column sizes. */
 function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
   const step =
     "grid h-9 w-8 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex items-stretch gap-2">
+    <div className="flex flex-col gap-2">
       <div
-        className="inline-flex h-9 shrink-0 items-center rounded-md border"
+        className="inline-flex h-9 items-center self-start rounded-md border"
         role="group"
         aria-label="Quantity"
       >
@@ -150,7 +151,7 @@ function QtyPlusAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" className="h-9 flex-1">
+      <Button size="sm" className="h-9 w-full">
         <ShoppingCart className="size-4" />
         Add to Cart
       </Button>
@@ -252,9 +253,11 @@ export function ProductCard({
             : null}
         </p>
 
-        {/* 9. Qty stepper + Add-to-Cart — slot always occupies h-9, either the
-              control (signed in) or the "Sign in to view pricing" link (out). */}
-        <div className="min-h-9">
+        {/* 9. Qty stepper + Add-to-Cart — stacked so the CTA never clips at
+              narrow card widths. Slot reserves h-[calc(2*2.25rem+0.5rem)]
+              (two h-9 rows + gap-2) whether the control or the signed-out
+              "Sign in to view pricing" link is showing. */}
+        <div className="min-h-[calc(2*2.25rem+0.5rem)]">
           {hasCommerce ? (
             <QtyPlusAdd />
           ) : (
