@@ -1,5 +1,7 @@
 import * as React from "react";
-import { Award, ImageOff, Star } from "lucide-react";
+import { Award, ImageOff, Repeat, Shield, Star } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
 
 import { cn } from "@/lib/utils";
 
@@ -171,6 +173,25 @@ export function StockStatus({
 }
 
 /* ─────────────── Certification chip (placeholder for real logos) ─────────────── */
+/* ─────────────── PRO Essentials + Substitute (attribute badges) ─────────────── */
+export function ProEssentialsBadge({ className }: { className?: string }) {
+  return (
+    <Badge variant="soft" color="blue" className={cn("", className)}>
+      <Shield className="size-3" />
+      Pro Essentials
+    </Badge>
+  );
+}
+
+export function SubstituteBadge({ className }: { className?: string }) {
+  return (
+    <Badge variant="soft" color="green" className={cn("", className)}>
+      <Repeat className="size-3" />
+      Substitute
+    </Badge>
+  );
+}
+
 export function CertBadge({
   className,
   children = "ENERGY STAR",

@@ -75,15 +75,6 @@ export function ProductCardsSection() {
           data={{ ...BASE, badges: undefined }}
         />
         <Case signedIn={false} data={BASE} />
-        <Case
-          signedIn={true}
-          data={{
-            ...BASE,
-            price: 154.5,
-            wasPrice: 193.2,
-            badges: [{ label: "Sale", tone: "solid", color: "red" }],
-          }}
-        />
         <Case signedIn={true} data={LONG_TITLE} />
         <Case
           signedIn={true}
@@ -95,7 +86,6 @@ export function ProductCardsSection() {
             badges: [
               { label: "PRO Essentials", tone: "outline-color", color: "red" },
               { label: "Substitute", tone: "outline-color", color: "blue" },
-              { label: "New", tone: "solid", color: "blue" },
             ],
           }}
         />
