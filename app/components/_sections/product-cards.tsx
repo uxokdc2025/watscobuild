@@ -36,19 +36,6 @@ const BASE: ProductCardData = {
   ],
 };
 
-const LONG_TITLE: ProductCardData = {
-  id: "long",
-  brand: "Factory Authorized Parts",
-  title:
-    "Factory Authorized Parts™ - Blower Motor - 1/2 HP - 120/240 V - 7.7/4.3 Amp - 1050 RPM - Multi-Speed ECM",
-  item: "58MV660006",
-  mfg: "58MV 660 006",
-  image: "/homans-search/blower-motor-01.webp",
-  price: 328.75,
-  points: 328,
-  yourBranchQty: 4,
-  nearbyBranchQty: 12,
-};
 
 export function ProductCardsSection() {
   return (
