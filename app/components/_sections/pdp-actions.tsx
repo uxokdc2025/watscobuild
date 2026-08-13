@@ -94,7 +94,7 @@ function VariantThreeBothButtons() {
         className="inline-flex h-8 w-[108px] shrink-0 items-center justify-center gap-1.5 rounded-md border border-border px-2 text-xs font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
       >
         <ListPlus className="size-3.5" />
-        Save
+        Save to List
       </button>
       <a
         href="#"
