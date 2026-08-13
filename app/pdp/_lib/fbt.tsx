@@ -83,7 +83,10 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
       </div>
       {multiGroup ? (
         <Tabs defaultValue={product.fbt[0].label}>
-          <TabsList variant="line" className="gap-4 overflow-x-auto">
+          <TabsList
+            variant="line"
+            className="gap-2 overflow-x-auto border-b border-border p-0 [&_[data-slot=tabs-trigger]]:h-auto [&_[data-slot=tabs-trigger]]:rounded-t-md [&_[data-slot=tabs-trigger]]:rounded-b-none [&_[data-slot=tabs-trigger]]:border-x [&_[data-slot=tabs-trigger]]:border-t [&_[data-slot=tabs-trigger]]:border-transparent [&_[data-slot=tabs-trigger]]:bg-transparent [&_[data-slot=tabs-trigger]]:px-4 [&_[data-slot=tabs-trigger]]:py-2 [&_[data-slot=tabs-trigger]]:text-sm [&_[data-slot=tabs-trigger]]:font-medium [&_[data-slot=tabs-trigger]]:text-muted-foreground [&_[data-slot=tabs-trigger]]:after:hidden [&_[data-slot=tabs-trigger][data-state=active]]:border-t-[3px] [&_[data-slot=tabs-trigger][data-state=active]]:border-t-primary [&_[data-slot=tabs-trigger][data-state=active]]:border-x-border [&_[data-slot=tabs-trigger][data-state=active]]:bg-background [&_[data-slot=tabs-trigger][data-state=active]]:text-foreground"
+          >
             {product.fbt.map((g) => (
               <TabsTrigger key={g.label} value={g.label}>
                 {g.label}

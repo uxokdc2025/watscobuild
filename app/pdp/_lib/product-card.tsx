@@ -214,14 +214,19 @@ export function ProductCard({
         </p>
       </div>
 
-      {/* 5. Attribute badges (PRO Essentials, SUBSTITUTE, etc.) — outline
-              color chips. Reserves 1 badge-row of height even when empty. */}
+      {/* 5. Attribute badges — canonical Pro Essentials / Substitute
+              components; anything else falls through to generic Badge. */}
       <div className="flex min-h-[1.5rem] flex-wrap gap-1.5">
-        {data.badges?.map((b) => (
-          <Badge key={b.label} variant={b.tone} color={b.color}>
-            {b.label}
-          </Badge>
-        ))}
+        {data.badges?.map((b) => {
+          const label = b.label.toLowerCase();
+          if (label === "pro essentials") return <ProEssentialsBadge key={b.label} />;
+          if (label === "substitute") return <SubstituteBadge key={b.label} />;
+          return (
+            <Badge key={b.label} variant={b.tone} color={b.color}>
+              {b.label}
+            </Badge>
+          );
+        })}
       </div>
 
       {/* 6. "N% Also Purchased" affinity — italic muted, reserves 1 line */}
