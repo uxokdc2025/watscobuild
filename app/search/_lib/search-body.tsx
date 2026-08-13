@@ -10,6 +10,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 
+import {
+  ProductCard as CanonicalProductCard,
+  type ProductCardData,
+} from "@/app/pdp/_lib/product-card";
 import type { SearchResult } from "./mock-data";
 
 /* ------------------------------------------------------------------ *
@@ -155,7 +159,7 @@ export function SearchBody({
       </nav>
 
       <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
-        <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[216px_1fr]">
           {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-6 text-sm">
             <section aria-labelledby="stocked-at-heading" className="space-y-2">
@@ -455,6 +459,11 @@ function productImageFor(brandKey: string, index: number, explicit?: string): st
   return list[index % list.length];
 }
 
+/** PLP tile — delegates to the canonical ProductCard (app/pdp/_lib) so
+ *  the vertical slot structure (points chip → title → item/mfg → badges
+ *  → % → your branch → nearby → price → qty/add → save) matches PDP FBT
+ *  and Customers Also Purchased. Even though PLP cards are narrower, the
+ *  slot order and heights are shared. */
 function ProductCard({
   result,
   signedIn,
@@ -467,50 +476,22 @@ function ProductCard({
   brandKey: string;
 }) {
   const imageSrc = productImageFor(brandKey, index, result.image);
-  return (
-    <article className="flex h-full flex-col overflow-hidden rounded-lg border bg-card transition-shadow hover:shadow-md">
-      <div className="grid aspect-[4/3] place-items-center bg-muted/40 p-4 text-muted-foreground">
-        {imageSrc ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={imageSrc}
-            alt={result.title}
-            loading="lazy"
-            className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
-          />
-        ) : (
-          <ImageOff className="size-8 opacity-40" aria-hidden />
-        )}
-      </div>
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <p className="text-xs font-medium text-primary">{result.brand}</p>
-        <Link
-          href={`/pdp/tradepro-${result.item.toLowerCase()}`}
-          className="text-sm font-semibold leading-snug text-foreground hover:text-primary"
-        >
-          {result.title}
-        </Link>
-        <div className="grid gap-0.5 text-xs text-muted-foreground">
-          <span>
-            <span className="font-medium">Item:</span> {result.item}
-          </span>
-          <span>
-            <span className="font-medium">MFG:</span> {result.mfg}
-          </span>
-        </div>
-        <div className="mt-auto pt-2 text-sm">
-          {signedIn ? (
-            <SignedInCommerce result={result} />
-          ) : (
-            <p className="text-sm">
-              <span className="font-medium">Sign in</span>{" "}
-              <span className="text-muted-foreground">to view pricing and inventory.</span>
-            </p>
-          )}
-        </div>
-      </div>
-    </article>
-  );
+  const yourBranchQty = result.stockStatus === "out-of-stock" ? 0 : 2;
+  const nearbyBranchQty = result.allBranchesQty ?? 0;
+  const cardData: ProductCardData = {
+    id: result.id,
+    brand: result.brand,
+    title: result.title,
+    item: result.item,
+    mfg: result.mfg,
+    image: imageSrc,
+    price: result.price ?? null,
+    points: result.points,
+    yourBranchQty,
+    nearbyBranchQty,
+    href: `/pdp/tradepro-${result.item.toLowerCase()}`,
+  };
+  return <CanonicalProductCard data={cardData} signedIn={signedIn} />;
 }
 
 function ProductRow({

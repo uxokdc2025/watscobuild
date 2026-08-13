@@ -127,7 +127,7 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
 function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
   const cell =
-    "grid h-full w-9 cursor-pointer place-items-center text-foreground transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
+    "grid h-full w-8 cursor-pointer place-items-center text-foreground transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
   return (
     <div className="flex items-center gap-2">
       <div
@@ -146,7 +146,7 @@ function QtyPlusAdd() {
         </button>
         <span
           aria-live="polite"
-          className="grid h-full w-9 place-items-center border-x text-sm font-medium tabular-nums"
+          className="grid h-full w-8 place-items-center border-x text-sm font-medium tabular-nums"
         >
           {qty}
         </span>
@@ -161,11 +161,11 @@ function QtyPlusAdd() {
       </div>
       <button
         type="button"
-        aria-label="Add to cart"
-        className="inline-flex h-9 flex-1 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+        className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
         style={{ flex: "1 1 0%", minWidth: 0 }}
       >
         <ShoppingCart className="size-4 shrink-0" />
+        Add
       </button>
     </div>
   );

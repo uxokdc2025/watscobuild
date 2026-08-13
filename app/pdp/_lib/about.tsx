@@ -1,7 +1,26 @@
 "use client";
 
 import * as React from "react";
-import { Minus, Plus, Search, Share2, ShoppingCart } from "lucide-react";
+import {
+  BookOpen,
+  Boxes,
+  ClipboardList,
+  Fan,
+  FileText,
+  Hammer,
+  Minus,
+  Package,
+  Plus,
+  Search,
+  Settings2,
+  Share2,
+  ShieldCheck,
+  ShoppingCart,
+  Star,
+  Wrench,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,6 +41,28 @@ import {
   type PdpProduct,
   type SpecGroup,
 } from "./types";
+
+/* ─────────────── Shared accordion header pattern ─────────────── *
+ * Every accordion trigger on the PDP (top-level About sections, Documents
+ * groups, Part List groups) uses these constants — update once and the
+ * whole page follows. 16px title, icon on the left, primary blue when
+ * the panel is open. */
+const ACCORDION_TRIGGER =
+  "items-center px-2 py-3 hover:no-underline data-[state=open]:text-primary [&_svg]:transition-colors data-[state=open]:[&_svg]:text-primary";
+const ACCORDION_TITLE = "text-base font-semibold";
+const ACCORDION_ICON = "size-4 shrink-0 text-muted-foreground";
+
+function AccordionHeader({ icon: Icon, title, suffix }: { icon: LucideIcon; title: React.ReactNode; suffix?: React.ReactNode }) {
+  return (
+    <span className="flex items-center gap-4">
+      <Icon className={ACCORDION_ICON} />
+      <span className={ACCORDION_TITLE}>
+        {title}
+        {suffix ? <span className="ml-1 text-sm font-normal text-muted-foreground">{suffix}</span> : null}
+      </span>
+    </span>
+  );
+}
 
 function ProductThumb({ src, alt }: { src?: string; alt: string }) {
   if (src) {
@@ -65,7 +106,7 @@ function SpecGroupTable({ group }: { group: SpecGroup }) {
 
 function Description({ product }: { product: PdpProduct }) {
   return (
-    <div className="max-w-prose">
+    <div className="w-3/4">
       <p className="text-sm text-muted-foreground">{product.description.intro}</p>
       {product.description.bullets?.length ? (
         <ul className="mt-4 flex flex-col gap-1.5">
@@ -109,10 +150,18 @@ function Specifications({ product }: { product: PdpProduct }) {
   );
 }
 
-/* ── Documents tab: filter + interactive accordion groups ──
-   Matches carrierenterprise.com reference — each category is a collapsible
-   accordion (all open by default), red PDF icon per row, filter search
-   narrows on live input. */
+/* ── Icon lookup — assigns a Lucide icon to a known category label. ── */
+const DOC_CATEGORY_ICONS: Record<string, LucideIcon> = {
+  "Accessory and Kit Data": Package,
+  "Application Guide": BookOpen,
+  Installation: Hammer,
+  "Owner's Manual": BookOpen,
+  "Product Data": FileText,
+  "Warranty Card - Date Specific": ShieldCheck,
+  Literature: FileText,
+};
+
+/* ── Documents tab — flat accordion (icon + title, no per-item box). ── */
 function Documents({ documents }: { documents: PdpDocument[] }) {
   const [filter, setFilter] = React.useState("");
   const groups = React.useMemo(() => {
@@ -149,61 +198,63 @@ function Documents({ documents }: { documents: PdpDocument[] }) {
         <Accordion
           type="multiple"
           defaultValue={groups.map(([cat]) => cat)}
-          className="mt-4 flex flex-col gap-2"
+          className="mt-4 w-full"
         >
-          {groups.map(([cat, docs]) => (
-            <AccordionItem
-              key={cat}
-              value={cat}
-              className="overflow-hidden rounded-md border"
-            >
-              <AccordionTrigger className="bg-muted/50 px-4 py-2.5 text-sm font-semibold hover:no-underline hover:bg-muted">
-                <span>
-                  {cat}{" "}
-                  <span className="font-normal text-muted-foreground">
-                    ({docs.length})
-                  </span>
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="p-0">
-                <ul>
-                  {docs.map((d) => (
-                    <li
-                      key={d.label}
-                      className="flex items-start gap-3 border-t px-4 py-3"
-                    >
-                      <span
-                        aria-hidden
-                        className="grid size-9 shrink-0 place-items-center rounded bg-red-600 text-[10px] font-bold text-white"
-                      >
-                        PDF
+          {groups.map(([cat, docs]) => {
+            const Icon = DOC_CATEGORY_ICONS[cat] ?? FileText;
+            return (
+              <AccordionItem key={cat} value={cat}>
+                <AccordionTrigger className={ACCORDION_TRIGGER}>
+                  <span className="flex items-center gap-4">
+                    <Icon className="size-4 shrink-0 text-muted-foreground" />
+                    <span>
+                      {cat}{" "}
+                      <span className="font-normal text-muted-foreground">
+                        ({docs.length})
                       </span>
-                      <div className="min-w-0 flex-1">
-                        <a
-                          href={d.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block text-sm font-medium text-primary underline-offset-4 hover:underline"
-                        >
-                          {d.label}
-                        </a>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                          {d.category ?? d.label}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        aria-label={`Share ${d.label}`}
-                        className="text-muted-foreground transition-colors hover:text-foreground"
+                    </span>
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="pl-10">
+                  <ul className="flex flex-col divide-y">
+                    {docs.map((d) => (
+                      <li
+                        key={d.label}
+                        className="flex items-start gap-3 py-3 first:pt-0"
                       >
-                        <Share2 className="size-4" />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+                        <span
+                          aria-hidden
+                          className="grid size-9 shrink-0 place-items-center rounded bg-red-600 text-[10px] font-bold text-white"
+                        >
+                          PDF
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <a
+                            href={d.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block text-sm font-medium text-primary underline-offset-4 hover:underline"
+                          >
+                            {d.label}
+                          </a>
+                          <p className="mt-0.5 text-xs text-muted-foreground">
+                            {d.category ?? d.label}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          aria-label={`Share ${d.label}`}
+                          className="text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          <Share2 className="size-4" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
         </Accordion>
       )}
     </div>
@@ -405,19 +456,20 @@ function PartList({ catalog }: { catalog: PartsCatalog }) {
         <Accordion
           type="multiple"
           defaultValue={filteredGroups.map((g) => g.id)}
-          className="flex flex-col gap-2"
+          className="w-full"
         >
-          {filteredGroups.map((g) => (
-            <AccordionItem
-              key={g.id}
-              value={g.id}
-              className="overflow-hidden rounded-md border"
-            >
-              <AccordionTrigger className="bg-muted/50 px-4 py-2.5 text-xs font-bold uppercase tracking-wide hover:no-underline hover:bg-muted">
-                <span>
-                  {g.label}{" "}
-                  <span className="ml-1 font-medium text-muted-foreground normal-case tracking-normal">
-                    {g.parts.length} {g.parts.length === 1 ? "part" : "parts"}
+          {filteredGroups.map((g) => {
+            const Icon = PART_GROUP_ICONS[g.id] ?? Wrench;
+            return (
+            <AccordionItem key={g.id} value={g.id}>
+              <AccordionTrigger className={ACCORDION_TRIGGER}>
+                <span className="flex items-center gap-4">
+                  <Icon className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="text-base font-semibold">
+                    {g.label}{" "}
+                    <span className="ml-1 text-sm font-normal text-muted-foreground">
+                      {g.parts.length} {g.parts.length === 1 ? "part" : "parts"}
+                    </span>
                   </span>
                 </span>
               </AccordionTrigger>
@@ -444,12 +496,24 @@ function PartList({ catalog }: { catalog: PartsCatalog }) {
                 </div>
               </AccordionContent>
             </AccordionItem>
-          ))}
+            );
+          })}
         </Accordion>
       )}
     </div>
   );
 }
+
+const PART_GROUP_ICONS: Record<string, LucideIcon> = {
+  critical: Star,
+  "fan-motor": Fan,
+  casing: Boxes,
+  compressor: Settings2,
+  electrical: Zap,
+  "coil-piping": Wrench,
+  accessory: Package,
+  instructions: ClipboardList,
+};
 
 function EmptyState({ label }: { label: string }) {
   return (
@@ -468,75 +532,97 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
   return (
     <section aria-label="About this product" className="flex flex-col gap-4">
       <h2 className="text-xl font-bold tracking-tight">About This Product</h2>
-      <Tabs defaultValue="info">
-        <TabsList variant="line">
-          <TabsTrigger value="info">Description</TabsTrigger>
-          {hasSpecs ? <TabsTrigger value="specs">Specifications</TabsTrigger> : null}
-          {hasDocs ? <TabsTrigger value="docs">Documents</TabsTrigger> : null}
-          {isBundle ? (
-            <TabsTrigger value="bundle">Bundle Components</TabsTrigger>
-          ) : (
-            <>
-              <TabsTrigger value="parts">Part List</TabsTrigger>
-              <TabsTrigger value="where">Where Used</TabsTrigger>
-            </>
-          )}
-        </TabsList>
+      {/* Sections are top-level accordion panels — only one open at a time
+          (collapsible), icon + title on each trigger, Description default-open. */}
+      <Accordion type="single" collapsible defaultValue="info" className="w-full">
+        <AccordionItem value="info">
+          <AccordionTrigger className={ACCORDION_TRIGGER}>
+            <AccordionHeader icon={FileText} title="Description" />
+          </AccordionTrigger>
+          <AccordionContent className="pt-4 pl-10">
+            <Description product={product} />
+          </AccordionContent>
+        </AccordionItem>
 
-        <TabsContent value="info" className="pt-6">
-          <Description product={product} />
-        </TabsContent>
         {hasSpecs ? (
-          <TabsContent value="specs" className="pt-6">
-            <Specifications product={product} />
-          </TabsContent>
+          <AccordionItem value="specs">
+            <AccordionTrigger className={ACCORDION_TRIGGER}>
+              <AccordionHeader icon={ClipboardList} title="Specifications" />
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 pl-10">
+              <Specifications product={product} />
+            </AccordionContent>
+          </AccordionItem>
         ) : null}
+
         {hasDocs ? (
-          <TabsContent value="docs" className="pt-6">
-            <Documents documents={product.documents!} />
-          </TabsContent>
+          <AccordionItem value="docs">
+            <AccordionTrigger className={ACCORDION_TRIGGER}>
+              <AccordionHeader icon={BookOpen} title="Documents" />
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 pl-10">
+              <Documents documents={product.documents!} />
+            </AccordionContent>
+          </AccordionItem>
         ) : null}
+
         {isBundle ? (
-          <TabsContent value="bundle" className="pt-6">
-            <div className="overflow-hidden rounded-lg border">
-              {product.bundleItems!.map((s, i) => (
-                <div
-                  key={s.id}
-                  className={`grid grid-cols-[1.5rem_3.5rem_1fr] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
-                >
-                  <span className="text-sm font-semibold text-muted-foreground">
-                    1 &times;
-                  </span>
-                  <div className="size-14">
-                    <ProductThumb src={s.image} alt={s.title} />
+          <AccordionItem value="bundle">
+            <AccordionTrigger className={ACCORDION_TRIGGER}>
+              <AccordionHeader icon={Package} title="Bundle Components" />
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 pl-10">
+              <div className="overflow-hidden rounded-lg border">
+                {product.bundleItems!.map((s, i) => (
+                  <div
+                    key={s.id}
+                    className={`grid grid-cols-[1.5rem_3.5rem_1fr] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+                  >
+                    <span className="text-sm font-semibold text-muted-foreground">
+                      1 &times;
+                    </span>
+                    <div className="size-14">
+                      <ProductThumb src={s.image} alt={s.title} />
+                    </div>
+                    <div>
+                      <a href="#" className="text-sm font-semibold text-primary hover:underline">
+                        {s.title}
+                      </a>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Item: {s.item} &nbsp; MFG: {s.mfg}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <a href="#" className="text-sm font-semibold text-primary hover:underline">
-                      {s.title}
-                    </a>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Item: {s.item} &nbsp; MFG: {s.mfg}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         ) : (
           <>
-            <TabsContent value="parts" className="pt-6">
-              {hasParts ? (
-                <PartList catalog={product.partsCatalog!} />
-              ) : (
-                <EmptyState label="No models found." />
-              )}
-            </TabsContent>
-            <TabsContent value="where" className="pt-6">
-              <EmptyState label="No results found." />
-            </TabsContent>
+            <AccordionItem value="parts">
+              <AccordionTrigger className={ACCORDION_TRIGGER}>
+                <AccordionHeader icon={Wrench} title="Part List" />
+              </AccordionTrigger>
+              <AccordionContent className="pt-4 pl-10">
+                {hasParts ? (
+                  <PartList catalog={product.partsCatalog!} />
+                ) : (
+                  <EmptyState label="No models found." />
+                )}
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="where">
+              <AccordionTrigger className={ACCORDION_TRIGGER}>
+                <AccordionHeader icon={Boxes} title="Where Used" />
+              </AccordionTrigger>
+              <AccordionContent className="pt-4 pl-10">
+                <EmptyState label="No results found." />
+              </AccordionContent>
+            </AccordionItem>
           </>
         )}
-      </Tabs>
+      </Accordion>
     </section>
   );
 }

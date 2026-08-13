@@ -26,7 +26,7 @@ export function PointsBadge({
       )}
     >
       <Award aria-hidden />
-      Earn {points} point{points === 1 ? "" : "s"}
+      Earn {points} pts
     </span>
   );
 }
