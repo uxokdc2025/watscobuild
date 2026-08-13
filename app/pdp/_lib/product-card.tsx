@@ -114,22 +114,18 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-/** Inline qty stepper + Add button — matches the reference frame layout.
- *  Uses a raw <button> for the Add CTA (not the shadcn Button primitive)
- *  because shadcn Button's default `inline-flex` was resisting `flex-1`
- *  growth inside a flex container; a plain button with `flex-1 min-w-0`
- *  stretches reliably. */
+/** Qty stepper on top, full-width Add to Cart below. Stacked because
+ *  inline never fit reliably at 4-across card widths. Reference shape
+ *  is preserved — the two controls sit together at the bottom of the
+ *  card, just one above the other. */
 function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
   const step =
-    "grid h-9 w-7 shrink-0 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+    "grid h-9 w-8 shrink-0 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div
-      className="flex w-full items-stretch gap-2"
-      style={{ display: "flex", width: "100%" }}
-    >
+    <div className="flex flex-col gap-2">
       <div
-        className="inline-flex h-9 shrink-0 items-center rounded-md border"
+        className="inline-flex h-9 items-center self-start rounded-md border"
         role="group"
         aria-label="Quantity"
       >
@@ -144,7 +140,7 @@ function QtyPlusAdd() {
         </button>
         <span
           aria-live="polite"
-          className="w-6 text-center text-sm font-medium tabular-nums"
+          className="w-8 text-center text-sm font-medium tabular-nums"
         >
           {qty}
         </span>
@@ -159,11 +155,10 @@ function QtyPlusAdd() {
       </div>
       <button
         type="button"
-        className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
-        style={{ flex: "1 1 0%", minWidth: 0 }}
+        className="flex h-9 w-full items-center justify-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
       >
         <ShoppingCart className="size-4 shrink-0" />
-        Add
+        Add to Cart
       </button>
     </div>
   );
@@ -229,15 +224,15 @@ export function ProductCard({
 
       {/* Pinned bottom — every subsequent slot reserves fixed height. */}
       <div className="mt-auto flex flex-col gap-1 pt-1">
-        {/* 7. Your Branch stock — green, reserves 1 line */}
-        <p className="min-h-[1lh] text-xs font-medium leading-tight text-in-stock">
+        {/* 7. Your Branch stock — green, one line, no wrap */}
+        <p className="min-h-[1lh] truncate text-xs font-medium leading-tight text-in-stock">
           {hasCommerce && data.yourBranchQty != null
             ? `${data.yourBranchQty.toLocaleString()} Your Branch`
             : null}
         </p>
 
-        {/* 8. Nearby Branch link — blue, reserves 1 line */}
-        <p className="min-h-[1lh] text-xs font-medium leading-tight">
+        {/* 8. Nearby Branch link — blue, one line, no wrap */}
+        <p className="min-h-[1lh] truncate text-xs font-medium leading-tight">
           {hasCommerce && data.nearbyBranchQty != null ? (
             <a
               href="#"
@@ -267,8 +262,9 @@ export function ProductCard({
           ) : null}
         </p>
 
-        {/* 10. Qty stepper + Add button — inline row per reference frames. */}
-        <div className="min-h-9 w-full pt-1" style={{ width: "100%" }}>
+        {/* 10. Qty stepper + Add to Cart — stacked (qty above, button
+              full-width below). Slot reserves the height of both. */}
+        <div className="min-h-[calc(2*2.25rem+0.5rem)] pt-1">
           {hasCommerce ? (
             <QtyPlusAdd />
           ) : (
