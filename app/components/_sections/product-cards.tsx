@@ -58,7 +58,7 @@ export function ProductCardsSection() {
       title="Product Card"
       description="The canonical worst-case card, used everywhere a product renders as a card (/search PLP, FBT, Customers Also Purchased). Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated. Layout structure documented at the top of app/pdp/_lib/product-card.tsx."
     >
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Case
           title="Minimal (signed out)"
           note="No commerce visible; steps 6-10 collapse to a Sign-in link."
