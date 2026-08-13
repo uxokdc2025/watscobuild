@@ -121,7 +121,7 @@ function QtyPlusAdd() {
   const step =
     "grid h-9 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex items-stretch gap-2">
+    <div className="flex w-full items-stretch gap-2">
       <div
         className="inline-flex h-9 shrink-0 items-center rounded-md border"
         role="group"
