@@ -6,21 +6,16 @@ import { Category } from "../_showcase";
 /** One demo card + a short label so use cases can be compared side by side. */
 function Case({
   title,
-  note,
   data,
   signedIn,
 }: {
   title: string;
-  note: string;
   data: ProductCardData;
   signedIn: boolean;
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <header>
-        <p className="text-sm font-semibold">{title}</p>
-        <p className="text-xs text-muted-foreground">{note}</p>
-      </header>
+      <p className="text-sm font-semibold">{title}</p>
       <ProductCard data={data} signedIn={signedIn} />
     </div>
   );
@@ -56,24 +51,13 @@ export function ProductCardsSection() {
     <Category
       id="product-cards"
       title="Product Card"
-      description="The canonical worst-case card, used everywhere a product renders as a card (/search PLP, FBT, Customers Also Purchased). Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated. Layout structure documented at the top of app/pdp/_lib/product-card.tsx."
+      description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated."
     >
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <Case
-          title="Minimal (signed out)"
-          note="No commerce visible; steps 6-10 collapse to a Sign-in link."
-          signedIn={false}
-          data={BASE}
-        />
-        <Case
-          title="Signed in"
-          note="Base commerce state: price, points as badge, stock, qty + Add to Cart, Add to List."
-          signedIn={true}
-          data={BASE}
-        />
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Case title="Minimal (signed out)" signedIn={false} data={BASE} />
+        <Case title="Signed in" signedIn={true} data={BASE} />
         <Case
           title="With badges"
-          note="Multiple badges — merchandising chips + PointsBadge in one row."
           signedIn={true}
           data={{
             ...BASE,
@@ -85,7 +69,6 @@ export function ProductCardsSection() {
         />
         <Case
           title="On sale"
-          note="Was-price strikethrough after the price. Sale intent lives in the badges row."
           signedIn={true}
           data={{
             ...BASE,
@@ -96,25 +79,17 @@ export function ProductCardsSection() {
         />
         <Case
           title="Customers Also Purchased"
-          note="Adds the italic '% Also Purchased' affinity line under badges."
           signedIn={true}
           data={{ ...BASE, pct: 42 }}
         />
-        <Case
-          title="Long title (4-line clamp)"
-          note="Title clamps to 4 lines with an ellipsis; height is still identical."
-          signedIn={true}
-          data={LONG_TITLE}
-        />
+        <Case title="Long title (4-line clamp)" signedIn={true} data={LONG_TITLE} />
         <Case
           title="No brand"
-          note="Brand slot reserves its line even when empty — card stays the same height."
           signedIn={true}
           data={{ ...BASE, brand: undefined }}
         />
         <Case
           title="Kitchen sink"
-          note="Everything on: multiple badges + points + % + sale + long title."
           signedIn={true}
           data={{
             ...LONG_TITLE,
