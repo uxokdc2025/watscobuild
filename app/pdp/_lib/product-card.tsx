@@ -151,8 +151,8 @@ function QtyPlusAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" className="h-9 w-full">
-        <ShoppingCart className="size-4" />
+      <Button size="sm" className="h-9 w-full min-w-0 px-2 text-xs">
+        <ShoppingCart className="size-3.5" />
         Add to Cart
       </Button>
     </div>
