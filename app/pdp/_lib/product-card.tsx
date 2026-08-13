@@ -156,8 +156,8 @@ function QtyPlusAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" className="h-9 w-full">
-        <ShoppingCart className="size-4" />
+      <Button size="sm" className="h-9 w-full px-2 text-xs">
+        <ShoppingCart className="size-3.5" />
         Add to Cart
       </Button>
     </div>
@@ -179,7 +179,7 @@ export function ProductCard({
   // cards in the same row — one with badges, one without — are the same
   // height, always.
   return (
-    <article className="flex h-full flex-col gap-2 rounded-lg border bg-card p-4">
+    <article className="flex h-full flex-col gap-2 overflow-hidden rounded-lg border bg-card p-3">
       {/* 1. Image */}
       <CardImage src={data.image} alt={data.title} />
 
