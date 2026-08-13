@@ -47,14 +47,13 @@ export default async function SearchPage({
   // Slice the mock set to page_size so the grid respects the URL.
   const results = MOCK_RESULTS.slice(0, pageSize);
 
-  const searchAction = "/search";
   const hiddenSearchFields = [{ name: "brand", value: brandKey }];
   const storeName = brandStoreName(brandKey);
 
   return (
     <PdpAuthProvider initialSignedIn={signedIn}>
       <div className="min-h-svh bg-background">
-        <SiteHeader brand={brand} signedIn={signedIn} />
+        <SiteHeader brand={brand} signedIn={signedIn} searchQuery={q} />
         <main>
           <SearchBody
             query={q}
@@ -62,7 +61,6 @@ export default async function SearchPage({
             totalResults={TOTAL_RESULT_COUNT}
             pageSize={pageSize}
             signedIn={signedIn}
-            searchAction={searchAction}
             hiddenSearchFields={hiddenSearchFields}
             storeName={storeName}
             brandKey={brandKey}

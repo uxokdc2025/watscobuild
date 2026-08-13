@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight, ImageOff, LayoutGrid, List as ListIcon, Search, X } from "lucide-react";
+import { ChevronRight, ImageOff, LayoutGrid, List as ListIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
@@ -72,9 +71,7 @@ type SearchBodyProps = {
   totalResults: number;
   pageSize: number;
   signedIn: boolean;
-  /** Path to submit search form to (respects the current brand query). */
-  searchAction: string;
-  /** Hidden field name/value pairs to preserve on search-form submit (?brand=…). */
+  /** Hidden field name/value pairs preserved when the Sign-in link submits. */
   hiddenSearchFields?: { name: string; value: string }[];
   /** Store name shown in the "Stocked At" facet. */
   storeName?: string;
@@ -90,7 +87,6 @@ export function SearchBody({
   totalResults,
   pageSize,
   signedIn,
-  searchAction,
   hiddenSearchFields = [],
   storeName = "Manchester, NH - Homans",
   branchName,
@@ -145,57 +141,11 @@ export function SearchBody({
 
   return (
     <>
-      {/* Header search bar (top of results — the page-header search stays global) */}
-      <div className="border-b bg-muted/30">
-        <div className="mx-auto max-w-6xl px-4 py-3 md:px-6">
-          <form
-            role="search"
-            action={searchAction}
-            method="get"
-            className="flex items-center gap-2"
-          >
-            <div className="relative flex-1">
-              <label htmlFor="results-search" className="sr-only">
-                Search
-              </label>
-              <Input
-                id="results-search"
-                name="q"
-                type="search"
-                defaultValue={query}
-                placeholder="Search item # or name"
-                className="h-11 pr-20"
-              />
-              {query ? (
-                <Link
-                  href={searchAction + (hiddenSearchFields.length > 0
-                    ? "?" + hiddenSearchFields.map((f) => `${f.name}=${encodeURIComponent(f.value)}`).join("&")
-                    : "")}
-                  aria-label="Clear search"
-                  className="absolute top-1/2 right-10 grid size-7 -translate-y-1/2 place-items-center rounded text-muted-foreground hover:text-foreground"
-                >
-                  <X className="size-4" />
-                </Link>
-              ) : null}
-              <button
-                type="submit"
-                aria-label="Search"
-                className="absolute top-1/2 right-1 grid size-9 -translate-y-1/2 place-items-center rounded text-primary hover:bg-primary/10"
-              >
-                <Search className="size-4" />
-              </button>
-            </div>
-            {hiddenSearchFields.map((f) => (
-              <input key={f.name} type="hidden" name={f.name} value={f.value} />
-            ))}
-          </form>
-        </div>
-      </div>
-
-      {/* Breadcrumb */}
+      {/* Breadcrumb — the site-chrome search bar carries the query, no
+          second search input on the results page. */}
       <nav
         aria-label="Breadcrumb"
-        className="mx-auto flex max-w-6xl items-center gap-2 px-4 pt-4 text-sm text-muted-foreground md:px-6"
+        className="mx-auto flex max-w-6xl items-center gap-2 px-4 pt-6 text-sm text-muted-foreground md:px-6"
       >
         <Link href="/" className="text-primary hover:underline">
           Home
@@ -204,10 +154,10 @@ export function SearchBody({
         <span>Search For &ldquo;{query}&rdquo;</span>
       </nav>
 
-      {/* Results toolbar */}
+      {/* Results toolbar — heading left, view toggle right, aligned baseline. */}
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 pt-3 pb-4 md:flex-row md:items-center md:justify-between md:px-6">
         <h1 className="text-lg font-semibold tracking-tight">
-          {totalResults.toLocaleString()} results
+          Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results for &ldquo;{query}&rdquo;
         </h1>
         <div className="flex items-center gap-3">
           <div

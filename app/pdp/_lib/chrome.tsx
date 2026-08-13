@@ -1550,21 +1550,60 @@ function GenericFooter({ brand }: { brand: BrandChrome }) {
    Dispatchers
    ════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Umbrella site header. When a `searchQuery` is passed (e.g. the current PLP
+ * query string), we splice a global effect below the header that pre-fills
+ * every rendered `input[type="search"]` — so the top search bar reflects the
+ * active query on every brand's chrome without having to thread the value
+ * through each brand's Header component individually.
+ */
 export function SiteHeader({
   brand,
   signedIn = false,
+  searchQuery,
 }: {
   brand: BrandChrome;
   signedIn?: boolean;
+  searchQuery?: string;
 }) {
-  if (brand.key === "gemaire") return <GemaireHeader signedIn={signedIn} />;
-  if (brand.key === "baker") return <BakerHeader brand={brand} signedIn={signedIn} />;
-  if (brand.key === "carrier") return <CarrierHeader brand={brand} signedIn={signedIn} />;
-  if (brand.key === "peirce") return <PeirceHeader brand={brand} signedIn={signedIn} />;
-  if (brand.key === "ecmdi") return <EcmdiHeader brand={brand} signedIn={signedIn} />;
-  if (brand.key === "dcne") return <DcneHeader brand={brand} />;
-  if (brand.key === "homans") return <HomansHeader brand={brand} signedIn={signedIn} />;
-  return <GenericHeader brand={brand} />;
+  return (
+    <>
+      {brand.key === "gemaire" ? <GemaireHeader signedIn={signedIn} /> : null}
+      {brand.key === "baker" ? <BakerHeader brand={brand} signedIn={signedIn} /> : null}
+      {brand.key === "carrier" ? <CarrierHeader brand={brand} signedIn={signedIn} /> : null}
+      {brand.key === "peirce" ? <PeirceHeader brand={brand} signedIn={signedIn} /> : null}
+      {brand.key === "ecmdi" ? <EcmdiHeader brand={brand} signedIn={signedIn} /> : null}
+      {brand.key === "dcne" ? <DcneHeader brand={brand} /> : null}
+      {brand.key === "homans" ? <HomansHeader brand={brand} signedIn={signedIn} /> : null}
+      {![
+        "gemaire",
+        "baker",
+        "carrier",
+        "peirce",
+        "ecmdi",
+        "dcne",
+        "homans",
+      ].includes(brand.key) ? <GenericHeader brand={brand} /> : null}
+      {searchQuery ? <HeaderSearchQuerySync value={searchQuery} /> : null}
+    </>
+  );
+}
+
+/**
+ * Pre-fills any `input[type="search"]` inside the site header with the
+ * current query. Runs once on mount — keeps every brand's chrome DRY (no
+ * per-brand prop threading). If the query changes on subsequent PLPs, the
+ * page reloads with a new key and this effect re-runs.
+ */
+function HeaderSearchQuerySync({ value }: { value: string }) {
+  if (typeof window === "undefined") return null;
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `(() => { const v = ${JSON.stringify(value)}; document.querySelectorAll('header input[type="search"], header input[aria-label="Search"]').forEach(i => { if (!i.value) i.value = v; }); })();`,
+      }}
+    />
+  );
 }
 
 export function SiteFooter({ brand }: { brand: BrandChrome }) {
