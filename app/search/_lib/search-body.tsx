@@ -154,48 +154,7 @@ export function SearchBody({
         <span>Search For &ldquo;{query}&rdquo;</span>
       </nav>
 
-      {/* Results toolbar — heading left, view toggle right, aligned baseline. */}
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 pt-3 pb-4 md:flex-row md:items-center md:justify-between md:px-6">
-        <h1 className="text-lg font-semibold tracking-tight">
-          Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results for &ldquo;{query}&rdquo;
-        </h1>
-        <div className="flex items-center gap-3">
-          <div
-            role="group"
-            aria-label="Result view"
-            className="inline-flex items-center gap-0.5 rounded-md border bg-background p-0.5"
-          >
-            <button
-              type="button"
-              aria-pressed={view === "grid"}
-              onClick={() => setView("grid")}
-              className={cn(
-                "inline-flex h-8 items-center gap-1.5 rounded-sm px-3 text-sm font-medium transition-colors [&_svg]:size-4",
-                view === "grid"
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              <LayoutGrid /> Grid
-            </button>
-            <button
-              type="button"
-              aria-pressed={view === "list"}
-              onClick={() => setView("list")}
-              className={cn(
-                "inline-flex h-8 items-center gap-1.5 rounded-sm px-3 text-sm font-medium transition-colors [&_svg]:size-4",
-                view === "list"
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              <ListIcon /> List
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-6xl px-4 pb-16 md:px-6">
+      <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
           {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-6 text-sm">
@@ -303,7 +262,46 @@ export function SearchBody({
           </aside>
 
           {/* Results grid or list */}
-          <section aria-label="Search results">
+          <section aria-label="Search results" className="flex flex-col gap-4">
+            {/* Results toolbar — heading left-aligned with the first product
+                card; view toggle pinned right at the same baseline. */}
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <h1 className="text-lg font-semibold tracking-tight">
+                Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results for &ldquo;{query}&rdquo;
+              </h1>
+              <div
+                role="group"
+                aria-label="Result view"
+                className="inline-flex items-center gap-0.5 self-start rounded-md border bg-background p-0.5 md:self-auto"
+              >
+                <button
+                  type="button"
+                  aria-pressed={view === "grid"}
+                  onClick={() => setView("grid")}
+                  className={cn(
+                    "inline-flex h-8 items-center gap-1.5 rounded-sm px-3 text-sm font-medium transition-colors [&_svg]:size-4",
+                    view === "grid"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <LayoutGrid /> Grid
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={view === "list"}
+                  onClick={() => setView("list")}
+                  className={cn(
+                    "inline-flex h-8 items-center gap-1.5 rounded-sm px-3 text-sm font-medium transition-colors [&_svg]:size-4",
+                    view === "list"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <ListIcon /> List
+                </button>
+              </div>
+            </div>
             {view === "grid" ? (
               <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {results.map((r, i) => (
