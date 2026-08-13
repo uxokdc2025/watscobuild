@@ -11,7 +11,12 @@ function Case({
   data: ProductCardData;
   signedIn: boolean;
 }) {
-  return <ProductCard data={data} signedIn={signedIn} />;
+  // 247px is the canonical card width per David's spec.
+  return (
+    <div className="w-[247px]">
+      <ProductCard data={data} signedIn={signedIn} />
+    </div>
+  );
 }
 
 const BASE: ProductCardData = {
@@ -52,7 +57,7 @@ export function ProductCardsSection() {
       title="Product Card"
       description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated."
     >
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="flex flex-wrap gap-6">
         <Case
           signedIn={true}
           data={BASE}
