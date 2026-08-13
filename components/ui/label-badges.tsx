@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Award, ImageOff, Repeat, Shield, Star } from "lucide-react";
+import { Award, ImageOff, Repeat, Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -174,12 +174,23 @@ export function StockStatus({
 
 /* ─────────────── Certification chip (placeholder for real logos) ─────────────── */
 /* ─────────────── PRO Essentials + Substitute (attribute badges) ─────────────── */
+/** Watsco PRO Essentials brand mark — locked SVG (red "PRO" + navy "Essentials"
+ *  inside a navy pill). Uses the exported artwork verbatim; height defaults
+ *  to 20px and scales the width via aspect-ratio. */
 export function ProEssentialsBadge({ className }: { className?: string }) {
   return (
-    <Badge variant="soft" color="blue" className={cn("", className)}>
-      <Shield className="size-3" />
-      Pro Essentials
-    </Badge>
+    <span
+      className={cn("inline-flex h-5 shrink-0 items-center", className)}
+      aria-label="PRO Essentials"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/pro-essentials.svg"
+        alt=""
+        aria-hidden
+        className="h-full w-auto"
+      />
+    </span>
   );
 }
 
