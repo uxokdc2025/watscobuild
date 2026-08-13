@@ -31,6 +31,7 @@ function toCardData(item: FbtProduct): ProductCardData {
     points: item.points,
     pct: item.pct,
     yourBranchQty: item.branchQty,
+    branchName: item.branchName,
     nearbyBranchQty: item.allBranchesQty ?? item.nearbyQty,
   };
 }

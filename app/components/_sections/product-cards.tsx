@@ -29,6 +29,7 @@ const BASE: ProductCardData = {
   price: 193.2,
   points: 3,
   yourBranchQty: 2,
+  branchName: "Miami",
   nearbyBranchQty: 123,
   badges: [
     { label: "PRO Essentials", tone: "outline-color", color: "red" },

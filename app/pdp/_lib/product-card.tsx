@@ -78,8 +78,10 @@ export type ProductCardData = {
   price?: number | null;
   wasPrice?: number;
   points?: number;
-  /** "N Your Branch" line (green). */
+  /** "N in {branchName}" line (green). */
   yourBranchQty?: number;
+  /** Human-readable branch label rendered next to yourBranchQty (e.g. "Miami"). */
+  branchName?: string;
   /** "N Nearby Branch" line (blue link). */
   nearbyBranchQty?: number;
   /** Optional per-item unit-of-measure. Defaults to "EACH". */
@@ -187,14 +189,15 @@ export function ProductCard({
   // height, always.
   return (
     <article className="flex h-full flex-col gap-2 rounded-md border bg-card p-4">
-      {/* 1. Image */}
-      <CardImage src={data.image} alt={data.title} />
-
-      {/* 2. Points — canonical PointsBadge from design system. Slot
-              reserves 1 badge row of height when absent. */}
+      {/* 1. Points — pinned to the very top of the card. Slot reserves 1
+              badge row of height so cards stay aligned when points are
+              absent. */}
       <div className="flex min-h-[1.5rem] items-start">
         {signedIn && data.points ? <PointsBadge points={data.points} /> : null}
       </div>
+
+      {/* 2. Image */}
+      <CardImage src={data.image} alt={data.title} />
 
       {/* 3. Title — primary blue, 14px/18px semibold, 3-line clamp. */}
       <a
@@ -236,10 +239,10 @@ export function ProductCard({
 
       {/* Pinned bottom — every subsequent slot reserves fixed height. */}
       <div className="mt-auto flex flex-col gap-1 pt-1">
-        {/* 7. Your Branch stock — foreground, 12px/16px medium. */}
-        <p className="min-h-4 truncate text-xs font-medium leading-4 text-foreground">
+        {/* 7. Your Branch stock — green, 12px/16px medium, real branch name. */}
+        <p className="min-h-4 truncate text-xs font-medium leading-4 text-emerald-600">
           {hasCommerce && data.yourBranchQty != null
-            ? `${data.yourBranchQty.toLocaleString()} Your Branch`
+            ? `${data.yourBranchQty.toLocaleString()} in ${data.branchName ?? "Your Branch"}`
             : null}
         </p>
 
