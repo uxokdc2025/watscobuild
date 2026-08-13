@@ -115,21 +115,20 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-/** Inline qty stepper + short "Add" button — compact so it fits at 4-across. */
+/** Qty stepper (self-start) on top, full-width "Add to Cart" button below.
+ *  Stacked because inline layouts consistently clipped the button at 4-across
+ *  card widths (~250px). Stacking gives the CTA the full card width and
+ *  works at every breakpoint. Reference frame's inline treatment stays as
+ *  the shape guide; the implementation prioritizes the button label being
+ *  legible. */
 function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
   const step =
-    "grid h-9 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
-  // Grid over flex here — Chrome's shadcn Button + `flex-1` was leaving the
-  // Button at its intrinsic width in some Tailwind builds. Grid track sizing
-  // `[auto,minmax(0,1fr)]` gives the Button the remaining space reliably.
+    "grid h-9 w-8 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div
-      className="grid w-full items-stretch gap-2"
-      style={{ gridTemplateColumns: "auto minmax(0, 1fr)" }}
-    >
+    <div className="flex w-full flex-col gap-2">
       <div
-        className="inline-flex h-9 items-center rounded-md border"
+        className="inline-flex h-9 items-center self-start rounded-md border"
         role="group"
         aria-label="Quantity"
       >
@@ -144,7 +143,7 @@ function QtyPlusAdd() {
         </button>
         <span
           aria-live="polite"
-          className="w-7 text-center text-sm font-medium tabular-nums"
+          className="w-8 text-center text-sm font-medium tabular-nums"
         >
           {qty}
         </span>
@@ -157,9 +156,9 @@ function QtyPlusAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" className="h-9 w-full min-w-0 gap-1.5 px-2">
+      <Button size="sm" className="h-9 w-full">
         <ShoppingCart className="size-4" />
-        Add
+        Add to Cart
       </Button>
     </div>
   );
@@ -263,8 +262,8 @@ export function ProductCard({
           ) : null}
         </p>
 
-        {/* 10. Qty stepper + Add button — inline row, always fits. */}
-        <div className="min-h-9 pt-1">
+        {/* 10. Qty stepper + Add-to-Cart — stacked so CTA text always fits. */}
+        <div className="min-h-[calc(2*2.25rem+0.5rem)] pt-1">
           {hasCommerce ? (
             <QtyPlusAdd />
           ) : (
