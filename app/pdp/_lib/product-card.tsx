@@ -124,7 +124,10 @@ function QtyPlusAdd() {
   const step =
     "grid h-9 w-7 shrink-0 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex w-full items-stretch gap-2">
+    <div
+      className="flex w-full items-stretch gap-2"
+      style={{ display: "flex", width: "100%" }}
+    >
       <div
         className="inline-flex h-9 shrink-0 items-center rounded-md border"
         role="group"
@@ -156,7 +159,8 @@ function QtyPlusAdd() {
       </div>
       <button
         type="button"
-        className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+        className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+        style={{ flex: "1 1 0%", minWidth: 0 }}
       >
         <ShoppingCart className="size-4 shrink-0" />
         Add
@@ -263,8 +267,8 @@ export function ProductCard({
           ) : null}
         </p>
 
-        {/* 10. Qty stepper + Add-to-Cart — stacked so CTA text always fits. */}
-        <div className="min-h-[calc(2*2.25rem+0.5rem)] pt-1">
+        {/* 10. Qty stepper + Add button — inline row per reference frames. */}
+        <div className="min-h-9 w-full pt-1" style={{ width: "100%" }}>
           {hasCommerce ? (
             <QtyPlusAdd />
           ) : (
