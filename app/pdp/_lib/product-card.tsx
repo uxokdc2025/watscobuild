@@ -121,9 +121,9 @@ function QtyPlusAdd() {
   const step =
     "grid h-9 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex w-full items-stretch gap-2">
+    <div className="grid w-full grid-cols-[auto_1fr] items-stretch gap-2">
       <div
-        className="inline-flex h-9 shrink-0 items-center rounded-md border"
+        className="inline-flex h-9 items-center rounded-md border"
         role="group"
         aria-label="Quantity"
       >
@@ -151,7 +151,7 @@ function QtyPlusAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" className="h-9 flex-1 min-w-0 gap-1.5 px-2">
+      <Button size="sm" className="h-9 w-full min-w-0 gap-1.5 px-2">
         <ShoppingCart className="size-4" />
         Add
       </Button>
