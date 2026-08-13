@@ -67,7 +67,7 @@ export type ProductCardData = {
   item: string;
   mfg: string;
   image?: string;
-  /** Badges row — same shape as `PdpProduct.badges`. Renders before `PointsBadge`. */
+  /** Merchandising / attribute badges (outline-color style). Rendered under Item/MFG. */
   badges?: PdpBadge[];
   /** "N% Also Purchased" affinity indicator (Customers Also Purchased rows). */
   pct?: number;
@@ -75,9 +75,10 @@ export type ProductCardData = {
   price?: number | null;
   wasPrice?: number;
   points?: number;
-  /** Displayed stock number. Prefer `allBranchesQty`; falls back to `nearbyQty`. */
-  allBranchesQty?: number;
-  nearbyQty?: number;
+  /** "N Your Branch" line (green). */
+  yourBranchQty?: number;
+  /** "N Nearby Branch" line (blue link). */
+  nearbyBranchQty?: number;
   /** Optional per-item unit-of-measure. Defaults to "EACH". */
   uom?: string;
   /** Link target for the title + brand. */
@@ -114,16 +115,15 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-/** Qty stepper on top, Add-to-Cart below — stacked so the CTA gets the
- *  full card width and never gets clipped at narrow column sizes. */
+/** Inline qty stepper + short "Add" button — compact so it fits at 4-across. */
 function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
   const step =
-    "grid h-9 w-8 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+    "grid h-9 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex items-stretch gap-2">
       <div
-        className="inline-flex h-9 items-center self-start rounded-md border"
+        className="inline-flex h-9 shrink-0 items-center rounded-md border"
         role="group"
         aria-label="Quantity"
       >
@@ -138,7 +138,7 @@ function QtyPlusAdd() {
         </button>
         <span
           aria-live="polite"
-          className="w-8 text-center text-sm font-medium tabular-nums"
+          className="w-7 text-center text-sm font-medium tabular-nums"
         >
           {qty}
         </span>
@@ -151,9 +151,9 @@ function QtyPlusAdd() {
           <Plus className="size-3.5" />
         </button>
       </div>
-      <Button size="sm" className="h-9 w-full min-w-0 px-2 text-xs">
-        <ShoppingCart className="size-3.5" />
-        Add to Cart
+      <Button size="sm" className="h-9 flex-1 min-w-0 gap-1.5 px-2">
+        <ShoppingCart className="size-4" />
+        Add
       </Button>
     </div>
   );
@@ -167,68 +167,79 @@ export function ProductCard({
   signedIn: boolean;
 }) {
   const href = data.href ?? "#";
-  const allBranches = data.allBranchesQty ?? data.nearbyQty;
   const hasCommerce = signedIn && data.price != null;
 
   // Every optional slot below reserves its rendered height even when empty,
   // so cards NEVER resize based on which fields a given SKU carries. Two
   // cards in the same row — one with badges, one without — are the same
-  // height, always. This is the David-approved worst-case guarantee.
+  // height, always.
   return (
     <article className="flex h-full flex-col gap-2 rounded-lg border bg-card p-4">
-      {/* 1. Image — fixed aspect-square */}
+      {/* 1. Image */}
       <CardImage src={data.image} alt={data.title} />
 
-      {/* 2. Brand — reserves 1 line even when absent */}
-      <div className="min-h-[1lh]">
-        {data.brand ? (
-          <a
-            href={href}
-            className="text-xs font-medium text-primary underline-offset-4 hover:underline"
-          >
-            {data.brand}
-          </a>
-        ) : null}
+      {/* 2. Points chip — sits at top per the reference (violet PointsBadge).
+              Slot reserves ~1 badge row of height even when absent. */}
+      <div className="flex min-h-[1.5rem] flex-wrap gap-1.5">
+        {signedIn && data.points ? <PointsBadge points={data.points} /> : null}
       </div>
 
-      {/* 3. Title — 4-line clamp; slot reserves 4 lines even for short titles */}
+      {/* 3. Title — blue link, 3-line clamp. Slot reserves 3 lines. */}
       <a
         href={href}
-        className="line-clamp-4 min-h-[4lh] text-sm font-semibold leading-snug text-foreground hover:text-primary"
+        className="line-clamp-3 min-h-[3lh] text-sm font-semibold leading-snug text-primary hover:underline"
       >
         {data.title}
       </a>
 
-      {/* 4. Badges row — reserves one badge-row of height even when empty */}
+      {/* 4. Item / MFG — always 2 lines */}
+      <div className="min-h-[2lh] text-xs leading-tight text-muted-foreground">
+        <p>
+          Item: <span className="text-foreground">{data.item}</span>
+        </p>
+        <p>
+          MFG: <span className="text-foreground">{data.mfg}</span>
+        </p>
+      </div>
+
+      {/* 5. Attribute badges (PRO Essentials, SUBSTITUTE, etc.) — outline
+              color chips. Reserves 1 badge-row of height even when empty. */}
       <div className="flex min-h-[1.5rem] flex-wrap gap-1.5">
         {data.badges?.map((b) => (
           <Badge key={b.label} variant={b.tone} color={b.color}>
             {b.label}
           </Badge>
         ))}
-        {signedIn && data.points ? <PointsBadge points={data.points} /> : null}
       </div>
 
-      {/* 5. "N% Also Purchased" affinity — italic muted, reserves 1 line */}
+      {/* 6. "N% Also Purchased" affinity — italic muted, reserves 1 line */}
       <p className="min-h-[1lh] text-xs italic leading-tight text-muted-foreground">
         {data.pct != null ? `${data.pct}% Also Purchased` : null}
       </p>
 
-      {/* Pinned bottom — every subsequent slot reserves fixed height so cards
-          in a row are the same height regardless of state. */}
-      <div className="mt-auto flex flex-col gap-2 pt-1">
-        {/* 6. Item / MFG — always 2 lines */}
-        <div className="min-h-[2lh] text-xs leading-tight text-muted-foreground">
-          <p>
-            Item: <span className="text-foreground">{data.item}</span>
-          </p>
-          <p>
-            MFG: <span className="text-foreground">{data.mfg}</span>
-          </p>
-        </div>
+      {/* Pinned bottom — every subsequent slot reserves fixed height. */}
+      <div className="mt-auto flex flex-col gap-1 pt-1">
+        {/* 7. Your Branch stock — green, reserves 1 line */}
+        <p className="min-h-[1lh] text-xs font-medium leading-tight text-in-stock">
+          {hasCommerce && data.yourBranchQty != null
+            ? `${data.yourBranchQty.toLocaleString()} Your Branch`
+            : null}
+        </p>
 
-        {/* 7. Price + / EACH + optional was-price — reserves 1 line */}
-        <p className="flex min-h-[1lh] flex-wrap items-baseline gap-1.5 leading-tight">
+        {/* 8. Nearby Branch link — blue, reserves 1 line */}
+        <p className="min-h-[1lh] text-xs font-medium leading-tight">
+          {hasCommerce && data.nearbyBranchQty != null ? (
+            <a
+              href="#"
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              {data.nearbyBranchQty.toLocaleString()} Nearby Branch
+            </a>
+          ) : null}
+        </p>
+
+        {/* 9. Price + / EACH + optional was-price — reserves 1 line */}
+        <p className="flex min-h-[1lh] flex-wrap items-baseline gap-1.5 pt-1 leading-tight">
           {hasCommerce ? (
             <>
               <span className="text-base font-bold text-price">
@@ -246,18 +257,8 @@ export function ProductCard({
           ) : null}
         </p>
 
-        {/* 8. Stock — reserves 1 line */}
-        <p className="min-h-[1lh] text-xs font-medium leading-tight text-in-stock">
-          {hasCommerce && allBranches != null
-            ? `In stock · ${allBranches.toLocaleString()} All Branches`
-            : null}
-        </p>
-
-        {/* 9. Qty stepper + Add-to-Cart — stacked so the CTA never clips at
-              narrow card widths. Slot reserves h-[calc(2*2.25rem+0.5rem)]
-              (two h-9 rows + gap-2) whether the control or the signed-out
-              "Sign in to view pricing" link is showing. */}
-        <div className="min-h-[calc(2*2.25rem+0.5rem)]">
+        {/* 10. Qty stepper + Add button — inline row, always fits. */}
+        <div className="min-h-9 pt-1">
           {hasCommerce ? (
             <QtyPlusAdd />
           ) : (
@@ -270,15 +271,15 @@ export function ProductCard({
           )}
         </div>
 
-        {/* 10. + Add to List — reserves 1 line even signed-out */}
-        <div className="min-h-[1lh]">
+        {/* 11. Save to List — reserves 1 line even signed-out */}
+        <div className="min-h-[1lh] pt-1">
           {hasCommerce ? (
             <button
               type="button"
               className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               <ListPlus className="size-3.5" />
-              Add to List
+              Save to List
             </button>
           ) : null}
         </div>

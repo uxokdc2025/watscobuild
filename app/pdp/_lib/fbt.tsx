@@ -28,8 +28,8 @@ function toCardData(item: FbtProduct): ProductCardData {
     wasPrice: item.wasPrice,
     points: item.points,
     pct: item.pct,
-    allBranchesQty: item.allBranchesQty,
-    nearbyQty: item.nearbyQty,
+    yourBranchQty: item.branchQty,
+    nearbyBranchQty: item.allBranchesQty ?? item.nearbyQty,
   };
 }
 
