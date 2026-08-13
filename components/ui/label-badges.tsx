@@ -180,7 +180,7 @@ export function StockStatus({
 export function ProEssentialsBadge({ className }: { className?: string }) {
   return (
     <span
-      className={cn("inline-flex h-5 shrink-0 items-center", className)}
+      className={cn("inline-flex h-[22px] shrink-0 items-center", className)}
       aria-label="PRO Essentials"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
