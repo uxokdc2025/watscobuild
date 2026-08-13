@@ -45,7 +45,7 @@ export function ProductCardsSection() {
       title="Product Card"
       description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated."
     >
-      <div className="flex flex-wrap gap-6">
+      <div className="flex flex-wrap gap-6 lg:col-span-2">
         {/* Badges + % Also Purchased (richest state) */}
         <Case signedIn={true} data={{ ...BASE, pct: 42 }} />
         {/* Badges only */}
