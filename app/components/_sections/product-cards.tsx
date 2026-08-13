@@ -46,13 +46,11 @@ export function ProductCardsSection() {
       description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated."
     >
       <div className="flex flex-wrap gap-6">
-        {/* Frame 6 — badges only */}
-        <Case signedIn={true} data={BASE} />
-        {/* Frame 3 — badges + % Also Purchased */}
+        {/* Badges + % Also Purchased (richest state) */}
         <Case signedIn={true} data={{ ...BASE, pct: 42 }} />
-        {/* Frame 4 — no badges, no % */}
-        <Case signedIn={true} data={{ ...BASE, badges: undefined }} />
-        {/* Frame 5 — same as Frame 4 (height parity check) */}
+        {/* Badges only */}
+        <Case signedIn={true} data={BASE} />
+        {/* No badges, no % */}
         <Case signedIn={true} data={{ ...BASE, badges: undefined }} />
       </div>
     </Category>
