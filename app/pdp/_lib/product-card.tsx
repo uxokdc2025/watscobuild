@@ -114,18 +114,16 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-/** Qty stepper on top, full-width Add to Cart below. Stacked because
- *  inline never fit reliably at 4-across card widths. Reference shape
- *  is preserved — the two controls sit together at the bottom of the
- *  card, just one above the other. */
+/** Qty stepper + Add button INLINE — per Figma node 3:2172. Qty stepper
+ *  is 113×34px with per-cell borders; Add button is 109×32px. Row uses
+ *  space-between so both stay pinned to their edges. Matches the exact
+ *  visual spec — do not switch to stacked. */
 function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
-  const step =
-    "grid h-9 w-8 shrink-0 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex items-center justify-between">
       <div
-        className="inline-flex h-9 items-center self-start rounded-md border"
+        className="inline-flex h-[34px] w-[113px] items-stretch overflow-hidden rounded-[4px] border border-[#e1e1e5]"
         role="group"
         aria-label="Quantity"
       >
@@ -134,13 +132,13 @@ function QtyPlusAdd() {
           onClick={() => setQty((q) => Math.max(1, q - 1))}
           disabled={qty <= 1}
           aria-label="Decrease quantity"
-          className={cn(step, "rounded-l-md")}
+          className="grid w-[33px] shrink-0 place-items-center text-foreground opacity-40 transition-opacity hover:opacity-70 disabled:cursor-not-allowed"
         >
           <Minus className="size-3.5" />
         </button>
         <span
           aria-live="polite"
-          className="w-8 text-center text-sm font-medium tabular-nums"
+          className="grid w-[45px] shrink-0 place-items-center border-x border-[#e1e1e5] text-sm font-medium tabular-nums text-foreground"
         >
           {qty}
         </span>
@@ -148,17 +146,17 @@ function QtyPlusAdd() {
           type="button"
           onClick={() => setQty((q) => Math.min(99, q + 1))}
           aria-label="Increase quantity"
-          className={cn(step, "rounded-r-md")}
+          className="grid w-[33px] shrink-0 place-items-center text-foreground transition-opacity hover:opacity-70"
         >
           <Plus className="size-3.5" />
         </button>
       </div>
       <button
         type="button"
-        className="flex h-9 w-full items-center justify-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+        className="inline-flex h-[32px] w-[109px] shrink-0 items-center justify-center gap-1.5 rounded-[4px] bg-[#2280df] text-sm font-medium text-white transition-colors hover:bg-[#1a6cc7] focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
       >
         <ShoppingCart className="size-4 shrink-0" />
-        Add to Cart
+        Add
       </button>
     </div>
   );
@@ -179,26 +177,31 @@ export function ProductCard({
   // cards in the same row — one with badges, one without — are the same
   // height, always.
   return (
-    <article className="flex h-full flex-col gap-2 overflow-hidden rounded-lg border bg-card p-3">
+    <article className="flex h-full flex-col gap-2 rounded-[4px] border border-[#e1e1e5] bg-white p-4">
       {/* 1. Image */}
       <CardImage src={data.image} alt={data.title} />
 
-      {/* 2. Points chip — sits at top per the reference (violet PointsBadge).
-              Slot reserves ~1 badge row of height even when absent. */}
-      <div className="flex min-h-[1.5rem] flex-wrap gap-1.5">
-        {signedIn && data.points ? <PointsBadge points={data.points} /> : null}
+      {/* 2. Points chip — pink #FCC1FA background per Figma node 3:2202.
+              Slot reserves 1 badge row of height when absent. */}
+      <div className="flex min-h-[1.5rem] items-start">
+        {signedIn && data.points ? (
+          <span className="inline-flex items-center bg-[#fcc1fa] px-1.5 py-0.5 text-xs font-medium leading-4 text-foreground">
+            Earn {data.points} {data.points === 1 ? "point" : "points"}
+          </span>
+        ) : null}
       </div>
 
-      {/* 3. Title — blue link, 3-line clamp. Slot reserves 3 lines. */}
+      {/* 3. Title — Curious Blue #2280DF, Roboto SemiBold 14px/18px,
+              3-line clamp. Slot reserves 3 lines. */}
       <a
         href={href}
-        className="line-clamp-3 min-h-[3lh] text-sm font-semibold leading-snug text-primary hover:underline"
+        className="line-clamp-3 min-h-[54px] text-sm font-semibold leading-[18px] text-[#2280df] hover:underline"
       >
         {data.title}
       </a>
 
-      {/* 4. Item / MFG — always 2 lines */}
-      <div className="min-h-[2lh] text-xs leading-tight text-muted-foreground">
+      {/* 4. Item / MFG — 12px/16px per Figma. Labels grey, values dark. */}
+      <div className="min-h-[32px] text-xs leading-4 text-[#71717b]">
         <p>
           Item: <span className="text-foreground">{data.item}</span>
         </p>
@@ -224,37 +227,37 @@ export function ProductCard({
 
       {/* Pinned bottom — every subsequent slot reserves fixed height. */}
       <div className="mt-auto flex flex-col gap-1 pt-1">
-        {/* 7. Your Branch stock — green, one line, no wrap */}
-        <p className="min-h-[1lh] truncate text-xs font-medium leading-tight text-in-stock">
+        {/* 7. Your Branch stock — black, Roboto Medium 12px/16px per Figma. */}
+        <p className="min-h-4 truncate text-xs font-medium leading-4 text-black">
           {hasCommerce && data.yourBranchQty != null
             ? `${data.yourBranchQty.toLocaleString()} Your Branch`
             : null}
         </p>
 
-        {/* 8. Nearby Branch link — blue, one line, no wrap */}
-        <p className="min-h-[1lh] truncate text-xs font-medium leading-tight">
+        {/* 8. Nearby Branch link — Curious Blue #2280DF per Figma. */}
+        <p className="min-h-4 truncate text-xs font-medium leading-4">
           {hasCommerce && data.nearbyBranchQty != null ? (
             <a
               href="#"
-              className="text-primary underline-offset-4 hover:underline"
+              className="text-[#2280df] underline-offset-4 hover:underline"
             >
               {data.nearbyBranchQty.toLocaleString()} Nearby Branch
             </a>
           ) : null}
         </p>
 
-        {/* 9. Price + / EACH + optional was-price — reserves 1 line */}
-        <p className="flex min-h-[1lh] flex-wrap items-baseline gap-1.5 pt-1 leading-tight">
+        {/* 9. Price — Roboto Bold 16px/24px #18181B, "/ EACH" muted 12px. */}
+        <p className="flex min-h-6 flex-wrap items-baseline gap-1.5 pt-1">
           {hasCommerce ? (
             <>
-              <span className="text-base font-bold text-price">
+              <span className="text-base font-bold leading-6 text-[#18181b]">
                 {formatUSD(data.price!)}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs leading-4 text-[#71717b]">
                 / {data.uom ?? "EACH"}
               </span>
               {data.wasPrice != null ? (
-                <span className="text-xs text-muted-foreground line-through">
+                <span className="text-xs leading-4 text-[#71717b] line-through">
                   {formatUSD(data.wasPrice)}
                 </span>
               ) : null}
@@ -262,29 +265,28 @@ export function ProductCard({
           ) : null}
         </p>
 
-        {/* 10. Qty stepper + Add to Cart — stacked (qty above, button
-              full-width below). Slot reserves the height of both. */}
-        <div className="min-h-[calc(2*2.25rem+0.5rem)] pt-1">
+        {/* 10. Qty stepper + Add — INLINE row per Figma node 3:2178. */}
+        <div className="min-h-[34px] pt-1">
           {hasCommerce ? (
             <QtyPlusAdd />
           ) : (
             <a
               href="#"
-              className="inline-flex h-9 items-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+              className="inline-flex h-[34px] items-center text-sm font-medium text-[#2280df] underline-offset-4 hover:underline"
             >
               Sign in to view pricing
             </a>
           )}
         </div>
 
-        {/* 11. Save to List — reserves 1 line even signed-out */}
-        <div className="min-h-[1lh] pt-1">
+        {/* 11. Save to List — Roboto Medium 14px/20px #71717B per Figma. */}
+        <div className="min-h-5 pt-1">
           {hasCommerce ? (
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-1.5 self-start text-sm font-medium leading-5 text-[#71717b] transition-colors hover:text-foreground"
             >
-              <ListPlus className="size-3.5" />
+              <ListPlus className="size-4" />
               Save to List
             </button>
           ) : null}
