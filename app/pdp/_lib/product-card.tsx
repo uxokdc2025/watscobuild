@@ -69,6 +69,8 @@ export type ProductCardData = {
   image?: string;
   /** Badges row — same shape as `PdpProduct.badges`. Renders before `PointsBadge`. */
   badges?: PdpBadge[];
+  /** "N% Also Purchased" affinity indicator (Customers Also Purchased rows). */
+  pct?: number;
   /** Commerce fields — omit / null on signed-out or gated state. */
   price?: number | null;
   wasPrice?: number;
@@ -166,48 +168,56 @@ export function ProductCard({
   const href = data.href ?? "#";
   const allBranches = data.allBranchesQty ?? data.nearbyQty;
   const hasCommerce = signedIn && data.price != null;
-  const showBadges =
-    (data.badges?.length ?? 0) > 0 || (signedIn && !!data.points);
 
+  // Every optional slot below reserves its rendered height even when empty,
+  // so cards NEVER resize based on which fields a given SKU carries. Two
+  // cards in the same row — one with badges, one without — are the same
+  // height, always. This is the David-approved worst-case guarantee.
   return (
     <article className="flex h-full flex-col gap-2 rounded-lg border bg-card p-4">
-      {/* 1. Image */}
+      {/* 1. Image — fixed aspect-square */}
       <CardImage src={data.image} alt={data.title} />
 
-      {/* 2. Brand */}
-      {data.brand ? (
-        <a
-          href={href}
-          className="text-xs font-medium text-primary underline-offset-4 hover:underline"
-        >
-          {data.brand}
-        </a>
-      ) : null}
+      {/* 2. Brand — reserves 1 line even when absent */}
+      <div className="min-h-[1lh]">
+        {data.brand ? (
+          <a
+            href={href}
+            className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+          >
+            {data.brand}
+          </a>
+        ) : null}
+      </div>
 
-      {/* 3. Title — 3-line clamp with ellipsis */}
+      {/* 3. Title — 4-line clamp; slot reserves 4 lines even for short titles */}
       <a
         href={href}
-        className="line-clamp-3 min-h-[3lh] text-sm font-semibold leading-snug text-foreground hover:text-primary"
+        className="line-clamp-4 min-h-[4lh] text-sm font-semibold leading-snug text-foreground hover:text-primary"
       >
         {data.title}
       </a>
 
-      {/* 4. Badges row */}
-      {showBadges ? (
-        <div className="flex flex-wrap gap-1.5">
-          {data.badges?.map((b) => (
-            <Badge key={b.label} variant={b.tone} color={b.color}>
-              {b.label}
-            </Badge>
-          ))}
-          {signedIn && data.points ? <PointsBadge points={data.points} /> : null}
-        </div>
-      ) : null}
+      {/* 4. Badges row — reserves one badge-row of height even when empty */}
+      <div className="flex min-h-[1.5rem] flex-wrap gap-1.5">
+        {data.badges?.map((b) => (
+          <Badge key={b.label} variant={b.tone} color={b.color}>
+            {b.label}
+          </Badge>
+        ))}
+        {signedIn && data.points ? <PointsBadge points={data.points} /> : null}
+      </div>
 
-      {/* Pinned bottom — aligns steps 5–9 across cards regardless of title */}
+      {/* 5. "N% Also Purchased" affinity — italic muted, reserves 1 line */}
+      <p className="min-h-[1lh] text-xs italic leading-tight text-muted-foreground">
+        {data.pct != null ? `${data.pct}% Also Purchased` : null}
+      </p>
+
+      {/* Pinned bottom — every subsequent slot reserves fixed height so cards
+          in a row are the same height regardless of state. */}
       <div className="mt-auto flex flex-col gap-2 pt-1">
-        {/* 5. Item / MFG */}
-        <div className="text-xs text-muted-foreground leading-tight">
+        {/* 6. Item / MFG — always 2 lines */}
+        <div className="min-h-[2lh] text-xs leading-tight text-muted-foreground">
           <p>
             Item: <span className="text-foreground">{data.item}</span>
           </p>
@@ -216,10 +226,10 @@ export function ProductCard({
           </p>
         </div>
 
-        {hasCommerce ? (
-          <>
-            {/* 6. Price + / EACH (+ optional was-price) */}
-            <p className="flex flex-wrap items-baseline gap-1.5 leading-tight">
+        {/* 7. Price + / EACH + optional was-price — reserves 1 line */}
+        <p className="flex min-h-[1lh] flex-wrap items-baseline gap-1.5 leading-tight">
+          {hasCommerce ? (
+            <>
               <span className="text-base font-bold text-price">
                 {formatUSD(data.price!)}
               </span>
@@ -231,19 +241,35 @@ export function ProductCard({
                   {formatUSD(data.wasPrice)}
                 </span>
               ) : null}
-            </p>
+            </>
+          ) : null}
+        </p>
 
-            {/* 7. Stock — single green line */}
-            {allBranches != null ? (
-              <p className="text-xs font-medium text-in-stock">
-                In stock · {allBranches.toLocaleString()} All Branches
-              </p>
-            ) : null}
+        {/* 8. Stock — reserves 1 line */}
+        <p className="min-h-[1lh] text-xs font-medium leading-tight text-in-stock">
+          {hasCommerce && allBranches != null
+            ? `In stock · ${allBranches.toLocaleString()} All Branches`
+            : null}
+        </p>
 
-            {/* 8. Qty stepper + Add to Cart */}
+        {/* 9. Qty stepper + Add-to-Cart — slot always occupies h-9, either the
+              control (signed in) or the "Sign in to view pricing" link (out). */}
+        <div className="min-h-9">
+          {hasCommerce ? (
             <QtyPlusAdd />
+          ) : (
+            <a
+              href="#"
+              className="inline-flex h-9 items-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Sign in to view pricing
+            </a>
+          )}
+        </div>
 
-            {/* 9. + Add to List */}
+        {/* 10. + Add to List — reserves 1 line even signed-out */}
+        <div className="min-h-[1lh]">
+          {hasCommerce ? (
             <button
               type="button"
               className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -251,15 +277,8 @@ export function ProductCard({
               <ListPlus className="size-3.5" />
               Add to List
             </button>
-          </>
-        ) : (
-          <a
-            href="#"
-            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-          >
-            Sign in to view pricing
-          </a>
-        )}
+          ) : null}
+        </div>
       </div>
     </article>
   );

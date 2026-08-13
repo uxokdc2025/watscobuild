@@ -11,6 +11,7 @@ import { OverlaysSection } from "./_sections/overlays";
 import { DataSection } from "./_sections/data";
 import { NavigationSection } from "./_sections/navigation";
 import { MediaSection } from "./_sections/media";
+import { ProductCardsSection } from "./_sections/product-cards";
 
 export const metadata: Metadata = {
   title: "Components — watscobuild",
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 const NAV = [
+  { id: "product-cards", label: "Product Card" },
   { id: "actions", label: "Actions" },
   { id: "labels", label: "Badges" },
   { id: "forms", label: "Forms" },
@@ -69,6 +71,7 @@ export default function ComponentsPage() {
       </header>
 
       <main className="mx-auto max-w-6xl space-y-16 px-4 py-10 md:px-6">
+        <ProductCardsSection />
         <ActionsSection />
         <LabelsSection />
         <FormsSection />

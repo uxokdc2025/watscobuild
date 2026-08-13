@@ -27,6 +27,7 @@ function toCardData(item: FbtProduct): ProductCardData {
     price: item.price,
     wasPrice: item.wasPrice,
     points: item.points,
+    pct: item.pct,
     allBranchesQty: item.allBranchesQty,
     nearbyQty: item.nearbyQty,
   };
