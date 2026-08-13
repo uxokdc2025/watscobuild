@@ -5,7 +5,7 @@
  * pack sizes) is shown or the gated "Sign in" state is shown instead.
  */
 
-export type BadgeTone = "solid" | "soft";
+export type BadgeTone = "solid" | "soft" | "outline-color";
 export type BadgeColor = "blue" | "violet" | "green" | "amber" | "red" | "slate";
 export type PdpBadge = { label: string; tone: BadgeTone; color: BadgeColor };
 
