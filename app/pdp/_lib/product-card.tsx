@@ -120,8 +120,14 @@ function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
   const step =
     "grid h-9 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+  // Grid over flex here — Chrome's shadcn Button + `flex-1` was leaving the
+  // Button at its intrinsic width in some Tailwind builds. Grid track sizing
+  // `[auto,minmax(0,1fr)]` gives the Button the remaining space reliably.
   return (
-    <div className="grid w-full grid-cols-[auto_1fr] items-stretch gap-2">
+    <div
+      className="grid w-full items-stretch gap-2"
+      style={{ gridTemplateColumns: "auto minmax(0, 1fr)" }}
+    >
       <div
         className="inline-flex h-9 items-center rounded-md border"
         role="group"
