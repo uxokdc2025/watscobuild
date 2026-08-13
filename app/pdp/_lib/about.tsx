@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown, FileText, Minus, Plus, Search, Share2, ShoppingCart } from "lucide-react";
+import { Minus, Plus, Search, Share2, ShoppingCart } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
