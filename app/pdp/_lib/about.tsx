@@ -8,7 +8,15 @@ import { Button } from "@/components/ui/button";
 import { PointsBadge } from "@/components/ui/label-badges";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   formatUSD,
+  type PartRow,
+  type PartsCatalog,
   type PartItem,
   type PdpDocument,
   type PdpProduct,
@@ -101,13 +109,26 @@ function Specifications({ product }: { product: PdpProduct }) {
   );
 }
 
-/* ── Documents tab: filter + collapsible groups ── */
+/* ── Documents tab: filter + interactive accordion groups ──
+   Matches carrierenterprise.com reference — each category is a collapsible
+   accordion (all open by default), red PDF icon per row, filter search
+   narrows on live input. */
 function Documents({ documents }: { documents: PdpDocument[] }) {
-  const groups = new Map<string, PdpDocument[]>();
-  for (const d of documents) {
-    const key = d.category ?? d.label;
-    groups.set(key, [...(groups.get(key) ?? []), d]);
-  }
+  const [filter, setFilter] = React.useState("");
+  const groups = React.useMemo(() => {
+    const map = new Map<string, PdpDocument[]>();
+    for (const d of documents) {
+      const key = d.category ?? d.label;
+      const matches =
+        !filter ||
+        d.label.toLowerCase().includes(filter.toLowerCase()) ||
+        key.toLowerCase().includes(filter.toLowerCase());
+      if (!matches) continue;
+      map.set(key, [...(map.get(key) ?? []), d]);
+    }
+    return [...map.entries()];
+  }, [documents, filter]);
+
   return (
     <div>
       <div className="relative">
@@ -115,46 +136,317 @@ function Documents({ documents }: { documents: PdpDocument[] }) {
         <input
           aria-label="Filter documents"
           placeholder="Filter by name, family, or file type..."
-          className="h-11 w-full rounded-md border bg-background pr-3 pl-9 text-sm outline-none"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="h-11 w-full rounded-md border bg-background pr-3 pl-9 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
       </div>
-      <div className="mt-4 flex flex-col gap-2">
-        {[...groups.entries()].map(([cat, docs]) => (
-          <div key={cat} className="overflow-hidden rounded-md border">
-            <div className="flex items-center justify-between gap-4 bg-muted px-4 py-2.5 text-sm font-semibold">
-              <span>
-                {cat} <span className="font-normal text-muted-foreground">({docs.length})</span>
-              </span>
-              <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
-            </div>
-            <ul>
-              {docs.map((d) => (
-                <li
-                  key={d.label}
-                  className="flex items-center justify-between gap-4 border-t px-4 py-3"
-                >
-                  <a
-                    href={d.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
-                  >
-                    <FileText className="size-5 shrink-0" />
-                    {d.label}
-                  </a>
-                  <button
-                    type="button"
-                    aria-label={`Share ${d.label}`}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <Share2 className="size-4" />
-                  </button>
-                </li>
-              ))}
-            </ul>
+      {groups.length === 0 ? (
+        <p className="mt-4 rounded-md border px-4 py-3 text-sm text-muted-foreground">
+          No documents match &ldquo;{filter}&rdquo;.
+        </p>
+      ) : (
+        <Accordion
+          type="multiple"
+          defaultValue={groups.map(([cat]) => cat)}
+          className="mt-4 flex flex-col gap-2"
+        >
+          {groups.map(([cat, docs]) => (
+            <AccordionItem
+              key={cat}
+              value={cat}
+              className="overflow-hidden rounded-md border"
+            >
+              <AccordionTrigger className="bg-muted/50 px-4 py-2.5 text-sm font-semibold hover:no-underline hover:bg-muted">
+                <span>
+                  {cat}{" "}
+                  <span className="font-normal text-muted-foreground">
+                    ({docs.length})
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="p-0">
+                <ul>
+                  {docs.map((d) => (
+                    <li
+                      key={d.label}
+                      className="flex items-start gap-3 border-t px-4 py-3"
+                    >
+                      <span
+                        aria-hidden
+                        className="grid size-9 shrink-0 place-items-center rounded bg-red-600 text-[10px] font-bold text-white"
+                      >
+                        PDF
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <a
+                          href={d.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-sm font-medium text-primary underline-offset-4 hover:underline"
+                        >
+                          {d.label}
+                        </a>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {d.category ?? d.label}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        aria-label={`Share ${d.label}`}
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        <Share2 className="size-4" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      )}
+    </div>
+  );
+}
+
+/* ── Part List tab: matching-model radio → filter → grouped tables ── */
+function PartRowSchema({ row }: { row: PartRow }) {
+  const gated = !row.price && !row.name;
+  return (
+    <tr className="border-t">
+      <td className="px-4 py-4 align-top">
+        <p className="text-sm font-medium">{row.item}</p>
+        {row.hasSupersedes ? (
+          <button
+            type="button"
+            className="mt-1 rounded border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:bg-accent"
+          >
+            View Supersedes
+          </button>
+        ) : null}
+      </td>
+      <td className="px-4 py-4 align-top">
+        {row.name ? (
+          <a href="#" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
+            {row.name}
+          </a>
+        ) : (
+          <span className="text-sm font-medium">{row.category}</span>
+        )}
+        {row.name && row.category ? (
+          <p className="mt-1 text-xs tracking-wide text-muted-foreground">{row.category}</p>
+        ) : null}
+      </td>
+      <td className="px-4 py-4 align-top text-sm">
+        {row.inventory?.state === "in-stock" ? (
+          <>
+            <p className="font-medium text-in-stock">IN STOCK</p>
+            <p className="text-xs text-muted-foreground">{row.inventory.branch}</p>
+          </>
+        ) : row.inventory?.state === "available" ? (
+          <>
+            <p className="font-medium text-in-stock">AVAILABLE</p>
+            <p className="text-xs text-muted-foreground">{row.inventory.note}</p>
+          </>
+        ) : (
+          <>
+            <p className="font-medium">Inventory</p>
+            <p className="text-xs text-muted-foreground">Not Available Online</p>
+          </>
+        )}
+      </td>
+      <td className="px-4 py-4 text-center align-top text-sm">{row.qtyInUnit ?? 1}</td>
+      <td className="px-4 py-4 align-top text-sm">
+        {row.price != null ? (
+          <>
+            <p>
+              <span className="font-bold">{formatUSD(row.price)}</span>{" "}
+              <span className="text-xs text-muted-foreground">/ EACH</span>
+            </p>
+            {row.points ? (
+              <p className="mt-1 text-xs font-medium text-in-stock">
+                Earn {row.points} {row.points === 1 ? "point" : "points"}
+              </p>
+            ) : null}
+          </>
+        ) : (
+          <div>
+            <p className="font-semibold">What&rsquo;s the price?</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              <a href="#" className="text-primary underline-offset-4 hover:underline">
+                Contact
+              </a>{" "}
+              for pricing and availability
+            </p>
           </div>
-        ))}
+        )}
+      </td>
+      <td className="px-4 py-4 align-top">
+        <div className="flex items-center gap-2">
+          <label className="sr-only" htmlFor={`qty-${row.item}`}>
+            Quantity for {row.item}
+          </label>
+          <input
+            id={`qty-${row.item}`}
+            defaultValue={1}
+            disabled={gated || row.price == null}
+            aria-label="Quantity"
+            className="h-9 w-14 rounded-md border bg-background px-2 text-center text-sm disabled:bg-muted/30 disabled:text-muted-foreground"
+          />
+          <button
+            type="button"
+            disabled={gated || row.price == null}
+            className="h-9 rounded-md bg-green-600 px-3 text-xs font-semibold text-white transition-colors hover:bg-green-700 disabled:bg-muted disabled:text-muted-foreground"
+          >
+            Add To Cart
+          </button>
+        </div>
+      </td>
+      <td className="px-4 py-4 align-top">
+        <button
+          type="button"
+          disabled={gated || row.price == null}
+          className="h-9 rounded-md border bg-muted/50 px-3 text-xs font-semibold text-foreground transition-colors hover:bg-muted disabled:text-muted-foreground"
+        >
+          Save To List
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+function PartList({ catalog }: { catalog: PartsCatalog }) {
+  const [selectedModel, setSelectedModel] = React.useState(catalog.selectedModelId);
+  const [filter, setFilter] = React.useState("");
+
+  const filteredGroups = React.useMemo(() => {
+    if (!filter.trim()) return catalog.groups;
+    const f = filter.toLowerCase();
+    return catalog.groups
+      .map((g) => ({
+        ...g,
+        parts: g.parts.filter(
+          (p) =>
+            p.item.toLowerCase().includes(f) ||
+            p.name?.toLowerCase().includes(f) ||
+            p.category?.toLowerCase().includes(f),
+        ),
+      }))
+      .filter((g) => g.parts.length > 0);
+  }, [catalog.groups, filter]);
+
+  const selected = catalog.models.find((m) => m.id === selectedModel) ?? catalog.models[0];
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <h3 className="text-base font-bold tracking-tight">
+          Matching Models ({catalog.models.length})
+        </h3>
+        <div className="mt-3 overflow-hidden rounded-md border">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/50 text-left">
+              <tr>
+                <th className="w-10 px-4 py-2.5"></th>
+                <th className="px-4 py-2.5 font-semibold">Model</th>
+                <th className="px-4 py-2.5 font-semibold">Brand</th>
+                <th className="px-4 py-2.5 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {catalog.models.map((m) => (
+                <tr
+                  key={m.id}
+                  className="cursor-pointer border-t hover:bg-muted/30"
+                  onClick={() => setSelectedModel(m.id)}
+                >
+                  <td className="px-4 py-3">
+                    <input
+                      type="radio"
+                      name="matching-model"
+                      value={m.id}
+                      checked={selectedModel === m.id}
+                      onChange={() => setSelectedModel(m.id)}
+                      aria-label={`Select ${m.id}`}
+                    />
+                  </td>
+                  <td className="px-4 py-3 font-medium">{m.id}</td>
+                  <td className="px-4 py-3">{m.brand}</td>
+                  <td className="px-4 py-3">{m.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      <div className="flex flex-col gap-3">
+        <h3 className="text-base font-bold tracking-tight">
+          Selected Model: {selected.id}
+        </h3>
+        <div className="relative">
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            aria-label="Filter parts"
+            placeholder="Filter by name or item number..."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="h-11 w-full rounded-md border bg-background pr-3 pl-9 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          />
+        </div>
+      </div>
+
+      {filteredGroups.length === 0 ? (
+        <p className="rounded-md border px-4 py-3 text-sm text-muted-foreground">
+          No parts match &ldquo;{filter}&rdquo;.
+        </p>
+      ) : (
+        <Accordion
+          type="multiple"
+          defaultValue={filteredGroups.map((g) => g.id)}
+          className="flex flex-col gap-2"
+        >
+          {filteredGroups.map((g) => (
+            <AccordionItem
+              key={g.id}
+              value={g.id}
+              className="overflow-hidden rounded-md border"
+            >
+              <AccordionTrigger className="bg-muted/50 px-4 py-2.5 text-xs font-bold uppercase tracking-wide hover:no-underline hover:bg-muted">
+                <span>
+                  {g.label}{" "}
+                  <span className="ml-1 font-medium text-muted-foreground normal-case tracking-normal">
+                    {g.parts.length} {g.parts.length === 1 ? "part" : "parts"}
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[900px] text-sm">
+                    <thead className="bg-background text-left">
+                      <tr>
+                        <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide">Item</th>
+                        <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide">Name</th>
+                        <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide">Inventory</th>
+                        <th className="px-4 py-3 text-center text-xs font-bold uppercase tracking-wide">Qty In Unit</th>
+                        <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide">Price</th>
+                        <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide">Buy</th>
+                        <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide">Save</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {g.parts.map((row) => (
+                        <PartRowSchema key={row.item + (row.name ?? "")} row={row} />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      )}
     </div>
   );
 }
@@ -170,6 +462,7 @@ function EmptyState({ label }: { label: string }) {
 export function AboutThisProduct({ product }: { product: PdpProduct }) {
   const hasDocs = Boolean(product.documents?.length);
   const hasSpecs = Boolean(product.productSpecs?.length);
+  const hasParts = Boolean(product.partsCatalog?.groups?.length);
   // A bundle swaps the Part List / Where Used tabs for a Bundle Components tab.
   const isBundle = Boolean(product.bundleItems?.length);
   return (
@@ -232,7 +525,11 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
         ) : (
           <>
             <TabsContent value="parts" className="pt-6">
-              <EmptyState label="No models found." />
+              {hasParts ? (
+                <PartList catalog={product.partsCatalog!} />
+              ) : (
+                <EmptyState label="No models found." />
+              )}
             </TabsContent>
             <TabsContent value="where" className="pt-6">
               <EmptyState label="No results found." />

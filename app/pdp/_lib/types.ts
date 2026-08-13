@@ -151,6 +151,9 @@ export type PdpProduct = {
   replacements?: SubstituteItem[];
   /** Non-sellable item that still has stock elsewhere: qty across all branches. */
   nonSellableAllBranchesQty?: number;
+  /** Parts catalog for the About This Product → Part List tab (Carrier CE
+   *  pattern): pick a matching model → filter → accordion-grouped part rows. */
+  partsCatalog?: PartsCatalog;
   /**
    * AHRI matched-system reference. `number` alone renders a header row with
    * "AHRI Matchup: {number}" + "View System Details" link. When
@@ -181,6 +184,49 @@ export type PdpProduct = {
   noImage?: boolean;
   /** Promo rebate message shown near the buy box (e.g. "Up to $200 rebate"). */
   rebate?: string;
+};
+
+/** Part row inside a group inside the Part List tab. */
+export type PartRow = {
+  item: string;
+  /** Part title (blue link) — omit for gated / no-name rows. */
+  name?: string;
+  /** Sub-label under the name (e.g. "MOTOR, FAN"). */
+  category?: string;
+  /** True when this row shows a "View Supersedes" chip under Item. */
+  hasSupersedes?: boolean;
+  /**
+   * Inventory line. `null` / `undefined` = gated (renders "Inventory Not
+   * Available Online" + Contact for pricing). Otherwise one of the shipped
+   * states + optional branch/note.
+   */
+  inventory?:
+    | { state: "in-stock"; branch: string }
+    | { state: "available"; note: "Other Branches" | "On Backorder" };
+  /** Qty in unit column (integer). Defaults to 1 when omitted. */
+  qtyInUnit?: number;
+  /** Price fields — omit both to render the gated "What's the price?" cell. */
+  price?: number;
+  points?: number;
+};
+
+export type PartsGroup = {
+  id: string;
+  label: string;
+  parts: PartRow[];
+};
+
+export type MatchingModel = {
+  id: string;
+  brand: string;
+  description: string;
+};
+
+export type PartsCatalog = {
+  models: MatchingModel[];
+  /** Default-selected model id (radio state on first render). */
+  selectedModelId: string;
+  groups: PartsGroup[];
 };
 
 /** Display form of a unit-of-measure: EA/Each → EACH; else upper-cased.

@@ -1790,6 +1790,102 @@ const ucTabsAccordions: PdpProduct = {
     yourBranch: { name: "Ybor City #2541", stock: 353 },
     nearbyBranches: [{ qty: 1082, name: "Other Branches" }],
   },
+  partsCatalog: {
+    models: [
+      { id: "GH5SAN53000AAAAA", brand: "Carrier", description: "SINGLE STAGE HEAT PUMP" },
+      { id: "GH5SAN53000AABAA", brand: "Carrier", description: "SINGLE STAGE HEAT PUMP" },
+    ],
+    selectedModelId: "GH5SAN53000AAAAA",
+    groups: [
+      {
+        id: "critical",
+        label: "Critical Parts List",
+        parts: [
+          { item: "HC34GQ235", name: "Factory Authorized Parts™ - HC34GQ235 - Fan Motor, 1/10 HP", category: "MOTOR, FAN", inventory: { state: "available", note: "Other Branches" }, price: 493.10, points: 9 },
+          { item: "LA01RA050", name: "Factory Authorized Parts™ - LA01RA050 Propeller Fan Blade", category: "FAN", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 688.80, points: 13 },
+          { item: "GC11MF010", category: "COMPRESSOR", hasSupersedes: true },
+          { item: "350234-415", name: "Factory Authorized Parts™ - Compressor Plug", category: "PLUG, COMPRESSOR", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 210.38, points: 4 },
+          { item: "HK32EA012", name: "Factory Authorized Parts™ - Circuit Board", category: "BOARD, CONTROL", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 285.80, points: 5 },
+          { item: "HN51ZC001", name: "Factory Authorized Parts™ - HN51ZC001 Contactor", category: "CONTACTOR", inventory: { state: "available", note: "Other Branches" }, price: 53.70, points: 1 },
+          { item: "HC98KA041", category: "CAPACITOR", hasSupersedes: true },
+          { item: "317497-701", name: "Factory Authorized Parts™ - 317497-701 Harness Assembly", category: "HARNESS ASSEMBLY, TERMINAL ABCD", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 53.10, points: 1 },
+        ],
+      },
+      {
+        id: "fan-motor",
+        label: "Fan and Motor Group",
+        parts: [
+          { item: "AT27DD101", name: "Factory Authorized Parts™ - AT27DD101 Hex Motor Nut", category: "NUT, MOTOR - Qty 4", hasSupersedes: true, inventory: { state: "available", note: "On Backorder" }, qtyInUnit: 4, price: 3.60 },
+          { item: "HC34GQ235", name: "Factory Authorized Parts™ - HC34GQ235 - Fan Motor, 1/10 HP", category: "MOTOR, FAN", inventory: { state: "available", note: "Other Branches" }, price: 493.10, points: 9 },
+          { item: "319421-302", name: "Factory Authorized Parts™ - 319421-302 - Raceway", category: "RACEWAY", inventory: { state: "available", note: "On Backorder" }, price: 7.60 },
+          { item: "LA01RA050", name: "Factory Authorized Parts™ - LA01RA050 Propeller Fan Blade", category: "FAN", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 688.80, points: 13 },
+        ],
+      },
+      {
+        id: "casing",
+        label: "Casing Group",
+        parts: [
+          { item: "336098-403", name: "Factory Authorized Parts™ - 336098-403 Fan Guard", category: "GUARD, FAN", inventory: { state: "available", note: "Other Branches" }, price: 441.90, points: 8 },
+          { item: "333980-403", name: "Factory Authorized Parts™ - Top Cover", category: "TOP COVER ASSEMBLY", inventory: { state: "available", note: "Other Branches" }, price: 399.80, points: 7 },
+          { item: "350281-70013", category: "CONTROL BOX COVER KIT" },
+          { item: "334007-418", category: "SERVICE PANEL ASSEMBLY", hasSupersedes: true },
+          { item: "340928-419", name: "Factory Authorized Parts™ - 340928-419 - Grille, Inlet", category: "GRILLE, INLET", inventory: { state: "available", note: "Other Branches" }, price: 787.00, points: 15 },
+          { item: "342055-401", name: "Factory Authorized Parts™ - Nameplate", category: "NAMEPLATE", inventory: { state: "available", note: "Other Branches" }, price: 5.00 },
+        ],
+      },
+      {
+        id: "compressor",
+        label: "Compressor Group",
+        parts: [
+          { item: "GC11MF010", category: "COMPRESSOR", hasSupersedes: true },
+          { item: "AH01AM210", category: "BOLT, COMPRESSOR - Qty 4", qtyInUnit: 4, hasSupersedes: true },
+          { item: "344660-401", name: "Factory Authorized Parts™ - 344660-401", category: "GROMMET, COMPRESSOR - Qty 4", qtyInUnit: 4, inventory: { state: "available", note: "On Backorder" }, price: 4.50 },
+          { item: "350234-415", name: "Factory Authorized Parts™ - Compressor Plug", category: "PLUG, COMPRESSOR", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 210.38, points: 4 },
+        ],
+      },
+      {
+        id: "electrical",
+        label: "Electrical Group",
+        parts: [
+          { item: "HK32EA012", name: "Factory Authorized Parts™ - Circuit Board", category: "BOARD, CONTROL", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 285.80, points: 5 },
+          { item: "HN51ZC001", name: "Factory Authorized Parts™ - HN51ZC001 Contactor", category: "CONTACTOR", inventory: { state: "available", note: "Other Branches" }, price: 53.70, points: 1 },
+          { item: "HC98KA041", category: "CAPACITOR", hasSupersedes: true },
+          { item: "317739-302", name: "Factory Authorized Parts™ - Round Capacitor Bracket", category: "STRAP, CAPACITOR", inventory: { state: "available", note: "On Backorder" }, price: 13.30 },
+          { item: "317497-701", name: "Factory Authorized Parts™ - 317497-701 Harness Assembly", category: "HARNESS ASSEMBLY, TERMINAL ABCD", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 53.10, points: 1 },
+          { item: "HY90AZ009", name: "Factory Authorized Parts™ - HY90AZ009 - GROUND LUG", category: "GROUND LUG", inventory: { state: "available", note: "On Backorder" }, price: 7.90 },
+        ],
+      },
+      {
+        id: "coil-piping",
+        label: "Coil and Piping Group",
+        parts: [
+          { item: "349795-751011", category: "REPLACEMENT COIL KIT", hasSupersedes: true },
+          { item: "337748-751", name: "Factory Authorized Parts™ - Aluminum Braze Kits 10/PK", category: "BRAZE KIT, MULTIPACK", inventory: { state: "available", note: "On Backorder" }, price: 1152.80, points: 23 },
+          { item: "350122-401", name: "Factory Authorized Parts™ - Service Valve", category: "VALVE, SERVICE, LIQUID", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 44.14 },
+          { item: "349801-403", name: "Factory Authorized Parts™ - Service Valve", category: "VALVE, SERVICE, SUCTION", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 57.90, points: 1 },
+          { item: "EF17BZ251", name: "Factory Authorized Parts™ - EF17BZ251 Reversing Valve", category: "VALVE, REVERSING", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 289.90, points: 5 },
+          { item: "KH45LG140", name: "Factory Authorized Parts™ - KH45LG140 Suction Line Drier 8 Cu In For R-410A", category: "DRIER, FILTER, SUCTION", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 180.70, points: 3 },
+        ],
+      },
+      {
+        id: "accessory",
+        label: "Accessory Group",
+        parts: [
+          { item: "KAACH1701AAA", name: "Compressor Crankcase Heater", category: "KIT, CRANKCASE HEATER", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 66.00, points: 1 },
+          { item: "HT32CH248", category: "HEATER, CRANKCASE", hasSupersedes: true },
+          { item: "HH18HA296", name: "Factory Authorized Parts™ - Temperature Switch", category: "SWITCH, TEMPERATURE", inventory: { state: "available", note: "On Backorder" }, price: 24.20 },
+          { item: "KSAFT0101AAA", name: "Evaporator Freeze Thermostat Kit", category: "KIT, EVAPORATOR FREEZE THERMOSTAT", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 77.00, points: 1 },
+          { item: "KAATD0101TDR", name: "Time Delay Relay Kit", category: "KIT, TIME DELAY", inventory: { state: "in-stock", branch: "Ybor City #2541" }, price: 176.00, points: 3 },
+          { item: "KHASS0606MPK", name: "Factory Authorized Parts™ - KHASS0606MPK Snow Stand Kit", category: "KIT, SNOW STAND", inventory: { state: "available", note: "On Backorder" }, price: 7847.20, points: 156 },
+        ],
+      },
+      {
+        id: "instructions",
+        label: "Instructions",
+        parts: [{ item: "GH5SAN5-01SI", category: "INSTRUCTIONS, INSTALLATION" }],
+      },
+    ],
+  },
 };
 
 export const pdps: PdpProduct[] = [
