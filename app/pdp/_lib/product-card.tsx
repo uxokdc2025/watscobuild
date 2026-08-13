@@ -199,10 +199,16 @@ export function ProductCard({
       {/* 2. Image */}
       <CardImage src={data.image} alt={data.title} />
 
-      {/* 3. Title — primary blue, 14px/18px semibold, 3-line clamp. */}
+      {/* 3. Brand — muted 14px, sits directly above the title. Slot reserves
+              its line even when brand is absent so cards stay aligned. */}
+      <p className="min-h-5 text-sm leading-5 text-muted-foreground">
+        {data.brand ?? null}
+      </p>
+
+      {/* 4. Title — foreground, 14px/18px semibold, 3-line clamp. */}
       <a
         href={href}
-        className="line-clamp-3 min-h-[54px] text-sm font-semibold leading-[18px] text-primary hover:underline"
+        className="line-clamp-3 min-h-[54px] text-sm font-semibold leading-[18px] text-foreground hover:underline"
       >
         {data.title}
       </a>
