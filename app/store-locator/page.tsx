@@ -28,7 +28,10 @@ function DirectionColumn({
       <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
         {label}
       </p>
-      {children}
+      {/* Gallery pins each drawer at 720px so height-relative behavior
+          (scroller, sticky header/footer) is visible. In /in-plp the same
+          drawer inherits full viewport height. */}
+      <div className="h-[720px]">{children}</div>
       <Link
         href={`/store-locator/in-plp?v=${variant}`}
         target="_blank"

@@ -12,8 +12,8 @@ import {
   X,
 } from "lucide-react";
 
-/** Ten mock branches, same list across all three drawers so the scroller
- *  behavior can be compared apples-to-apples. */
+/** Ten mock branches — same list across all three variants so scroll and
+ *  layout tradeoffs are comparable apples-to-apples. */
 export const BRANCHES = [
   { name: "Ybor City #2541", miles: 0.8, open: "Open · closes 6pm", phone: "(813) 555-2541" },
   { name: "Tampa #2531", miles: 6.6, open: "Open · closes 6pm", phone: "(813) 555-2531" },
@@ -27,12 +27,25 @@ export const BRANCHES = [
   { name: "Kissimmee #2618", miles: 78.2, open: "Open · closes 5pm", phone: "(407) 555-2618" },
 ];
 
-/** Row-level action links shared by all three variants. Phone · Chat · Directions
- *  render as a single flex row of anchor buttons — every anchor picks up
- *  the global hover-underline rule from globals.css. */
-function RowLinks({ phone }: { phone: string }) {
+/** Directions + miles as a single unit — David's rule: distance and directions
+ *  belong together (miles is the answer, directions is the action). */
+function MilesDirections({ miles }: { miles: number }) {
   return (
-    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+    <span className="inline-flex items-center gap-1.5 text-xs">
+      <span className="text-muted-foreground">{miles} mi</span>
+      <span className="text-muted-foreground/40">·</span>
+      <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
+        <Navigation className="size-3.5" />
+        Get directions
+      </a>
+    </span>
+  );
+}
+
+/** Phone + chat clustered together — talk-to-someone actions live as one unit. */
+function ContactCluster({ phone }: { phone: string }) {
+  return (
+    <span className="inline-flex items-center gap-3 text-xs">
       <a
         href={`tel:${phone.replace(/[^\d]/g, "")}`}
         className="inline-flex items-center gap-1 font-medium text-primary"
@@ -44,20 +57,16 @@ function RowLinks({ phone }: { phone: string }) {
         <MessageSquare className="size-3.5" />
         Chat
       </a>
-      <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
-        <Navigation className="size-3.5" />
-        Get directions
-      </a>
-    </p>
+    </span>
   );
 }
 
-/** Shared secondary-button style for the drawer footer CTAs
- *  (Find other / See more). Used across all three variants for consistency. */
 const SECONDARY_BTN =
   "inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80";
 
-/** Shared drawer close-X. */
+const OUTLINE_BTN =
+  "inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-foreground bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background";
+
 function CloseX() {
   return (
     <button
@@ -70,17 +79,23 @@ function CloseX() {
   );
 }
 
-/** Card shell — 340px wide, subtle hover (background only, no border shift so
- *  the row doesn't visually jump). Used by every variant. */
 const ROW_CARD =
-  "flex w-[340px] flex-col gap-2 rounded-lg border bg-card p-4 transition-colors duration-150 ease-out hover:bg-muted/40";
+  "w-[340px] rounded-lg border bg-card p-4 transition-colors duration-150 ease-out hover:bg-muted/40";
 
-/* ────────────────── Direction A — Ranked list, radio commit ────────────── */
+/** Drawer shell — flexes to whatever height its parent provides. In the
+ *  gallery each column pins 720px; in the /in-plp overlay it stretches
+ *  to inset-y-0 for full viewport height. */
+const DRAWER_SHELL =
+  "flex h-full w-[404px] flex-col overflow-hidden border bg-background shadow-xl";
 
+/* ────────────────── Direction 1 — Ranked list, radio commit ─────────────
+ * Row layout: radio | name / open / miles+directions / phone+chat
+ * Stacking: distance-below-name (readable-first), contact cluster on its own line.
+ */
 export function DirectionADrawer() {
   return (
-    <div className="flex h-[720px] w-[404px] flex-col overflow-hidden rounded-xl border bg-background shadow-sm">
-      <header className="flex items-center justify-between border-b bg-primary px-5 py-3 text-primary-foreground">
+    <div className={DRAWER_SHELL}>
+      <header className="flex shrink-0 items-center justify-between border-b bg-primary px-5 py-3 text-primary-foreground">
         <p className="text-base font-bold">Select a store</p>
         <button
           type="button"
@@ -90,7 +105,7 @@ export function DirectionADrawer() {
           <X className="size-4" />
         </button>
       </header>
-      <div className="border-b p-4">
+      <div className="shrink-0 border-b p-4">
         <p className="text-sm font-semibold">Enter zip code or city, state</p>
         <div className="mt-2 flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
@@ -106,7 +121,10 @@ export function DirectionADrawer() {
       </div>
       <div className="flex flex-1 flex-col items-center gap-3 overflow-y-auto p-4">
         {BRANCHES.map((s, i) => (
-          <label key={s.name} className={`${ROW_CARD} cursor-pointer flex-row gap-3`}>
+          <label
+            key={s.name}
+            className={`${ROW_CARD} flex cursor-pointer gap-3`}
+          >
             <span
               aria-hidden
               className={`mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border-2 ${
@@ -115,20 +133,16 @@ export function DirectionADrawer() {
             >
               {i === 0 ? <span className="size-2 rounded-full bg-primary" /> : null}
             </span>
-            <div className="flex-1">
+            <div className="flex flex-1 flex-col gap-1.5">
               <p className="text-sm font-semibold">{s.name}</p>
-              <p className="mt-1 flex items-center gap-3 text-xs">
-                <span className="font-medium text-emerald-700">{s.open}</span>
-                <span className="text-muted-foreground">{s.miles} mi</span>
-              </p>
-              <div className="mt-1">
-                <RowLinks phone={s.phone} />
-              </div>
+              <p className="text-xs font-medium text-emerald-700">{s.open}</p>
+              <MilesDirections miles={s.miles} />
+              <ContactCluster phone={s.phone} />
             </div>
           </label>
         ))}
       </div>
-      <div className="border-t p-3">
+      <div className="shrink-0 border-t p-3">
         <button
           type="button"
           className="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
@@ -140,19 +154,22 @@ export function DirectionADrawer() {
   );
 }
 
-/* ────────────────── Direction B — Numbered ranking, inline commit ─────── */
-
+/* ────────────────── Direction 2 — Numbered, small inline commit ──────────
+ * Row layout: numbered pill top-left; name + open next to it; miles+directions
+ * bottom-left; phone+chat bottom-right; TINY outline "Select" button at end.
+ * Stacking: horizontal metadata rail instead of vertical stack.
+ */
 export function DirectionBDrawer() {
   return (
-    <div className="flex h-[720px] w-[404px] flex-col overflow-hidden rounded-xl border bg-background shadow-sm">
-      <header className="flex items-center justify-between border-b px-5 py-4">
+    <div className={DRAWER_SHELL}>
+      <header className="flex shrink-0 items-center justify-between border-b px-5 py-4">
         <div>
           <p className="text-base font-bold">Find a branch</p>
           <p className="text-xs text-muted-foreground">Sorted by distance</p>
         </div>
         <CloseX />
       </header>
-      <div className="border-b p-4">
+      <div className="shrink-0 border-b p-4">
         <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
           <span className="flex-1 text-foreground">Tampa, FL 33605</span>
@@ -175,23 +192,23 @@ export function DirectionBDrawer() {
               <div className="flex-1">
                 <p className="text-sm font-bold tracking-wide uppercase">{s.name}</p>
                 <p className="mt-0.5 text-xs font-medium text-emerald-700">{s.open}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{s.miles} mi</p>
-                <div className="mt-1">
-                  <RowLinks phone={s.phone} />
-                </div>
               </div>
+              <button
+                type="button"
+                className="rounded-sm border border-foreground bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-foreground transition-colors hover:bg-foreground hover:text-background"
+              >
+                Select
+              </button>
             </div>
-            <button
-              type="button"
-              className="mt-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              Select store
-            </button>
+            <div className="mt-2 flex items-center justify-between">
+              <MilesDirections miles={s.miles} />
+              <ContactCluster phone={s.phone} />
+            </div>
           </li>
         ))}
       </ul>
-      <div className="border-t p-3">
-        <button type="button" className={SECONDARY_BTN}>
+      <div className="shrink-0 border-t p-3">
+        <button type="button" className={OUTLINE_BTN}>
           See more branches
           <ChevronRight className="size-4" />
         </button>
@@ -200,16 +217,19 @@ export function DirectionBDrawer() {
   );
 }
 
-/* ───────── Direction C — Product-aware inventory drawer ────────────────── */
-
+/* ────────────────── Direction 3 — Product-aware inventory drawer ─────────
+ * Row layout: currently-shopping tag → name → open+miles+directions on one
+ * inline rail → phone+chat rail below → Select store primary button.
+ * Stacking: product context up top, per-row commit inline.
+ */
 export function DirectionCDrawer() {
   return (
-    <div className="flex h-[720px] w-[404px] flex-col overflow-hidden rounded-xl border bg-background shadow-sm">
-      <header className="flex items-center justify-between border-b px-5 py-3">
+    <div className={DRAWER_SHELL}>
+      <header className="flex shrink-0 items-center justify-between border-b px-5 py-3">
         <p className="text-base font-bold">Check Availability</p>
         <CloseX />
       </header>
-      <div className="flex items-start gap-3 border-b bg-muted/40 p-4">
+      <div className="flex shrink-0 items-start gap-3 border-b bg-muted/40 p-4">
         <div className="grid size-16 shrink-0 place-items-center rounded-md border bg-background">
           <MapPin className="size-6 text-muted-foreground/60" />
         </div>
@@ -222,7 +242,7 @@ export function DirectionCDrawer() {
           </p>
         </div>
       </div>
-      <div className="flex border-b">
+      <div className="flex shrink-0 border-b">
         <button
           type="button"
           className="relative flex flex-1 items-center justify-center gap-1.5 border-b-2 border-primary py-3 text-sm font-semibold text-primary"
@@ -240,20 +260,22 @@ export function DirectionCDrawer() {
       </div>
       <ul className="flex flex-1 flex-col items-center gap-3 overflow-y-auto p-4">
         {BRANCHES.map((s, i) => (
-          <li key={s.name} className={ROW_CARD}>
+          <li key={s.name} className={`${ROW_CARD} flex flex-col gap-2`}>
             {i === 0 ? (
               <span className="inline-flex w-fit items-center rounded bg-emerald-600 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
                 Currently shopping
               </span>
             ) : null}
             <p className="text-sm font-bold">{s.name}</p>
-            <p className="text-xs font-medium text-emerald-700">{s.open}</p>
-            <p className="text-xs text-muted-foreground">{s.miles} mi</p>
-            <RowLinks phone={s.phone} />
+            <p className="flex items-center gap-3 text-xs">
+              <span className="font-medium text-emerald-700">{s.open}</span>
+              <MilesDirections miles={s.miles} />
+            </p>
+            <ContactCluster phone={s.phone} />
             {i === 0 ? null : (
               <button
                 type="button"
-                className="mt-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                className="mt-1 self-start rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Select store
               </button>
@@ -261,7 +283,7 @@ export function DirectionCDrawer() {
           </li>
         ))}
       </ul>
-      <div className="border-t p-3">
+      <div className="shrink-0 border-t p-3">
         <button type="button" className={SECONDARY_BTN}>
           Find other branches
           <ChevronRight className="size-4" />

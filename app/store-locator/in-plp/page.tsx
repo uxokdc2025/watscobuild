@@ -52,8 +52,9 @@ export default async function StoreLocatorInPlpPage({
   return (
     <PdpAuthProvider initialSignedIn>
       <div className="relative min-h-svh bg-background">
-        {/* PLP background — Homans search results, signed-in state. */}
-        <div className="pointer-events-none opacity-95">
+        {/* PLP background — Homans search results, signed-in state. Kept
+            non-interactive under the scrim so the drawer is the focus. */}
+        <div aria-hidden className="pointer-events-none opacity-95">
           <SiteHeader brand={brand} signedIn searchQuery="blower motor" />
           <main>
             <SearchBody
@@ -70,12 +71,12 @@ export default async function StoreLocatorInPlpPage({
           <SiteFooter brand={brand} />
         </div>
 
-        {/* Scrim + drawer overlay */}
+        {/* Scrim covers the viewport; drawer pins left, full viewport height. */}
         <div className="fixed inset-0 z-50 bg-black/50">
-          <div className="absolute inset-0 flex items-start justify-end p-6">
+          <div className="absolute inset-y-0 left-0 flex">
             <VariantDrawer v={variant} />
           </div>
-          <div className="absolute top-4 left-4 flex items-center gap-3 rounded-lg bg-background/95 px-3 py-2 shadow-lg">
+          <div className="absolute top-4 right-4 flex items-center gap-3 rounded-lg bg-background/95 px-3 py-2 shadow-lg">
             <Link
               href="/store-locator"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
