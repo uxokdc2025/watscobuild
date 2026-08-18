@@ -199,9 +199,9 @@ export function ProductCard({
       {/* 2. Image */}
       <CardImage src={data.image} alt={data.title} />
 
-      {/* 3. Brand — muted 14px, sits directly above the title. Slot reserves
+      {/* 3. Brand — muted 12px, sits directly above the title. Slot reserves
               its line even when brand is absent so cards stay aligned. */}
-      <p className="min-h-5 text-sm leading-5 text-muted-foreground">
+      <p className="min-h-4 text-xs leading-4 text-muted-foreground">
         {data.brand ?? null}
       </p>
 
