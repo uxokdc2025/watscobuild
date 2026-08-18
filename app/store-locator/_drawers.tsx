@@ -64,9 +64,6 @@ function ContactCluster({ phone }: { phone: string }) {
 const SECONDARY_BTN =
   "inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80";
 
-const OUTLINE_BTN =
-  "inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-foreground bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background";
-
 function CloseX() {
   return (
     <button
@@ -168,10 +165,10 @@ export function DirectionADrawer() {
   );
 }
 
-/* ────────────────── Direction 2 — Numbered, small inline commit ──────────
- * Row layout: numbered pill top-left; name + open next to it; miles+directions
- * bottom-left; phone+chat bottom-right; TINY outline "Select" button at end.
- * Stacking: horizontal metadata rail instead of vertical stack.
+/* ────────────────── Direction 2 — Divider list, small blue commit ───────
+ * No card boxes — rows are separated by hairline dividers so the eye moves
+ * top-to-bottom without visual weight from row chrome. Small primary-blue
+ * "Select" button per row. No numbering (didn't earn its space).
  */
 export function DirectionBDrawer() {
   return (
@@ -196,33 +193,30 @@ export function DirectionBDrawer() {
           Use my location
         </a>
       </div>
-      <ul className="flex flex-1 flex-col items-center gap-3 overflow-y-auto p-4">
-        {BRANCHES.map((s, i) => (
-          <li key={s.name} className={ROW_CARD}>
-            <div className="flex items-start gap-3">
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-                {i + 1}
-              </span>
-              <div className="flex-1">
-                <p className="text-sm font-bold tracking-wide uppercase">{s.name}</p>
+      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
+        {BRANCHES.map((s) => (
+          <li key={s.name} className="px-5 py-4 transition-colors hover:bg-muted/40">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold">{s.name}</p>
                 <p className="mt-0.5 text-xs font-medium text-emerald-700">{s.open}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <MilesDirections miles={s.miles} />
+                  <ContactCluster phone={s.phone} />
+                </div>
               </div>
               <button
                 type="button"
-                className="rounded-sm border border-foreground bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-foreground transition-colors hover:bg-foreground hover:text-background"
+                className="shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Select
               </button>
-            </div>
-            <div className="mt-2 flex items-center justify-between">
-              <MilesDirections miles={s.miles} />
-              <ContactCluster phone={s.phone} />
             </div>
           </li>
         ))}
       </ul>
       <div className="shrink-0 border-t p-3">
-        <button type="button" className={OUTLINE_BTN}>
+        <button type="button" className={SECONDARY_BTN}>
           See more branches
           <ChevronRight className="size-4" />
         </button>
@@ -272,28 +266,52 @@ export function DirectionCDrawer() {
           Delivery
         </button>
       </div>
-      <ul className="flex flex-1 flex-col items-center gap-3 overflow-y-auto p-4">
+      {/* Search + change-location — same primitive the other drawers use so
+          switching branches is discoverable in the product-aware mode too. */}
+      <div className="shrink-0 border-b p-4">
+        <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
+          <Search className="size-4 text-muted-foreground" />
+          <span className="flex-1 text-foreground">33605</span>
+        </div>
+        <a
+          href="#"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+        >
+          <Navigation className="size-4" />
+          Use my current location
+        </a>
+      </div>
+      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {BRANCHES.map((s, i) => (
-          <li key={s.name} className={`${ROW_CARD} flex flex-col gap-2`}>
+          <li
+            key={s.name}
+            className="flex flex-col gap-1.5 px-5 py-4 transition-colors hover:bg-muted/40"
+          >
             {i === 0 ? (
               <span className="inline-flex w-fit items-center rounded bg-emerald-600 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
                 Currently shopping
               </span>
             ) : null}
-            <p className="text-sm font-bold">{s.name}</p>
-            <p className="flex items-center gap-3 text-xs">
-              <span className="font-medium text-emerald-700">{s.open}</span>
-              <MilesDirections miles={s.miles} />
-            </p>
-            <ContactCluster phone={s.phone} />
-            {i === 0 ? null : (
-              <button
-                type="button"
-                className="mt-1 self-start rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-              >
-                Select store
-              </button>
-            )}
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold">{s.name}</p>
+                <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                  <span className="font-medium text-emerald-700">{s.open}</span>
+                  <MilesDirections miles={s.miles} />
+                </p>
+                <div className="mt-1">
+                  <ContactCluster phone={s.phone} />
+                </div>
+              </div>
+              {i === 0 ? null : (
+                <button
+                  type="button"
+                  className="shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  Select store
+                </button>
+              )}
+            </div>
           </li>
         ))}
       </ul>
