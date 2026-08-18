@@ -29,15 +29,26 @@ function Column({
         {label}
       </p>
       <div className="h-[720px]">{children}</div>
-      <Link
-        href={`/store-locator/inventory/in-plp?v=${variant}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-      >
-        See in PLP
-        <ArrowUpRight className="size-3.5" />
-      </Link>
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        <Link
+          href={`/store-locator/inventory/in-pdp?v=${variant}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          See on PDP
+          <ArrowUpRight className="size-3.5" />
+        </Link>
+        <Link
+          href={`/store-locator/inventory/in-plp?v=${variant}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md border border-primary bg-transparent px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5"
+        >
+          See on PLP
+          <ArrowUpRight className="size-3.5" />
+        </Link>
+      </div>
     </div>
   );
 }
