@@ -1,0 +1,270 @@
+"use client";
+
+/**
+ * INVENTORY DRAWERS — right-side, product-scoped.
+ *
+ * Sibling to `_drawers.tsx` (which handles STORE LOCATOR — left-side, branch
+ * selection). These drawers open on the PDP or PLP when the user wants to
+ * know "how many of THIS thing does each branch have?" — never for changing
+ * their default branch (that's the left drawer's job).
+ *
+ * Three directions, three anchor points on the spectrum:
+ *  1 — Reference literal: East Coast pattern — Current Branch + All Branches
+ *      table, qty on the left rail, info icon per row.
+ *  2 — Tabbed with fulfilment: Branch pickup / Delivery tabs; "currently
+ *      shopping" pill; per-row Select store CTA.
+ *  3 — Dense picker: search + condensed rows, qty badge inline with branch
+ *      name; hover = row-scoped Select action.
+ *
+ * All three slide in from the RIGHT (`inset-y-0 right-0`) — mirror of the
+ * left-side store locators — and all three carry the product context header
+ * so the buyer never loses what they're looking at.
+ */
+
+import { Building2, Info, Search, Truck, X } from "lucide-react";
+
+/** Same 10-branch mock the left drawers use so the two experiences can be
+ *  compared side by side without noise. */
+const BRANCHES = [
+  { name: "Durham NC #1", qty: 0, tag: "current" as const },
+  { name: "Raleigh NC #5", qty: 8 },
+  { name: "Garner NC #45", qty: 2 },
+  { name: "Sanford NC #46", qty: 11 },
+  { name: "Greensboro NC #6", qty: 9 },
+  { name: "Fayetteville NC #38", qty: 1 },
+  { name: "Aberdeen NC #39", qty: 15 },
+  { name: "Winterville NC #25", qty: 9 },
+  { name: "Roanoke VA #10", qty: 4 },
+  { name: "Charlotte NC #3", qty: 2 },
+  { name: "Wilmington NC #9", qty: 6 },
+  { name: "Richmond VA #2", qty: 9 },
+];
+
+const PRODUCT = {
+  brand: "TradePro®",
+  title: "1/3 HP Evaporator Motor — 1075/3 RPM · 208/230V",
+  item: "54510A",
+  mfg: "TP-E33-3SP2",
+};
+
+/** Right-side shell — mirrors the left-side DRAWER_SHELL but slides in from
+ *  the right edge. */
+const SHELL =
+  "flex h-full w-[404px] flex-col overflow-hidden border bg-background shadow-xl";
+
+function ProductHeader() {
+  return (
+    <div className="flex shrink-0 items-start gap-3 border-b bg-muted/40 px-4 py-3">
+      <div className="grid size-12 shrink-0 place-items-center rounded-md border bg-background text-xs font-semibold text-muted-foreground">
+        IMG
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          {PRODUCT.brand}
+        </p>
+        <p className="mt-0.5 text-sm leading-tight font-semibold">
+          {PRODUCT.title}
+        </p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Item {PRODUCT.item} · MFG {PRODUCT.mfg}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function stockColor(qty: number) {
+  if (qty === 0) return "text-red-600";
+  if (qty < 3) return "text-amber-600";
+  return "text-emerald-700";
+}
+
+/* ────────────────── Inventory Direction 1 — East Coast literal ─────────── */
+
+export function InventoryDirection1() {
+  const current = BRANCHES.find((b) => b.tag === "current")!;
+  const rest = BRANCHES.filter((b) => b.tag !== "current");
+  return (
+    <div className={SHELL}>
+      <header className="flex shrink-0 items-center justify-between border-b px-5 py-3">
+        <p className="text-base font-bold">Product Availability</p>
+      </header>
+      <ProductHeader />
+      <div className="shrink-0 border-b px-4 pt-3 pb-2">
+        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          Current Branch
+        </p>
+        <div className="mt-1.5 flex items-center gap-3 rounded-md border bg-card px-3 py-2">
+          <span className={`w-8 shrink-0 text-sm font-bold tabular-nums ${stockColor(current.qty)}`}>
+            {current.qty}
+          </span>
+          <span className="flex-1 text-sm font-medium">{current.name}</span>
+        </div>
+      </div>
+      <div className="shrink-0 px-4 pt-3 pb-1">
+        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          All Branches
+        </p>
+      </div>
+      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
+        {rest.map((b) => (
+          <li
+            key={b.name}
+            className="flex items-center gap-3 px-5 py-2.5 transition-colors hover:bg-muted/40"
+          >
+            <span className={`w-6 shrink-0 text-sm font-semibold tabular-nums ${stockColor(b.qty)}`}>
+              {b.qty}
+            </span>
+            <span className="flex-1 text-sm">{b.name}</span>
+            <button
+              type="button"
+              aria-label={`Details for ${b.name}`}
+              className="grid size-6 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              <Info className="size-4" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ────────────────── Inventory Direction 2 — Tabbed, per-row commit ─────── */
+
+export function InventoryDirection2() {
+  return (
+    <div className={SHELL}>
+      <ProductHeader />
+      <div className="flex shrink-0 border-b">
+        <button
+          type="button"
+          className="flex flex-1 items-center justify-center gap-1.5 border-b-2 border-primary py-3 text-sm font-semibold text-primary"
+        >
+          <Building2 className="size-4" />
+          Branch pickup
+        </button>
+        <button
+          type="button"
+          className="flex flex-1 items-center justify-center gap-1.5 border-b-2 border-transparent py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Truck className="size-4" />
+          Delivery
+        </button>
+      </div>
+      <div className="shrink-0 border-b px-4 pt-3 pb-2.5">
+        <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
+          <Search className="size-4 text-muted-foreground" />
+          <span className="flex-1 text-foreground">Search branches</span>
+        </div>
+      </div>
+      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
+        {BRANCHES.map((b) => (
+          <li
+            key={b.name}
+            className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
+          >
+            <span className={`w-8 shrink-0 text-sm font-bold tabular-nums ${stockColor(b.qty)}`}>
+              {b.qty}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold">{b.name}</p>
+              {b.tag === "current" ? (
+                <span className="mt-0.5 inline-flex items-center rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
+                  Currently shopping
+                </span>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  {b.qty === 0
+                    ? "Out of stock"
+                    : b.qty < 3
+                    ? "Low stock"
+                    : "In stock"}
+                </p>
+              )}
+            </div>
+            {b.tag === "current" ? null : (
+              <button
+                type="button"
+                className="shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                Select
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ────────────────── Inventory Direction 3 — Dense picker ─────────────── */
+
+export function InventoryDirection3() {
+  return (
+    <div className={SHELL}>
+      <ProductHeader />
+      <div className="shrink-0 border-b px-4 pt-3 pb-2.5">
+        <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-1.5 text-sm">
+          <Search className="size-4 text-muted-foreground" />
+          <span className="flex-1 text-foreground">City, state, or ZIP</span>
+        </div>
+      </div>
+      <div className="grid shrink-0 grid-cols-[64px_1fr_28px] items-center gap-2 border-b bg-muted/30 px-4 py-2 text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
+        <span>Qty</span>
+        <span>Branch</span>
+        <span aria-hidden />
+      </div>
+      <ul className="flex flex-1 flex-col overflow-y-auto text-sm">
+        {BRANCHES.map((b, i) => (
+          <li
+            key={b.name}
+            className={`grid grid-cols-[64px_1fr_28px] items-center gap-2 border-b px-4 py-2 transition-colors hover:bg-muted/40 ${
+              i === 0 ? "bg-emerald-50 dark:bg-emerald-950/20" : ""
+            }`}
+          >
+            <span className={`text-sm font-bold tabular-nums ${stockColor(b.qty)}`}>
+              {b.qty}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate font-medium">{b.name}</p>
+              {b.tag === "current" ? (
+                <p className="text-[11px] font-semibold text-emerald-700">
+                  Currently shopping
+                </p>
+              ) : null}
+            </div>
+            <button
+              type="button"
+              aria-label={`Details for ${b.name}`}
+              className="grid size-6 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              <Info className="size-4" />
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="shrink-0 border-t p-3">
+        <button
+          type="button"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background"
+        >
+          Set as my branch
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** Shared close-X for the /in-plp overlay — matches the store-locator scrim. */
+export function InventoryCloseX() {
+  return (
+    <button
+      type="button"
+      aria-label="Close"
+      className="grid size-10 place-items-center rounded-full bg-background text-foreground shadow-lg transition-colors hover:bg-accent"
+    >
+      <X className="size-5" />
+    </button>
+  );
+}
