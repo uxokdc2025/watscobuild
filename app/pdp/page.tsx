@@ -395,6 +395,45 @@ export default function PdpMasterPage() {
             </AccordionItem>
           ) : null}
         </Accordion>
+
+        {/* Project footer — persistent credits + provenance. Kept terse so
+            the review page ends with signal, not chrome. */}
+        <footer className="mt-16 border-t pt-8 pb-4 text-sm text-muted-foreground">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <p className="font-semibold text-foreground">
+                Watsco PDP Prototype
+              </p>
+              <p className="mt-1">
+                Started July 23, 2026 · Design-system prototype for the Watsco
+                distributor storefronts.
+              </p>
+            </div>
+            <dl className="grid grid-cols-2 gap-x-8 gap-y-1 text-xs sm:text-sm">
+              <dt className="font-semibold text-foreground">Client</dt>
+              <dd>Ryan · Watsco</dd>
+              <dt className="font-semibold text-foreground">UX Designer</dt>
+              <dd>David Cervantes</dd>
+              <dt className="font-semibold text-foreground">Stack</dt>
+              <dd>Next.js 15 · React 19 · Tailwind v4 · shadcn</dd>
+              <dt className="font-semibold text-foreground">Source</dt>
+              <dd>
+                <a
+                  href="https://github.com/uxokdc2025/watscobuild"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline-offset-4 hover:underline"
+                >
+                  github.com/uxokdc2025/watscobuild
+                </a>
+              </dd>
+            </dl>
+          </div>
+          <p className="mt-6 text-xs">
+            Prototype · not for production. Product data is representative,
+            not live inventory.
+          </p>
+        </footer>
       </main>
     </div>
   );
