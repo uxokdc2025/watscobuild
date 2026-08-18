@@ -270,7 +270,7 @@ export default function PdpMasterPage() {
             other panels start collapsed to keep the review focused. */}
         <Accordion
           type="multiple"
-          defaultValue={["in-review"]}
+          defaultValue={[]}
           className="mt-8 flex flex-col gap-3"
         >
           <AccordionItem
