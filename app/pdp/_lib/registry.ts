@@ -1623,7 +1623,7 @@ const ucTabsAccordions: PdpProduct = {
   slug: "uc-tabs-accordions",
   brand: "Carrier®",
   brandKey: "carrier",
-  useCase: "In Review",
+  useCase: "Tabs & Accordions",
   sourceUrl: "https://www.carrierenterprise.com/product/1604089243320928",
   store: { name: "Ybor City #2541" },
   title:
@@ -1632,10 +1632,6 @@ const ucTabsAccordions: PdpProduct = {
   mfg: "GH5SAN53000A",
   thumbnailCount: 1,
   images: ["/uc-tabs-accordions/gh5san.avif"],
-  // Wired for AHRI discovery so the "Find an AHRI Matched System" outline
-  // button surfaces here — this is the canonical in-review PDP where every
-  // recent design decision (buy-box, badges, product card, AHRI CTA) lands.
-  ahri: { number: "213895723" },
   commerce: {
     price: 3849.0,
     uom: "EA",

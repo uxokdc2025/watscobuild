@@ -201,19 +201,27 @@ export default function PdpMasterPage() {
   // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
   const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
   // In-review bucket: the PDP(s) David is actively reviewing right now.
-  // `uc-tabs-accordions` is the canonical review PDP — every recent design
-  // decision (AHRI CTA, buy-box, product card, badges, accordions) lands
-  // there so the review target is one link, not a scavenger hunt.
-  const inReviewSlugs = ["uc-tabs-accordions"];
+  // `uc-ahri-matched-system` is the canonical review PDP — it renders the
+  // full AHRI discovery pattern (Find AHRI outline button, matchup badge)
+  // that is the current review target.
+  const inReviewSlugs = ["uc-ahri-matched-system"];
+  const tabsAccordionsSlugs = ["uc-tabs-accordions"];
   const inReview = templates.filter((p) => inReviewSlugs.includes(p.slug));
+  const tabsAccordions = templates.filter((p) =>
+    tabsAccordionsSlugs.includes(p.slug),
+  );
   const useCases = templates.filter(
-    (p) => p.useCase && !inReviewSlugs.includes(p.slug),
+    (p) =>
+      p.useCase &&
+      !inReviewSlugs.includes(p.slug) &&
+      !tabsAccordionsSlugs.includes(p.slug),
   );
   const rest = templates.filter(
     (p) =>
       p.slug !== "ecmdi-pro-flush-v2" &&
       !p.useCase &&
-      !inReviewSlugs.includes(p.slug),
+      !inReviewSlugs.includes(p.slug) &&
+      !tabsAccordionsSlugs.includes(p.slug),
   );
   const inScope = rest
     .filter((p) => IN_SCOPE.includes(p.brandKey ?? ""))
@@ -340,12 +348,38 @@ export default function PdpMasterPage() {
               </AccordionTrigger>
               <AccordionContent>
                 <p className="max-w-2xl text-sm text-muted-foreground">
-                  Active review target. Every recent design decision — buy-box
-                  layout, product cards, badges, AHRI discovery CTA, tabbed
-                  About + accordions — lives on this PDP.
+                  Active review target. AHRI matched-system flow, buy-box
+                  layout, product cards, and the Find-AHRI outline button all
+                  render on this PDP.
                 </p>
                 <ul className="mt-4 flex flex-col gap-3 pb-2">
                   {inReview.map((p) => (
+                    <TemplateCard key={p.slug} p={p} signedInOnly />
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ) : null}
+
+          {tabsAccordions.length ? (
+            <AccordionItem
+              value="tabs-accordions"
+              id="tabs-accordions"
+              className="scroll-mt-6 rounded-xl border bg-card px-5"
+            >
+              <AccordionTrigger className="hover:no-underline">
+                <span className="flex items-center gap-3">
+                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                    Product Details Page
+                  </span>
+                  <span className="text-lg font-bold tracking-tight">
+                    Tabs &amp; Accordions ({tabsAccordions.length})
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <ul className="flex flex-col gap-3 pb-2">
+                  {tabsAccordions.map((p) => (
                     <TemplateCard key={p.slug} p={p} signedInOnly />
                   ))}
                 </ul>
