@@ -1632,17 +1632,6 @@ const ucTabsAccordions: PdpProduct = {
   mfg: "GH5SAN53000A",
   thumbnailCount: 1,
   images: ["/uc-tabs-accordions/gh5san.avif"],
-  commerce: {
-    price: 3849.0,
-    uom: "EA",
-    points: 38,
-    yourBranch: { name: "Ybor City #2541", stock: 12 },
-    nearbyBranches: [
-      { qty: 8, name: "Tampa #2531" },
-      { qty: 4, name: "Clearwater #2521" },
-      { qty: 2, name: "Lakeland #2551" },
-    ],
-  },
   detailsStyle: "about",
   description: {
     intro:
@@ -1793,11 +1782,9 @@ const ucTabsAccordions: PdpProduct = {
     },
   ],
   commerce: {
-    // Signed-in state on this reference is "Contact for pricing" — expose one
-    // representative price so the shared summary block still renders. Real
-    // gating (price hidden) is covered by the ucPoints / ucNonSellable states.
-    price: null,
+    price: 3849.0,
     uom: "EACH",
+    points: 38,
     yourBranch: { name: "Ybor City #2541", stock: 353 },
     nearbyBranches: [{ qty: 1082, name: "Other Branches" }],
   },
