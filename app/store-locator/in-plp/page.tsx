@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 
 import { getBrand } from "@/app/pdp/_lib/brands";
 import { SiteHeader, SiteFooter } from "@/app/pdp/_lib/chrome";
@@ -75,6 +75,17 @@ export default async function StoreLocatorInPlpPage({
         <div className="fixed inset-0 z-50 bg-black/50">
           <div className="absolute inset-y-0 left-0 flex">
             <VariantDrawer v={variant} />
+            {/* Direction 3 — Close X lives OUTSIDE the drawer, floating on
+                the scrim to the right of the drawer edge. */}
+            {variant === "c" ? (
+              <button
+                type="button"
+                aria-label="Close"
+                className="absolute top-4 left-[420px] grid size-10 place-items-center rounded-full bg-background text-foreground shadow-lg transition-colors hover:bg-accent"
+              >
+                <X className="size-5" />
+              </button>
+            ) : null}
           </div>
           <div className="absolute top-4 right-4 flex items-center gap-3 rounded-lg bg-background/95 px-3 py-2 shadow-lg">
             <Link

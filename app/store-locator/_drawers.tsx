@@ -99,7 +99,7 @@ export function DirectionADrawer() {
           <X className="size-4" />
         </button>
       </header>
-      <div className="shrink-0 border-b px-4 pt-4 pb-3">
+      <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
         <p className="text-sm font-semibold">Enter zip code or city, state</p>
         <div className="mt-2 flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
@@ -116,7 +116,7 @@ export function DirectionADrawer() {
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {BRANCHES.map((s, i) => (
           <li key={s.name}>
-            <label className="flex cursor-pointer gap-3 px-5 py-4 transition-colors hover:bg-muted/40">
+            <label className="flex cursor-pointer gap-3 px-5 py-3.5 transition-colors hover:bg-muted/40">
               <span
                 aria-hidden
                 className={`mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border-2 ${
@@ -127,13 +127,26 @@ export function DirectionADrawer() {
                   <span className="size-2 rounded-full bg-primary" />
                 ) : null}
               </span>
-              {/* Two-column row: identity left, miles + directions pinned
-                  right so the whitespace on the right is used. */}
+              {/* Two-column row, three lines each side.
+                  Left: name / phone / chat.
+                  Right: miles / directions / open-status. */}
               <div className="flex flex-1 items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1.5">
-                  <p className="text-sm font-semibold">{s.name}</p>
-                  <p className="text-xs font-medium text-emerald-700">{s.open}</p>
-                  <ContactCluster phone={s.phone} />
+                <div className="flex min-w-0 flex-col gap-1 text-xs">
+                  <p className="text-sm font-semibold text-foreground">{s.name}</p>
+                  <a
+                    href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
+                    className="inline-flex items-center gap-1 font-medium text-primary"
+                  >
+                    <Phone className="size-3.5" />
+                    {s.phone}
+                  </a>
+                  <a
+                    href="#"
+                    className="inline-flex items-center gap-1 font-medium text-primary"
+                  >
+                    <MessageSquare className="size-3.5" />
+                    Chat
+                  </a>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
                   <span className="font-medium text-foreground">
@@ -146,6 +159,7 @@ export function DirectionADrawer() {
                     <Navigation className="size-3.5" />
                     Directions
                   </a>
+                  <span className="font-medium text-emerald-700">{s.open}</span>
                 </div>
               </div>
             </label>
@@ -172,14 +186,14 @@ export function DirectionADrawer() {
 export function DirectionBDrawer() {
   return (
     <div className={DRAWER_SHELL}>
-      <header className="flex shrink-0 items-center justify-between border-b px-5 py-4">
+      <header className="flex shrink-0 items-center justify-between border-b px-5 py-3.5">
         <div>
           <p className="text-base font-bold">Find a branch</p>
           <p className="text-xs text-muted-foreground">Sorted by distance</p>
         </div>
         <CloseX />
       </header>
-      <div className="shrink-0 border-b px-4 pt-4 pb-3">
+      <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
         <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
           <span className="flex-1 text-foreground">Tampa, FL 33605</span>
@@ -194,7 +208,7 @@ export function DirectionBDrawer() {
       </div>
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {BRANCHES.map((s) => (
-          <li key={s.name} className="px-5 py-4 transition-colors hover:bg-muted/40">
+          <li key={s.name} className="px-5 py-3.5 transition-colors hover:bg-muted/40">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold">{s.name}</p>
@@ -234,17 +248,10 @@ export function DirectionBDrawer() {
  */
 export function DirectionCDrawer() {
   return (
-    <div className={`${DRAWER_SHELL} relative`}>
-      {/* Floating close button — sits outside the drawer at the top-right,
-          circle with drop shadow, so the header can be reserved entirely
-          for the product context. */}
-      <button
-        type="button"
-        aria-label="Close"
-        className="absolute top-3 -right-4 z-10 grid size-8 translate-x-full place-items-center rounded-full border bg-background text-muted-foreground shadow-lg transition-colors hover:bg-accent hover:text-foreground"
-      >
-        <X className="size-4" />
-      </button>
+    <div className={DRAWER_SHELL}>
+      {/* No inline header — product context row is the top of the drawer.
+          The Close X floats OUTSIDE this drawer on the scrim; it lives in
+          the /in-plp overlay page, not in this component. */}
       <div className="flex shrink-0 items-start gap-3 border-b bg-muted/40 p-4">
         <div className="grid size-16 shrink-0 place-items-center rounded-md border bg-background">
           <MapPin className="size-6 text-muted-foreground/60" />
@@ -276,7 +283,7 @@ export function DirectionCDrawer() {
       </div>
       {/* Search + change-location — same primitive the other drawers use so
           switching branches is discoverable in the product-aware mode too. */}
-      <div className="shrink-0 border-b px-4 pt-4 pb-3">
+      <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
         <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
           <span className="flex-1 text-foreground">33605</span>
@@ -293,7 +300,7 @@ export function DirectionCDrawer() {
         {BRANCHES.map((s, i) => (
           <li
             key={s.name}
-            className="flex flex-col gap-1.5 px-5 py-4 transition-colors hover:bg-muted/40"
+            className="flex flex-col gap-1.5 px-5 py-3.5 transition-colors hover:bg-muted/40"
           >
             {i === 0 ? (
               <span className="inline-flex w-fit items-center rounded bg-emerald-600 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
