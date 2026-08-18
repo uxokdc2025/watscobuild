@@ -73,7 +73,12 @@ function BranchAvailability({
               </li>
             ))}
           </ul>
-          <a href="#" className="mt-3 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline">
+          <a
+            href="/store-locator"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
+          >
             View All Branches
           </a>
         </div>

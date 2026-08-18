@@ -354,6 +354,42 @@ export default function PdpMasterPage() {
           ) : null}
 
           <AccordionItem
+            value="store-locator"
+            id="store-locator"
+            className="scroll-mt-6 rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  Shared Component
+                </span>
+                <span className="text-lg font-bold tracking-tight">
+                  Store Locator + Inventory Drawer
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                Three UX/UI directions for the shared store-locator +
+                inventory-drawer component. Homans is the starting reference;
+                every PDP&apos;s Nearby Branches → View All Branches link opens
+                this page.
+              </p>
+              <div className="mt-4">
+                <Link
+                  href="/store-locator"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  Open direction gallery
+                  <ArrowUpRight className="size-3.5" />
+                </Link>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem
             value="plp"
             id="plp"
             className="scroll-mt-6 rounded-xl border bg-card px-5"
