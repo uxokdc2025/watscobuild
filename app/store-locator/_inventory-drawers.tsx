@@ -25,8 +25,9 @@ import { Building2, Search, Truck, X } from "lucide-react";
 
 /** Same 10-branch mock the left drawers use so the two experiences can be
  *  compared side by side without noise. */
-const BRANCHES = [
-  { name: "Durham NC #1", qty: 0, tag: "current" as const },
+type Branch = { name: string; qty: number; tag?: "current" };
+const BRANCHES: Branch[] = [
+  { name: "Durham NC #1", qty: 0, tag: "current" },
   { name: "Raleigh NC #5", qty: 8 },
   { name: "Garner NC #45", qty: 2 },
   { name: "Sanford NC #46", qty: 11 },
@@ -36,8 +37,26 @@ const BRANCHES = [
   { name: "Winterville NC #25", qty: 9 },
   { name: "Roanoke VA #10", qty: 4 },
   { name: "Charlotte NC #3", qty: 2 },
+  { name: "South Charlotte NC #19", qty: 2 },
   { name: "Wilmington NC #9", qty: 6 },
   { name: "Richmond VA #2", qty: 9 },
+  { name: "Hickory NC #11", qty: 6 },
+  { name: "Conway SC #47", qty: 6 },
+  { name: "Newport News VA #37", qty: 2 },
+  { name: "Myrtle Beach SC #27", qty: 7 },
+  { name: "Boone NC #40", qty: 5 },
+  { name: "Virginia Beach VA #7", qty: 7 },
+  { name: "Fredericksburg VA #18", qty: 3 },
+  { name: "Columbia SC #8", qty: 11 },
+  { name: "Blountville TN #24", qty: 15 },
+  { name: "Orangeburg SC #34", qty: 21 },
+  { name: "Greenville SC #4", qty: 10 },
+  { name: "Charleston SC #12", qty: 1 },
+  { name: "Morristown TN #22", qty: 14 },
+  { name: "Beaufort SC #33", qty: 4 },
+  { name: "Knoxville TN #21", qty: 3 },
+  { name: "Savannah GA #31", qty: 14 },
+  { name: "Gainesville GA #28", qty: 2 },
 ];
 
 const PRODUCT = {
@@ -110,12 +129,23 @@ export function InventoryDirection1() {
         {rest.map((b) => (
           <li
             key={b.name}
-            className="flex items-center gap-3 px-5 py-2.5 transition-colors hover:bg-muted/40"
+            className="group flex items-center gap-3 px-5 py-2.5 transition-colors hover:bg-muted/40"
           >
-            <span className={`w-6 shrink-0 text-sm font-semibold tabular-nums ${stockColor(b.qty)}`}>
+            <span
+              className={`w-6 shrink-0 text-sm font-semibold tabular-nums ${stockColor(b.qty)}`}
+            >
               {b.qty}
             </span>
             <span className="flex-1 text-sm">{b.name}</span>
+            {/* Select store — hidden by default so Direction 1 stays super
+                light; row hover reveals it (per-row commit without extra
+                chrome on rest state). */}
+            <button
+              type="button"
+              className="ml-2 hidden shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 group-hover:inline-flex"
+            >
+              Select store
+            </button>
           </li>
         ))}
       </ul>
