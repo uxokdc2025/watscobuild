@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { BranchRow, PointsBadge, stockTextClass } from "@/components/ui/label-badges";
-import { CompareButton } from "@/components/ui/compare-button";
 import { PackSizePills } from "@/components/ui/pack-size-pills";
 import { useAuth } from "./auth";
 import { formatUSD, formatUom, type PdpCommerce, type PdpProduct } from "./types";
@@ -128,21 +127,21 @@ function InfoBanner({ children }: { children: React.ReactNode }) {
  *  It stays hidden on refrigerants, capacitors, blower motors, etc., where
  *  the page never "calls for" AHRI matching. */
 function SecondaryActions({
-  showCompare,
   showFindAhri,
 }: {
-  showCompare: boolean;
   showFindAhri: boolean;
 }) {
   return (
     // Two-column grid mirrors the Qty-stepper (134px) + Add-to-Cart row above,
     // so Find AHRI aligns flush with the Add-to-Cart left edge and Save to
     // List sits under the qty stepper. No visual stagger between rows.
+    // Compare is intentionally NOT surfaced in this secondary row (locked
+    // 2026-08-18) — the buy-box already carries the value hierarchy without
+    // a third CTA competing for attention.
     <div className="grid grid-cols-[134px_1fr] items-center gap-x-3 gap-y-1">
       <SaveToList />
       <div className="flex flex-wrap items-center gap-x-3">
         {showFindAhri ? <FindAhriMatchedSystem /> : null}
-        {showCompare ? <CompareButton /> : null}
       </div>
     </div>
   );
@@ -158,10 +157,8 @@ function SecondaryActions({
 
 export function PdpSummary({
   product,
-  showCompare = false,
 }: {
   product: PdpProduct;
-  showCompare?: boolean;
 }) {
   const { signedIn } = useAuth();
   // Shared quantity: the stepper and the pack-size pills both drive it, so
@@ -246,7 +243,7 @@ export function PdpSummary({
                 </p>
               </div>
             )}
-            <SecondaryActions showCompare={showCompare} showFindAhri={showFindAhri} />
+            <SecondaryActions showFindAhri={showFindAhri} />
           </>
         ) : (
           <div className="rounded-lg border border-amber-500/40 bg-amber-50 p-4 text-sm dark:bg-amber-950/30">
@@ -336,7 +333,7 @@ export function PdpSummary({
                 Add to Cart
               </Button>
             </div>
-            <SecondaryActions showCompare={showCompare} showFindAhri={showFindAhri} />
+            <SecondaryActions showFindAhri={showFindAhri} />
           </div>
         </>
       ) : (
@@ -352,7 +349,7 @@ export function PdpSummary({
             <LogIn />
             Sign in to view pricing
           </Button>
-          <SecondaryActions showCompare={showCompare} showFindAhri={showFindAhri} />
+          <SecondaryActions showFindAhri={showFindAhri} />
         </>
           )}
         </>

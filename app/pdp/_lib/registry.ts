@@ -1636,6 +1636,17 @@ const ucTabsAccordions: PdpProduct = {
   // button surfaces here — this is the canonical in-review PDP where every
   // recent design decision (buy-box, badges, product card, AHRI CTA) lands.
   ahri: { number: "213895723" },
+  commerce: {
+    price: 3849.0,
+    uom: "EA",
+    points: 38,
+    yourBranch: { name: "Ybor City #2541", stock: 12 },
+    nearbyBranches: [
+      { qty: 8, name: "Tampa #2531" },
+      { qty: 4, name: "Clearwater #2521" },
+      { qty: 2, name: "Lakeland #2551" },
+    ],
+  },
   detailsStyle: "about",
   description: {
     intro:

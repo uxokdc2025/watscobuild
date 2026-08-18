@@ -1,9 +1,13 @@
 "use client";
 
-import { Check, Loader2, Plus, Shield } from "lucide-react";
+import { Check, Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  ProEssentialsBadge,
+  SubstituteBadge,
+} from "@/components/ui/label-badges";
 import { Category, Demo, State } from "../_showcase";
 
 export function ActionsSection() {
@@ -88,11 +92,11 @@ export function ActionsSection() {
             Active
           </Badge>
         </State>
-        <State label="Soft (Pro Essentials)">
-          <Badge variant="soft" color="blue">
-            <Shield className="size-3" />
-            Pro Essentials
-          </Badge>
+        <State label="Pro Essentials">
+          <ProEssentialsBadge />
+        </State>
+        <State label="Substitute">
+          <SubstituteBadge />
         </State>
         <State label="Solid (Best Value)">
           <Badge variant="solid" color="violet">

@@ -87,10 +87,7 @@ export function Pdp({
               />
             </div>
             <div className="flex flex-col gap-6">
-              <PdpSummary
-                product={summaryProduct}
-                showCompare={brand?.hasCompare ?? false}
-              />
+              <PdpSummary product={summaryProduct} />
               {/* New pattern: bundles + recommendations all sit under the buy
                   box, in the summary column. AHRI Matchup renders in this same
                   band using the PRO-Picks shape (H2 + single card, no nested
