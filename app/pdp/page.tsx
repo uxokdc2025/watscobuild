@@ -200,20 +200,20 @@ function TemplateCard({
 export default function PdpMasterPage() {
   // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
   const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
-  // The v2 pack-size-pills demo is called out on its own, not in the main list.
-  // Use-case demo entries get their own section at the bottom.
-  // "Tabs & Accordions" is its own section on the master (per David) — pulled
-  // out of the general Use-Cases list so both surfaces stay clean.
-  const tabsAccordionsSlugs = ["uc-tabs-accordions"];
-  const tabsAccordions = templates.filter((p) => tabsAccordionsSlugs.includes(p.slug));
+  // In-review bucket: the PDP(s) David is actively reviewing right now.
+  // `uc-tabs-accordions` is the canonical review PDP — every recent design
+  // decision (AHRI CTA, buy-box, product card, badges, accordions) lands
+  // there so the review target is one link, not a scavenger hunt.
+  const inReviewSlugs = ["uc-tabs-accordions"];
+  const inReview = templates.filter((p) => inReviewSlugs.includes(p.slug));
   const useCases = templates.filter(
-    (p) => p.useCase && !tabsAccordionsSlugs.includes(p.slug),
+    (p) => p.useCase && !inReviewSlugs.includes(p.slug),
   );
   const rest = templates.filter(
     (p) =>
       p.slug !== "ecmdi-pro-flush-v2" &&
       !p.useCase &&
-      !tabsAccordionsSlugs.includes(p.slug),
+      !inReviewSlugs.includes(p.slug),
   );
   const inScope = rest
     .filter((p) => IN_SCOPE.includes(p.brandKey ?? ""))
@@ -257,11 +257,12 @@ export default function PdpMasterPage() {
           </div>
         </div>
 
-        {/* Each section is its own accordion panel. Use Cases opens by default;
-            the in-scope list and Descoped start collapsed. */}
+        {/* Each section is its own accordion panel. "In Review" opens by
+            default — that is where every active design decision lands. All
+            other panels start collapsed to keep the review focused. */}
         <Accordion
           type="multiple"
-          defaultValue={["use-cases"]}
+          defaultValue={["in-review"]}
           className="mt-8 flex flex-col gap-3"
         >
           <AccordionItem
@@ -291,7 +292,7 @@ export default function PdpMasterPage() {
             <AccordionItem
               value="use-cases"
               id="use-cases"
-              className="scroll-mt-6 rounded-xl border-2 border-primary/40 bg-card px-5"
+              className="scroll-mt-6 rounded-xl border bg-card px-5"
             >
               <AccordionTrigger className="hover:no-underline">
                 <span className="flex items-center gap-3">
@@ -321,11 +322,11 @@ export default function PdpMasterPage() {
             </AccordionItem>
           ) : null}
 
-          {tabsAccordions.length ? (
+          {inReview.length ? (
             <AccordionItem
-              value="tabs-accordions"
-              id="tabs-accordions"
-              className="scroll-mt-6 rounded-xl border bg-card px-5"
+              value="in-review"
+              id="in-review"
+              className="scroll-mt-6 rounded-xl border-2 border-primary/40 bg-card px-5"
             >
               <AccordionTrigger className="hover:no-underline">
                 <span className="flex items-center gap-3">
@@ -333,13 +334,18 @@ export default function PdpMasterPage() {
                     Product Details Page
                   </span>
                   <span className="text-lg font-bold tracking-tight">
-                    Tabs &amp; Accordions ({tabsAccordions.length})
+                    In Review ({inReview.length})
                   </span>
                 </span>
               </AccordionTrigger>
               <AccordionContent>
-                <ul className="flex flex-col gap-3 pb-2">
-                  {tabsAccordions.map((p) => (
+                <p className="max-w-2xl text-sm text-muted-foreground">
+                  Active review target. Every recent design decision — buy-box
+                  layout, product cards, badges, AHRI discovery CTA, tabbed
+                  About + accordions — lives on this PDP.
+                </p>
+                <ul className="mt-4 flex flex-col gap-3 pb-2">
+                  {inReview.map((p) => (
                     <TemplateCard key={p.slug} p={p} signedInOnly />
                   ))}
                 </ul>

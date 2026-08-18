@@ -87,7 +87,7 @@ function SaveToList() {
   return (
     <button
       type="button"
-      className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      className="inline-flex items-center gap-1.5 rounded-md py-2 text-sm font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
     >
       <ListPlus className="size-4" />
       Save to List
@@ -135,10 +135,15 @@ function SecondaryActions({
   showFindAhri: boolean;
 }) {
   return (
-    <div className="-ml-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+    // Two-column grid mirrors the Qty-stepper (134px) + Add-to-Cart row above,
+    // so Find AHRI aligns flush with the Add-to-Cart left edge and Save to
+    // List sits under the qty stepper. No visual stagger between rows.
+    <div className="grid grid-cols-[134px_1fr] items-center gap-x-3 gap-y-1">
       <SaveToList />
-      {showFindAhri ? <FindAhriMatchedSystem /> : null}
-      {showCompare ? <CompareButton /> : null}
+      <div className="flex flex-wrap items-center gap-x-3">
+        {showFindAhri ? <FindAhriMatchedSystem /> : null}
+        {showCompare ? <CompareButton /> : null}
+      </div>
     </div>
   );
 }
