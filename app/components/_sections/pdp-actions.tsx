@@ -9,7 +9,7 @@ import { Category, Demo } from "../_showcase";
  *  the PDP buy-box uses, so alignment is honest. */
 function QtyAndAdd() {
   const cell =
-    "grid h-9 w-9 place-items-center text-foreground disabled:opacity-40 disabled:hover:bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors";
+    "grid h-9 w-9 place-items-center text-foreground disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground hover:bg-accent hover:text-accent-foreground transition-colors";
   return (
     <div className="flex items-center gap-3">
       <div

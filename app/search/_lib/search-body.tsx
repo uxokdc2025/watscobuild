@@ -257,7 +257,7 @@ export function SearchBody({
                 </ul>
                 <button
                   type="button"
-                  className="mt-2 text-xs font-medium text-primary hover:underline"
+                  className="mt-2 inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/80"
                 >
                   See More
                 </button>
@@ -401,7 +401,7 @@ function FacetGroup({
         {spec.seeMore ? (
           <button
             type="button"
-            className="mt-2 text-xs font-medium text-primary hover:underline"
+            className="mt-2 inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/80"
           >
             See More
           </button>

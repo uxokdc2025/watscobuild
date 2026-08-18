@@ -758,7 +758,7 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
 function QtyAdd() {
   const [qty, setQty] = React.useState(1);
   const step =
-    "grid h-8 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+    "grid h-8 w-7 place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground";
   return (
     <div className="flex w-20 shrink-0 flex-col gap-3">
       <div className="inline-flex h-8 items-center justify-between rounded-md border" role="group" aria-label="Quantity">

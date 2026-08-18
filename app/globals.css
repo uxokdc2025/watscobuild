@@ -402,4 +402,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Global link pattern: every <a> underlines on hover with a 4px offset.
+     Opt out per-link with Tailwind `hover:no-underline`. Applies to
+     bare anchors only — buttons rendered as <a asChild> keep their
+     button styling because they carry Tailwind hover classes that win. */
+  a {
+    text-underline-offset: 4px;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
 }

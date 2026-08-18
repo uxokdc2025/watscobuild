@@ -178,33 +178,31 @@ function DirectionA() {
               Use my current location
             </button>
           </div>
-          <div className="flex flex-1 flex-col divide-y overflow-y-auto">
+          <div className="flex flex-1 flex-col items-center gap-3 overflow-y-auto p-4">
             {[
               {
                 selected: true,
                 name: "Ybor City #2541",
-                addr: "1502 E 5th Ave, Tampa, FL 33605",
                 miles: 0.8,
                 openUntil: "6pm",
               },
               {
                 selected: false,
                 name: "Tampa #2531",
-                addr: "3200 W Cypress St, Tampa, FL 33607",
                 miles: 6.6,
                 openUntil: "6pm",
               },
               {
                 selected: false,
                 name: "Clearwater #2521",
-                addr: "18325 US Highway 19 N, Clearwater, FL 33764",
                 miles: 8.6,
                 openUntil: "6pm",
               },
             ].map((s) => (
               <label
                 key={s.name}
-                className="flex cursor-pointer items-start gap-3 px-4 py-3 hover:bg-accent"
+                style={{ width: "340px" }}
+                className="flex cursor-pointer items-start gap-3 rounded-lg border bg-card p-4 transition-colors duration-150 ease-out hover:bg-muted/50 hover:border-primary/20"
               >
                 <span
                   aria-hidden
@@ -218,9 +216,6 @@ function DirectionA() {
                 </span>
                 <div className="flex-1">
                   <p className="text-sm font-semibold">{s.name}</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {s.addr}
-                  </p>
                   <p className="mt-1.5 flex items-center gap-3 text-xs">
                     <span className="font-medium text-emerald-700">
                       Open · until {s.openUntil}
@@ -314,36 +309,40 @@ function DirectionB() {
           </button>
         </div>
       </div>
-      <ul className="flex flex-col divide-y">
+      <ul className="flex flex-col items-center gap-3 p-4">
         {[
-          { n: 1, name: "Ybor City #2541", addr: "1502 E 5th Ave, Tampa, FL 33605", miles: 0.8, open: "Open · closes 6pm" },
-          { n: 2, name: "Tampa #2531", addr: "3200 W Cypress St, Tampa, FL 33607", miles: 6.6, open: "Open · closes 6pm" },
-          { n: 3, name: "Clearwater #2521", addr: "18325 US Hwy 19 N, Clearwater, FL 33764", miles: 8.6, open: "Open · closes 6pm" },
+          { n: 1, name: "Ybor City #2541", miles: 0.8, open: "Open · closes 6pm" },
+          { n: 2, name: "Tampa #2531", miles: 6.6, open: "Open · closes 6pm" },
+          { n: 3, name: "Clearwater #2521", miles: 8.6, open: "Open · closes 6pm" },
         ].map((s) => (
-          <li key={s.n} className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <li
+            key={s.n}
+            style={{ width: "340px" }}
+            className="flex flex-col gap-3 rounded-lg border bg-card p-4 transition-colors duration-150 ease-out hover:bg-muted/50 hover:border-primary/20 sm:flex-row sm:items-center sm:justify-between"
+          >
             <div className="flex gap-3">
               <span className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 {s.n}
               </span>
               <div>
                 <p className="text-sm font-bold uppercase tracking-wide">{s.name}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{s.addr}</p>
                 <p className="mt-1 text-xs font-medium text-emerald-700">{s.open}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{s.miles} miles away</p>
+                <button
+                  type="button"
+                  className="mt-1 text-xs font-semibold text-primary underline-offset-4 hover:underline"
+                >
+                  Store details
+                </button>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-primary">~{s.miles} mi</span>
               <button
                 type="button"
-                className="rounded-md border border-primary px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/5"
+                className="rounded-md bg-secondary px-3 py-1.5 text-xs font-semibold text-secondary-foreground hover:bg-secondary/80"
               >
-                Location details
-              </button>
-              <button
-                type="button"
-                className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                Set as my branch
+                Select store
               </button>
             </div>
           </li>
@@ -399,26 +398,25 @@ function DirectionC() {
           Delivery
         </button>
       </div>
-      {/* Rows */}
-      <ul className="flex flex-col divide-y">
-        <li className="p-4">
-          <span className="inline-flex items-center rounded bg-emerald-600 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
+      {/* Rows — PLP-embedded picker: list-only, no map */}
+      <ul className="flex flex-col items-center gap-3 p-4">
+        <li
+          style={{ width: "340px" }}
+          className="flex flex-col gap-2 rounded-lg border bg-card p-4 transition-colors duration-150 ease-out hover:bg-muted/50 hover:border-primary/20"
+        >
+          <span className="inline-flex w-fit items-center rounded bg-emerald-600 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
             Currently shopping
           </span>
-          <p className="mt-2 text-sm font-bold">Ybor City #2541</p>
+          <p className="text-sm font-bold">Ybor City #2541</p>
+          <p className="text-xs font-medium text-emerald-700">Open · closes 6pm</p>
+          <p className="text-xs text-muted-foreground">0.8 miles away</p>
           <button
             type="button"
-            className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+            className="text-left text-xs font-semibold text-primary underline-offset-4 hover:underline"
           >
-            Get directions
+            Store details
           </button>
-          <p className="mt-1 text-xs text-muted-foreground">
-            1502 E 5th Ave, Tampa, FL 33605
-          </p>
-          <p className="mt-1 text-xs font-semibold text-emerald-700">
-            12 available today
-          </p>
-          <p className="mt-2 flex items-center gap-3 text-xs">
+          <p className="flex items-center gap-3 text-xs">
             <a
               href="#"
               className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline"
@@ -436,25 +434,31 @@ function DirectionC() {
           </p>
         </li>
         {[
-          { name: "Tampa #2531", miles: 6.6, qty: 8 },
-          { name: "Clearwater #2521", miles: 8.6, qty: 4 },
-          { name: "Lakeland #2551", miles: 12.4, qty: 2 },
+          { name: "Tampa #2531", miles: 6.6, open: "Open · closes 6pm" },
+          { name: "Clearwater #2521", miles: 8.6, open: "Open · closes 6pm" },
+          { name: "Lakeland #2551", miles: 12.4, open: "Open · closes 6pm" },
         ].map((s) => (
-          <li key={s.name} className="flex items-start justify-between gap-3 p-4">
+          <li
+            key={s.name}
+            style={{ width: "340px" }}
+            className="flex items-start justify-between gap-3 rounded-lg border bg-card p-4 transition-colors duration-150 ease-out hover:bg-muted/50 hover:border-primary/20"
+          >
             <div>
               <p className="text-sm font-bold">{s.name}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {s.miles} miles · Get directions
-              </p>
-              <p className="mt-1 text-xs font-semibold text-emerald-700">
-                {s.qty} available today
-              </p>
+              <p className="mt-1 text-xs font-medium text-emerald-700">{s.open}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">{s.miles} miles away</p>
+              <button
+                type="button"
+                className="mt-1 text-xs font-semibold text-primary underline-offset-4 hover:underline"
+              >
+                Store details
+              </button>
             </div>
             <button
               type="button"
               className="shrink-0 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-primary-foreground hover:bg-primary/90"
             >
-              Pickup here
+              Select store
             </button>
           </li>
         ))}
@@ -462,7 +466,7 @@ function DirectionC() {
       <div className="border-t p-3">
         <button
           type="button"
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-primary py-2 text-sm font-semibold text-primary hover:bg-primary/5"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80"
         >
           Find other branches
           <ChevronRight className="size-4" />
@@ -471,6 +475,10 @@ function DirectionC() {
     </div>
   );
 }
+
+/* ───────── PLP-embedded picker — list-only (no map) ──────────────
+   DirectionC is the PLP surface: card list only, no map column.
+   Standalone /store-locator (DirectionA) keeps its map. */
 
 /* ─────────────────────────────── Page ─────────────────────────────── */
 

@@ -22,7 +22,7 @@ function QtyStepper({
   const h = size === "sm" ? "h-9" : "h-11";
   const w = size === "sm" ? "w-9" : "w-11";
   const btn =
-    "grid h-full place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent";
+    "grid h-full place-items-center text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground";
   return (
     <div className={cn("inline-flex shrink-0 items-center rounded-md border", h)} role="group" aria-label="Quantity">
       <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="Decrease quantity" className={cn(btn, w, "rounded-l-md")}>

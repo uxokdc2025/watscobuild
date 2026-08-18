@@ -129,7 +129,7 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
 function QtyPlusAdd() {
   const [qty, setQty] = React.useState(1);
   const cell =
-    "grid h-full w-8 cursor-pointer place-items-center text-foreground transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
+    "grid h-full w-8 cursor-pointer place-items-center text-foreground transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
   return (
     <div className="flex items-center gap-2">
       <div
