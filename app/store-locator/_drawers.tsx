@@ -76,9 +76,6 @@ function CloseX() {
   );
 }
 
-const ROW_CARD =
-  "w-[340px] rounded-lg border bg-card p-4 transition-colors duration-150 ease-out hover:bg-muted/40";
-
 /** Drawer shell — flexes to whatever height its parent provides. In the
  *  gallery each column pins 720px; in the /in-plp overlay it stretches
  *  to inset-y-0 for full viewport height. */
