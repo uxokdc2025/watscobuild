@@ -11,7 +11,9 @@ import {
   HighlightBadge,
   NoImage,
   PointsBadge,
+  ProEssentialsBadge,
   StockStatus,
+  SubstituteBadge,
 } from "@/components/ui/label-badges";
 import { Category } from "../_showcase";
 
@@ -100,6 +102,15 @@ export function LabelsSection() {
         <Badge variant="outline-color" color="blue">R-454B</Badge>
       </Group>
 
+      {/* PRO Essentials + Substitute — canonical attribute badges */}
+      <Group
+        title="PRO Essentials & Substitute"
+        note="Locked brand-mark PRO Essentials pill + Substitute chip. Same height, sit side-by-side on product cards."
+      >
+        <ProEssentialsBadge />
+        <SubstituteBadge />
+      </Group>
+
       {/* Flag / ribbon */}
       <Group title="Flag / ribbon" note="White fill, dark text, colored corner notch.">
         <FlagBadge tone="red">Direct Ship</FlagBadge>
@@ -111,20 +122,14 @@ export function LabelsSection() {
       <Group title="Highlighter" note="Two-tone marker style for seasonal / promo.">
         <HighlightBadge
           segments={[
-            { text: "PRO", className: "bg-green-200 text-green-950" },
-            { text: "Essentials", className: "bg-yellow-300 text-yellow-950" },
-          ]}
-        />
-        <HighlightBadge
-          segments={[
             { text: "FALL", className: "bg-red-200 text-red-950" },
-            { text: "PROMO", className: "text-muted-foreground" },
+            { text: "PROMO", className: "bg-muted text-muted-foreground" },
           ]}
         />
         <HighlightBadge
           segments={[
             { text: "Spring", className: "bg-green-200 text-green-950", italic: true },
-            { text: "Preseason", className: "text-muted-foreground" },
+            { text: "Preseason", className: "bg-muted text-muted-foreground" },
           ]}
         />
       </Group>

@@ -103,9 +103,9 @@ function FindAhriMatchedSystem() {
   return (
     <a
       href="#"
-      className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-violet-700 underline-offset-4 outline-none transition-colors hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:text-violet-300"
+      className="inline-flex h-8 items-center gap-1.5 rounded-md border border-violet-500 px-3 text-xs font-semibold text-violet-700 outline-none transition-colors hover:bg-violet-50 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:border-violet-400 dark:text-violet-300 dark:hover:bg-violet-950/40"
     >
-      <Search className="size-4" />
+      <Search className="size-3.5" />
       Find an AHRI Matched System
     </a>
   );
