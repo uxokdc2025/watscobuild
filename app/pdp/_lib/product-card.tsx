@@ -205,10 +205,11 @@ export function ProductCard({
         {data.brand ?? null}
       </p>
 
-      {/* 4. Title — foreground, 14px/18px semibold, 3-line clamp. */}
+      {/* 4. Title — primary blue, 14px/18px semibold, 3-line clamp. Hover
+              underline comes from the global anchor rule in globals.css. */}
       <a
         href={href}
-        className="line-clamp-3 min-h-[54px] text-sm font-semibold leading-[18px] text-foreground hover:underline"
+        className="line-clamp-3 min-h-[54px] text-sm font-semibold leading-[18px] text-primary"
       >
         {data.title}
       </a>
@@ -252,12 +253,15 @@ export function ProductCard({
             : null}
         </p>
 
-        {/* 8. Nearby Branch link — primary blue, 12px/16px medium. */}
+        {/* 8. Nearby Branch link — primary blue, 12px/16px medium. Opens the
+              shared inventory drawer (Direction C) overlaid on the PLP. */}
         <p className="min-h-4 truncate text-xs font-medium leading-4">
           {hasCommerce && data.nearbyBranchQty != null ? (
             <a
-              href="#"
-              className="text-primary underline-offset-4 hover:underline"
+              href="/store-locator/in-plp?v=c"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary"
             >
               {data.nearbyBranchQty.toLocaleString()} Nearby Branch
             </a>

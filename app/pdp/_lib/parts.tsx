@@ -49,7 +49,12 @@ function PartCard({ item }: { item: PartItem }) {
       </div>
       <div className="text-sm">
         <span className="font-medium text-in-stock">{item.nearbyQty}</span>{" "}
-        <a href="#" className="text-primary underline-offset-4 hover:underline">
+        <a
+          href="/store-locator/in-plp?v=c"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary"
+        >
           Check Nearby Branches
         </a>
       </div>

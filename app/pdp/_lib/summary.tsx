@@ -74,10 +74,10 @@ function BranchAvailability({
             ))}
           </ul>
           <a
-            href="/store-locator"
+            href="/store-locator/in-plp?v=c"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
+            className="mt-3 inline-block text-sm font-medium text-primary"
           >
             View All Branches
           </a>
