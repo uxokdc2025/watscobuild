@@ -237,11 +237,17 @@ export function DirectionBDrawer() {
  */
 export function DirectionCDrawer() {
   return (
-    <div className={DRAWER_SHELL}>
-      <header className="flex shrink-0 items-center justify-between border-b px-5 py-3">
-        <p className="text-base font-bold">Check Availability</p>
-        <CloseX />
-      </header>
+    <div className={`${DRAWER_SHELL} relative`}>
+      {/* Floating close button — sits outside the drawer at the top-right,
+          circle with drop shadow, so the header can be reserved entirely
+          for the product context. */}
+      <button
+        type="button"
+        aria-label="Close"
+        className="absolute top-3 -right-4 z-10 grid size-8 translate-x-full place-items-center rounded-full border bg-background text-muted-foreground shadow-lg transition-colors hover:bg-accent hover:text-foreground"
+      >
+        <X className="size-4" />
+      </button>
       <div className="flex shrink-0 items-start gap-3 border-b bg-muted/40 p-4">
         <div className="grid size-16 shrink-0 place-items-center rounded-md border bg-background">
           <MapPin className="size-6 text-muted-foreground/60" />
