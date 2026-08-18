@@ -116,43 +116,45 @@ export function DirectionADrawer() {
           Use my current location
         </a>
       </div>
-      <div className="flex flex-1 flex-col items-center gap-3 overflow-y-auto p-4">
+      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {BRANCHES.map((s, i) => (
-          <label
-            key={s.name}
-            className={`${ROW_CARD} flex cursor-pointer gap-3`}
-          >
-            <span
-              aria-hidden
-              className={`mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border-2 ${
-                i === 0 ? "border-primary" : "border-muted-foreground/40"
-              }`}
-            >
-              {i === 0 ? <span className="size-2 rounded-full bg-primary" /> : null}
-            </span>
-            {/* Two-column: left = identity (name / open / phone+chat),
-                right = distance + directions. Reclaims the whitespace on
-                the right that the earlier vertical stack was leaving idle. */}
-            <div className="flex flex-1 items-start justify-between gap-3">
-              <div className="flex min-w-0 flex-col gap-1.5">
-                <p className="text-sm font-semibold">{s.name}</p>
-                <p className="text-xs font-medium text-emerald-700">{s.open}</p>
-                <ContactCluster phone={s.phone} />
+          <li key={s.name}>
+            <label className="flex cursor-pointer gap-3 px-5 py-4 transition-colors hover:bg-muted/40">
+              <span
+                aria-hidden
+                className={`mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border-2 ${
+                  i === 0 ? "border-primary" : "border-muted-foreground/40"
+                }`}
+              >
+                {i === 0 ? (
+                  <span className="size-2 rounded-full bg-primary" />
+                ) : null}
+              </span>
+              {/* Two-column row: identity left, miles + directions pinned
+                  right so the whitespace on the right is used. */}
+              <div className="flex flex-1 items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <p className="text-sm font-semibold">{s.name}</p>
+                  <p className="text-xs font-medium text-emerald-700">{s.open}</p>
+                  <ContactCluster phone={s.phone} />
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
+                  <span className="font-medium text-foreground">
+                    {s.miles} mi
+                  </span>
+                  <a
+                    href="#"
+                    className="inline-flex items-center gap-1 font-medium text-primary"
+                  >
+                    <Navigation className="size-3.5" />
+                    Directions
+                  </a>
+                </div>
               </div>
-              <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
-                <span className="font-medium text-foreground">{s.miles} mi</span>
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-1 font-medium text-primary"
-                >
-                  <Navigation className="size-3.5" />
-                  Directions
-                </a>
-              </div>
-            </div>
-          </label>
+            </label>
+          </li>
         ))}
-      </div>
+      </ul>
       <div className="shrink-0 border-t p-3">
         <button
           type="button"
@@ -216,7 +218,10 @@ export function DirectionBDrawer() {
         ))}
       </ul>
       <div className="shrink-0 border-t p-3">
-        <button type="button" className={SECONDARY_BTN}>
+        <button
+          type="button"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background"
+        >
           See more branches
           <ChevronRight className="size-4" />
         </button>
