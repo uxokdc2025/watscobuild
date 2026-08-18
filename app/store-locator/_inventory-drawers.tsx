@@ -21,7 +21,7 @@
  * so the buyer never loses what they're looking at.
  */
 
-import { Building2, Info, Search, Truck, X } from "lucide-react";
+import { Building2, Search, Truck, X } from "lucide-react";
 
 /** Same 10-branch mock the left drawers use so the two experiences can be
  *  compared side by side without noise. */
@@ -116,13 +116,6 @@ export function InventoryDirection1() {
               {b.qty}
             </span>
             <span className="flex-1 text-sm">{b.name}</span>
-            <button
-              type="button"
-              aria-label={`Details for ${b.name}`}
-              className="grid size-6 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            >
-              <Info className="size-4" />
-            </button>
           </li>
         ))}
       </ul>
@@ -210,16 +203,15 @@ export function InventoryDirection3() {
           <span className="flex-1 text-foreground">City, state, or ZIP</span>
         </div>
       </div>
-      <div className="grid shrink-0 grid-cols-[64px_1fr_28px] items-center gap-2 border-b bg-muted/30 px-4 py-2 text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
+      <div className="grid shrink-0 grid-cols-[64px_1fr] items-center gap-2 border-b bg-muted/30 px-4 py-2 text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
         <span>Qty</span>
         <span>Branch</span>
-        <span aria-hidden />
       </div>
       <ul className="flex flex-1 flex-col overflow-y-auto text-sm">
         {BRANCHES.map((b, i) => (
           <li
             key={b.name}
-            className={`grid grid-cols-[64px_1fr_28px] items-center gap-2 border-b px-4 py-2 transition-colors hover:bg-muted/40 ${
+            className={`grid grid-cols-[64px_1fr] items-center gap-2 border-b px-4 py-2 transition-colors hover:bg-muted/40 ${
               i === 0 ? "bg-emerald-50 dark:bg-emerald-950/20" : ""
             }`}
           >
@@ -234,13 +226,6 @@ export function InventoryDirection3() {
                 </p>
               ) : null}
             </div>
-            <button
-              type="button"
-              aria-label={`Details for ${b.name}`}
-              className="grid size-6 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            >
-              <Info className="size-4" />
-            </button>
           </li>
         ))}
       </ul>
