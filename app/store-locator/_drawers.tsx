@@ -99,7 +99,7 @@ export function DirectionADrawer() {
           <X className="size-4" />
         </button>
       </header>
-      <div className="shrink-0 border-b p-4">
+      <div className="shrink-0 border-b px-4 pt-4 pb-3">
         <p className="text-sm font-semibold">Enter zip code or city, state</p>
         <div className="mt-2 flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
@@ -179,7 +179,7 @@ export function DirectionBDrawer() {
         </div>
         <CloseX />
       </header>
-      <div className="shrink-0 border-b p-4">
+      <div className="shrink-0 border-b px-4 pt-4 pb-3">
         <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
           <span className="flex-1 text-foreground">Tampa, FL 33605</span>
@@ -276,7 +276,7 @@ export function DirectionCDrawer() {
       </div>
       {/* Search + change-location — same primitive the other drawers use so
           switching branches is discoverable in the product-aware mode too. */}
-      <div className="shrink-0 border-b p-4">
+      <div className="shrink-0 border-b px-4 pt-4 pb-3">
         <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
           <span className="flex-1 text-foreground">33605</span>
