@@ -404,19 +404,28 @@ export default function PdpMasterPage() {
             </AccordionTrigger>
             <AccordionContent>
               <p className="max-w-2xl text-sm text-muted-foreground">
-                Three UX/UI directions for the shared store-locator +
-                inventory-drawer component. Homans is the starting reference;
-                every PDP&apos;s Nearby Branches → View All Branches link opens
-                this page.
+                Two related components, three directions each. Store Locator
+                slides in from the LEFT (branch selection). Inventory Drawer
+                slides in from the RIGHT (per-branch stock for one product) —
+                surfaces from a PDP&apos;s Nearby Branches link or a PLP card.
               </p>
-              <div className="mt-4">
+              <div className="mt-4 flex flex-wrap items-center gap-2">
                 <Link
                   href="/store-locator"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 >
-                  Open direction gallery
+                  Store Locator gallery (left)
+                  <ArrowUpRight className="size-3.5" />
+                </Link>
+                <Link
+                  href="/store-locator/inventory"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  Inventory Drawer gallery (right)
                   <ArrowUpRight className="size-3.5" />
                 </Link>
               </div>
