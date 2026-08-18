@@ -133,11 +133,25 @@ export function DirectionADrawer() {
             >
               {i === 0 ? <span className="size-2 rounded-full bg-primary" /> : null}
             </span>
-            <div className="flex flex-1 flex-col gap-1.5">
-              <p className="text-sm font-semibold">{s.name}</p>
-              <p className="text-xs font-medium text-emerald-700">{s.open}</p>
-              <MilesDirections miles={s.miles} />
-              <ContactCluster phone={s.phone} />
+            {/* Two-column: left = identity (name / open / phone+chat),
+                right = distance + directions. Reclaims the whitespace on
+                the right that the earlier vertical stack was leaving idle. */}
+            <div className="flex flex-1 items-start justify-between gap-3">
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <p className="text-sm font-semibold">{s.name}</p>
+                <p className="text-xs font-medium text-emerald-700">{s.open}</p>
+                <ContactCluster phone={s.phone} />
+              </div>
+              <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
+                <span className="font-medium text-foreground">{s.miles} mi</span>
+                <a
+                  href="#"
+                  className="inline-flex items-center gap-1 font-medium text-primary"
+                >
+                  <Navigation className="size-3.5" />
+                  Directions
+                </a>
+              </div>
             </div>
           </label>
         ))}
