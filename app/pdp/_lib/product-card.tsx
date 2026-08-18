@@ -133,7 +133,7 @@ function QtyPlusAdd() {
   return (
     <div className="flex items-center gap-2">
       <div
-        className="inline-flex h-9 shrink-0 items-center rounded-md border"
+        className="inline-flex h-[34px] shrink-0 items-center rounded-md border"
         role="group"
         aria-label="Quantity"
       >
@@ -163,7 +163,7 @@ function QtyPlusAdd() {
       </div>
       <button
         type="button"
-        className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+        className="inline-flex h-[34px] flex-1 items-center justify-center gap-1.5 rounded-md bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
         style={{ flex: "1 1 0%", minWidth: 0 }}
       >
         <ShoppingCart className="size-4 shrink-0" />
@@ -188,7 +188,7 @@ export function ProductCard({
   // cards in the same row — one with badges, one without — are the same
   // height, always.
   return (
-    <article className="flex h-full flex-col gap-2 rounded-md border bg-card p-4">
+    <article className="flex h-full flex-col gap-[7px] rounded-md border bg-card p-[15px]">
       {/* 1. Points — pinned to the very top of the card. Slot reserves 1
               badge row of height so cards stay aligned when points are
               absent. */}
@@ -206,12 +206,14 @@ export function ProductCard({
       </p>
 
       {/* 4. Title — primary blue, 14px/18px semibold, 3-line clamp. Hover
-              underline comes from the global anchor rule in globals.css. */}
-      <a
-        href={href}
-        className="line-clamp-3 min-h-[54px] text-sm font-semibold leading-[18px] text-primary"
-      >
-        {data.title}
+              underlines the ENTIRE clamped title (all lines). We force the
+              underline via a nested span (line-clamp on the <a> uses
+              -webkit-box which can drop the last-line underline in some
+              browsers). */}
+      <a href={href} className="block min-h-[54px] group">
+        <span className="line-clamp-3 text-sm font-semibold leading-[18px] text-primary group-hover:underline">
+          {data.title}
+        </span>
       </a>
 
       {/* 4. Item / MFG — 12px/16px. Labels muted, values foreground. */}
@@ -261,7 +263,7 @@ export function ProductCard({
               href="/store-locator/in-plp?v=c"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="text-primary hover:underline"
             >
               {data.nearbyBranchQty.toLocaleString()} Nearby Branch
             </a>
@@ -288,7 +290,7 @@ export function ProductCard({
         </p>
 
         {/* 10. Qty stepper + Add — inline row. */}
-        <div className="min-h-9 pt-1">
+        <div className="min-h-[34px] pt-1">
           {hasCommerce ? (
             <QtyPlusAdd />
           ) : (

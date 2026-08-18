@@ -212,8 +212,8 @@ export function SearchBody({
               </ul>
             </section>
 
-            <section aria-labelledby="narrow-heading" className="space-y-2 border-t pt-4">
-              <h2 id="narrow-heading" className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            <section aria-labelledby="narrow-heading" className="border-t border-b py-2">
+              <h2 id="narrow-heading" className="text-xs font-bold tracking-wide text-foreground uppercase">
                 Narrow Your Results
               </h2>
             </section>
