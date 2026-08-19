@@ -25,6 +25,7 @@ import {
   ArrowDownUp,
   Building2,
   Check,
+  ChevronDown,
   MapPin,
   Navigation,
   Phone,
@@ -141,13 +142,31 @@ export function InventoryDirection1() {
           <Check className="size-3" />
           In stock
         </button>
-        <button
-          type="button"
-          className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowDownUp className="size-3.5" />
-          Sort: Miles
-        </button>
+        {/* Sort dropdown — <details> gives us a zero-JS popover; click the
+            summary to open, click an option to select. Only one open at a
+            time thanks to the shared name attribute. */}
+        <details className="group relative">
+          <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground [&::-webkit-details-marker]:hidden">
+            <ArrowDownUp className="size-3.5" />
+            Sort: Miles
+            <ChevronDown className="size-3 transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
+            <button
+              type="button"
+              className="flex items-center justify-between px-3 py-2 text-left font-medium text-primary transition-colors hover:bg-muted"
+            >
+              Miles
+              <Check className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              className="px-3 py-2 text-left text-foreground transition-colors hover:bg-muted"
+            >
+              Availability
+            </button>
+          </div>
+        </details>
       </div>
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {rest.map((b) => (
