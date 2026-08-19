@@ -21,42 +21,42 @@
  * so the buyer never loses what they're looking at.
  */
 
-import { Building2, Search, Truck, X } from "lucide-react";
+import { Building2, MapPin, Navigation, Search, Truck, X } from "lucide-react";
 
 /** Same 10-branch mock the left drawers use so the two experiences can be
  *  compared side by side without noise. */
-type Branch = { name: string; qty: number; tag?: "current" };
+type Branch = { name: string; qty: number; miles: number; tag?: "current" };
 const BRANCHES: Branch[] = [
-  { name: "Durham NC #1", qty: 0, tag: "current" },
-  { name: "Raleigh NC #5", qty: 8 },
-  { name: "Garner NC #45", qty: 2 },
-  { name: "Sanford NC #46", qty: 11 },
-  { name: "Greensboro NC #6", qty: 9 },
-  { name: "Fayetteville NC #38", qty: 1 },
-  { name: "Aberdeen NC #39", qty: 15 },
-  { name: "Winterville NC #25", qty: 9 },
-  { name: "Roanoke VA #10", qty: 4 },
-  { name: "Charlotte NC #3", qty: 2 },
-  { name: "South Charlotte NC #19", qty: 2 },
-  { name: "Wilmington NC #9", qty: 6 },
-  { name: "Richmond VA #2", qty: 9 },
-  { name: "Hickory NC #11", qty: 6 },
-  { name: "Conway SC #47", qty: 6 },
-  { name: "Newport News VA #37", qty: 2 },
-  { name: "Myrtle Beach SC #27", qty: 7 },
-  { name: "Boone NC #40", qty: 5 },
-  { name: "Virginia Beach VA #7", qty: 7 },
-  { name: "Fredericksburg VA #18", qty: 3 },
-  { name: "Columbia SC #8", qty: 11 },
-  { name: "Blountville TN #24", qty: 15 },
-  { name: "Orangeburg SC #34", qty: 21 },
-  { name: "Greenville SC #4", qty: 10 },
-  { name: "Charleston SC #12", qty: 1 },
-  { name: "Morristown TN #22", qty: 14 },
-  { name: "Beaufort SC #33", qty: 4 },
-  { name: "Knoxville TN #21", qty: 3 },
-  { name: "Savannah GA #31", qty: 14 },
-  { name: "Gainesville GA #28", qty: 2 },
+  { name: "Durham NC #1", qty: 0, miles: 0, tag: "current" },
+  { name: "Raleigh NC #5", qty: 8, miles: 24 },
+  { name: "Garner NC #45", qty: 2, miles: 31 },
+  { name: "Sanford NC #46", qty: 11, miles: 48 },
+  { name: "Greensboro NC #6", qty: 9, miles: 55 },
+  { name: "Fayetteville NC #38", qty: 1, miles: 79 },
+  { name: "Aberdeen NC #39", qty: 15, miles: 82 },
+  { name: "Winterville NC #25", qty: 9, miles: 96 },
+  { name: "Roanoke VA #10", qty: 4, miles: 118 },
+  { name: "Charlotte NC #3", qty: 2, miles: 141 },
+  { name: "South Charlotte NC #19", qty: 2, miles: 148 },
+  { name: "Wilmington NC #9", qty: 6, miles: 172 },
+  { name: "Richmond VA #2", qty: 9, miles: 176 },
+  { name: "Hickory NC #11", qty: 6, miles: 187 },
+  { name: "Conway SC #47", qty: 6, miles: 214 },
+  { name: "Newport News VA #37", qty: 2, miles: 216 },
+  { name: "Myrtle Beach SC #27", qty: 7, miles: 235 },
+  { name: "Boone NC #40", qty: 5, miles: 241 },
+  { name: "Virginia Beach VA #7", qty: 7, miles: 246 },
+  { name: "Fredericksburg VA #18", qty: 3, miles: 264 },
+  { name: "Columbia SC #8", qty: 11, miles: 269 },
+  { name: "Blountville TN #24", qty: 15, miles: 271 },
+  { name: "Orangeburg SC #34", qty: 21, miles: 314 },
+  { name: "Greenville SC #4", qty: 10, miles: 323 },
+  { name: "Charleston SC #12", qty: 1, miles: 340 },
+  { name: "Morristown TN #22", qty: 14, miles: 345 },
+  { name: "Beaufort SC #33", qty: 4, miles: 375 },
+  { name: "Knoxville TN #21", qty: 3, miles: 383 },
+  { name: "Savannah GA #31", qty: 14, miles: 405 },
+  { name: "Gainesville GA #28", qty: 2, miles: 411 },
 ];
 
 const PRODUCT = {
@@ -137,12 +137,32 @@ export function InventoryDirection1() {
               {b.qty}
             </span>
             <span className="flex-1 text-sm">{b.name}</span>
+            {/* Miles + location icons — location pin (map) + navigation
+                arrow (directions). Both are icon-only anchors that keep
+                the rest state visually light. */}
+            <span className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
+              <span className="tabular-nums">{b.miles} mi</span>
+              <a
+                href="#"
+                aria-label={`Map for ${b.name}`}
+                className="grid size-6 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
+              >
+                <MapPin className="size-3.5" />
+              </a>
+              <a
+                href="#"
+                aria-label={`Directions to ${b.name}`}
+                className="grid size-6 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
+              >
+                <Navigation className="size-3.5" />
+              </a>
+            </span>
             {/* Select store — hidden by default so Direction 1 stays super
                 light; row hover reveals it (per-row commit without extra
                 chrome on rest state). */}
             <button
               type="button"
-              className="ml-2 hidden shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 group-hover:inline-flex"
+              className="ml-1 hidden shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 group-hover:inline-flex"
             >
               Select store
             </button>
