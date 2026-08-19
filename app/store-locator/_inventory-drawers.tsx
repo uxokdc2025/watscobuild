@@ -21,7 +21,7 @@
  * so the buyer never loses what they're looking at.
  */
 
-import { Building2, MapPin, Navigation, Search, Truck, X } from "lucide-react";
+import { Building2, MapPin, Navigation, Phone, Search, Truck, X } from "lucide-react";
 
 /** Same 10-branch mock the left drawers use so the two experiences can be
  *  compared side by side without noise. */
@@ -129,40 +129,49 @@ export function InventoryDirection1() {
         {rest.map((b) => (
           <li
             key={b.name}
-            className="group flex items-center gap-3 px-5 py-2.5 transition-colors hover:bg-muted/40"
+            className="group flex items-start gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
           >
             <span
-              className={`w-6 shrink-0 text-sm font-semibold tabular-nums ${stockColor(b.qty)}`}
+              className={`w-6 shrink-0 pt-0.5 text-sm font-semibold tabular-nums ${stockColor(b.qty)}`}
             >
               {b.qty}
             </span>
-            <span className="flex-1 text-sm">{b.name}</span>
-            {/* Miles + location icons — location pin (map) + navigation
-                arrow (directions). Both are icon-only anchors that keep
-                the rest state visually light. */}
-            <span className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-              <span className="tabular-nums">{b.miles} mi</span>
-              <a
-                href="#"
-                aria-label={`Map for ${b.name}`}
-                className="grid size-6 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
-              >
-                <MapPin className="size-3.5" />
-              </a>
-              <a
-                href="#"
-                aria-label={`Directions to ${b.name}`}
-                className="grid size-6 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
-              >
-                <Navigation className="size-3.5" />
-              </a>
-            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm">{b.name}</p>
+              {/* Sub-row: miles + map / directions / phone icons — opens up
+                  the cell vertically so metadata reads cleanly under the
+                  name instead of crowding the right edge. */}
+              <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
+                <span className="tabular-nums">{b.miles} mi</span>
+                <a
+                  href="#"
+                  aria-label={`Map for ${b.name}`}
+                  className="grid size-5 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
+                >
+                  <MapPin className="size-3.5" />
+                </a>
+                <a
+                  href="#"
+                  aria-label={`Directions to ${b.name}`}
+                  className="grid size-5 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
+                >
+                  <Navigation className="size-3.5" />
+                </a>
+                <a
+                  href="#"
+                  aria-label={`Call ${b.name}`}
+                  className="grid size-5 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
+                >
+                  <Phone className="size-3.5" />
+                </a>
+              </div>
+            </div>
             {/* Select store — hidden by default so Direction 1 stays super
                 light; row hover reveals it (per-row commit without extra
                 chrome on rest state). */}
             <button
               type="button"
-              className="ml-1 hidden shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 group-hover:inline-flex"
+              className="mt-0.5 hidden shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 group-hover:inline-flex"
             >
               Select store
             </button>
