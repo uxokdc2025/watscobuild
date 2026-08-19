@@ -334,6 +334,11 @@ export function InventoryDirection2() {
 /* ────────────────── Inventory Direction 3 — Dense picker ─────────────── */
 
 export function InventoryDirection3() {
+  const [selected, setSelected] = React.useState<string | null>(null);
+  const selectedBranch = BRANCHES.find((b) => b.name === selected);
+  const canCommit =
+    selectedBranch != null && selectedBranch.tag !== "current";
+
   return (
     <div className={SHELL}>
       <ProductHeader />
@@ -347,34 +352,62 @@ export function InventoryDirection3() {
         <span>Qty</span>
         <span>Branch</span>
       </div>
-      <ul className="flex flex-1 flex-col overflow-y-auto text-sm">
-        {BRANCHES.map((b, i) => (
-          <li
-            key={b.name}
-            className={`grid grid-cols-[64px_1fr] items-center gap-2 border-b px-4 py-2 transition-colors hover:bg-muted/40 ${
-              i === 0 ? "bg-emerald-50 dark:bg-emerald-950/20" : ""
-            }`}
-          >
-            <span className={`text-sm font-bold tabular-nums ${stockColor(b.qty)}`}>
-              {b.qty}
-            </span>
-            <div className="min-w-0">
-              <p className="truncate font-medium">{b.name}</p>
-              {b.tag === "current" ? (
-                <p className="text-[11px] font-semibold text-emerald-700">
-                  Currently shopping
-                </p>
-              ) : null}
-            </div>
-          </li>
-        ))}
+      <ul
+        role="listbox"
+        aria-label="Branches"
+        className="flex flex-1 flex-col overflow-y-auto text-sm"
+      >
+        {BRANCHES.map((b, i) => {
+          const isSelected = selected === b.name;
+          const isCurrent = b.tag === "current";
+          return (
+            <li key={b.name}>
+              <button
+                type="button"
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => setSelected(b.name)}
+                className={`grid w-full grid-cols-[64px_1fr] items-center gap-2 border-b px-4 py-2 text-left transition-colors ${
+                  isSelected
+                    ? "bg-primary/10 ring-1 ring-inset ring-primary"
+                    : isCurrent
+                    ? "bg-emerald-50 dark:bg-emerald-950/20"
+                    : i % 2 === 0
+                    ? "hover:bg-muted/40"
+                    : "hover:bg-muted/40"
+                }`}
+              >
+                <span
+                  className={`text-sm font-bold tabular-nums ${stockColor(b.qty)}`}
+                >
+                  {b.qty}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{b.name}</p>
+                  {isCurrent ? (
+                    <p className="text-[11px] font-semibold text-emerald-700">
+                      Currently shopping
+                    </p>
+                  ) : null}
+                </div>
+              </button>
+            </li>
+          );
+        })}
       </ul>
       <div className="shrink-0 border-t p-3">
         <button
           type="button"
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background"
+          disabled={!canCommit}
+          className={
+            canCommit
+              ? "inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              : "inline-flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-md border border-border bg-transparent px-4 py-2 text-sm font-medium text-muted-foreground"
+          }
         >
-          Set as my branch
+          {canCommit
+            ? `Set ${selectedBranch!.name} as my branch`
+            : "Select a branch"}
         </button>
       </div>
     </div>
