@@ -21,7 +21,17 @@
  * so the buyer never loses what they're looking at.
  */
 
-import { Building2, MapPin, Navigation, Phone, Search, Truck, X } from "lucide-react";
+import {
+  ArrowDownUp,
+  Building2,
+  Check,
+  MapPin,
+  Navigation,
+  Phone,
+  Search,
+  Truck,
+  X,
+} from "lucide-react";
 
 /** Same 10-branch mock the left drawers use so the two experiences can be
  *  compared side by side without noise. */
@@ -120,10 +130,24 @@ export function InventoryDirection1() {
           <span className="flex-1 text-sm font-medium">{current.name}</span>
         </div>
       </div>
-      <div className="shrink-0 px-4 pt-3 pb-1">
-        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-          All Branches
-        </p>
+      {/* Filter + sort — filter chip is preset ON (In stock), sort exposes
+          Miles vs Qty as the two useful axes for an inventory drawer. */}
+      <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
+        <button
+          type="button"
+          aria-pressed="true"
+          className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
+        >
+          <Check className="size-3" />
+          In stock
+        </button>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowDownUp className="size-3.5" />
+          Sort: Miles
+        </button>
       </div>
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {rest.map((b) => (
