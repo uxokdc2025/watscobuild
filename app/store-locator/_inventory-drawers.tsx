@@ -21,6 +21,7 @@
  * so the buyer never loses what they're looking at.
  */
 
+import * as React from "react";
 import {
   ArrowDownUp,
   Building2,
@@ -114,62 +115,99 @@ function stockColor(qty: number) {
 export function InventoryDirection1() {
   const current = BRANCHES.find((b) => b.tag === "current")!;
   const rest = BRANCHES.filter((b) => b.tag !== "current");
+
+  const [inStockOnly, setInStockOnly] = React.useState(true);
+  const [sortBy, setSortBy] = React.useState<"miles" | "availability">("miles");
+  const [sortOpen, setSortOpen] = React.useState(false);
+
+  const displayed = React.useMemo(() => {
+    const filtered = inStockOnly ? rest.filter((b) => b.qty > 0) : rest;
+    return [...filtered].sort((a, b) =>
+      sortBy === "miles" ? a.miles - b.miles : b.qty - a.qty,
+    );
+  }, [rest, inStockOnly, sortBy]);
+
   return (
     <div className={SHELL}>
       <header className="flex shrink-0 items-center justify-between border-b px-5 py-3">
         <p className="text-base font-bold">Product Availability</p>
       </header>
       <ProductHeader />
-      <div className="shrink-0 border-b px-4 pt-3 pb-2">
+      {/* Current branch — inline row, no wrapper box (no nested chrome). */}
+      <div className="flex shrink-0 items-center gap-3 border-b px-5 py-2.5">
         <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-          Current Branch
+          Current
         </p>
-        <div className="mt-1.5 flex items-center gap-3 rounded-md border bg-card px-3 py-2">
-          <span className={`w-8 shrink-0 text-sm font-bold tabular-nums ${stockColor(current.qty)}`}>
-            {current.qty}
-          </span>
-          <span className="flex-1 text-sm font-medium">{current.name}</span>
-        </div>
+        <span
+          className={`text-sm font-bold tabular-nums ${stockColor(current.qty)}`}
+        >
+          {current.qty}
+        </span>
+        <span className="text-sm font-medium">{current.name}</span>
       </div>
-      {/* Filter + sort — filter chip is preset ON (In stock), sort exposes
-          Miles vs Qty as the two useful axes for an inventory drawer. */}
+      {/* Filter + sort — filter chip is a real toggle; sort dropdown swaps
+          between Miles and Availability. State drives the list below. */}
       <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
         <button
           type="button"
-          aria-pressed="true"
-          className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
+          aria-pressed={inStockOnly}
+          onClick={() => setInStockOnly((v) => !v)}
+          className={
+            inStockOnly
+              ? "inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
+              : "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          }
         >
-          <Check className="size-3" />
+          {inStockOnly ? <Check className="size-3" /> : null}
           In stock
         </button>
-        {/* Sort dropdown — <details> gives us a zero-JS popover; click the
-            summary to open, click an option to select. Only one open at a
-            time thanks to the shared name attribute. */}
-        <details className="group relative">
-          <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground [&::-webkit-details-marker]:hidden">
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setSortOpen((v) => !v)}
+            aria-expanded={sortOpen}
+            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
             <ArrowDownUp className="size-3.5" />
-            Sort: Miles
-            <ChevronDown className="size-3 transition-transform group-open:rotate-180" />
-          </summary>
-          <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
-            <button
-              type="button"
-              className="flex items-center justify-between px-3 py-2 text-left font-medium text-primary transition-colors hover:bg-muted"
-            >
-              Miles
-              <Check className="size-3.5" />
-            </button>
-            <button
-              type="button"
-              className="px-3 py-2 text-left text-foreground transition-colors hover:bg-muted"
-            >
-              Availability
-            </button>
-          </div>
-        </details>
+            Sort: {sortBy === "miles" ? "Miles" : "Availability"}
+            <ChevronDown
+              className={`size-3 transition-transform ${sortOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+          {sortOpen ? (
+            <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
+              <button
+                type="button"
+                onClick={() => {
+                  setSortBy("miles");
+                  setSortOpen(false);
+                }}
+                className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${
+                  sortBy === "miles" ? "font-medium text-primary" : "text-foreground"
+                }`}
+              >
+                Miles
+                {sortBy === "miles" ? <Check className="size-3.5" /> : null}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSortBy("availability");
+                  setSortOpen(false);
+                }}
+                className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${
+                  sortBy === "availability" ? "font-medium text-primary" : "text-foreground"
+                }`}
+              >
+                Availability
+                {sortBy === "availability" ? <Check className="size-3.5" /> : null}
+              </button>
+            </div>
+          ) : null}
+        </div>
       </div>
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
-        {rest.map((b) => (
+        {displayed.map((b) => (
           <li
             key={b.name}
             className="group flex items-start gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
