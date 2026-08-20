@@ -95,35 +95,18 @@ export function DirectionBDrawer() {
         {BRANCHES.map((s) => (
           <li
             key={s.name}
-            className="flex flex-col gap-1 px-5 py-3.5 transition-colors hover:bg-muted/40"
+            className="flex gap-3 px-5 py-2.5 transition-colors hover:bg-muted/40"
           >
-            {/* Row 1 — branch name (left) + miles + Get directions (right). */}
-            <div className="flex items-baseline justify-between gap-3">
+            {/* Left column — name + Open · closes rail sits tight underneath
+                (grouped), phone + chat at the bottom. */}
+            <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold">{s.name}</p>
-              <span className="flex shrink-0 items-center gap-2 text-xs">
-                <span className="text-muted-foreground tabular-nums">
-                  {s.miles} mi
-                </span>
-                <a
-                  href="#"
-                  aria-label={`Directions to ${s.name}`}
-                  className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
-                >
-                  <Navigation className="size-3.5" />
-                  Get directions
-                </a>
-              </span>
-            </div>
-            {/* Row 2 — Open status. */}
-            <p className="text-xs font-medium text-emerald-700">{s.open}</p>
-            {/* Row 3 — Phone + Chat (mobile-friendly 44px targets) + inline
-                Select store CTA on the right, sharing the line. */}
-            <div className="mt-1 flex items-center justify-between gap-3">
-              <span className="flex items-center gap-2 text-xs">
+              <p className="text-xs font-medium text-emerald-700">{s.open}</p>
+              <div className="mt-1 flex items-center gap-2 text-xs">
                 <a
                   href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
                   aria-label={`Call ${s.name}`}
-                  className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                  className="inline-flex items-center gap-1 font-medium text-primary"
                 >
                   <Phone className="size-3.5" />
                   {s.phone}
@@ -131,15 +114,31 @@ export function DirectionBDrawer() {
                 <a
                   href="#"
                   aria-label={`Chat with ${s.name}`}
-                  className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                  className="inline-flex items-center gap-1 font-medium text-primary"
                 >
                   <MessageSquare className="size-3.5" />
                   Chat
                 </a>
+              </div>
+            </div>
+            {/* Right column — miles + Get directions stacked, then Select
+                sits under them so the whole stack matches the branch-name
+                column height. */}
+            <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
+              <span className="text-muted-foreground tabular-nums">
+                {s.miles} mi
               </span>
+              <a
+                href="#"
+                aria-label={`Directions to ${s.name}`}
+                className="inline-flex items-center gap-1 font-medium text-primary"
+              >
+                <Navigation className="size-3.5" />
+                Get directions
+              </a>
               <button
                 type="button"
-                className="inline-flex min-h-11 shrink-0 items-center rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                className="mt-1 inline-flex h-7 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Select
               </button>
@@ -221,7 +220,7 @@ export function DirectionCDrawer() {
           return (
             <li
               key={s.name}
-              className="flex flex-col gap-1.5 px-5 py-3.5 transition-colors hover:bg-muted/40"
+              className="flex flex-col gap-1 px-5 py-2.5 transition-colors hover:bg-muted/40"
             >
               {/* Row 1 — branch name (left) + availability count (right). */}
               <div className="flex items-baseline justify-between gap-3">
@@ -230,21 +229,19 @@ export function DirectionCDrawer() {
                   {s.qty} available
                 </span>
               </div>
-              {/* Row 2 — open status + miles/directions. */}
-              <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-                <span className="font-medium text-emerald-700">{s.open}</span>
+              {/* Row 2 — miles + Get directions, LEFT-aligned. */}
+              <div className="flex items-center text-xs">
                 <MilesDirections miles={s.miles} />
-              </p>
-              {/* Row 3 — phone + chat + commit button (inline). Currently
-                  shopping row swaps the commit for a locked "Currently
-                  shopping" button-style badge in the same slot so alignment
-                  matches across all rows. */}
+              </div>
+              {/* Row 3 — phone + chat (left) + commit (right). Current-store
+                  row swaps the commit for a locked green "Current store"
+                  button-style tag in the same slot for alignment. */}
               <div className="mt-1 flex items-center justify-between gap-3">
                 <span className="flex items-center gap-2 text-xs">
                   <a
                     href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
                     aria-label={`Call ${s.name}`}
-                    className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                    className="inline-flex items-center gap-1 font-medium text-primary"
                   >
                     <Phone className="size-3.5" />
                     {s.phone}
@@ -252,20 +249,20 @@ export function DirectionCDrawer() {
                   <a
                     href="#"
                     aria-label={`Chat with ${s.name}`}
-                    className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                    className="inline-flex items-center gap-1 font-medium text-primary"
                   >
                     <MessageSquare className="size-3.5" />
                     Chat
                   </a>
                 </span>
                 {isCurrent ? (
-                  <span className="inline-flex min-h-11 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold tracking-wide text-white uppercase">
-                    Currently shopping
+                  <span className="inline-flex h-7 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
+                    Current store
                   </span>
                 ) : (
                   <button
                     type="button"
-                    className="inline-flex min-h-11 shrink-0 items-center rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                    className="inline-flex h-7 shrink-0 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                   >
                     Select store
                   </button>
