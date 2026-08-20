@@ -95,14 +95,32 @@ export function DirectionBDrawer() {
         {BRANCHES.map((s) => (
           <li
             key={s.name}
-            className="flex gap-3 px-5 py-2.5 transition-colors hover:bg-muted/40"
+            className="flex flex-col gap-1 px-5 py-2.5 transition-colors hover:bg-muted/40"
           >
-            {/* Left column — name + Open · closes rail sits tight underneath
-                (grouped), phone + chat at the bottom. */}
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold">{s.name}</p>
-              <p className="text-xs font-medium text-emerald-700">{s.open}</p>
-              <div className="mt-1 flex items-center gap-2 text-xs">
+            {/* Branch identity and availability stay on the top rail. */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold">{s.name}</p>
+                <p className="text-xs font-medium text-emerald-700">{s.open}</p>
+              </div>
+              {/* Right column — miles + Get directions stay grouped together. */}
+              <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
+                <span className="text-muted-foreground tabular-nums">
+                  {s.miles} mi
+                </span>
+                <a
+                  href="#"
+                  aria-label={`Directions to ${s.name}`}
+                  className="inline-flex items-center gap-1 font-medium text-primary"
+                >
+                  <Navigation className="size-3.5" />
+                  Get directions
+                </a>
+              </div>
+            </div>
+            {/* Contact actions share a rail with Select so their labels align. */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs">
                 <a
                   href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
                   aria-label={`Call ${s.name}`}
@@ -120,25 +138,9 @@ export function DirectionBDrawer() {
                   Chat
                 </a>
               </div>
-            </div>
-            {/* Right column — miles + Get directions stacked, then Select
-                sits under them so the whole stack matches the branch-name
-                column height. */}
-            <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
-              <span className="text-muted-foreground tabular-nums">
-                {s.miles} mi
-              </span>
-              <a
-                href="#"
-                aria-label={`Directions to ${s.name}`}
-                className="inline-flex items-center gap-1 font-medium text-primary"
-              >
-                <Navigation className="size-3.5" />
-                Get directions
-              </a>
               <button
                 type="button"
-                className="mt-1 inline-flex h-7 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                className="inline-flex h-7 shrink-0 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Select
               </button>
