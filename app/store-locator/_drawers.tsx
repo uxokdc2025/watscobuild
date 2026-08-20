@@ -15,16 +15,16 @@ import {
 /** Ten mock branches — same list across all three variants so scroll and
  *  layout tradeoffs are comparable apples-to-apples. */
 export const BRANCHES = [
-  { name: "Ybor City #2541", miles: 0.8, open: "Open · closes 6pm", phone: "(813) 555-2541" },
-  { name: "Tampa #2531", miles: 6.6, open: "Open · closes 6pm", phone: "(813) 555-2531" },
-  { name: "Clearwater #2521", miles: 8.6, open: "Open · closes 6pm", phone: "(727) 555-2521" },
-  { name: "Lakeland #2551", miles: 12.4, open: "Open · closes 6pm", phone: "(863) 555-2551" },
-  { name: "St. Petersburg #2544", miles: 14.9, open: "Open · closes 6pm", phone: "(727) 555-2544" },
-  { name: "Bradenton #2557", miles: 18.3, open: "Open · closes 6pm", phone: "(941) 555-2557" },
-  { name: "Sarasota #2559", miles: 24.7, open: "Open · closes 6pm", phone: "(941) 555-2559" },
-  { name: "Ocala #2571", miles: 62.1, open: "Open · closes 6pm", phone: "(352) 555-2571" },
-  { name: "Orlando SW #2612", miles: 74.4, open: "Open · closes 5pm", phone: "(407) 555-2612" },
-  { name: "Kissimmee #2618", miles: 78.2, open: "Open · closes 5pm", phone: "(407) 555-2618" },
+  { name: "Ybor City #2541", miles: 0.8, open: "Open · closes 6pm", phone: "(813) 555-2541", qty: 12 },
+  { name: "Tampa #2531", miles: 6.6, open: "Open · closes 6pm", phone: "(813) 555-2531", qty: 8 },
+  { name: "Clearwater #2521", miles: 8.6, open: "Open · closes 6pm", phone: "(727) 555-2521", qty: 4 },
+  { name: "Lakeland #2551", miles: 12.4, open: "Open · closes 6pm", phone: "(863) 555-2551", qty: 2 },
+  { name: "St. Petersburg #2544", miles: 14.9, open: "Open · closes 6pm", phone: "(727) 555-2544", qty: 50 },
+  { name: "Bradenton #2557", miles: 18.3, open: "Open · closes 6pm", phone: "(941) 555-2557", qty: 10 },
+  { name: "Sarasota #2559", miles: 24.7, open: "Open · closes 6pm", phone: "(941) 555-2559", qty: 1 },
+  { name: "Ocala #2571", miles: 62.1, open: "Open · closes 6pm", phone: "(352) 555-2571", qty: 6 },
+  { name: "Orlando SW #2612", miles: 74.4, open: "Open · closes 5pm", phone: "(407) 555-2612", qty: 22 },
+  { name: "Kissimmee #2618", miles: 78.2, open: "Open · closes 5pm", phone: "(407) 555-2618", qty: 3 },
 ];
 
 /** Directions + miles as a single unit — David's rule: distance and directions
@@ -37,25 +37,6 @@ function MilesDirections({ miles }: { miles: number }) {
       <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
         <Navigation className="size-3.5" />
         Get directions
-      </a>
-    </span>
-  );
-}
-
-/** Phone + chat clustered together — talk-to-someone actions live as one unit. */
-function ContactCluster({ phone }: { phone: string }) {
-  return (
-    <span className="inline-flex items-center gap-3 text-xs">
-      <a
-        href={`tel:${phone.replace(/[^\d]/g, "")}`}
-        className="inline-flex items-center gap-1 font-medium text-primary"
-      >
-        <Phone className="size-3.5" />
-        {phone}
-      </a>
-      <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
-        <MessageSquare className="size-3.5" />
-        Chat
       </a>
     </span>
   );
@@ -81,102 +62,6 @@ function CloseX() {
  *  to inset-y-0 for full viewport height. */
 const DRAWER_SHELL =
   "flex h-full w-[404px] flex-col overflow-hidden border bg-background shadow-xl";
-
-/* ────────────────── Direction 1 — Ranked list, radio commit ─────────────
- * Row layout: radio | name / open / miles+directions / phone+chat
- * Stacking: distance-below-name (readable-first), contact cluster on its own line.
- */
-export function DirectionADrawer() {
-  return (
-    <div className={DRAWER_SHELL}>
-      <header className="flex shrink-0 items-center justify-between border-b bg-primary px-5 py-3 text-primary-foreground">
-        <p className="text-base font-bold">Select a store</p>
-        <button
-          type="button"
-          aria-label="Close"
-          className="grid size-8 place-items-center rounded-md hover:bg-primary/80"
-        >
-          <X className="size-4" />
-        </button>
-      </header>
-      <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
-        <p className="text-sm font-semibold">Enter zip code or city, state</p>
-        <div className="mt-2 flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
-          <Search className="size-4 text-muted-foreground" />
-          <span className="flex-1 text-foreground">33605</span>
-        </div>
-        <a
-          href="#"
-          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
-        >
-          <Navigation className="size-4" />
-          Use my current location
-        </a>
-      </div>
-      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
-        {BRANCHES.map((s, i) => (
-          <li key={s.name}>
-            <label className="flex cursor-pointer gap-3 px-5 py-3.5 transition-colors hover:bg-muted/40">
-              <span
-                aria-hidden
-                className={`mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border-2 ${
-                  i === 0 ? "border-primary" : "border-muted-foreground/40"
-                }`}
-              >
-                {i === 0 ? (
-                  <span className="size-2 rounded-full bg-primary" />
-                ) : null}
-              </span>
-              {/* Two-column row, three lines each side.
-                  Left: name / phone / chat.
-                  Right: miles / directions / open-status. */}
-              <div className="flex flex-1 items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1 text-xs">
-                  <p className="text-sm font-semibold text-foreground">{s.name}</p>
-                  <a
-                    href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
-                    className="inline-flex items-center gap-1 font-medium text-primary"
-                  >
-                    <Phone className="size-3.5" />
-                    {s.phone}
-                  </a>
-                  <a
-                    href="#"
-                    className="inline-flex items-center gap-1 font-medium text-primary"
-                  >
-                    <MessageSquare className="size-3.5" />
-                    Chat
-                  </a>
-                </div>
-                <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
-                  <span className="font-medium text-foreground">
-                    {s.miles} mi
-                  </span>
-                  <a
-                    href="#"
-                    className="inline-flex items-center gap-1 font-medium text-primary"
-                  >
-                    <Navigation className="size-3.5" />
-                    Directions
-                  </a>
-                  <span className="font-medium text-emerald-700">{s.open}</span>
-                </div>
-              </div>
-            </label>
-          </li>
-        ))}
-      </ul>
-      <div className="shrink-0 border-t p-3">
-        <button
-          type="button"
-          className="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          Save selection
-        </button>
-      </div>
-    </div>
-  );
-}
 
 /* ────────────────── Direction 2 — Divider list, small blue commit ───────
  * No card boxes — rows are separated by hairline dividers so the eye moves
@@ -208,19 +93,53 @@ export function DirectionBDrawer() {
       </div>
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {BRANCHES.map((s) => (
-          <li key={s.name} className="px-5 py-3.5 transition-colors hover:bg-muted/40">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold">{s.name}</p>
-                <p className="mt-0.5 text-xs font-medium text-emerald-700">{s.open}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <MilesDirections miles={s.miles} />
-                  <ContactCluster phone={s.phone} />
-                </div>
-              </div>
+          <li
+            key={s.name}
+            className="flex flex-col gap-1 px-5 py-3.5 transition-colors hover:bg-muted/40"
+          >
+            {/* Row 1 — branch name (left) + miles + Get directions (right). */}
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="text-sm font-semibold">{s.name}</p>
+              <span className="flex shrink-0 items-center gap-2 text-xs">
+                <span className="text-muted-foreground tabular-nums">
+                  {s.miles} mi
+                </span>
+                <a
+                  href="#"
+                  aria-label={`Directions to ${s.name}`}
+                  className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                >
+                  <Navigation className="size-3.5" />
+                  Get directions
+                </a>
+              </span>
+            </div>
+            {/* Row 2 — Open status. */}
+            <p className="text-xs font-medium text-emerald-700">{s.open}</p>
+            {/* Row 3 — Phone + Chat (mobile-friendly 44px targets) + inline
+                Select store CTA on the right, sharing the line. */}
+            <div className="mt-1 flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2 text-xs">
+                <a
+                  href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
+                  aria-label={`Call ${s.name}`}
+                  className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                >
+                  <Phone className="size-3.5" />
+                  {s.phone}
+                </a>
+                <a
+                  href="#"
+                  aria-label={`Chat with ${s.name}`}
+                  className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                >
+                  <MessageSquare className="size-3.5" />
+                  Chat
+                </a>
+              </span>
               <button
                 type="button"
-                className="shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                className="inline-flex min-h-11 shrink-0 items-center rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Select
               </button>
@@ -297,38 +216,64 @@ export function DirectionCDrawer() {
         </a>
       </div>
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
-        {BRANCHES.map((s, i) => (
-          <li
-            key={s.name}
-            className="flex flex-col gap-1.5 px-5 py-3.5 transition-colors hover:bg-muted/40"
-          >
-            {i === 0 ? (
-              <span className="inline-flex w-fit items-center rounded bg-emerald-600 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
-                Currently shopping
-              </span>
-            ) : null}
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
+        {BRANCHES.map((s, i) => {
+          const isCurrent = i === 0;
+          return (
+            <li
+              key={s.name}
+              className="flex flex-col gap-1.5 px-5 py-3.5 transition-colors hover:bg-muted/40"
+            >
+              {/* Row 1 — branch name (left) + availability count (right). */}
+              <div className="flex items-baseline justify-between gap-3">
                 <p className="text-sm font-semibold">{s.name}</p>
-                <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-                  <span className="font-medium text-emerald-700">{s.open}</span>
-                  <MilesDirections miles={s.miles} />
-                </p>
-                <div className="mt-1">
-                  <ContactCluster phone={s.phone} />
-                </div>
+                <span className="text-xs font-semibold tabular-nums text-emerald-700">
+                  {s.qty} available
+                </span>
               </div>
-              {i === 0 ? null : (
-                <button
-                  type="button"
-                  className="shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                >
-                  Select store
-                </button>
-              )}
-            </div>
-          </li>
-        ))}
+              {/* Row 2 — open status + miles/directions. */}
+              <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                <span className="font-medium text-emerald-700">{s.open}</span>
+                <MilesDirections miles={s.miles} />
+              </p>
+              {/* Row 3 — phone + chat + commit button (inline). Currently
+                  shopping row swaps the commit for a locked "Currently
+                  shopping" button-style badge in the same slot so alignment
+                  matches across all rows. */}
+              <div className="mt-1 flex items-center justify-between gap-3">
+                <span className="flex items-center gap-2 text-xs">
+                  <a
+                    href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
+                    aria-label={`Call ${s.name}`}
+                    className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                  >
+                    <Phone className="size-3.5" />
+                    {s.phone}
+                  </a>
+                  <a
+                    href="#"
+                    aria-label={`Chat with ${s.name}`}
+                    className="inline-flex min-h-11 items-center gap-1 px-1 font-medium text-primary"
+                  >
+                    <MessageSquare className="size-3.5" />
+                    Chat
+                  </a>
+                </span>
+                {isCurrent ? (
+                  <span className="inline-flex min-h-11 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold tracking-wide text-white uppercase">
+                    Currently shopping
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    className="inline-flex min-h-11 shrink-0 items-center rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    Select store
+                  </button>
+                )}
+              </div>
+            </li>
+          );
+        })}
       </ul>
       <div className="shrink-0 border-t p-3">
         <button type="button" className={SECONDARY_BTN}>

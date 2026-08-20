@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
-import {
-  DirectionADrawer,
-  DirectionBDrawer,
-  DirectionCDrawer,
-} from "./_drawers";
+import { DirectionBDrawer, DirectionCDrawer } from "./_drawers";
 
 export const metadata: Metadata = {
   title: "Store Locator — Drawer Directions",
@@ -20,7 +16,7 @@ function DirectionColumn({
   children,
 }: {
   label: string;
-  variant: "a" | "b" | "c";
+  variant: "b" | "c";
   children: React.ReactNode;
 }) {
   return (
@@ -61,13 +57,10 @@ export default function StoreLocatorPage() {
           <span className="w-32" />
         </div>
         <div className="flex flex-wrap items-start justify-center gap-6">
-          <DirectionColumn label="Direction 1" variant="a">
-            <DirectionADrawer />
-          </DirectionColumn>
-          <DirectionColumn label="Direction 2" variant="b">
+          <DirectionColumn label="Direction 1" variant="b">
             <DirectionBDrawer />
           </DirectionColumn>
-          <DirectionColumn label="Direction 3" variant="c">
+          <DirectionColumn label="Direction 2" variant="c">
             <DirectionCDrawer />
           </DirectionColumn>
         </div>

@@ -13,7 +13,6 @@ import {
 } from "@/app/search/_lib/mock-data";
 
 import {
-  DirectionADrawer,
   DirectionBDrawer,
   DirectionCDrawer,
 } from "../_drawers";
@@ -26,13 +25,11 @@ export const metadata: Metadata = {
 type SearchParams = { v?: string };
 
 const VARIANT_TITLE: Record<string, string> = {
-  a: "Direction 1 — Ranked list, radio commit",
-  b: "Direction 2 — Numbered ranking, inline commit",
-  c: "Direction 3 — Product-aware inventory drawer",
+  b: "Direction 1 — Divider list, inline commit",
+  c: "Direction 2 — Product-aware inventory drawer",
 };
 
 function VariantDrawer({ v }: { v: string }) {
-  if (v === "a") return <DirectionADrawer />;
   if (v === "b") return <DirectionBDrawer />;
   return <DirectionCDrawer />;
 }
@@ -43,7 +40,7 @@ export default async function StoreLocatorInPlpPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { v = "c" } = await searchParams;
-  const variant = ["a", "b", "c"].includes(v) ? v : "c";
+  const variant = v === "b" || v === "c" ? v : "c";
   const brand = getBrand("homans");
   if (!brand) notFound();
 
