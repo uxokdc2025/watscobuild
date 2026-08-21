@@ -194,7 +194,7 @@ export function DirectionCDrawer() {
           return (
             <li
               key={s.name}
-              className="flex flex-col gap-2 px-5 py-3 transition-colors hover:bg-muted/40"
+              className="relative flex flex-col gap-2 px-5 py-3 transition-colors hover:bg-muted/40"
             >
               {/* Row 1 — branch name. */}
               <div className="flex items-baseline gap-3">
@@ -236,11 +236,11 @@ export function DirectionCDrawer() {
                   </a>
                 </span>
                 {isCurrent ? (
-                  <span className="inline-flex h-7 shrink-0 self-center items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
+                  <span className="absolute top-1/2 right-5 inline-flex h-7 -translate-y-1/2 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
                     Current Store
                   </span>
                 ) : (
-                  <Button size="sm" className="h-7 self-center px-3 text-xs">
+                  <Button size="sm" className="absolute top-1/2 right-5 h-7 -translate-y-1/2 px-3 text-xs">
                     Select Store
                   </Button>
                 )}
