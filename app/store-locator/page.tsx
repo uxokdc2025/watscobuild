@@ -52,7 +52,7 @@ export default function StoreLocatorPage() {
             <ArrowLeft className="size-3.5" />
             Back to templates
           </Link>
-          <h1 className="text-lg font-semibold">Store Locator — drawer directions</h1>
+          <h1 className="text-lg font-semibold">Store Locator and Inventory Drawer</h1>
           <span className="w-32" />
         </div>
         <div className="flex flex-wrap items-start justify-center gap-6">
