@@ -264,8 +264,6 @@ export function ProductCard({
           {hasCommerce && data.nearbyBranchQty != null ? (
             <a
               href="/store-locator/inventory/in-plp?v=c"
-              target="_blank"
-              rel="noopener noreferrer"
               className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
             >
               {data.nearbyBranchQty.toLocaleString()} Nearby Branch

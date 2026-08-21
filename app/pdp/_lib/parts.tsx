@@ -51,8 +51,6 @@ function PartCard({ item }: { item: PartItem }) {
         <span className="font-medium text-in-stock">{item.nearbyQty}</span>{" "}
         <a
           href="/store-locator/inventory/in-plp?v=c"
-          target="_blank"
-          rel="noopener noreferrer"
           className="text-primary"
         >
           Check Nearby Branches

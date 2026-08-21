@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 import { getBrand } from "@/app/pdp/_lib/brands";
 import { SiteHeader, SiteFooter } from "@/app/pdp/_lib/chrome";
@@ -23,11 +21,6 @@ export const metadata: Metadata = {
 };
 
 type SearchParams = { v?: string };
-
-const VARIANT_TITLE: Record<string, string> = {
-  b: "Direction 1 — Divider list, inline commit",
-  c: "Direction 2 — Product-aware inventory drawer",
-};
 
 function VariantDrawer({ v }: { v: string }) {
   if (v === "b") return <DirectionBDrawer />;
@@ -72,18 +65,6 @@ export default async function StoreLocatorInPlpPage({
         <div className="fixed inset-0 z-50 bg-black/50">
           <div className="absolute inset-y-0 left-0 flex">
             <VariantDrawer v={variant} />
-          </div>
-          <div className="absolute top-4 right-4 flex items-center gap-3 rounded-lg bg-background/95 px-3 py-2 shadow-lg">
-            <Link
-              href="/store-locator"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
-            >
-              <ArrowLeft className="size-3.5" />
-              Back to gallery
-            </Link>
-            <span className="text-xs text-muted-foreground">
-              {VARIANT_TITLE[variant]}
-            </span>
           </div>
         </div>
       </div>
