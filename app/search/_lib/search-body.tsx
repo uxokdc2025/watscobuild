@@ -98,7 +98,7 @@ export function SearchBody({
   brandKey,
 }: SearchBodyProps) {
   const [view, setView] = React.useState<"grid" | "list">("grid");
-  const [stockLocation, setStockLocation] = React.useState<typeof STOCK_LOCATIONS[number]["value"]>("all");
+  const [stockLocation, setStockLocation] = React.useState<typeof STOCK_LOCATIONS[number]["value"]>("your-branch");
   const [selectedFacets, setSelectedFacets] = React.useState<Record<string, Set<string>>>({});
   const [selectedBrands, setSelectedBrands] = React.useState<Set<string>>(new Set());
 
