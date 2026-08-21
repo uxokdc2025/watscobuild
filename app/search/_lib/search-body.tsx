@@ -231,8 +231,8 @@ export function SearchBody({
               ) : null}
             </section>
 
-            <section aria-labelledby="categories-heading" className="space-y-2 border-t pt-4">
-              <h2 id="categories-heading" className="pb-3 font-semibold">
+            <section aria-labelledby="categories-heading" className="space-y-2 pt-4">
+              <h2 id="categories-heading" className="border-b border-border/70 pb-3 font-semibold">
                 Categories
               </h2>
               <ul className="space-y-2">
@@ -262,9 +262,9 @@ export function SearchBody({
               />
             ))}
 
-            <section aria-labelledby="brand-facet-heading" className="space-y-2 border-t pt-4">
+            <section aria-labelledby="brand-facet-heading" className="space-y-2 pt-4">
               <details open>
-                <summary className="flex cursor-pointer items-center justify-between pb-3 font-semibold">
+                <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
                   <span id="brand-facet-heading">Brand</span>
                   <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
                 </summary>
@@ -427,9 +427,9 @@ function FacetGroup({
   count: (key: FacetGroupSpec["key"], option: string) => number;
 }) {
   return (
-    <section aria-labelledby={`facet-${spec.key}-heading`} className="space-y-2 border-t pt-4">
+    <section aria-labelledby={`facet-${spec.key}-heading`} className="space-y-2 pt-4">
       <details open className="group">
-        <summary className="flex cursor-pointer items-center justify-between pb-3 font-semibold">
+        <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
           <span id={`facet-${spec.key}-heading`}>{spec.label}</span>
           <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
         </summary>
