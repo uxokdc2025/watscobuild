@@ -496,7 +496,7 @@ export function InventoryStoreLocatorDrawer() {
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {displayed.map((branch) => (
           <li key={branch.name} className="flex flex-col gap-2 px-5 py-3 transition-colors hover:bg-muted/40">
-            <div className="flex items-baseline justify-between gap-3">
+            <div className="flex items-center justify-between gap-3">
               <p className="text-sm font-semibold">{branch.name}</p>
               <span className={`text-xs font-semibold tabular-nums ${stockColor(branch.qty)}`}>
                 {branch.qty} available
@@ -517,7 +517,7 @@ export function InventoryStoreLocatorDrawer() {
                 Get Directions
               </a>
             </div>
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-baseline justify-between gap-3">
               <span className="flex items-center gap-2 text-xs">
                 <a href={`tel:${branch.name}`} className="inline-flex items-center gap-1 font-medium text-primary">
                   <Phone className="size-3.5" />
