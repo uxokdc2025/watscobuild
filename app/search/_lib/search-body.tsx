@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight, ImageOff, LayoutGrid, List as ListIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, ImageOff, LayoutGrid, List as ListIcon, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -143,6 +143,36 @@ export function SearchBody({
     });
   };
 
+  const appliedFilters = [
+    ...(stockLocation !== "all"
+      ? [{ key: `location-${stockLocation}`, label: displayLocations.find((loc) => loc.value === stockLocation)?.label ?? stockLocation }]
+      : []),
+    ...Object.entries(selectedFacets).flatMap(([group, options]) =>
+      Array.from(options).map((option) => ({ key: `${group}-${option}`, label: option })),
+    ),
+    ...Array.from(selectedBrands).map((brand) => ({ key: `brand-${brand}`, label: brand })),
+  ];
+
+  const clearAllFilters = () => {
+    setStockLocation("all");
+    setSelectedFacets({});
+    setSelectedBrands(new Set());
+  };
+
+  const removeFilter = (key: string) => {
+    if (key.startsWith("location-")) {
+      setStockLocation("all");
+      return;
+    }
+    const [group, ...rest] = key.split("-");
+    const option = rest.join("-");
+    if (group === "brand") {
+      toggleBrand(option);
+      return;
+    }
+    toggleFacet(group, option);
+  };
+
   return (
     <>
       {/* Breadcrumb — the site-chrome search bar carries the query, no
@@ -159,11 +189,11 @@ export function SearchBody({
       </nav>
 
       <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
-        <div className="grid gap-6 lg:grid-cols-[216px_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
           {/* Facet sidebar */}
-          <aside aria-label="Filters" className="space-y-6 text-sm">
-            <section aria-labelledby="stocked-at-heading" className="space-y-2">
-              <h2 id="stocked-at-heading" className="font-semibold">
+          <aside aria-label="Filters" className="space-y-5 text-sm">
+            <section aria-labelledby="stocked-at-heading" className="space-y-2 rounded-md bg-muted/50 p-4">
+              <h2 id="stocked-at-heading" className="border-b border-border/70 pb-3 font-semibold">
                 Stocked At
               </h2>
               <RadioGroup
@@ -176,7 +206,10 @@ export function SearchBody({
                 {displayLocations.map((loc) => (
                   <label
                     key={loc.value}
-                    className="flex items-center justify-between gap-2 text-sm"
+                    className={cn(
+                      "flex items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors",
+                      stockLocation === loc.value ? "bg-background font-medium shadow-sm" : "hover:bg-background/70",
+                    )}
                   >
                     <span className="flex items-center gap-2">
                       <RadioGroupItem value={loc.value} id={`loc-${loc.value}`} />
@@ -199,7 +232,7 @@ export function SearchBody({
             </section>
 
             <section aria-labelledby="categories-heading" className="space-y-2 border-t pt-4">
-              <h2 id="categories-heading" className="font-semibold">
+              <h2 id="categories-heading" className="border-b border-border/70 pb-3 font-semibold">
                 Categories
               </h2>
               <ul className="space-y-2">
@@ -212,7 +245,7 @@ export function SearchBody({
               </ul>
             </section>
 
-            <section aria-labelledby="narrow-heading" className="border-t border-b py-2">
+            <section aria-labelledby="narrow-heading" className="border-t border-b py-3">
               <h2 id="narrow-heading" className="text-xs font-bold tracking-wide text-foreground uppercase">
                 Narrow Your Results
               </h2>
@@ -231,9 +264,9 @@ export function SearchBody({
 
             <section aria-labelledby="brand-facet-heading" className="space-y-2 border-t pt-4">
               <details open>
-                <summary className="flex cursor-pointer items-center justify-between font-semibold">
+                <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
                   <span id="brand-facet-heading">Brand</span>
-                  <ChevronRight className="size-3.5 opacity-70 transition-transform group-open:rotate-90" />
+                  <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
                 </summary>
                 <ul className="mt-2 space-y-2">
                   {BRANDS_FACET.map((b) => {
@@ -257,7 +290,7 @@ export function SearchBody({
                 </ul>
                 <button
                   type="button"
-                  className="mt-2 inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/80"
+                  className="mt-3 text-sm font-medium text-primary underline-offset-4 hover:underline"
                 >
                   See More
                 </button>
@@ -267,6 +300,29 @@ export function SearchBody({
 
           {/* Results grid or list */}
           <section aria-label="Search results" className="flex flex-col gap-4">
+            {appliedFilters.length ? (
+              <div className="flex flex-wrap items-center gap-2" aria-label="Filters applied">
+                <span className="mr-1 font-semibold">Filters Applied:</span>
+                {appliedFilters.map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    onClick={() => removeFilter(filter.key)}
+                    className="inline-flex items-center gap-2 rounded-full bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/80"
+                  >
+                    {filter.label}
+                    <X className="size-3.5" />
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={clearAllFilters}
+                  className="ml-1 text-sm font-medium text-foreground underline-offset-4 hover:underline"
+                >
+                  Clear All
+                </button>
+              </div>
+            ) : null}
             {/* Results toolbar — heading left-aligned with the first product
                 card; view toggle pinned right at the same baseline. */}
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -374,9 +430,9 @@ function FacetGroup({
   return (
     <section aria-labelledby={`facet-${spec.key}-heading`} className="space-y-2 border-t pt-4">
       <details open className="group">
-        <summary className="flex cursor-pointer items-center justify-between font-semibold">
+        <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
           <span id={`facet-${spec.key}-heading`}>{spec.label}</span>
-          <ChevronRight className="size-3.5 opacity-70 transition-transform group-open:rotate-90" />
+          <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
         </summary>
         <ul className="mt-2 space-y-2">
           {spec.options.map((opt) => {
@@ -401,7 +457,7 @@ function FacetGroup({
         {spec.seeMore ? (
           <button
             type="button"
-            className="mt-2 inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/80"
+            className="mt-3 text-sm font-medium text-primary underline-offset-4 hover:underline"
           >
             See More
           </button>
