@@ -193,7 +193,7 @@ export function SearchBody({
           {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-5 text-sm">
             <section aria-labelledby="stocked-at-heading" className="space-y-2 rounded-md bg-muted/50 p-4">
-              <h2 id="stocked-at-heading" className="border-b border-border/70 pb-3 font-semibold">
+              <h2 id="stocked-at-heading" className="pb-3 font-semibold">
                 Stocked At
               </h2>
               <RadioGroup
@@ -232,7 +232,7 @@ export function SearchBody({
             </section>
 
             <section aria-labelledby="categories-heading" className="space-y-2 border-t pt-4">
-              <h2 id="categories-heading" className="border-b border-border/70 pb-3 font-semibold">
+              <h2 id="categories-heading" className="pb-3 font-semibold">
                 Categories
               </h2>
               <ul className="space-y-2">
@@ -245,7 +245,7 @@ export function SearchBody({
               </ul>
             </section>
 
-            <section aria-labelledby="narrow-heading" className="border-t border-b py-3">
+            <section aria-labelledby="narrow-heading" className="border-t py-3">
               <h2 id="narrow-heading" className="text-xs font-bold tracking-wide text-foreground uppercase">
                 Narrow Your Results
               </h2>
@@ -264,7 +264,7 @@ export function SearchBody({
 
             <section aria-labelledby="brand-facet-heading" className="space-y-2 border-t pt-4">
               <details open>
-                <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
+                <summary className="flex cursor-pointer items-center justify-between pb-3 font-semibold">
                   <span id="brand-facet-heading">Brand</span>
                   <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
                 </summary>
@@ -290,7 +290,7 @@ export function SearchBody({
                 </ul>
                 <button
                   type="button"
-                  className="mt-3 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  className="mt-3 text-xs font-medium text-primary underline-offset-4 hover:underline"
                 >
                   See More
                 </button>
@@ -300,29 +300,6 @@ export function SearchBody({
 
           {/* Results grid or list */}
           <section aria-label="Search results" className="flex flex-col gap-4">
-            {appliedFilters.length ? (
-              <div className="flex flex-wrap items-center gap-2" aria-label="Filters applied">
-                <span className="mr-1 font-semibold">Filters Applied:</span>
-                {appliedFilters.map((filter) => (
-                  <button
-                    key={filter.key}
-                    type="button"
-                    onClick={() => removeFilter(filter.key)}
-                    className="inline-flex items-center gap-2 rounded-full bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/80"
-                  >
-                    {filter.label}
-                    <X className="size-3.5" />
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={clearAllFilters}
-                  className="ml-1 text-sm font-medium text-foreground underline-offset-4 hover:underline"
-                >
-                  Clear All
-                </button>
-              </div>
-            ) : null}
             {/* Results toolbar — heading left-aligned with the first product
                 card; view toggle pinned right at the same baseline. */}
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -362,6 +339,28 @@ export function SearchBody({
                 </button>
               </div>
             </div>
+            {appliedFilters.length ? (
+              <div className="flex flex-wrap items-center gap-2">
+                {appliedFilters.map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    onClick={() => removeFilter(filter.key)}
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    {filter.label}
+                    <X className="size-3.5" />
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={clearAllFilters}
+                  className="ml-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                >
+                  Clear All
+                </button>
+              </div>
+            ) : null}
             {view === "grid" ? (
               <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {results.map((r, i) => (
@@ -430,7 +429,7 @@ function FacetGroup({
   return (
     <section aria-labelledby={`facet-${spec.key}-heading`} className="space-y-2 border-t pt-4">
       <details open className="group">
-        <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
+        <summary className="flex cursor-pointer items-center justify-between pb-3 font-semibold">
           <span id={`facet-${spec.key}-heading`}>{spec.label}</span>
           <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
         </summary>
@@ -457,7 +456,7 @@ function FacetGroup({
         {spec.seeMore ? (
           <button
             type="button"
-            className="mt-3 text-sm font-medium text-primary underline-offset-4 hover:underline"
+            className="mt-3 text-xs font-medium text-primary underline-offset-4 hover:underline"
           >
             See More
           </button>
