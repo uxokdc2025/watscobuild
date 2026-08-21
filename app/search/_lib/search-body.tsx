@@ -222,12 +222,12 @@ export function SearchBody({
                 ))}
               </RadioGroup>
               {stockLocation !== "your-branch" ? (
-                <button
-                  type="button"
+                <Link
+                  href="/store-locator/in-plp?v=c"
                   className="text-xs font-medium text-primary hover:underline"
                 >
                   Change
-                </button>
+                </Link>
               ) : null}
             </section>
 
