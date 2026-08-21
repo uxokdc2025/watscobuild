@@ -210,7 +210,7 @@ export function DirectionCDrawer() {
                 </p>
               </details>
               {/* Row 2 — miles + Get directions, LEFT-aligned. */}
-              <div className="flex items-center text-xs">
+              <div className="flex translate-y-px items-center text-xs">
                 <MilesDirections miles={s.miles} />
               </div>
               {/* Row 3 — phone + chat (left) + commit (right). Current-store
@@ -236,11 +236,11 @@ export function DirectionCDrawer() {
                   </a>
                 </span>
                 {isCurrent ? (
-                  <span className="inline-flex h-7 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
+                  <span className="inline-flex h-7 shrink-0 self-center items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
                     Current Store
                   </span>
                 ) : (
-                  <Button size="sm" className="h-7 px-3 text-xs">
+                  <Button size="sm" className="h-7 self-center px-3 text-xs">
                     Select Store
                   </Button>
                 )}
