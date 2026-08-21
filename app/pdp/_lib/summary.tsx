@@ -74,7 +74,7 @@ function BranchAvailability({
             ))}
           </ul>
           <a
-            href="/store-locator/in-plp?v=c"
+            href="/store-locator/inventory/in-plp?v=c"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 inline-block text-sm font-medium text-primary"

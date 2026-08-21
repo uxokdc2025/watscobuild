@@ -50,7 +50,7 @@ function PartCard({ item }: { item: PartItem }) {
       <div className="text-sm">
         <span className="font-medium text-in-stock">{item.nearbyQty}</span>{" "}
         <a
-          href="/store-locator/in-plp?v=c"
+          href="/store-locator/inventory/in-plp?v=c"
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary"

@@ -263,7 +263,7 @@ export function ProductCard({
         <p className="min-h-4 truncate text-xs font-medium leading-4">
           {hasCommerce && data.nearbyBranchQty != null ? (
             <a
-              href="/store-locator/in-plp?v=c"
+              href="/store-locator/inventory/in-plp?v=c"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"

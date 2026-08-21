@@ -96,8 +96,8 @@ function GemaireHeader({ signedIn = false }: { signedIn?: boolean }) {
           </div>
 
           {/* Branch selector */}
-          <button
-            type="button"
+          <a
+            href="/store-locator/in-plp?v=c"
             className="ml-auto hidden items-center gap-2 text-left lg:inline-flex"
           >
             <MapPin className="size-5 shrink-0" />
@@ -110,7 +110,7 @@ function GemaireHeader({ signedIn = false }: { signedIn?: boolean }) {
               </span>
             </span>
             <ChevronDown className="size-4 opacity-90" />
-          </button>
+          </a>
 
           {/* Orange cart */}
           <button
