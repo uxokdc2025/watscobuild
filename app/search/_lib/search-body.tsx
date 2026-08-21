@@ -15,6 +15,7 @@ import {
   type ProductCardData,
 } from "@/app/pdp/_lib/product-card";
 import type { SearchResult } from "./mock-data";
+import { useCart } from "@/components/cart/cart-context";
 
 /* ------------------------------------------------------------------ *
  * Facet definitions
@@ -609,6 +610,7 @@ function SignedInCommerce({
   result: SearchResult;
   align?: "left" | "right";
 }) {
+  const { addItem } = useCart();
   return (
     <div className={cn("space-y-1", align === "right" ? "text-right" : "text-left")}>
       {result.price != null ? (
@@ -623,7 +625,17 @@ function SignedInCommerce({
         </p>
       ) : null}
       <StockLine result={result} />
-      <Button size="sm" className="mt-2">
+      <Button
+        size="sm"
+        className="mt-2"
+        onClick={() => addItem({
+          id: result.id,
+          title: result.title,
+          brand: result.brand,
+          image: result.image,
+          price: result.price ?? 0,
+        })}
+      >
         Add to Cart
       </Button>
     </div>
