@@ -27,13 +27,17 @@ import {
   Building2,
   Check,
   ChevronDown,
+  ChevronRight,
   MapPin,
+  MessageSquare,
   Navigation,
   Phone,
   Search,
   Truck,
   X,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 /** Same 10-branch mock the left drawers use so the two experiences can be
  *  compared side by side without noise. */
@@ -409,6 +413,137 @@ export function InventoryDirection3() {
             ? `Set ${selectedBranch!.name} as my branch`
             : "Select a branch"}
         </button>
+      </div>
+    </div>
+  );
+}
+
+/** Store-locator-first inventory drawer: product context sits above the
+ * branch-finder pattern, with inventory filter and sort controls preserved. */
+export function InventoryStoreLocatorDrawer() {
+  const [inStockOnly, setInStockOnly] = React.useState(true);
+  const [sortBy, setSortBy] = React.useState<"miles" | "availability">("miles");
+  const [sortOpen, setSortOpen] = React.useState(false);
+
+  const displayed = React.useMemo(() => {
+    const filtered = inStockOnly ? BRANCHES.filter((b) => b.qty > 0) : BRANCHES;
+    return [...filtered].sort((a, b) =>
+      sortBy === "miles" ? a.miles - b.miles : b.qty - a.qty,
+    );
+  }, [inStockOnly, sortBy]);
+
+  return (
+    <div className={SHELL}>
+      <ProductHeader />
+      <header className="flex shrink-0 items-center border-b px-5 py-3.5">
+        <div>
+          <p className="text-base font-bold">Find a branch</p>
+          <p className="text-xs text-muted-foreground">Sorted by distance</p>
+        </div>
+      </header>
+      <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
+        <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
+          <Search className="size-4 text-muted-foreground" />
+          <span className="flex-1 text-foreground">33605</span>
+        </div>
+        <a
+          href="#"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+        >
+          <Navigation className="size-4" />
+          Use my current location
+        </a>
+      </div>
+      <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
+        <button
+          type="button"
+          aria-pressed={inStockOnly}
+          onClick={() => setInStockOnly((value) => !value)}
+          className={
+            inStockOnly
+              ? "inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
+              : "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          }
+        >
+          {inStockOnly ? <Check className="size-3" /> : null}
+          In Stock
+        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setSortOpen((value) => !value)}
+            aria-expanded={sortOpen}
+            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowDownUp className="size-3.5" />
+            Sort: {sortBy === "miles" ? "Miles" : "Availability"}
+            <ChevronDown className={`size-3 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
+          </button>
+          {sortOpen ? (
+            <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
+              {(["miles", "availability"] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => {
+                    setSortBy(option);
+                    setSortOpen(false);
+                  }}
+                  className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${sortBy === option ? "font-medium text-primary" : "text-foreground"}`}
+                >
+                  {option === "miles" ? "Miles" : "Availability"}
+                  {sortBy === option ? <Check className="size-3.5" /> : null}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </div>
+      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
+        {displayed.map((branch) => (
+          <li key={branch.name} className="flex flex-col gap-2 px-5 py-3 transition-colors hover:bg-muted/40">
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="text-sm font-semibold">{branch.name}</p>
+              <span className={`text-xs font-semibold tabular-nums ${stockColor(branch.qty)}`}>
+                {branch.qty} available
+              </span>
+            </div>
+            <details className="group text-xs">
+              <summary className="flex w-fit cursor-pointer list-none items-center gap-1 font-medium text-black/70 outline-none focus-visible:underline [&::-webkit-details-marker]:hidden">
+                Store Hours
+                <ChevronDown className="size-3.5 text-black/70 transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-1 text-muted-foreground">Mon–Fri 7am–6pm · Sat 8am–12pm · Sun Closed</p>
+            </details>
+            <div className="flex items-center text-xs">
+              <span className="text-muted-foreground tabular-nums">{branch.miles} mi</span>
+              <span className="mx-1.5 text-muted-foreground/40">·</span>
+              <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
+                <Navigation className="size-3.5" />
+                Get Directions
+              </a>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2 text-xs">
+                <a href={`tel:${branch.name}`} className="inline-flex items-center gap-1 font-medium text-primary">
+                  <Phone className="size-3.5" />
+                  (919) 555-0100
+                </a>
+                <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
+                  <MessageSquare className="size-3.5" />
+                  Chat
+                </a>
+              </span>
+              <Button size="sm" className="h-7 px-3 text-xs">Select Store</Button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div className="shrink-0 border-t p-3">
+        <Button variant="secondary" className="h-10 w-full">
+          Find Other Branches
+          <ChevronRight className="size-4" />
+        </Button>
       </div>
     </div>
   );

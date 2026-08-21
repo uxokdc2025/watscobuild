@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Loader2, Plus } from "lucide-react";
+import { ArrowRight, Check, Loader2, Plus, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,11 @@ export function ActionsSection() {
       description="Triggers and status markers. Hover/Focus tiles show the interaction styles forced on; every tile is also live."
     >
       {/* ── Button ── */}
-      <Demo name="Button" slug="button" description="Six variants, four sizes.">
+      <Demo
+        name="Button"
+        slug="button"
+        description="Primary, secondary, disabled, icon, and sentence-case label patterns."
+      >
         <State label="Default">
           <Button>Button</Button>
         </State>
@@ -43,9 +47,6 @@ export function ActionsSection() {
         <State label="Secondary">
           <Button variant="secondary">Button</Button>
         </State>
-        <State label="Outline">
-          <Button variant="outline">Button</Button>
-        </State>
         <State label="Ghost">
           <Button variant="ghost">Button</Button>
         </State>
@@ -56,6 +57,21 @@ export function ActionsSection() {
           <Button size="icon" aria-label="Add">
             <Plus />
           </Button>
+        </State>
+        <State label="Icon + label">
+          <Button>
+            <ShoppingCart />
+            Add to Cart
+          </Button>
+        </State>
+        <State label="Secondary + icon">
+          <Button variant="secondary">
+            <ArrowRight />
+            See More Branches
+          </Button>
+        </State>
+        <State label="Sentence case">
+          <Button>View All Branches</Button>
         </State>
         <State label="Small">
           <Button size="sm">Button</Button>

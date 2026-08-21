@@ -1,16 +1,16 @@
 "use client";
 
 import {
-  Building2,
+  ChevronDown,
   ChevronRight,
-  MapPin,
   MessageSquare,
   Navigation,
   Phone,
   Search,
-  Truck,
   X,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 /** Ten mock branches — same list across all three variants so scroll and
  *  layout tradeoffs are comparable apples-to-apples. */
@@ -41,9 +41,6 @@ function MilesDirections({ miles }: { miles: number }) {
     </span>
   );
 }
-
-const SECONDARY_BTN =
-  "inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80";
 
 function CloseX() {
   return (
@@ -153,7 +150,7 @@ export function DirectionBDrawer() {
           type="button"
           className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background"
         >
-          See more branches
+          See More Branches
           <ChevronRight className="size-4" />
         </button>
       </div>
@@ -168,61 +165,36 @@ export function DirectionBDrawer() {
  */
 export function DirectionCDrawer() {
   return (
-    <div className={DRAWER_SHELL}>
-      {/* No inline header — product context row is the top of the drawer.
-          The Close X floats OUTSIDE this drawer on the scrim; it lives in
-          the /in-plp overlay page, not in this component. */}
-      <div className="flex shrink-0 items-start gap-3 border-b bg-muted/40 p-4">
-        <div className="grid size-16 shrink-0 place-items-center rounded-md border bg-background">
-          <MapPin className="size-6 text-muted-foreground/60" />
+    <div className="relative h-full w-[444px]">
+      <div className={DRAWER_SHELL}>
+        <header className="flex shrink-0 items-center border-b px-5 py-3.5">
+          <div>
+            <p className="text-base font-bold">Find a branch</p>
+            <p className="text-xs text-muted-foreground">Sorted by distance</p>
+          </div>
+        </header>
+        {/* Search + change-location — same primitive the other drawers use so
+            switching branches is discoverable in the product-aware mode too. */}
+        <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
+          <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
+            <Search className="size-4 text-muted-foreground" />
+            <span className="flex-1 text-foreground">33605</span>
+          </div>
+          <a
+            href="#"
+            className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+          >
+            <Navigation className="size-4" />
+            Use my current location
+          </a>
         </div>
-        <div>
-          <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-            Carrier
-          </p>
-          <p className="mt-0.5 text-sm leading-tight font-semibold">
-            2.5 Ton 14.3 SEER2 Residential Heat Pump Condensing Unit (R-454B)
-          </p>
-        </div>
-      </div>
-      <div className="flex shrink-0 border-b">
-        <button
-          type="button"
-          className="relative flex flex-1 items-center justify-center gap-1.5 border-b-2 border-primary py-3 text-sm font-semibold text-primary"
-        >
-          <Building2 className="size-4" />
-          Branch pickup
-        </button>
-        <button
-          type="button"
-          className="flex flex-1 items-center justify-center gap-1.5 border-b-2 border-transparent py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <Truck className="size-4" />
-          Delivery
-        </button>
-      </div>
-      {/* Search + change-location — same primitive the other drawers use so
-          switching branches is discoverable in the product-aware mode too. */}
-      <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
-        <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
-          <Search className="size-4 text-muted-foreground" />
-          <span className="flex-1 text-foreground">33605</span>
-        </div>
-        <a
-          href="#"
-          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
-        >
-          <Navigation className="size-4" />
-          Use my current location
-        </a>
-      </div>
-      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
+        <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {BRANCHES.map((s, i) => {
           const isCurrent = i === 0;
           return (
             <li
               key={s.name}
-              className="flex flex-col gap-1 px-5 py-2.5 transition-colors hover:bg-muted/40"
+              className="flex flex-col gap-2 px-5 py-3 transition-colors hover:bg-muted/40"
             >
               {/* Row 1 — branch name (left) + availability count (right). */}
               <div className="flex items-baseline justify-between gap-3">
@@ -231,6 +203,15 @@ export function DirectionCDrawer() {
                   {s.qty} available
                 </span>
               </div>
+              <details className="group text-xs">
+                <summary className="flex w-fit cursor-pointer list-none items-center gap-1 font-medium text-black/70 outline-none focus-visible:underline [&::-webkit-details-marker]:hidden">
+                  Store Hours
+                  <ChevronDown className="size-3.5 text-black/70 transition-transform group-open:rotate-180" />
+                </summary>
+                <p className="mt-1 text-muted-foreground">
+                  Mon–Fri 7am–6pm · Sat 8am–12pm · Sun Closed
+                </p>
+              </details>
               {/* Row 2 — miles + Get directions, LEFT-aligned. */}
               <div className="flex items-center text-xs">
                 <MilesDirections miles={s.miles} />
@@ -238,7 +219,7 @@ export function DirectionCDrawer() {
               {/* Row 3 — phone + chat (left) + commit (right). Current-store
                   row swaps the commit for a locked green "Current store"
                   button-style tag in the same slot for alignment. */}
-              <div className="mt-1 flex items-center justify-between gap-3">
+              <div className="flex items-center justify-between gap-3">
                 <span className="flex items-center gap-2 text-xs">
                   <a
                     href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
@@ -259,27 +240,33 @@ export function DirectionCDrawer() {
                 </span>
                 {isCurrent ? (
                   <span className="inline-flex h-7 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
-                    Current store
+                    Current Store
                   </span>
                 ) : (
-                  <button
-                    type="button"
-                    className="inline-flex h-7 shrink-0 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                  >
-                    Select store
-                  </button>
+                  <Button size="sm" className="h-7 px-3 text-xs">
+                    Select Store
+                  </Button>
                 )}
               </div>
             </li>
           );
         })}
-      </ul>
-      <div className="shrink-0 border-t p-3">
-        <button type="button" className={SECONDARY_BTN}>
-          Find other branches
-          <ChevronRight className="size-4" />
-        </button>
+        </ul>
+        <div className="shrink-0 border-t p-3">
+          <Button variant="secondary" className="h-10 w-full">
+            Find Other Branches
+            <ChevronRight className="size-4" />
+          </Button>
+        </div>
       </div>
+      {/* The close control sits on the scrim, outside the drawer edge. */}
+      <button
+        type="button"
+        aria-label="Close"
+        className="absolute top-4 left-[420px] grid size-10 place-items-center rounded-full bg-background text-foreground shadow-lg transition-colors hover:bg-accent"
+      >
+        <X className="size-5" />
+      </button>
     </div>
   );
 }

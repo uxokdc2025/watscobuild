@@ -210,7 +210,10 @@ export function ProductCard({
               underline via a nested span (line-clamp on the <a> uses
               -webkit-box which can drop the last-line underline in some
               browsers). */}
-      <a href={href} className="block min-h-[54px] group">
+      <a
+        href={href}
+        className="group block min-h-[54px] text-primary underline-offset-2 decoration-1 hover:underline"
+      >
         <span className="line-clamp-3 text-sm font-semibold leading-[18px] text-primary group-hover:underline">
           {data.title}
         </span>
@@ -263,7 +266,7 @@ export function ProductCard({
               href="/store-locator/in-plp?v=c"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
             >
               {data.nearbyBranchQty.toLocaleString()} Nearby Branch
             </a>

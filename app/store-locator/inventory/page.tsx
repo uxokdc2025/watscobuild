@@ -1,57 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
-import {
-  InventoryDirection1,
-  InventoryDirection2,
-  InventoryDirection3,
-} from "../_inventory-drawers";
+import { InventoryStoreLocatorDrawer } from "../_inventory-drawers";
 
 export const metadata: Metadata = {
   title: "Inventory Drawer — Right-side directions",
-  description:
-    "Three right-side inventory drawers, side by side for visual comparison.",
+  description: "Inventory drawer using the store-locator branch finder pattern.",
 };
-
-function Column({
-  label,
-  variant,
-  children,
-}: {
-  label: string;
-  variant: "1" | "2" | "3";
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-3">
-      <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-        {label}
-      </p>
-      <div className="h-[720px]">{children}</div>
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <Link
-          href={`/store-locator/inventory/in-pdp?v=${variant}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          See on PDP
-          <ArrowUpRight className="size-3.5" />
-        </Link>
-        <Link
-          href={`/store-locator/inventory/in-plp?v=${variant}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md border border-primary bg-transparent px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5"
-        >
-          See on PLP
-          <ArrowUpRight className="size-3.5" />
-        </Link>
-      </div>
-    </div>
-  );
-}
 
 export default function InventoryGalleryPage() {
   return (
@@ -70,16 +26,10 @@ export default function InventoryGalleryPage() {
           </h1>
           <span className="w-32" />
         </div>
-        <div className="flex flex-wrap items-start justify-center gap-6">
-          <Column label="Direction 1" variant="1">
-            <InventoryDirection1 />
-          </Column>
-          <Column label="Direction 2" variant="2">
-            <InventoryDirection2 />
-          </Column>
-          <Column label="Direction 3" variant="3">
-            <InventoryDirection3 />
-          </Column>
+        <div className="flex items-start justify-center">
+          <div className="h-[720px]">
+            <InventoryStoreLocatorDrawer />
+          </div>
         </div>
       </main>
     </div>
