@@ -547,13 +547,15 @@ export function InventoryStoreLocatorDrawer() {
 /** Shared close-X for the /in-plp overlay — matches the store-locator scrim. */
 export function InventoryCloseX() {
   return (
-    <button
+    <Button
       type="button"
       aria-label="Close"
       onClick={closeDrawer}
-      className="grid size-7 place-items-center rounded-full border border-transparent bg-transparent text-foreground shadow-none transition-colors hover:border-black/50 hover:bg-transparent hover:text-black"
+      variant="outline"
+      size="icon-sm"
+      className="rounded-full shadow-lg"
     >
       <X className="size-4" />
-    </button>
+    </Button>
   );
 }

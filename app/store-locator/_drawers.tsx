@@ -258,14 +258,16 @@ export function DirectionCDrawer() {
         </div>
       </div>
       {/* The close control sits on the scrim, outside the drawer edge. */}
-      <button
+      <Button
         type="button"
         aria-label="Close"
         onClick={closeDrawer}
-        className="absolute top-4 left-[428px] grid size-7 place-items-center rounded-full border border-transparent bg-transparent text-foreground shadow-none transition-colors hover:border-black/50 hover:bg-transparent hover:text-black"
+        variant="outline"
+        size="icon-sm"
+        className="absolute top-4 left-[428px] rounded-full shadow-lg"
       >
         <X className="size-4" />
-      </button>
+      </Button>
     </div>
   );
 }
