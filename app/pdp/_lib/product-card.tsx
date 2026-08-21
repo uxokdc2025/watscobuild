@@ -62,6 +62,7 @@ import {
 } from "@/components/ui/label-badges";
 import { cn } from "@/lib/utils";
 import { formatUSD, type PdpBadge } from "./types";
+import { useCart } from "@/components/cart/cart-context";
 
 export type ProductCardData = {
   id: string;
@@ -126,8 +127,9 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
 /** Qty stepper + Add button INLINE. Qty stepper reuses the buy-box
  *  pattern (grid place-items-center cells with border-x on the middle)
  *  scaled to h-9 for card context. Add button uses the primary token. */
-function QtyPlusAdd() {
+function QtyPlusAdd({ data }: { data: ProductCardData }) {
   const [qty, setQty] = React.useState(1);
+  const { addItem } = useCart();
   const cell =
     "grid h-full w-7 cursor-pointer place-items-center text-foreground transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
   return (
@@ -163,6 +165,7 @@ function QtyPlusAdd() {
       </div>
       <button
         type="button"
+        onClick={() => addItem({ id: data.id, title: data.title, brand: data.brand, image: data.image, price: data.price ?? 0 }, qty)}
         className="inline-flex h-[34px] min-w-[72px] flex-1 items-center justify-center gap-1.5 rounded-md bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
         style={{ flex: "1 1 0%", minWidth: 0 }}
       >
@@ -293,7 +296,7 @@ export function ProductCard({
         {/* 10. Qty stepper + Add — inline row. */}
         <div className="min-h-[34px] pt-1">
           {hasCommerce ? (
-            <QtyPlusAdd />
+            <QtyPlusAdd data={data} />
           ) : (
             <a
               href="#"

@@ -11,6 +11,7 @@ import { BranchRow, PointsBadge, stockTextClass } from "@/components/ui/label-ba
 import { PackSizePills } from "@/components/ui/pack-size-pills";
 import { useAuth } from "./auth";
 import { formatUSD, formatUom, type PdpCommerce, type PdpProduct } from "./types";
+import { useCart } from "@/components/cart/cart-context";
 
 function QtyStepper({
   qty,
@@ -163,6 +164,7 @@ export function PdpSummary({
 }: {
   product: PdpProduct;
 }) {
+  const { addItem } = useCart();
   const { signedIn } = useAuth();
   // Shared quantity: the stepper and the pack-size pills both drive it, so
   // selecting "2 Packs (48)" sets the quantity box to 48.
@@ -331,6 +333,13 @@ export function PdpSummary({
                 size="lg"
                 disabled={product.commerce!.price == null}
                 className="h-12 flex-1 text-base"
+                onClick={() => addItem({
+                  id: product.slug,
+                  title: product.title,
+                  brand: product.brand,
+                  image: product.images?.[0],
+                  price: product.commerce!.price ?? 0,
+                }, qty)}
               >
                 <ShoppingCart />
                 Add to Cart
