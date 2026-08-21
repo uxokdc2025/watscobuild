@@ -196,12 +196,9 @@ export function DirectionCDrawer() {
               key={s.name}
               className="flex flex-col gap-2 px-5 py-3 transition-colors hover:bg-muted/40"
             >
-              {/* Row 1 — branch name (left) + availability count (right). */}
-              <div className="flex items-baseline justify-between gap-3">
+              {/* Row 1 — branch name. */}
+              <div className="flex items-baseline gap-3">
                 <p className="text-sm font-semibold">{s.name}</p>
-                <span className="text-xs font-semibold tabular-nums text-emerald-700">
-                  {s.qty} available
-                </span>
               </div>
               <details className="group text-xs">
                 <summary className="flex w-fit cursor-pointer list-none items-center gap-1 font-medium text-black/70 outline-none focus-visible:underline [&::-webkit-details-marker]:hidden">
@@ -219,7 +216,7 @@ export function DirectionCDrawer() {
               {/* Row 3 — phone + chat (left) + commit (right). Current-store
                   row swaps the commit for a locked green "Current store"
                   button-style tag in the same slot for alignment. */}
-              <div className="flex items-center justify-between gap-3">
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
                 <span className="flex items-center gap-2 text-xs">
                   <a
                     href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
@@ -239,11 +236,11 @@ export function DirectionCDrawer() {
                   </a>
                 </span>
                 {isCurrent ? (
-                  <span className="inline-flex h-7 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
+                  <span className="col-start-2 inline-flex h-7 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
                     Current Store
                   </span>
                 ) : (
-                  <Button size="sm" className="h-7 px-3 text-xs">
+                  <Button size="sm" className="col-start-2 h-7 px-3 text-xs">
                     Select Store
                   </Button>
                 )}
