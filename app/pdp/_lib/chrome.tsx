@@ -315,7 +315,7 @@ function BakerHeader({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={BAKER_LOGO} alt="Baker Distributing" className="h-9 w-auto" />
         </a>
-        <button type="button" className="hidden text-left text-xs leading-tight lg:block">
+        <a href="/store-locator/in-plp?v=c" className="hidden text-left text-xs leading-tight lg:block">
           <span className="inline-flex items-center gap-1.5">
             <MapPin className="size-4 shrink-0" />
             <span>
@@ -325,7 +325,7 @@ function BakerHeader({
               </span>
             </span>
           </span>
-        </button>
+        </a>
         <div className="relative hidden min-w-0 flex-1 md:block">
           <input
             aria-label="Search"
@@ -922,7 +922,7 @@ function EcmdiHeader({
             </span>
           </span>
         </button>
-        <button type="button" className="hidden text-left text-xs leading-tight lg:block">
+        <a href="/store-locator/in-plp?v=c" className="hidden text-left text-xs leading-tight lg:block">
           <span className="inline-flex items-center gap-1.5">
             <MapPin className="size-5" />
             <span>
@@ -932,7 +932,7 @@ function EcmdiHeader({
               </span>
             </span>
           </span>
-        </button>
+        </a>
         <button type="button" aria-label="Shopping Cart" className="relative inline-flex items-center gap-1.5 font-medium">
           <ShoppingCart className="size-6" />
           <span className="hidden lg:inline">Shopping Cart</span>
@@ -1186,7 +1186,10 @@ function HomansHeader({
           </a>
 
           {/* Your store */}
-          <div className="hidden items-center gap-2 text-xs leading-tight xl:flex">
+          <a
+            href="/store-locator/in-plp?v=c"
+            className="hidden items-center gap-2 text-xs leading-tight transition-opacity hover:opacity-80 xl:flex"
+          >
             <Home className="size-5 shrink-0" />
             <span>
               <span className="block opacity-90">Your store</span>
@@ -1197,7 +1200,7 @@ function HomansHeader({
                 Open now
               </span>
             </span>
-          </div>
+          </a>
 
           {/* Search */}
           <div className="relative min-w-0 flex-1">
