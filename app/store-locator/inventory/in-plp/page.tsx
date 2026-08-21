@@ -16,6 +16,7 @@ import {
   InventoryDirection1,
   InventoryDirection2,
   InventoryDirection3,
+  InventoryStoreLocatorDrawer,
   InventoryCloseX,
 } from "../../_inventory-drawers";
 
@@ -30,11 +31,13 @@ const VARIANT_TITLE: Record<string, string> = {
   "1": "Direction 1 — Reference literal (East Coast)",
   "2": "Direction 2 — Tabbed, per-row commit",
   "3": "Direction 3 — Dense picker",
+  c: "Direction C — Store locator inventory",
 };
 
 function VariantDrawer({ v }: { v: string }) {
   if (v === "1") return <InventoryDirection1 />;
   if (v === "2") return <InventoryDirection2 />;
+  if (v === "c") return <InventoryStoreLocatorDrawer />;
   return <InventoryDirection3 />;
 }
 
@@ -44,7 +47,7 @@ export default async function InventoryInPlpPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { v = "1" } = await searchParams;
-  const variant = ["1", "2", "3"].includes(v) ? v : "1";
+  const variant = ["1", "2", "3", "c"].includes(v) ? v : "1";
   const brand = getBrand("homans");
   if (!brand) notFound();
 

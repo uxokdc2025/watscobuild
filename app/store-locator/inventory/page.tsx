@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 import { InventoryStoreLocatorDrawer } from "../_inventory-drawers";
 
@@ -27,8 +27,19 @@ export default function InventoryGalleryPage() {
           <span className="w-32" />
         </div>
         <div className="flex items-start justify-center">
-          <div className="h-[720px]">
-            <InventoryStoreLocatorDrawer />
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-[720px]">
+              <InventoryStoreLocatorDrawer />
+            </div>
+            <Link
+              href="/store-locator/inventory/in-plp?v=c"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              See in PLP
+              <ArrowUpRight className="size-3.5" />
+            </Link>
           </div>
         </div>
       </main>
