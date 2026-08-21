@@ -551,7 +551,7 @@ export function InventoryCloseX() {
       type="button"
       aria-label="Close"
       onClick={closeDrawer}
-      className="grid size-7 place-items-center rounded-full border border-black/20 bg-background text-foreground shadow-lg transition-colors hover:bg-black/10"
+      className="grid size-7 place-items-center rounded-full border border-black/20 bg-background/70 text-foreground shadow-lg transition-colors hover:bg-background/80"
     >
       <X className="size-4" />
     </button>
