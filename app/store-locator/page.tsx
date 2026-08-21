@@ -6,9 +6,8 @@ import { DirectionCDrawer } from "./_drawers";
 import { InventoryStoreLocatorDrawer } from "./_inventory-drawers";
 
 export const metadata: Metadata = {
-  title: "Store Locator — Drawer Directions",
-  description:
-    "Three drawer directions side-by-side for visual comparison.",
+  title: "Store Locator and Inventory Drawer",
+  description: "Store locator and inventory drawer previews with PLP links.",
 };
 
 function DirectionColumn({
