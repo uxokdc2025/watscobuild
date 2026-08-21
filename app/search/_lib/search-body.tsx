@@ -6,6 +6,7 @@ import { ChevronDown, ChevronRight, ImageOff, LayoutGrid, List as ListIcon, X } 
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 
@@ -15,6 +16,12 @@ import {
 } from "@/app/pdp/_lib/product-card";
 import type { SearchResult } from "./mock-data";
 import { useCart } from "@/components/cart/cart-context";
+
+const STOCK_LOCATIONS = [
+  { value: "your-branch", label: "Your Store" },
+  { value: "nearby", label: "Nearby Branches" },
+  { value: "all", label: "All Branches" },
+] as const;
 
 /* ------------------------------------------------------------------ *
  * Facet definitions
@@ -91,10 +98,15 @@ export function SearchBody({
   brandKey,
 }: SearchBodyProps) {
   const [view, setView] = React.useState<"grid" | "list">("grid");
+  const [stockLocation, setStockLocation] = React.useState<typeof STOCK_LOCATIONS[number]["value"]>("all");
   const [selectedFacets, setSelectedFacets] = React.useState<Record<string, Set<string>>>({});
   const [selectedBrands, setSelectedBrands] = React.useState<Set<string>>(new Set());
 
   const displayName = branchName ?? storeName.split(" - ")[0];
+  const displayLocations = React.useMemo(
+    () => STOCK_LOCATIONS.map((loc) => loc.value === "your-branch" ? { ...loc, label: storeName } : loc),
+    [storeName],
+  );
   // Counts for facets — derived from the visible mock set for realism.
   const facetCount = React.useCallback(
     (key: FacetGroupSpec["key"], option: string) => {
@@ -136,11 +148,16 @@ export function SearchBody({
   ];
 
   const clearAllFilters = () => {
+    setStockLocation("all");
     setSelectedFacets({});
     setSelectedBrands(new Set());
   };
 
   const removeFilter = (key: string) => {
+    if (key.startsWith("location-")) {
+      setStockLocation("all");
+      return;
+    }
     const [group, ...rest] = key.split("-");
     const option = rest.join("-");
     if (group === "brand") {
@@ -169,6 +186,34 @@ export function SearchBody({
         <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
           {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-5 text-sm">
+            <section aria-labelledby="stocked-at-heading" className="space-y-2 rounded-md bg-muted/50 p-4">
+              <h2 id="stocked-at-heading" className="pb-3 font-semibold">Stocked At</h2>
+              <RadioGroup
+                value={stockLocation}
+                onValueChange={(value) => setStockLocation(value as typeof STOCK_LOCATIONS[number]["value"])}
+                className="space-y-2"
+              >
+                {displayLocations.map((location) => (
+                  <label
+                    key={location.value}
+                    className={cn(
+                      "flex items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors",
+                      stockLocation === location.value ? "bg-background font-medium shadow-sm" : "hover:bg-background/70",
+                    )}
+                  >
+                    <span className="flex items-center gap-2">
+                      <RadioGroupItem value={location.value} id={`loc-${location.value}`} />
+                      <span>{location.label}</span>
+                    </span>
+                    <span className="text-xs text-muted-foreground">({location.value === "all" ? totalResults : 0})</span>
+                  </label>
+                ))}
+              </RadioGroup>
+              <Link href="/store-locator/in-plp?v=c" className="text-xs font-medium text-primary hover:underline">
+                Change
+              </Link>
+            </section>
+
             <section aria-labelledby="categories-heading" className="space-y-2 pt-4">
               <h2 id="categories-heading" className="border-b border-border/70 pb-3 font-semibold">
                 Categories
