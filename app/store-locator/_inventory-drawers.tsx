@@ -467,7 +467,7 @@ export function InventoryStoreLocatorDrawer() {
             type="button"
             onClick={() => setSortOpen((value) => !value)}
             aria-expanded={sortOpen}
-            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex translate-y-px items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowDownUp className="size-3.5" />
             Sort: {sortBy === "miles" ? "Miles" : "Availability"}
