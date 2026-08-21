@@ -553,7 +553,7 @@ export function InventoryCloseX() {
       onClick={closeDrawer}
       variant="outline"
       size="icon-sm"
-      className="rounded-full shadow-lg"
+      className="rounded-full bg-background shadow-lg hover:bg-accent dark:bg-background dark:hover:bg-accent"
     >
       <X className="size-4" />
     </Button>
