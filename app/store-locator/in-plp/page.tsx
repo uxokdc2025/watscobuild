@@ -14,6 +14,7 @@ import {
   DirectionBDrawer,
   DirectionCDrawer,
 } from "../_drawers";
+import { DrawerOverlay } from "../_drawer-overlay";
 
 export const metadata: Metadata = {
   title: "Store Locator — Drawer over PLP",
@@ -62,11 +63,11 @@ export default async function StoreLocatorInPlpPage({
         </div>
 
         {/* Scrim covers the viewport; drawer pins left, full viewport height. */}
-        <div className="fixed inset-0 z-50 bg-black/50">
+        <DrawerOverlay>
           <div className="absolute inset-y-0 left-0 flex">
             <VariantDrawer v={variant} />
           </div>
-        </div>
+        </DrawerOverlay>
       </div>
     </PdpAuthProvider>
   );

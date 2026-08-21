@@ -17,6 +17,7 @@ import {
   InventoryStoreLocatorDrawer,
   InventoryCloseX,
 } from "../../_inventory-drawers";
+import { DrawerOverlay } from "../../_drawer-overlay";
 
 export const metadata: Metadata = {
   title: "Inventory Drawer — over PLP",
@@ -66,7 +67,7 @@ export default async function InventoryInPlpPage({
         </div>
 
         {/* Scrim + right-side drawer */}
-        <div className="fixed inset-0 z-50 bg-black/50">
+        <DrawerOverlay>
           <div className="absolute inset-y-0 right-0 flex">
             {/* Close X floats on the scrim, LEFT of the drawer edge. */}
             <div className="absolute top-4 -left-14">
@@ -74,7 +75,7 @@ export default async function InventoryInPlpPage({
             </div>
             <VariantDrawer v={variant} />
           </div>
-        </div>
+        </DrawerOverlay>
       </div>
     </PdpAuthProvider>
   );

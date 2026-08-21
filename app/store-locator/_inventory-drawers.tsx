@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { closeDrawer } from "./_drawer-overlay";
 
 /** Same 10-branch mock the left drawers use so the two experiences can be
  *  compared side by side without noise. */
@@ -549,6 +550,7 @@ export function InventoryCloseX() {
     <button
       type="button"
       aria-label="Close"
+      onClick={closeDrawer}
       className="grid size-10 place-items-center rounded-full bg-background text-foreground shadow-lg transition-colors hover:bg-accent"
     >
       <X className="size-5" />

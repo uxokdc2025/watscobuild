@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { closeDrawer } from "./_drawer-overlay";
 
 /** Ten mock branches — same list across all three variants so scroll and
  *  layout tradeoffs are comparable apples-to-apples. */
@@ -260,6 +261,7 @@ export function DirectionCDrawer() {
       <button
         type="button"
         aria-label="Close"
+        onClick={closeDrawer}
         className="absolute top-4 left-[420px] grid size-10 place-items-center rounded-full bg-background text-foreground shadow-lg transition-colors hover:bg-accent"
       >
         <X className="size-5" />
