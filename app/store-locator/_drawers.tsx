@@ -262,7 +262,7 @@ export function DirectionCDrawer() {
         type="button"
         aria-label="Close"
         onClick={closeDrawer}
-        className="absolute top-4 left-[428px] grid size-7 place-items-center rounded-full border border-black/20 bg-background/70 text-foreground shadow-lg transition-colors hover:bg-background/80"
+        className="absolute top-4 left-[428px] grid size-7 place-items-center rounded-full border border-transparent bg-transparent text-foreground shadow-none transition-colors hover:border-black/50 hover:bg-transparent hover:text-black"
       >
         <X className="size-4" />
       </button>
