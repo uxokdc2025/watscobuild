@@ -528,7 +528,7 @@ export function InventoryStoreLocatorDrawer() {
                   Chat
                 </a>
               </span>
-              <Button size="sm" className="h-7 px-3 text-xs">Select Store</Button>
+              <Button size="sm" className="h-7 -translate-y-px px-3 text-xs">Select Store</Button>
             </div>
           </li>
         ))}
