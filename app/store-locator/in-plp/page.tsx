@@ -64,7 +64,7 @@ export default async function StoreLocatorInPlpPage({
 
         {/* Scrim covers the viewport; drawer pins left, full viewport height. */}
         <DrawerOverlay>
-          <div className="absolute inset-y-0 left-0 flex">
+          <div className="drawer-panel-left-enter absolute inset-y-0 left-0 flex">
             <VariantDrawer v={variant} />
           </div>
         </DrawerOverlay>

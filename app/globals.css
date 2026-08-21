@@ -392,8 +392,31 @@
 @keyframes slide-in-from-top { from { transform: translateY(-8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes slide-in-from-bottom { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes zoom-in { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes drawer-overlay-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes drawer-panel-left-enter { from { transform: translateX(-24px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes drawer-panel-right-enter { from { transform: translateX(24px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes accordion-down { from { height: 0 } to { height: var(--radix-accordion-content-height) } }
 @keyframes accordion-up   { from { height: var(--radix-accordion-content-height) } to { height: 0 } }
+
+.drawer-overlay-enter {
+  animation: drawer-overlay-enter 420ms ease-out both;
+}
+
+.drawer-panel-left-enter {
+  animation: drawer-panel-left-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) 60ms both;
+}
+
+.drawer-panel-right-enter {
+  animation: drawer-panel-right-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) 60ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-overlay-enter,
+  .drawer-panel-left-enter,
+  .drawer-panel-right-enter {
+    animation: none;
+  }
+}
 
 @layer base {
   * {

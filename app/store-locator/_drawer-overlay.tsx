@@ -5,7 +5,7 @@ import * as React from "react";
 export function DrawerOverlay({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50"
+      className="drawer-overlay-enter fixed inset-0 z-50 bg-black/50"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) window.history.back();
       }}
