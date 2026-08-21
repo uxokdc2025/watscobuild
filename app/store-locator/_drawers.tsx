@@ -216,7 +216,7 @@ export function DirectionCDrawer() {
               {/* Row 3 — phone + chat (left) + commit (right). Current-store
                   row swaps the commit for a locked green "Current store"
                   button-style tag in the same slot for alignment. */}
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+              <div className="flex items-center justify-between gap-3">
                 <span className="flex items-center gap-2 text-xs">
                   <a
                     href={`tel:${s.phone.replace(/[^\d]/g, "")}`}
@@ -236,11 +236,11 @@ export function DirectionCDrawer() {
                   </a>
                 </span>
                 {isCurrent ? (
-                  <span className="col-start-2 inline-flex h-7 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
+                  <span className="inline-flex h-7 shrink-0 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
                     Current Store
                   </span>
                 ) : (
-                  <Button size="sm" className="col-start-2 h-7 px-3 text-xs">
+                  <Button size="sm" className="h-7 px-3 text-xs">
                     Select Store
                   </Button>
                 )}
