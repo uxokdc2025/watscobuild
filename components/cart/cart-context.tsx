@@ -40,8 +40,8 @@ function CartDrawer() {
   if (!open || !items.length) return null;
   const added = items[items.length - 1];
   const recommendations = [
-    { id: `${added.id}-filter`, title: "Replacement filter", price: 12.5 },
-    { id: `${added.id}-bracket`, title: "Universal mounting bracket", price: 18.75 },
+    { id: `${added.id}-filter`, title: "Replacement filter", price: 12.5, image: "/peirce-search/blower-motor-07.avif" },
+    { id: `${added.id}-bracket`, title: "Universal mounting bracket", price: 18.75, image: "/peirce-search/blower-motor-17.avif" },
   ];
 
   return (
@@ -80,8 +80,9 @@ function CartDrawer() {
             <h2 className="text-lg font-semibold">You may also need</h2>
             <div className="mt-3 flex flex-col gap-3">
               {recommendations.map((item) => (
-                <div key={item.id} className="flex items-center justify-between rounded-md border p-3">
-                  <div><p className="text-sm font-medium">{item.title}</p><p className="text-sm text-muted-foreground">{formatUSD(item.price)}</p></div>
+                <div key={item.id} className="flex items-center gap-3 rounded-md border p-3">
+                  <div className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-md bg-muted"><img src={item.image} alt="" className="max-h-full max-w-full object-contain" /></div>
+                  <div className="min-w-0 flex-1"><p className="text-sm font-medium">{item.title}</p><p className="text-sm text-muted-foreground">{formatUSD(item.price)}</p></div>
                   <button className="text-sm font-semibold text-primary underline-offset-4 hover:underline" onClick={() => addItem(item)}>Add</button>
                 </div>
               ))}
@@ -91,8 +92,8 @@ function CartDrawer() {
         <footer className="mt-auto border-t bg-background p-5">
           <div className="mb-3 flex items-center justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span className="font-semibold">{formatUSD(totalPrice)}</span></div>
           <div className="flex items-center gap-3">
-          <Button className="flex-1 justify-between" onClick={closeCart}><span>View Cart</span><span>{formatUSD(totalPrice)}</span></Button>
             <Button variant="outline" onClick={closeCart}>Keep shopping</Button>
+            <Button className="flex-1" onClick={closeCart}>View Cart</Button>
           </div>
         </footer>
       </aside>
