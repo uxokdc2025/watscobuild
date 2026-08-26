@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronRight, ShoppingCart } from "lucide-react";
+import { ArrowLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountNav } from "@/components/ui/account-nav";
 import { DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
@@ -86,8 +86,8 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               </section>
             ) : null}
             {shipToOpen ? (
-              <div className={`absolute inset-x-0 bottom-0 z-20 max-h-[72%] overflow-y-auto rounded-t-xl border-t bg-background shadow-2xl drawer-panel-right-enter ${shipToClosing ? "drawer-panel-bottom-exit" : ""}`}>
-                <div className="sticky top-0 flex items-center justify-between border-b bg-background px-5 py-4"><h3 className="font-bold">Select Ship To</h3><DrawerCloseButton label="Close ship-to" onClick={closeShipTo} /></div>
+              <div className={`absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl drawer-panel-right-enter ${shipToClosing ? "drawer-panel-bottom-exit" : ""}`}>
+                <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background px-5 py-4"><button type="button" aria-label="Back to account" onClick={closeShipTo} className="grid size-8 place-items-center rounded-md text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ArrowLeft className="size-5" /></button><h3 className="font-bold">Select Ship To</h3></div>
                 {SHIP_TO_OPTIONS.map((option) => <button key={option} type="button" onClick={closeShipTo} className="block w-full border-b px-5 py-3 text-left text-xs hover:bg-muted">{option}</button>)}
               </div>
             ) : null}
