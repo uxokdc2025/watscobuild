@@ -13,13 +13,13 @@ import {
   MapPin,
   Menu,
   Phone,
-  Search,
   ShoppingCart,
   User,
   Video,
   Youtube,
 } from "lucide-react";
 import { AccountFlyout, CartTrigger } from "./account-flyout";
+import { SearchAutocomplete } from "@/components/ui/search-autocomplete";
 
 import { cn } from "@/lib/utils";
 
@@ -81,20 +81,7 @@ function GemaireHeader({ signedIn = false }: { signedIn?: boolean }) {
           </a>
 
           {/* Prominent search */}
-          <div className="relative hidden min-w-0 flex-1 md:block">
-            <input
-              aria-label="Search for products"
-              placeholder="Search for products, categories, systems..."
-              className="h-11 w-full rounded-sm bg-white pr-11 pl-4 text-sm text-foreground outline-none"
-            />
-            <button
-              type="button"
-              aria-label="Search"
-              className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground"
-            >
-              <Search className="size-5" />
-            </button>
-          </div>
+          <SearchAutocomplete placeholder="Search for products, categories, systems..." className="hidden md:block" />
 
           {/* Branch selector */}
           <a
@@ -327,16 +314,7 @@ function BakerHeader({
             </span>
           </span>
         </a>
-        <div className="relative hidden min-w-0 flex-1 md:block">
-          <input
-            aria-label="Search"
-            placeholder="Search by Model, Item #, or Name..."
-            className="h-10 w-full rounded-sm bg-white pr-11 pl-3 text-sm text-foreground outline-none"
-          />
-          <span className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground">
-            <Search className="size-5" />
-          </span>
-        </div>
+        <SearchAutocomplete placeholder="Search by Model, Item #, or Name..." className="hidden md:block" />
         <button type="button" className="inline-flex items-center gap-1.5 text-sm font-medium">
           <User className="size-5" />
           <span className="hidden sm:inline">
@@ -547,14 +525,7 @@ function CarrierHeader({
         <a href="#" className="shrink-0" aria-label="Carrier Enterprise home">
           <CeMonogram />
         </a>
-        <div className="relative min-w-0 flex-1">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            aria-label="Search"
-            placeholder="Search"
-            className="h-10 w-full rounded border bg-background pr-3 pl-9 text-sm outline-none"
-          />
-        </div>
+        <SearchAutocomplete placeholder="Search" />
         {/* Account */}
         <button type="button" className={cn(greyBtn, "hidden py-1.5 text-left text-xs sm:inline-flex")}>
           <User className="size-5 shrink-0" />
@@ -783,20 +754,7 @@ function PeirceHeader({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={PEIRCE_LOGO} alt="Peirce-Phelps" className="h-11 w-auto" />
         </a>
-        <div className="relative hidden min-w-0 flex-1 md:block">
-          <input
-            aria-label="Search"
-            placeholder="Search item # or keyword"
-            className="h-10 w-full rounded border bg-background pr-11 pl-3 text-sm outline-none"
-          />
-          <button
-            type="button"
-            aria-label="Search"
-            className="absolute top-1/2 right-1 grid size-8 -translate-y-1/2 place-items-center rounded bg-brand-peirce text-white"
-          >
-            <Search className="size-4" />
-          </button>
-        </div>
+        <SearchAutocomplete placeholder="Search item # or keyword" className="hidden md:block" />
         <div className="ml-auto flex items-center gap-4 text-sm">
           {signedIn ? (
             <a href="#" className="hidden text-left leading-tight sm:block">
@@ -893,16 +851,7 @@ function EcmdiHeader({
           >
             Website <ChevronDown className="size-3.5" />
           </button>
-          <div className="relative min-w-0 flex-1">
-            <input
-              aria-label="Search our site"
-              placeholder="Search our site..."
-              className="h-9 w-full bg-transparent pr-10 pl-3 text-sm text-foreground outline-none"
-            />
-            <span className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground">
-              <Search className="size-4" />
-            </span>
-          </div>
+          <SearchAutocomplete placeholder="Search our site..." className="h-9" />
         </div>
         <button type="button" className="ml-auto hidden text-left text-xs leading-tight sm:block">
           <span className="inline-flex items-center gap-1.5">
@@ -1073,14 +1022,7 @@ function DcneHeader({ brand }: { brand: BrandChrome }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={DCNE_LOGO} alt="DCNE" className="h-8 w-auto" />
         </a>
-        <div className="relative hidden min-w-0 flex-1 md:block">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            aria-label="Search"
-            placeholder="Search"
-            className="h-10 w-full rounded border bg-background pr-3 pl-9 text-sm outline-none"
-          />
-        </div>
+        <SearchAutocomplete placeholder="Search" className="hidden md:block" />
         <div className="ml-auto flex items-center gap-4 text-sm">
           <button type="button" className="inline-flex items-center gap-1.5">
             <User className="size-5" />
@@ -1204,20 +1146,7 @@ function HomansHeader({
           </a>
 
           {/* Search */}
-          <div className="relative min-w-0 flex-1">
-            <input
-              aria-label="Search"
-              placeholder="Search item # or name"
-              className="h-11 w-full rounded-sm bg-white pr-11 pl-4 text-sm text-foreground outline-none"
-            />
-            <button
-              type="button"
-              aria-label="Search"
-              className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground"
-            >
-              <Search className="size-5" />
-            </button>
-          </div>
+          <SearchAutocomplete placeholder="Search item # or name" />
 
           {/* Lists */}
           <button type="button" className="hidden flex-col items-center text-[11px] lg:flex">
@@ -1477,14 +1406,7 @@ function GenericHeader({ brand }: { brand: BrandChrome }) {
         >
           {brand.name}
         </span>
-        <div className="relative hidden flex-1 md:block">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            aria-label="Search"
-            placeholder="Search item # or name"
-            className="h-9 w-full rounded-md border bg-muted/40 pr-3 pl-9 text-sm outline-none"
-          />
-        </div>
+        <SearchAutocomplete placeholder="Search item # or name" className="hidden flex-1 md:block" />
         <div className="ml-auto flex items-center gap-4 text-sm">
           <button type="button" aria-label="Sign in" className="inline-flex items-center gap-1.5">
             <User className="size-4" />

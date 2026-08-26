@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FilterPill, FilterOption, FilterSection, RadiusControl } from "@/components/ui/plp-filters";
 import { ProductListRow } from "@/components/ui/product-list-row";
+import { SearchAutocomplete } from "@/components/ui/search-autocomplete";
 import { Category, Demo, State } from "../_showcase";
 
 export function PlpSection() {
@@ -38,6 +39,9 @@ export function PlpSection() {
       </Demo>
       <Demo name="Product-card actions" slug="plp-product-actions" description="Quantity control, primary Add action, and secondary Save link follow the shared button system.">
         <State label="Default"><div className="flex items-center gap-2"><div className="inline-flex h-9 items-center rounded-md border"><Button size="icon-sm" variant="ghost" aria-label="Decrease quantity">−</Button><span className="grid h-full w-8 place-items-center border-x text-sm">1</span><Button size="icon-sm" variant="ghost" aria-label="Increase quantity">+</Button></div><Button><span className="sr-only">Add </span>to Cart</Button><Button variant="link">Save</Button><ChevronRight className="sr-only" /></div></State>
+      </Demo>
+      <Demo name="Search autocomplete" slug="search-autocomplete" description="Global header search pattern with keyboard navigation, contextual suggestions, and suggested products.">
+        <State label="Type to preview"><div className="w-full max-w-xl"><SearchAutocomplete placeholder="Search item # or name" /></div></State>
       </Demo>
     </Category>
   );
