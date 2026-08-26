@@ -85,8 +85,9 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <p className="text-xs text-muted-foreground">613 MAIN STREET · ALL CASH SALES ARE FINAL</p>
               <button type="button" onClick={() => setShipToOpen(true)} className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">Change Ship To <ChevronRight className="size-4" /></button>
             </div>
-            <AccountNav onSelect={openNestedMenu} />
-            <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
+            <div className="relative flex min-h-0 flex-1 flex-col">
+              <AccountNav onSelect={openNestedMenu} />
+              <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
             {nestedMenu ? (
               <section aria-label={`${nestedMenu} menu`} className={`absolute inset-0 z-30 flex flex-col bg-background ${nestedMenuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
                 <header className="flex shrink-0 items-center justify-between border-b bg-background px-5 py-4">
@@ -104,6 +105,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
                 {SHIP_TO_OPTIONS.map((option) => <button key={option} type="button" onClick={closeShipTo} className="block w-full border-b px-5 py-3 text-left text-xs hover:bg-muted">{option}</button>)}
               </div>
             ) : null}
+            </div>
           </aside>
         </div>
       ) : null}
