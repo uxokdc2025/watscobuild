@@ -54,7 +54,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
       </button>
       {open ? (
         <div className={drawerOverlayClassName(closing)} onMouseDown={(event) => event.target === event.currentTarget && closeAccount()}>
-          <aside role="dialog" aria-modal="true" aria-label="My Account" className={drawerPanelClassName("right", closing, "absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col bg-background shadow-2xl")}>
+          <aside role="dialog" aria-modal="true" aria-label="My Account" className={drawerPanelClassName("right", closing, "absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col bg-background text-foreground shadow-2xl")}>
             <header className="sticky top-0 z-10 flex items-center justify-between border-b px-5 py-4">
               <h2 className="text-lg font-bold text-neutral-900">My Account</h2>
               <DrawerCloseButton label="Close account" onClick={closeAccount} />
@@ -67,7 +67,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <button type="button" onClick={() => setMenuOpen(true)} className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">Change Ship To <ChevronRight className="size-4" /></button>
             </div>
             <AccountNav />
-            <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium hover:bg-muted">Sign Out</button></div>
+            <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
             {menuOpen ? (
               <section aria-label="Account menu" className={`absolute inset-0 z-30 flex flex-col bg-background ${menuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
                 <header className="flex shrink-0 items-center justify-between border-b bg-background px-5 py-4">
