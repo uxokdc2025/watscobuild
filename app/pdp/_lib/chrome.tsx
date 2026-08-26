@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { AccountFlyout, CartTrigger } from "./account-flyout";
 import { SearchAutocomplete } from "@/components/ui/search-autocomplete";
+import { MegaMenu } from "@/components/ui/mega-menu";
 
 import { cn } from "@/lib/utils";
 
@@ -1165,14 +1166,9 @@ function HomansHeader({
       {/* Nav bar (darker navy) */}
       <nav aria-label="Primary" className="bg-brand-homans-nav text-brand-homans-foreground">
         <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
-          {brand.nav.map((n) => (
-            <button
-              key={n}
-              type="button"
-              className="inline-flex items-center gap-1 px-3 py-3 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white"
-            >
-              {n}
-              {HOMANS_CARET.test(n) ? <ChevronDown className="size-3.5" /> : null}
+          {brand.nav.map((n) => n === "Products" ? <MegaMenu key={n} /> : (
+            <button key={n} type="button" className="inline-flex items-center gap-1 px-3 py-3 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white">
+              {n}{HOMANS_CARET.test(n) ? <ChevronDown className="size-3.5" /> : null}
             </button>
           ))}
         </div>
