@@ -86,7 +86,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               </section>
             ) : null}
             {shipToOpen ? (
-              <div className={`absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl drawer-panel-right-enter ${shipToClosing ? "drawer-panel-bottom-exit" : ""}`}>
+              <div className={`absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl drawer-panel-right-enter ${shipToClosing ? "drawer-panel-right-exit" : ""}`}>
                 <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background px-5 py-4"><button type="button" aria-label="Back to account" onClick={closeShipTo} className="grid size-8 place-items-center rounded-md text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ArrowLeft className="size-5" /></button><h3 className="font-bold">Select Ship To</h3></div>
                 {SHIP_TO_OPTIONS.map((option) => <button key={option} type="button" onClick={closeShipTo} className="block w-full border-b px-5 py-3 text-left text-xs hover:bg-muted">{option}</button>)}
               </div>
