@@ -19,7 +19,7 @@ import {
   Video,
   Youtube,
 } from "lucide-react";
-import { AccountFlyout } from "./account-flyout";
+import { AccountFlyout, CartTrigger } from "./account-flyout";
 
 import { cn } from "@/lib/utils";
 
@@ -1229,13 +1229,7 @@ function HomansHeader({
           <AccountFlyout signedIn={signedIn} />
 
           {/* Cart */}
-          <button type="button" aria-label="Cart" className="flex items-center gap-1.5 text-[11px] leading-tight">
-            <ShoppingCart className="size-6 shrink-0" />
-            <span className="hidden text-left sm:block">
-              {signedIn ? <span className="block font-semibold">1 Item</span> : null}
-              <span className="block">Cart</span>
-            </span>
-          </button>
+          <CartTrigger signedIn={signedIn} />
         </div>
       </div>
 

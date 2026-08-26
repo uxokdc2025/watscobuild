@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight, ShoppingCart, X } from "lucide-react";
+import { useCart } from "@/components/cart/cart-context";
 
 const SHIP_TO_OPTIONS = [
   "CASH 1248 · 613 MAIN STREET · ALL CASH SALES ARE FINAL",
@@ -54,5 +55,18 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
         </div>
       ) : null}
     </>
+  );
+}
+
+export function CartTrigger({ signedIn }: { signedIn: boolean }) {
+  const { totalCount, openCart } = useCart();
+  return (
+    <button type="button" aria-label="Cart" onClick={openCart} className="flex items-center gap-1.5 text-[11px] leading-tight">
+      <ShoppingCart className="size-6 shrink-0" />
+      <span className="hidden text-left sm:block">
+        {signedIn ? <span className="block font-semibold">{totalCount || 1} Item{totalCount === 1 ? "" : "s"}</span> : null}
+        <span className="block">Cart</span>
+      </span>
+    </button>
   );
 }
