@@ -264,7 +264,7 @@ export function DirectionCDrawer() {
         onClick={closeDrawer}
         variant="outline"
         size="icon-sm"
-        className="absolute top-4 left-[428px] rounded-full bg-background shadow-lg hover:bg-accent dark:bg-background dark:hover:bg-accent"
+        className="absolute top-4 left-[412px] rounded-full bg-background shadow-lg hover:bg-accent dark:bg-background dark:hover:bg-accent"
       >
         <X className="size-4" />
       </Button>

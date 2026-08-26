@@ -70,7 +70,7 @@ export default async function InventoryInPlpPage({
         <DrawerOverlay>
           <div className="drawer-panel-right-enter absolute inset-y-0 right-0 flex">
             {/* Close X floats on the scrim, LEFT of the drawer edge. */}
-            <div className="absolute top-4 -left-14">
+            <div className="absolute top-4 -left-2">
               <InventoryCloseX />
             </div>
             <VariantDrawer v={variant} />

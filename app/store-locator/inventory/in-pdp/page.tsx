@@ -54,7 +54,7 @@ export default async function InventoryInPdpPage({
         {/* Scrim + right-side inventory drawer */}
         <div className="fixed inset-0 z-50 bg-black/50">
           <div className="absolute inset-y-0 right-0 flex">
-            <div className="absolute top-4 -left-14">
+            <div className="absolute top-4 -left-2">
               <InventoryCloseX />
             </div>
             <VariantDrawer v={variant} />
