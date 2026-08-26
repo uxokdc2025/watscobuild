@@ -107,6 +107,7 @@
 }
 
 :root {
+  --toast-offset-top: 8rem;
   /* ══════════ RADIUS (base — 4px, flat across the system) ══════════ */
   --radius: 0.25rem;
 
@@ -322,6 +323,10 @@
      panel settles with a bit of bounce instead of a linear glide. */
   --animate-accordion-down: accordion-down 500ms cubic-bezier(0.22, 1.25, 0.36, 1);
   --animate-accordion-up:   accordion-up   360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (max-width: 640px) {
+  :root { --toast-offset-top: 6rem; }
 }
 
 .dark {

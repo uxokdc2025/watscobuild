@@ -94,7 +94,7 @@ export function FeedbackSection() {
       <Demo
         name="Sonner"
         slug="sonner"
-        description="Toast notifications. Click to fire each state."
+        description="Toasts appear below the global header. Each semantic state has its own color, icon, and example message."
       >
         <State label="Default">
           <Button variant="outline" onClick={() => toast("Event created")}>
@@ -115,6 +115,22 @@ export function FeedbackSection() {
             onClick={() => toast.error("Could not save changes")}
           >
             Error
+          </Button>
+        </State>
+        <State label="Info">
+          <Button
+            variant="outline"
+            onClick={() => toast.info("Branch availability updated")}
+          >
+            Info
+          </Button>
+        </State>
+        <State label="Warning">
+          <Button
+            variant="outline"
+            onClick={() => toast.warning("Only 2 items remain")}
+          >
+            Warning
           </Button>
         </State>
         <State label="Loading">
