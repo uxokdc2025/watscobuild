@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, ImageOff, LayoutGrid, List as ListIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, LayoutGrid, List as ListIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,6 +17,7 @@ import {
 import type { SearchResult } from "./mock-data";
 import { useCart } from "@/components/cart/cart-context";
 import { FilterPill } from "@/components/ui/plp-filters";
+import { ProductListRow } from "@/components/ui/product-list-row";
 
 const STOCK_LOCATIONS = [
   { value: "your-branch", label: "Your Store" },
@@ -542,43 +543,24 @@ function ProductRow({
 }) {
   const imageSrc = productImageFor(brandKey, index, result.image);
   return (
-    <article className="grid gap-4 p-4 sm:grid-cols-[80px_1fr_auto] sm:items-center">
-      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-        {imageSrc ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={imageSrc}
-            alt={result.title}
-            loading="lazy"
-            className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
-          />
-        ) : (
-          <ImageOff className="size-6 opacity-40" aria-hidden />
-        )}
-      </div>
-      <div>
-        <p className="text-xs font-medium text-primary">{result.brand}</p>
-        <Link
-          href={`/pdp/tradepro-${result.item.toLowerCase()}`}
-          className="text-sm font-semibold leading-snug hover:text-primary"
-        >
-          {result.title}
-        </Link>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Item: {result.item} · MFG: {result.mfg}
-        </p>
-      </div>
-      <div className="text-sm sm:text-right">
-        {signedIn ? (
+    <ProductListRow
+      image={imageSrc}
+      imageAlt={result.title}
+      brand={result.brand}
+      title={<Link href={`/pdp/tradepro-${result.item.toLowerCase()}`} className="hover:text-primary">{result.title}</Link>}
+      item={result.item}
+      mfg={result.mfg}
+      actions={
+        signedIn ? (
           <SignedInCommerce result={result} align="right" />
         ) : (
           <p>
             <span className="font-medium">Sign in</span>{" "}
             <span className="text-muted-foreground">for pricing.</span>
           </p>
-        )}
-      </div>
-    </article>
+        )
+      }
+    />
   );
 }
 

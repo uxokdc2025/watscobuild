@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FilterPill, FilterOption, FilterSection, RadiusControl } from "@/components/ui/plp-filters";
+import { ProductListRow } from "@/components/ui/product-list-row";
 import { Category, Demo, State } from "../_showcase";
 
 export function PlpSection() {
@@ -31,6 +32,9 @@ export function PlpSection() {
       </Demo>
       <Demo name="Results view controls" slug="plp-view-toggle" description="Grid and list are mutually exclusive selected states.">
         <State label="Grid selected"><div className="inline-flex rounded-md border p-0.5"><Button size="sm" className="gap-1"><LayoutGrid />Grid</Button><Button size="sm" variant="ghost" className="gap-1"><List />List</Button></div></State>
+      </Demo>
+      <Demo name="Product list row" slug="product-list-row" description="Compact PLP result row: product identity on the left, commerce actions aligned to the right.">
+        <State label="Default"><div className="w-full"><ProductListRow image="/peirce-search/blower-motor-01.avif" imageAlt="Blower motor" brand="Factory Authorized Parts" title="Blower Motor 1/2 HP · 120/240 V" item="58MV660006" mfg="58MV 660 006" actions={<Button size="sm">Add to Cart</Button>} /></div></State>
       </Demo>
       <Demo name="Product-card actions" slug="plp-product-actions" description="Quantity control, primary Add action, and secondary Save link follow the shared button system.">
         <State label="Default"><div className="flex items-center gap-2"><div className="inline-flex h-9 items-center rounded-md border"><Button size="icon-sm" variant="ghost" aria-label="Decrease quantity">−</Button><span className="grid h-full w-8 place-items-center border-x text-sm">1</span><Button size="icon-sm" variant="ghost" aria-label="Increase quantity">+</Button></div><Button><span className="sr-only">Add </span>to Cart</Button><Button variant="link">Save</Button><ChevronRight className="sr-only" /></div></State>
