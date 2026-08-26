@@ -19,6 +19,7 @@ import {
   Video,
   Youtube,
 } from "lucide-react";
+import { AccountFlyout } from "./account-flyout";
 
 import { cn } from "@/lib/utils";
 
@@ -1225,10 +1226,7 @@ function HomansHeader({
           </button>
 
           {/* Account */}
-          <button type="button" className="hidden text-left text-xs leading-tight sm:block">
-            <span className="block opacity-90">{signedIn ? "Hello, David" : "Sign In"}</span>
-            <span className="block font-bold">My Account</span>
-          </button>
+          <AccountFlyout signedIn={signedIn} />
 
           {/* Cart */}
           <button type="button" aria-label="Cart" className="flex items-center gap-1.5 text-[11px] leading-tight">
