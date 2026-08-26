@@ -30,6 +30,7 @@ const NESTED_MENU_ITEMS = {
   Account: ["Address Book", "Card Management"],
 } as const;
 type NestedMenu = keyof typeof NESTED_MENU_ITEMS;
+const DRAWER_H3_CLASS = "text-[15px] leading-5 font-bold";
 
 export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
   const [open, setOpen] = React.useState(false);
@@ -93,7 +94,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
             {nestedMenu ? (
               <section aria-label={`${nestedMenu} menu`} className={`absolute inset-0 z-30 flex flex-col bg-background ${nestedMenuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
                 <header className="flex shrink-0 items-center justify-between border-b bg-background px-5 py-4">
-                  <h3 className="font-bold">{nestedMenu}</h3>
+                  <h3 className={DRAWER_H3_CLASS}>{nestedMenu}</h3>
                   <DrawerBackButton label={`Back from ${nestedMenu}`} onClick={closeNestedMenu} />
                 </header>
                 <nav aria-label={`${nestedMenu} navigation`} className="divide-y divide-border border-b border-border bg-background text-sm text-foreground">
@@ -103,7 +104,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
             ) : null}
             {shipToOpen ? (
               <div className={`absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl drawer-panel-right-enter ${shipToClosing ? "drawer-panel-right-exit" : ""}`}>
-                <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background px-5 py-4"><DrawerBackButton label="Back to account" onClick={closeShipTo} /><h3 className="font-bold">Select Ship To</h3></div>
+                <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background px-5 py-4"><DrawerBackButton label="Back to account" onClick={closeShipTo} /><h3 className={DRAWER_H3_CLASS}>Select Ship To</h3></div>
                 {SHIP_TO_OPTIONS.map((option) => <button key={option} type="button" onClick={closeShipTo} className="block w-full border-b px-5 py-3 text-left text-xs hover:bg-muted">{option}</button>)}
               </div>
             ) : null}
