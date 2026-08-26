@@ -48,7 +48,8 @@ function CloseX() {
     <button
       type="button"
       aria-label="Close"
-      className="grid size-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+      onClick={closeDrawer}
+      className="grid size-8 place-items-center rounded-md border bg-background text-foreground transition-colors hover:bg-muted"
     >
       <X className="size-4" />
     </button>
@@ -173,6 +174,7 @@ export function DirectionCDrawer() {
             <p className="text-base font-bold">Find a branch</p>
             <p className="text-xs text-muted-foreground">Sorted by distance</p>
           </div>
+          <div className="ml-auto"><CloseX /></div>
         </header>
         {/* Search + change-location — same primitive the other drawers use so
             switching branches is discoverable in the product-aware mode too. */}
@@ -257,17 +259,6 @@ export function DirectionCDrawer() {
           </Button>
         </div>
       </div>
-      {/* The close control sits on the scrim, outside the drawer edge. */}
-      <Button
-        type="button"
-        aria-label="Close"
-        onClick={closeDrawer}
-        variant="outline"
-        size="icon-sm"
-        className="absolute top-4 left-[412px] rounded-full bg-background shadow-lg hover:bg-accent dark:bg-background dark:hover:bg-accent"
-      >
-        <X className="size-4" />
-      </Button>
     </div>
   );
 }

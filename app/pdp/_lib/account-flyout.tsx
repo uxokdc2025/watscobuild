@@ -31,9 +31,9 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
       {open ? (
         <div className="fixed inset-0 z-50 bg-black/50" onMouseDown={(event) => event.target === event.currentTarget && setOpen(false)}>
           <aside role="dialog" aria-modal="true" aria-label="My Account" className="drawer-panel-right-enter absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col bg-background shadow-2xl">
-            <button type="button" aria-label="Close account" onClick={() => setOpen(false)} className="absolute top-4 -left-2 z-20 grid size-8 place-items-center rounded-full border bg-background shadow-lg transition-colors hover:bg-muted"><X className="size-4" /></button>
-            <header className="sticky top-0 z-10 flex items-center border-b px-5 py-4">
+            <header className="sticky top-0 z-10 flex items-center justify-between border-b px-5 py-4">
               <h2 className="text-lg font-bold">My Account</h2>
+              <button type="button" aria-label="Close account" onClick={() => setOpen(false)} className="grid size-8 place-items-center rounded-md border bg-background text-foreground transition-colors hover:bg-muted"><X className="size-4" /></button>
             </header>
             <div className="border-b px-5 py-4">
               <p className="font-semibold">Hello, David Whiteside</p>
