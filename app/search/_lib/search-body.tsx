@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, ImageOff, LayoutGrid, List as ListIcon, X } from "lucide-react";
+import { ChevronDown, ChevronRight, ImageOff, LayoutGrid, List as ListIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,6 +16,7 @@ import {
 } from "@/app/pdp/_lib/product-card";
 import type { SearchResult } from "./mock-data";
 import { useCart } from "@/components/cart/cart-context";
+import { FilterPill } from "@/components/ui/plp-filters";
 
 const STOCK_LOCATIONS = [
   { value: "your-branch", label: "Your Store" },
@@ -325,15 +326,11 @@ export function SearchBody({
             {appliedFilters.length ? (
               <div className="flex flex-wrap items-center gap-2">
                 {appliedFilters.map((filter) => (
-                  <button
+                  <FilterPill
                     key={filter.key}
-                    type="button"
-                    onClick={() => removeFilter(filter.key)}
-                    className="inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                  >
-                    {filter.label}
-                    <X className="size-3.5" />
-                  </button>
+                    label={filter.label}
+                    onRemove={() => removeFilter(filter.key)}
+                  />
                 ))}
                 <button
                   type="button"

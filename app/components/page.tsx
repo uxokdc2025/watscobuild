@@ -13,6 +13,7 @@ import { NavigationSection } from "./_sections/navigation";
 import { MediaSection } from "./_sections/media";
 import { ProductCardsSection } from "./_sections/product-cards";
 import { PdpActionsSection } from "./_sections/pdp-actions";
+import { PlpSection } from "./_sections/plp";
 
 export const metadata: Metadata = {
   title: "Components — watscobuild",
@@ -22,6 +23,7 @@ export const metadata: Metadata = {
 
 const NAV = [
   { id: "product-cards", label: "Product Card" },
+  { id: "plp", label: "PLP Patterns" },
   { id: "pdp-actions", label: "Save + AHRI" },
   { id: "actions", label: "Actions" },
   { id: "labels", label: "Badges" },
@@ -74,6 +76,7 @@ export default function ComponentsPage() {
 
       <main className="mx-auto max-w-6xl space-y-16 px-4 py-10 md:px-6">
         <ProductCardsSection />
+        <PlpSection />
         <PdpActionsSection />
         <ActionsSection />
         <LabelsSection />
