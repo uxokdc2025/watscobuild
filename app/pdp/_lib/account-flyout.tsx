@@ -7,13 +7,21 @@ import { AccountNav } from "@/components/ui/account-nav";
 import { DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
 
 const SHIP_TO_OPTIONS = [
-  "CASH 1248 · 613 MAIN STREET · ALL CASH SALES ARE FINAL",
-  "150 WILLIAMS STREET · CASH 1248 · ALL CASH SALES ARE FINAL",
-  "DION DEJESUS · 613 MAIN STREET · ALL CASH SALES ARE FINAL",
-  "DRIEHAUS-ATHENS RESIDENCE · 613 MAIN STREET",
-  "FAIRBANKS · 613 MAIN STREET · ALL CASH SALES ARE FINAL",
-  "FALLON · 613 MAIN STREET · ALL CASH SALES ARE FINAL",
-  "HENRY NGUYEN · 613 MAIN STREET · ALL CASH SALES ARE FINAL",
+  "50 WILLIAMS STREET - CASH 1248 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "DION DEJESUS - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "DRIEHAUS-ATHENS RESIDENCE - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "FAIRBANKS - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "FALLON - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "HENRY NGUYEN - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "HM03 - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "CASH 1248 - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "INSULATION CONTRACTORS - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "HOSSELBARTH - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "KELLEY - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "MCFARLAND - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "MEREDITH 2 - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "MEREDITH - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
+  "NORTH ESSEX COMMUNITY COLLEGE - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
 ];
 
 export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
@@ -64,7 +72,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <p className="mt-2 text-xs text-muted-foreground">Account: #erp|HOM509973</p>
               <p className="text-xs text-muted-foreground">Ship To:</p>
               <p className="text-xs text-muted-foreground">613 MAIN STREET · ALL CASH SALES ARE FINAL</p>
-              <button type="button" onClick={() => setMenuOpen(true)} className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">Change Ship To <ChevronRight className="size-4" /></button>
+              <button type="button" onClick={() => setShipToOpen(true)} className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">Change Ship To <ChevronRight className="size-4" /></button>
             </div>
             <AccountNav />
             <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
