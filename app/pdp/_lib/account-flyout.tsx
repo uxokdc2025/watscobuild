@@ -93,7 +93,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
             {nestedMenu ? (
               <section aria-label={`${nestedMenu} menu`} className={`absolute inset-0 z-30 flex flex-col bg-background ${nestedMenuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
                 <header className="flex shrink-0 items-center justify-between border-b bg-background px-5 py-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wide">{nestedMenu}</h3>
+                  <h3 className="font-bold">{nestedMenu}</h3>
                   <DrawerBackButton label={`Back from ${nestedMenu}`} onClick={closeNestedMenu} />
                 </header>
                 <nav aria-label={`${nestedMenu} navigation`} className="divide-y divide-border border-b border-border bg-background text-sm text-foreground">
