@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { ChevronRight, FileText, LayoutDashboard, ListChecks, ShoppingCart, Truck, User, X } from "lucide-react";
+import { ChevronRight, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
+import { AccountNav } from "@/components/ui/account-nav";
+import { DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
 
 const SHIP_TO_OPTIONS = [
   "CASH 1248 · 613 MAIN STREET · ALL CASH SALES ARE FINAL",
@@ -51,11 +53,11 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
         <span className="block font-bold">My Account</span>
       </button>
       {open ? (
-        <div className={`fixed inset-0 z-50 bg-black/50 ${closing ? "drawer-overlay-exit" : ""}`} onMouseDown={(event) => event.target === event.currentTarget && closeAccount()}>
-          <aside role="dialog" aria-modal="true" aria-label="My Account" className={`drawer-panel-right-enter absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col bg-background shadow-2xl ${closing ? "drawer-panel-right-exit" : ""}`}>
+        <div className={drawerOverlayClassName(closing)} onMouseDown={(event) => event.target === event.currentTarget && closeAccount()}>
+          <aside role="dialog" aria-modal="true" aria-label="My Account" className={drawerPanelClassName("right", closing, "absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col bg-background shadow-2xl")}>
             <header className="sticky top-0 z-10 flex items-center justify-between border-b px-5 py-4">
               <h2 className="text-lg font-bold text-neutral-900">My Account</h2>
-              <button type="button" aria-label="Close account" onClick={closeAccount} className="grid size-8 place-items-center rounded-md border bg-background text-foreground transition-colors hover:bg-muted"><X className="size-4" /></button>
+              <DrawerCloseButton label="Close account" onClick={closeAccount} />
             </header>
             <div className="border-b px-5 py-4">
               <p className="font-semibold">Hello, David Whiteside</p>
@@ -64,9 +66,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <p className="text-xs text-muted-foreground">613 MAIN STREET · ALL CASH SALES ARE FINAL</p>
               <button type="button" onClick={() => setMenuOpen(true)} className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">Change Ship To <ChevronRight className="size-4" /></button>
             </div>
-            <nav aria-label="Account navigation" className="divide-y divide-border bg-background text-sm text-neutral-900">
-              {[{ label: "Dashboard", Icon: LayoutDashboard }, { label: "Buying Tools", Icon: ListChecks }, { label: "Quotes", Icon: FileText }, { label: "Orders", Icon: Truck }, { label: "Account", Icon: User }].map(({ label, Icon }) => <button key={label} type="button" className="flex min-h-12 w-full items-center justify-between bg-background px-5 text-left text-neutral-900 transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"><span className="inline-flex items-center gap-2"><Icon aria-hidden className="size-4 text-muted-foreground" />{label}</span><ChevronRight aria-hidden className="size-4 text-muted-foreground" /></button>)}
-            </nav>
+            <AccountNav />
             <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium hover:bg-muted">Sign Out</button></div>
             {menuOpen ? (
               <section aria-label="Account menu" className={`absolute inset-0 z-30 flex flex-col bg-background ${menuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
@@ -74,14 +74,12 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
                   <h3 className="font-bold">Account</h3>
                   <button type="button" onClick={closeMenu} className="text-sm font-medium text-muted-foreground hover:text-foreground">Back</button>
                 </header>
-                <nav aria-label="Account menu navigation" className="divide-y divide-border text-sm text-neutral-900">
-                  {[{ label: "Dashboard", Icon: LayoutDashboard }, { label: "Buying Tools", Icon: ListChecks }, { label: "Quotes", Icon: FileText }, { label: "Orders", Icon: Truck }, { label: "Account", Icon: User }].map(({ label, Icon }) => <button key={label} type="button" className="flex min-h-14 w-full items-center justify-between bg-background px-5 text-left text-neutral-900 transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"><span className="inline-flex items-center gap-3"><Icon aria-hidden className="size-5 text-muted-foreground" />{label}</span><ChevronRight aria-hidden className="size-4 text-muted-foreground" /></button>)}
-                </nav>
+                <AccountNav ariaLabel="Account menu navigation" compact />
               </section>
             ) : null}
             {shipToOpen ? (
               <div className={`absolute inset-x-0 bottom-0 z-20 max-h-[72%] overflow-y-auto rounded-t-xl border-t bg-background shadow-2xl drawer-panel-right-enter ${shipToClosing ? "drawer-panel-bottom-exit" : ""}`}>
-                <div className="sticky top-0 flex items-center justify-between border-b bg-background px-5 py-4"><h3 className="font-bold">Select Ship To</h3><button type="button" aria-label="Close ship-to" onClick={closeShipTo} className="grid size-8 place-items-center rounded-md border bg-background text-foreground hover:bg-muted"><X className="size-4" /></button></div>
+                <div className="sticky top-0 flex items-center justify-between border-b bg-background px-5 py-4"><h3 className="font-bold">Select Ship To</h3><DrawerCloseButton label="Close ship-to" onClick={closeShipTo} /></div>
                 {SHIP_TO_OPTIONS.map((option) => <button key={option} type="button" onClick={closeShipTo} className="block w-full border-b px-5 py-3 text-left text-xs hover:bg-muted">{option}</button>)}
               </div>
             ) : null}

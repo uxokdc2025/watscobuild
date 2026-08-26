@@ -32,6 +32,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Category, Demo, State } from "../_showcase";
+import { DrawerCloseButton } from "@/components/ui/drawer";
+import { AccountNav } from "@/components/ui/account-nav";
 
 export function OverlaysSection() {
   const [notifications, setNotifications] = React.useState(true);
@@ -71,6 +73,22 @@ export function OverlaysSection() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+        </State>
+      </Demo>
+
+      {/* ── Shared drawer primitives ── */}
+      <Demo
+        name="Drawer primitives"
+        slug="drawer-primitives"
+        description="Canonical close control and account navigation used by every drawer surface."
+      >
+        <State label="Close button">
+          <DrawerCloseButton label="Close preview" onClick={() => undefined} />
+        </State>
+        <State label="Account navigation">
+          <div className="w-full max-w-sm overflow-hidden rounded-md border">
+            <AccountNav ariaLabel="Account navigation preview" />
+          </div>
         </State>
       </Demo>
 

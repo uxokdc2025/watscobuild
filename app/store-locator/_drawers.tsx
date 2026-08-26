@@ -7,10 +7,10 @@ import {
   Navigation,
   Phone,
   Search,
-  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { DrawerCloseButton } from "@/components/ui/drawer";
 import { closeDrawer } from "./_drawer-overlay";
 
 /** Ten mock branches — same list across all three variants so scroll and
@@ -44,16 +44,7 @@ function MilesDirections({ miles }: { miles: number }) {
 }
 
 function CloseX() {
-  return (
-    <button
-      type="button"
-      aria-label="Close"
-      onClick={closeDrawer}
-      className="grid size-8 place-items-center rounded-md border bg-background text-foreground transition-colors hover:bg-muted"
-    >
-      <X className="size-4" />
-    </button>
-  );
+  return <DrawerCloseButton label="Close drawer" onClick={closeDrawer} />;
 }
 
 /** Drawer shell — flexes to whatever height its parent provides. In the
