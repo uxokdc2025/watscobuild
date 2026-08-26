@@ -35,6 +35,14 @@ export function SearchAutocomplete({
   const [active, setActive] = React.useState(-1);
 
   React.useEffect(() => {
+    const query = new URLSearchParams(window.location.search).get("q");
+    if (query) setValue(query);
+    // The query is only used to seed the controlled input on mount; after
+    // that, clearing or editing the field must remain user-controlled.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
     const close = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
     };
