@@ -425,6 +425,7 @@ export function InventoryStoreLocatorDrawer() {
   const [inStockOnly, setInStockOnly] = React.useState(true);
   const [sortBy, setSortBy] = React.useState<"miles" | "availability">("miles");
   const [sortOpen, setSortOpen] = React.useState(false);
+  const [selectedStore, setSelectedStore] = React.useState(BRANCHES[0].name);
 
   const displayed = React.useMemo(() => {
     const filtered = inStockOnly ? BRANCHES.filter((b) => b.qty > 0) : BRANCHES;
@@ -529,7 +530,22 @@ export function InventoryStoreLocatorDrawer() {
                   Chat
                 </a>
               </span>
-              <Button size="sm" className="h-7 -translate-y-px px-3 text-xs">Select Store</Button>
+              {selectedStore === branch.name ? (
+                <Button
+                  size="sm"
+                  className="h-7 -translate-y-px bg-emerald-600 px-3 text-xs text-white hover:bg-emerald-700"
+                >
+                  Current Store
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => setSelectedStore(branch.name)}
+                  className="h-7 -translate-y-px px-3 text-xs"
+                >
+                  Select Store
+                </Button>
+              )}
             </div>
           </li>
         ))}
