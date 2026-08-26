@@ -36,6 +36,13 @@ export function useCart() {
 
 function CartDrawer() {
   const { items, totalCount, totalPrice, removeItem, setQuantity, closeCart, addItem, open } = useCart();
+  const [closing, setClosing] = React.useState(false);
+
+  const requestClose = React.useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    window.setTimeout(() => { closeCart(); setClosing(false); }, 520);
+  }, [closeCart, closing]);
 
   if (!open) return null;
   const added = items[items.length - 1];
@@ -45,12 +52,12 @@ function CartDrawer() {
   ] : [];
 
   return (
-    <div className="fixed inset-0 z-[70]">
-      <button aria-label="Close cart" className="absolute inset-0 cursor-default bg-black/50" onClick={closeCart} />
-      <aside role="dialog" aria-modal="true" aria-label="Shopping cart" className="drawer-panel-right-enter absolute inset-y-0 right-0 flex w-full max-w-[430px] flex-col border-l bg-background shadow-2xl">
+    <div className={`fixed inset-0 z-[70] ${closing ? "drawer-overlay-exit" : ""}`}>
+      <button aria-label="Close cart" className="absolute inset-0 cursor-default bg-black/50" onClick={requestClose} />
+      <aside role="dialog" aria-modal="true" aria-label="Shopping cart" className={`drawer-panel-right-enter absolute inset-y-0 right-0 flex w-full max-w-[430px] flex-col border-l bg-background shadow-2xl ${closing ? "drawer-panel-right-exit" : ""}`}>
         <header className="flex items-center justify-between border-b px-5 py-4">
           <div className="flex items-center gap-2 text-lg font-semibold"><ShoppingCart className="size-5" /> Cart ({totalCount})</div>
-          <Button variant="outline" size="icon-sm" aria-label="Close cart" onClick={closeCart}><X /></Button>
+          <Button variant="outline" size="icon-sm" aria-label="Close cart" onClick={requestClose}><X /></Button>
         </header>
         <div className="flex-1 overflow-y-auto px-5 py-5">
           {items.length ? <div className="mb-5 flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-sm font-medium"><Check className="size-4 text-emerald-600" /> Added to cart</div> : <p className="py-8 text-center text-sm text-muted-foreground">Your cart is empty.</p>}
@@ -92,8 +99,8 @@ function CartDrawer() {
         <footer className="mt-auto border-t bg-background p-5">
           <div className="mb-3 flex items-center justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span className="font-semibold">{formatUSD(totalPrice)}</span></div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={closeCart}>Keep shopping</Button>
-            <Button className="flex-1" onClick={closeCart}>View Cart</Button>
+            <Button variant="outline" onClick={requestClose}>Keep shopping</Button>
+            <Button className="flex-1" onClick={requestClose}>View Cart</Button>
           </div>
         </footer>
       </aside>
