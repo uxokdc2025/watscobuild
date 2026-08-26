@@ -21,7 +21,7 @@ export function AccountNav({
   compact?: boolean;
 }) {
   return (
-    <nav aria-label={ariaLabel} className="divide-y divide-border bg-background text-sm text-neutral-900">
+    <nav aria-label={ariaLabel} className="divide-y divide-border border-b border-border bg-background text-sm text-neutral-900">
       {ACCOUNT_NAV_ITEMS.map(({ label, Icon }) => (
         <button
           key={label}
