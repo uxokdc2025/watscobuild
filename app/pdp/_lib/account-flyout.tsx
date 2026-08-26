@@ -65,7 +65,7 @@ export function CartTrigger({ signedIn }: { signedIn: boolean }) {
     <button type="button" aria-label="Cart" onClick={openCart} className="flex items-center gap-1.5 text-[11px] leading-tight">
       <ShoppingCart className="size-6 shrink-0" />
       <span className="hidden text-left sm:block">
-        {signedIn ? <span className="block font-semibold">{totalCount || 1} Item{totalCount === 1 ? "" : "s"}</span> : null}
+        {signedIn ? <span className="block font-semibold">{totalCount} Item{totalCount === 1 ? "" : "s"}</span> : null}
         <span className="block">Cart</span>
       </span>
     </button>

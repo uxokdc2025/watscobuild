@@ -37,12 +37,12 @@ export function useCart() {
 function CartDrawer() {
   const { items, totalCount, totalPrice, removeItem, setQuantity, closeCart, addItem, open } = useCart();
 
-  if (!open || !items.length) return null;
+  if (!open) return null;
   const added = items[items.length - 1];
-  const recommendations = [
+  const recommendations = added ? [
     { id: `${added.id}-filter`, title: "Replacement filter", price: 12.5, image: "/peirce-search/blower-motor-07.avif" },
     { id: `${added.id}-bracket`, title: "Universal mounting bracket", price: 18.75, image: "/peirce-search/blower-motor-17.avif" },
-  ];
+  ] : [];
 
   return (
     <div className="fixed inset-0 z-[70]">
@@ -53,7 +53,7 @@ function CartDrawer() {
           <Button variant="outline" size="icon-sm" aria-label="Close cart" onClick={closeCart}><X /></Button>
         </header>
         <div className="flex-1 overflow-y-auto px-5 py-5">
-          <div className="mb-5 flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-sm font-medium"><Check className="size-4 text-emerald-600" /> Added to cart</div>
+          {items.length ? <div className="mb-5 flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-sm font-medium"><Check className="size-4 text-emerald-600" /> Added to cart</div> : <p className="py-8 text-center text-sm text-muted-foreground">Your cart is empty.</p>}
           <div className="flex flex-col gap-5">
             {items.map((item) => (
               <div key={item.id} className="flex gap-3 border-b pb-5">
@@ -76,7 +76,7 @@ function CartDrawer() {
               </div>
             ))}
           </div>
-          <section className="pt-6">
+          {items.length ? <section className="pt-6">
             <h2 className="text-lg font-semibold">You may also need</h2>
             <div className="mt-3 flex flex-col gap-3">
               {recommendations.map((item) => (
@@ -87,7 +87,7 @@ function CartDrawer() {
                 </div>
               ))}
             </div>
-          </section>
+          </section> : null}
         </div>
         <footer className="mt-auto border-t bg-background p-5">
           <div className="mb-3 flex items-center justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span className="font-semibold">{formatUSD(totalPrice)}</span></div>
