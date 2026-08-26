@@ -4,7 +4,7 @@ import * as React from "react";
 import { ArrowLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountNav } from "@/components/ui/account-nav";
-import { DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
+import { DrawerBackButton, DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
 
 const SHIP_TO_OPTIONS = [
   "50 WILLIAMS STREET - CASH 1248 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
@@ -24,13 +24,20 @@ const SHIP_TO_OPTIONS = [
   "NORTH ESSEX COMMUNITY COLLEGE - 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
 ];
 
+const NESTED_MENU_ITEMS = {
+  "Buying Tools": ["Shopping Lists", "Saved Carts"],
+  Orders: ["Open Orders"],
+  Account: ["Address Book", "Card Management"],
+} as const;
+type NestedMenu = keyof typeof NESTED_MENU_ITEMS;
+
 export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
   const [open, setOpen] = React.useState(false);
   const [closing, setClosing] = React.useState(false);
   const [shipToOpen, setShipToOpen] = React.useState(false);
   const [shipToClosing, setShipToClosing] = React.useState(false);
-  const [menuOpen, setMenuOpen] = React.useState(false);
-  const [menuClosing, setMenuClosing] = React.useState(false);
+  const [nestedMenu, setNestedMenu] = React.useState<NestedMenu | null>(null);
+  const [nestedMenuClosing, setNestedMenuClosing] = React.useState(false);
 
   const closeAccount = React.useCallback(() => {
     if (closing) return;
@@ -44,11 +51,15 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
     window.setTimeout(() => { setShipToOpen(false); setShipToClosing(false); }, 520);
   }, [shipToClosing]);
 
-  const closeMenu = React.useCallback(() => {
-    if (menuClosing) return;
-    setMenuClosing(true);
-    window.setTimeout(() => { setMenuOpen(false); setMenuClosing(false); }, 520);
-  }, [menuClosing]);
+  const openNestedMenu = React.useCallback((label: string) => {
+    if (label in NESTED_MENU_ITEMS) setNestedMenu(label as NestedMenu);
+  }, []);
+
+  const closeNestedMenu = React.useCallback(() => {
+    if (nestedMenuClosing) return;
+    setNestedMenuClosing(true);
+    window.setTimeout(() => { setNestedMenu(null); setNestedMenuClosing(false); }, 520);
+  }, [nestedMenuClosing]);
 
   if (!signedIn) {
     return <button type="button" className="hidden text-left text-xs leading-tight sm:block">Sign In</button>;
@@ -74,15 +85,17 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <p className="text-xs text-muted-foreground">613 MAIN STREET · ALL CASH SALES ARE FINAL</p>
               <button type="button" onClick={() => setShipToOpen(true)} className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">Change Ship To <ChevronRight className="size-4" /></button>
             </div>
-            <AccountNav />
+            <AccountNav onSelect={openNestedMenu} />
             <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
-            {menuOpen ? (
-              <section aria-label="Account menu" className={`absolute inset-0 z-30 flex flex-col bg-background ${menuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
+            {nestedMenu ? (
+              <section aria-label={`${nestedMenu} menu`} className={`absolute inset-0 z-30 flex flex-col bg-background ${nestedMenuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
                 <header className="flex shrink-0 items-center justify-between border-b bg-background px-5 py-4">
-                  <h3 className="font-bold">Account</h3>
-                  <button type="button" onClick={closeMenu} className="text-sm font-medium text-muted-foreground hover:text-foreground">Back</button>
+                  <h3 className="text-xs font-bold uppercase tracking-wide">{nestedMenu}</h3>
+                  <DrawerBackButton label={`Back from ${nestedMenu}`} onClick={closeNestedMenu} />
                 </header>
-                <AccountNav ariaLabel="Account menu navigation" compact />
+                <nav aria-label={`${nestedMenu} navigation`} className="divide-y divide-border border-b border-border bg-background text-sm text-foreground">
+                  {NESTED_MENU_ITEMS[nestedMenu].map((item) => <button key={item} type="button" className="flex min-h-12 w-full items-center px-5 text-left text-foreground transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">{item}</button>)}
+                </nav>
               </section>
             ) : null}
             {shipToOpen ? (

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -48,6 +48,30 @@ export function DrawerCloseButton({
       className={cn("bg-background text-foreground hover:bg-muted", className)}
     >
       <X aria-hidden="true" />
+    </Button>
+  );
+}
+
+/** Canonical nested-drawer back control: same placement and surface as close. */
+export function DrawerBackButton({
+  onClick,
+  label = "Back",
+  className,
+}: {
+  onClick: () => void;
+  label?: string;
+  className?: string;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="icon-sm"
+      aria-label={label}
+      onClick={onClick}
+      className={cn("bg-background text-foreground hover:bg-muted", className)}
+    >
+      <ChevronLeft aria-hidden="true" />
     </Button>
   );
 }
