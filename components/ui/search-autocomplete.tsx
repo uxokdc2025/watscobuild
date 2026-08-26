@@ -37,9 +37,8 @@ export function SearchAutocomplete({
   React.useEffect(() => {
     const query = new URLSearchParams(window.location.search).get("q");
     if (query) setValue(query);
-    // The query is only used to seed the controlled input on mount; after
-    // that, clearing or editing the field must remain user-controlled.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // The query only seeds the controlled input on mount; after that, clearing
+    // or editing the field remains user-controlled.
   }, []);
 
   React.useEffect(() => {
