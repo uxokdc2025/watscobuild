@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /** Canonical motion timing for every drawer in the system. */
-export const DRAWER_MOTION_MS = 400;
+export const DRAWER_MOTION_MS = 520;
 
 export function drawerOverlayClassName(closing = false, className?: string) {
   return cn("fixed inset-0 z-50 bg-black/50", closing && "drawer-overlay-exit", className);

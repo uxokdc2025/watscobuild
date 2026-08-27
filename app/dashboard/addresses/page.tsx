@@ -144,7 +144,7 @@ export default function AddressesPage() {
   return (
     <DashboardShell
       title="Address Book"
-      description="Keep job sites, warehouses, and branch pickups ready for checkout. Manage your saved addresses and review the locations on file with your Homans account."
+      description="Manage your saved addresses and review the locations on file with your Homans account."
       actions={<Button onClick={openAdd} className="min-h-10 w-full px-3.5 sm:w-auto">
         <Plus aria-hidden="true" className="size-4" />
         Add new address

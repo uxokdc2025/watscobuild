@@ -4,7 +4,7 @@ import * as React from "react";
 import { ChevronRight, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountNav } from "@/components/ui/account-nav";
-import { DRAWER_MOTION_MS, DrawerBackButton, DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
+import { DrawerBackButton, DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
 
 const SHIP_TO_OPTIONS = [
   "50 WILLIAMS STREET - CASH 1248 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
@@ -33,13 +33,13 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
   const closeAccount = React.useCallback(() => {
     if (closing) return;
     setClosing(true);
-    window.setTimeout(() => setOpen(false), DRAWER_MOTION_MS);
+    window.setTimeout(() => setOpen(false), 520);
   }, [closing]);
 
   const closeShipTo = React.useCallback(() => {
     if (shipToClosing) return;
     setShipToClosing(true);
-    window.setTimeout(() => { setShipToOpen(false); setShipToClosing(false); }, DRAWER_MOTION_MS);
+    window.setTimeout(() => { setShipToOpen(false); setShipToClosing(false); }, 520);
   }, [shipToClosing]);
 
   if (!signedIn) {
