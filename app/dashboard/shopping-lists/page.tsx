@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 type ShoppingList = {
   name: string;
   label: string;
@@ -300,16 +301,13 @@ export default function ShoppingListsPage() {
               <div>
                 <label className="text-sm font-medium">Label</label>
                 <div className="mt-2 flex gap-2">
-                  <select
-                    className="h-11 flex-1 rounded-md border px-3"
-                    value={selected}
-                    onChange={(e) => setSelected(e.target.value)}
-                  >
-                    <option value="">No label</option>
-                    {labels.map((l) => (
-                      <option key={l}>{l}</option>
-                    ))}
-                  </select>
+                  <Select value={selected || "none"} onValueChange={(value) => setSelected(value === "none" ? "" : value)}>
+                    <SelectTrigger className="h-11 w-full flex-1"><SelectValue placeholder="No label" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No label</SelectItem>
+                      {labels.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                   <button
                     className="min-h-11 rounded-md border px-3 text-sm"
                     onClick={() => openLabel(null)}
