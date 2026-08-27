@@ -28,6 +28,7 @@ const SHIP_TO_OPTIONS = [
 
 const NESTED_MENU_ITEMS = {
   "Buying Tools": [{ label: "Shopping Lists", href: "/dashboard/shopping-lists" }, { label: "Saved Carts", href: "/dashboard/saved-carts" }],
+  Quotes: [{ label: "Quotes", href: "/dashboard/quotes" }],
   Orders: [{ label: "Open Orders", href: "/dashboard/orders?status=open" }],
   Account: [{ label: "Address Book", href: "/dashboard/addresses" }, { label: "Card Management", href: "/dashboard/card-management" }],
 } as const;
