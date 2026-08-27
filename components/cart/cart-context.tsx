@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Check, Minus, Plus, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DrawerCloseButton } from "@/components/ui/drawer";
+import { DRAWER_MOTION_MS, DrawerCloseButton } from "@/components/ui/drawer";
 import { formatUSD } from "@/app/pdp/_lib/types";
 
 export type CartItem = {
@@ -42,7 +42,7 @@ function CartDrawer() {
   const requestClose = React.useCallback(() => {
     if (closing) return;
     setClosing(true);
-    window.setTimeout(() => { closeCart(); setClosing(false); }, 520);
+    window.setTimeout(() => { closeCart(); setClosing(false); }, DRAWER_MOTION_MS);
   }, [closeCart, closing]);
 
   if (!open) return null;

@@ -3,7 +3,7 @@
 import * as React from "react";
 
 export const DRAWER_EXIT_EVENT = "watsco:drawer-exit";
-export const DRAWER_MOTION_MS = 520;
+export const DRAWER_MOTION_MS = 400;
 
 export function DrawerOverlay({ children }: { children: React.ReactNode }) {
   const [closing, setClosing] = React.useState(false);
