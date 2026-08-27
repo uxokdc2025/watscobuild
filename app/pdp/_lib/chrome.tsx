@@ -1112,7 +1112,7 @@ function HomansHeader({
     <header>
       {/* Utility bar (white, centered) */}
       <div className="border-b bg-background">
-        <div className="mx-auto flex max-w-6xl items-center justify-center gap-6 px-4 py-2 text-xs text-muted-foreground md:px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-start gap-6 overflow-x-auto px-4 py-2 text-xs text-muted-foreground [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:justify-center md:px-6">
           {HOMANS_UTIL.map((l) => (
             <a key={l} href="#" className="whitespace-nowrap hover:text-foreground">
               {l}
