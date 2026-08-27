@@ -159,26 +159,26 @@ export default function ShoppingListsPage() {
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
+            <table className="w-full min-w-[760px] text-left text-[13px]">
               <thead>
                 <tr className="border-b bg-muted/30 text-muted-foreground">
-                  <th className="px-5 py-4 font-medium">Name</th>
-                  <th className="px-5 py-4 font-medium">Label</th>
-                  <th className="px-5 py-4 font-medium">Products</th>
-                  <th className="px-5 py-4 font-medium">Type</th>
-                  <th className="px-5 py-4 font-medium">Latest activity</th>
-                  <th className="px-5 py-4 font-medium">Created by</th>
-                  <th className="px-5 py-4 font-medium">Actions</th>
+                  <th className="w-[24%] px-5 py-3 font-medium text-[11px]">Name</th>
+                  <th className="px-5 py-3 font-medium text-[11px]">Label</th>
+                  <th className="px-5 py-3 font-medium text-[11px]">Products</th>
+                  <th className="px-5 py-3 font-medium text-[11px]">Type</th>
+                  <th className="px-5 py-3 font-medium text-[11px]">Latest activity</th>
+                  <th className="px-5 py-3 font-medium text-[11px]">Created by</th>
+                  <th className="px-5 py-3 font-medium text-[11px]">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((v) => (
                   <tr key={v.name} className="border-b last:border-0">
-                    <td className="px-5 py-5 font-medium">
+                    <td className="px-5 py-3 font-medium">
                       <span className="mr-3 text-primary">⠿</span>
                       {v.name}
                     </td>
-                    <td className="relative px-5 py-5">
+                    <td className="relative px-5 py-3">
                       <button
                         className="inline-flex min-h-10 items-center gap-2 rounded-md px-2 text-sm text-muted-foreground hover:bg-muted"
                         onClick={() => setMenu(menu === v.name ? null : v.name)}
@@ -216,19 +216,19 @@ export default function ShoppingListsPage() {
                         </div>
                       )}
                     </td>
-                    <td className="px-5 py-5">{v.products}</td>
-                    <td className="px-5 py-5">
+                    <td className="px-5 py-3">{v.products}</td>
+                    <td className="px-5 py-3">
                       <span className="rounded-full border px-2.5 py-1 text-xs">
                         {v.type}
                       </span>
                     </td>
-                    <td className="px-5 py-5 text-muted-foreground">
+                    <td className="px-5 py-3 text-muted-foreground">
                       {v.activity}
                     </td>
-                    <td className="px-5 py-5 text-muted-foreground">
+                    <td className="px-5 py-3 text-muted-foreground">
                       {v.owner}
                     </td>
-                    <td className="px-5 py-5">
+                    <td className="px-5 py-3">
                       <button
                         aria-label={`Edit ${v.name}`}
                         className="rounded p-2 hover:bg-muted"

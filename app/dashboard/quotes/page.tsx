@@ -18,16 +18,16 @@ export default function QuotesPage() {
           <span className="text-sm text-muted-foreground">{QUOTES.length} quotes</span>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1100px] border-collapse text-sm">
+          <table className="w-full min-w-[1100px] border-collapse text-[13px]">
             <thead>
               <tr className="border-b bg-muted/20 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                <th className="px-5 py-4">Quote #</th><th className="px-5 py-4">PO #</th><th className="px-5 py-4">Created</th><th className="px-5 py-4">Expires</th><th className="px-5 py-4">Last Updated</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Buyer</th><th className="px-5 py-4">Buyer Email</th><th className="px-5 py-4 text-right">Subtotal</th>
+                <th className="px-5 py-3 text-[11px]">Quote #</th><th className="px-5 py-3 text-[11px]">PO #</th><th className="px-5 py-3 text-[11px]">Created</th><th className="px-5 py-3 text-[11px]">Expires</th><th className="px-5 py-3 text-[11px]">Last Updated</th><th className="px-5 py-3 text-[11px]">Status</th><th className="px-5 py-3 text-[11px]">Buyer</th><th className="px-5 py-3 text-[11px]">Buyer Email</th><th className="px-5 py-3 text-right text-[11px]">Subtotal</th>
               </tr>
             </thead>
             <tbody>
               {QUOTES.map((item) => (
                 <tr key={item.quote} className="border-b last:border-0 hover:bg-muted/20">
-                  <td className="px-5 py-4 font-semibold text-primary">{item.quote}</td><td className="px-5 py-4">{item.po}</td><td className="px-5 py-4 whitespace-nowrap">{item.created}</td><td className="px-5 py-4 whitespace-nowrap">{item.expires}</td><td className="px-5 py-4 whitespace-nowrap">{item.updated}</td><td className="px-5 py-4"><span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">Active</span></td><td className="px-5 py-4 whitespace-nowrap">{item.buyer}</td><td className="px-5 py-4">{item.email}</td><td className="px-5 py-4 text-right font-semibold whitespace-nowrap">{item.subtotal}</td>
+                  <td className="px-5 py-3 font-semibold text-primary">{item.quote}</td><td className="px-5 py-3">{item.po}</td><td className="px-5 py-3 whitespace-nowrap">{item.created}</td><td className="px-5 py-3 whitespace-nowrap">{item.expires}</td><td className="px-5 py-3 whitespace-nowrap">{item.updated}</td><td className="px-5 py-3"><span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">Active</span></td><td className="px-5 py-3 whitespace-nowrap">{item.buyer}</td><td className="px-5 py-3">{item.email}</td><td className="px-5 py-3 text-right font-semibold whitespace-nowrap">{item.subtotal}</td>
                 </tr>
               ))}
             </tbody>

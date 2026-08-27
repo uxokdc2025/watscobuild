@@ -24,7 +24,7 @@ export function DashboardShell({ title, description, children }: { title: string
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
           <p className="max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
-        <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+        <div className="grid gap-8 lg:grid-cols-[185px_1fr]">
           <nav aria-label="Account dashboard" className="h-fit rounded-md border border-border bg-background p-2 shadow-sm">
             {NAV.map(({ label, href, Icon }) => (
               <Link key={href} href={href} aria-current={pathname === href.split("?")[0] ? "page" : undefined} className={`flex min-h-11 items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${pathname === href.split("?")[0] ? "bg-primary/10 font-semibold text-primary" : ""}`}>
