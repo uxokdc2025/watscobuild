@@ -93,9 +93,9 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
             {nestedMenu ? (
               <section aria-label={`${nestedMenu} menu`} className={`absolute inset-0 z-30 flex flex-col bg-background ${nestedMenuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
-                <header className="flex shrink-0 items-center justify-between border-b bg-background px-5 py-4">
-                  <h3 className={DRAWER_H3_CLASS}>{nestedMenu}</h3>
+                <header className="flex shrink-0 items-center justify-start gap-3 border-b bg-background px-5 py-4">
                   <DrawerBackButton label={`Back from ${nestedMenu}`} onClick={closeNestedMenu} />
+                  <h3 className={DRAWER_H3_CLASS}>{nestedMenu}</h3>
                 </header>
                 <nav aria-label={`${nestedMenu} navigation`} className="divide-y divide-border border-b border-border bg-background text-sm text-foreground">
                   {NESTED_MENU_ITEMS[nestedMenu].map((item) => <button key={item} type="button" className="flex min-h-12 w-full items-center px-5 text-left text-foreground transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">{item}</button>)}
