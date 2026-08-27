@@ -12,7 +12,21 @@ import { AddressFormDialog } from "./_components/address-form-dialog";
 import { ConfirmRemoveDialog } from "./_components/confirm-remove-dialog";
 
 export default function AddressesPage() {
-  const [userAddresses, setUserAddresses] = useState<Address[]>([]);
+  const [userAddresses, setUserAddresses] = useState<Address[]>([
+    {
+      id: "user-1",
+      kind: "user",
+      label: "Nashua job site",
+      name: "David Whiteside",
+      company: "Whiteside Mechanical LLC",
+      street1: "1248 Daniel Webster Hwy",
+      city: "Nashua",
+      state: "NH",
+      zip: "03060",
+      phone: "+1 978 657 8990",
+      isDefault: false,
+    },
+  ]);
   const [accountAddresses, setAccountAddresses] = useState<Address[]>(ACCOUNT_ADDRESSES);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);

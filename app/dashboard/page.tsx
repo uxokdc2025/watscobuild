@@ -116,7 +116,7 @@ export default function DashboardPage() {
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[900px] border-collapse text-sm">
               <thead><tr className="border-b text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Quote #</th><th className="px-2 py-3">PO #</th><th className="px-2 py-3">Created</th><th className="px-2 py-3">Expires</th><th className="px-2 py-3">Last Updated</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Buyer</th><th className="px-2 py-3">Buyer Email</th><th className="px-2 py-3">Subtotal</th></tr></thead>
-              <tbody><tr><td colSpan={9} className="px-2 py-8 text-muted-foreground">No quotes found.</td></tr></tbody>
+              <tbody><tr className="border-b"><td className="px-2 py-4 font-semibold text-primary">Q-2026-0184</td><td className="px-2 py-4">—</td><td className="px-2 py-4">Aug 20, 2026</td><td className="px-2 py-4">Sep 20, 2026</td><td className="px-2 py-4">Today</td><td className="px-2 py-4"><span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">Active</span></td><td className="px-2 py-4">David Whiteside</td><td className="px-2 py-4">—</td><td className="px-2 py-4 text-right font-semibold">$1,248.00</td></tr></tbody>
             </table>
           </div>
         </section>
