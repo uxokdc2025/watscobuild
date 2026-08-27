@@ -57,7 +57,7 @@ export default function DashboardPage() {
         <section aria-labelledby="find-order-heading" className="rounded-lg border bg-background p-4 shadow-sm sm:p-6">
           <SectionHeading id="find-order-heading" title="Find an Order" />
           <form onSubmit={searchOrders} className="mt-5 max-w-xl">
-            <label htmlFor="order-search" className="text-sm font-medium">Search</label>
+            <label htmlFor="order-search" className="sr-only">Search by order number or PO number</label>
             <div className="relative mt-2">
               <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <input id="order-search" value={orderQuery} onChange={(event) => setOrderQuery(event.target.value)} placeholder="Search by Order # or PO #" className="min-h-11 w-full rounded-md border bg-background pl-10 pr-3 text-sm outline-none transition-shadow placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />
