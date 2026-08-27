@@ -75,7 +75,7 @@ export default function DashboardPage() {
 
         <section aria-labelledby="recent-orders-heading" className="rounded-lg border bg-background p-4 shadow-sm sm:p-6">
           <SectionHeading id="recent-orders-heading" title="Recent Orders" href="/dashboard/orders" />
-          <div className="mt-4 flex items-center gap-3 rounded-md bg-primary px-4 py-4 text-sm font-semibold text-primary-foreground">
+          <div className="mt-4 flex items-center gap-3 rounded-md bg-brand-homans px-4 py-4 text-sm font-semibold text-brand-homans-foreground">
             <Info aria-hidden="true" className="size-4 shrink-0" /> {visibleOrders.length} Orders Available
           </div>
           <div className="mt-4 overflow-x-auto">

@@ -35,7 +35,6 @@ export default function AddressesPage() {
   const [confirmRemove, setConfirmRemove] = useState<Address | null>(null);
 
   const allAddresses = [...userAddresses, ...accountAddresses];
-  const defaultAddr = allAddresses.find((a) => a.isDefault);
 
   function openAdd() {
     setEditingId(null);
@@ -148,21 +147,7 @@ export default function AddressesPage() {
       description="Keep job sites, warehouses, and branch pickups ready for checkout. Manage your saved addresses and review the locations on file with your Homans account."
     >
       <div className="space-y-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-muted-foreground">
-            {defaultAddr ? (
-              <span>
-                Default: <span className="font-medium text-foreground">{defaultAddr.label}</span> —{" "}
-                {defaultAddr.city}, {defaultAddr.state}
-              </span>
-            ) : (
-              <span>No default selected.</span>
-            )}
-            <span className="hidden sm:inline">
-              {" "}
-              · {userAddresses.length} saved by you · {accountAddresses.length} on account
-            </span>
-          </div>
+        <div className="flex justify-end">
           <Button onClick={openAdd} className="min-h-10 w-full px-3.5 sm:w-auto">
             <Plus aria-hidden="true" className="size-4" />
             Add new address
