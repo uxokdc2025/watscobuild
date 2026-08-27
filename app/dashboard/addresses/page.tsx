@@ -157,9 +157,9 @@ export default function AddressesPage() {
         {/* User addresses — editable */}
         <section
           aria-labelledby="user-addresses-heading"
-          className="overflow-hidden rounded-lg border bg-background shadow-sm"
+          className="space-y-3"
         >
-          <div className="flex flex-col gap-1 border-b bg-muted/20 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 id="user-addresses-heading" className="text-base font-semibold">
                 Your addresses
@@ -176,7 +176,7 @@ export default function AddressesPage() {
             </span>
           </div>
 
-          <div className="p-4 sm:p-6">
+          <div>
             {userAddresses.length === 0 ? (
               <div className="rounded-md border border-dashed bg-muted/20 px-6 py-12 text-center">
                 <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-background shadow-xs">
@@ -211,9 +211,9 @@ export default function AddressesPage() {
         {/* Account addresses — read-only with checkout preference */}
         <section
           aria-labelledby="account-addresses-heading"
-          className="overflow-hidden rounded-lg border bg-background shadow-sm"
+          className="space-y-3"
         >
-          <div className="border-b bg-muted/20 px-4 py-4 sm:px-6">
+          <div>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h2 id="account-addresses-heading" className="text-base font-semibold">
@@ -230,7 +230,7 @@ export default function AddressesPage() {
             </div>
           </div>
 
-          <div className="p-4 sm:p-6">
+          <div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {accountAddresses.map((addr) => (
                 <AddressCard key={addr.id} addr={addr} onSetDefault={() => handleSetDefault(addr.id)} />

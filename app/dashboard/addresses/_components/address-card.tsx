@@ -31,7 +31,7 @@ export function AddressCard(props: Props) {
 
   return (
     <div
-      className={`flex flex-col bg-transparent p-2 ${addr.isDefault ? "border-l-2 border-primary pl-4" : ""}`}
+      className={`flex flex-col rounded-lg border bg-background p-4 shadow-sm ${addr.isDefault ? "border-l-2 border-l-primary" : ""}`}
     >
       {/* Badge row — default vs kind */}
       <div className="flex items-start justify-between gap-3">
