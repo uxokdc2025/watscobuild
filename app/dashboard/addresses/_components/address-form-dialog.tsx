@@ -201,7 +201,7 @@ export function AddressFormDialog({
             <p className="text-xs text-muted-foreground">Used for delivery updates and branch contact.</p>
           </div>
 
-          <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+          <div className="sticky bottom-0 z-10 -mx-5 flex flex-col-reverse gap-3 border-t bg-background px-5 py-4 sm:-mx-6 sm:flex-row sm:justify-end sm:px-6">
             <Button type="button" variant="outline" className="min-h-11" onClick={onClose}>
               Cancel
             </Button>
