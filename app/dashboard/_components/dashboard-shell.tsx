@@ -20,13 +20,13 @@ export function DashboardShell({ title, description, actions, children }: { titl
     <main className="min-h-svh bg-brand-homans-bg text-foreground">
       <div className="mx-auto max-w-6xl px-4 py-4 md:px-6 md:py-8">
         <div className="mb-8 flex flex-col gap-4">
-          <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="space-y-2">
               <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to shopping</Link>
               <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
               <p className="max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
             </div>
-            {actions ? <div className="shrink-0">{actions}</div> : null}
+            {actions ? <div className="shrink-0 translate-y-8">{actions}</div> : null}
           </div>
         </div>
         <div className="grid gap-8 lg:grid-cols-[185px_1fr]">
