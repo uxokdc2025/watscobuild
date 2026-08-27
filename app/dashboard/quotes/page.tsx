@@ -1,0 +1,2 @@
+import { DashboardShell, EmptyState } from "../_components/dashboard-shell";
+export default function QuotesPage() { return <DashboardShell title="Quotes" description="Review pricing and quote details in one clear, searchable view."><EmptyState title="No quotes to review" body="When a quote is created for your account, it will show up here with its status and expiration date." /></DashboardShell>; }

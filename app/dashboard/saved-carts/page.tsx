@@ -1,0 +1,2 @@
+import { DashboardShell, EmptyState } from "../_components/dashboard-shell";
+export default function SavedCartsPage() { return <DashboardShell title="Saved Carts" description="Save a cart now and return to it when you are ready to place the order."><EmptyState title="No saved carts" body="Saved carts will appear here so you can review quantities and check out when the job is ready." action="Start shopping" href="/search?q=blower%20motor&signedin=1" /></DashboardShell>; }

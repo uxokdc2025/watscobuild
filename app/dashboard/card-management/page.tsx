@@ -1,0 +1,2 @@
+import { DashboardShell, EmptyState } from "../_components/dashboard-shell";
+export default function CardManagementPage() { return <DashboardShell title="Card Management" description="Manage payment methods securely for your account."><EmptyState title="No saved payment methods" body="Payment methods can be added securely during checkout or from this page." action="Return to shopping" href="/search?q=blower%20motor&signedin=1" /></DashboardShell>; }

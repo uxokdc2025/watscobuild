@@ -1,0 +1,42 @@
+import Link from "next/link";
+import { ArrowRight, LayoutDashboard, ListChecks, FileText, Truck, MapPin, CreditCard } from "lucide-react";
+
+const NAV = [
+  { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboard },
+  { label: "Shopping Lists", href: "/dashboard/shopping-lists", Icon: ListChecks },
+  { label: "Saved Carts", href: "/dashboard/saved-carts", Icon: ListChecks },
+  { label: "Quotes", href: "/dashboard/quotes", Icon: FileText },
+  { label: "Open Orders", href: "/dashboard/orders?status=open", Icon: Truck },
+  { label: "Address Book", href: "/dashboard/addresses", Icon: MapPin },
+  { label: "Card Management", href: "/dashboard/card-management", Icon: CreditCard },
+] as const;
+
+export function DashboardShell({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+  return (
+    <main className="min-h-svh bg-brand-homans-bg text-foreground">
+      <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 md:py-12">
+        <div className="mb-8 flex flex-col gap-2">
+          <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to shopping</Link>
+          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
+          <p className="max-w-2xl text-muted-foreground">{description}</p>
+        </div>
+        <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+          <nav aria-label="Account dashboard" className="h-fit rounded-md border border-border bg-background p-2 shadow-sm">
+            {NAV.map(({ label, href, Icon }) => (
+              <Link key={href} href={href} className="flex min-h-11 items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <Icon aria-hidden="true" className="size-4 text-muted-foreground" />
+                <span>{label}</span>
+                <ArrowRight aria-hidden="true" className="ml-auto size-3.5 text-muted-foreground" />
+              </Link>
+            ))}
+          </nav>
+          <section className="min-w-0">{children}</section>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export function EmptyState({ title, body, action, href }: { title: string; body: string; action?: string; href?: string }) {
+  return <div className="rounded-md border border-dashed border-border bg-background px-6 py-14 text-center shadow-sm"><h2 className="text-xl font-semibold">{title}</h2><p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{body}</p>{action && href ? <Link href={href} className="mt-6 inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{action}</Link> : null}</div>;
+}

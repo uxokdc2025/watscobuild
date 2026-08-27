@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronRight, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountNav } from "@/components/ui/account-nav";
@@ -25,9 +27,9 @@ const SHIP_TO_OPTIONS = [
 ];
 
 const NESTED_MENU_ITEMS = {
-  "Buying Tools": ["Shopping Lists", "Saved Carts"],
-  Orders: ["Open Orders"],
-  Account: ["Address Book", "Card Management"],
+  "Buying Tools": [{ label: "Shopping Lists", href: "/dashboard/shopping-lists" }, { label: "Saved Carts", href: "/dashboard/saved-carts" }],
+  Orders: [{ label: "Open Orders", href: "/dashboard/orders?status=open" }],
+  Account: [{ label: "Address Book", href: "/dashboard/addresses" }, { label: "Card Management", href: "/dashboard/card-management" }],
 } as const;
 type NestedMenu = keyof typeof NESTED_MENU_ITEMS;
 const DRAWER_H3_CLASS = "text-[15px] leading-5 font-bold";
@@ -39,6 +41,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
   const [shipToClosing, setShipToClosing] = React.useState(false);
   const [nestedMenu, setNestedMenu] = React.useState<NestedMenu | null>(null);
   const [nestedMenuClosing, setNestedMenuClosing] = React.useState(false);
+  const router = useRouter();
 
   const closeAccount = React.useCallback(() => {
     if (closing) return;
@@ -55,6 +58,15 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
   const openNestedMenu = React.useCallback((label: string) => {
     if (label in NESTED_MENU_ITEMS) setNestedMenu(label as NestedMenu);
   }, []);
+
+  const handleAccountNavSelect = React.useCallback((label: string) => {
+    if (label === "Dashboard") {
+      closeAccount();
+      window.setTimeout(() => router.push("/dashboard"), 180);
+      return;
+    }
+    openNestedMenu(label);
+  }, [closeAccount, openNestedMenu, router]);
 
   const closeNestedMenu = React.useCallback(() => {
     if (nestedMenuClosing) return;
@@ -89,7 +101,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <button type="button" onClick={() => setShipToOpen(true)} className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">Change Ship To <ChevronRight className="size-4" /></button>
             </div>
             <div className="relative flex min-h-0 flex-1 flex-col">
-              <AccountNav onSelect={openNestedMenu} />
+              <AccountNav onSelect={handleAccountNavSelect} />
               <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
             {nestedMenu ? (
               <section aria-label={`${nestedMenu} menu`} className={`absolute inset-0 z-30 flex flex-col bg-background ${nestedMenuClosing ? "drawer-panel-right-exit" : "drawer-panel-right-enter"}`}>
@@ -98,7 +110,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
                   <h3 className={DRAWER_H3_CLASS}>{nestedMenu}</h3>
                 </header>
                 <nav aria-label={`${nestedMenu} navigation`} className="divide-y divide-border border-b border-border bg-background text-sm text-foreground">
-                  {NESTED_MENU_ITEMS[nestedMenu].map((item) => <button key={item} type="button" className="flex min-h-12 w-full items-center px-5 text-left text-foreground transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">{item}</button>)}
+                  {NESTED_MENU_ITEMS[nestedMenu].map((item) => <Link key={item.href} href={item.href} onClick={closeAccount} className="flex min-h-12 w-full items-center px-5 text-left text-foreground transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">{item.label}</Link>)}
                 </nav>
               </section>
             ) : null}

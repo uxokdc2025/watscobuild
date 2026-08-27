@@ -1,0 +1,2 @@
+import { DashboardShell, EmptyState } from "../_components/dashboard-shell";
+export default function OrdersPage() { return <DashboardShell title="Open Orders" description="Track orders, delivery progress, and recent purchasing activity."><EmptyState title="No open orders" body="There are no open orders for this account right now. Completed orders remain available in your order history." action="Continue shopping" href="/search?q=blower%20motor&signedin=1" /></DashboardShell>; }

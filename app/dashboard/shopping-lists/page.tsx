@@ -1,0 +1,2 @@
+import { DashboardShell, EmptyState } from "../_components/dashboard-shell";
+export default function ShoppingListsPage() { return <DashboardShell title="Shopping Lists" description="Organize products you reorder often and share them with your team."><EmptyState title="No shopping lists yet" body="Create a list to keep common parts together and make your next order faster." action="Create shopping list" href="/search?q=blower%20motor&signedin=1" /></DashboardShell>; }

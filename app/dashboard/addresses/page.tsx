@@ -1,0 +1,2 @@
+import { DashboardShell, EmptyState } from "../_components/dashboard-shell";
+export default function AddressesPage() { return <DashboardShell title="Address Book" description="Keep shipping destinations organized and ready for checkout."><EmptyState title="Your address book is empty" body="Add a shipping destination to make future orders faster and more accurate." action="Add an address" href="/dashboard/addresses" /></DashboardShell>; }
