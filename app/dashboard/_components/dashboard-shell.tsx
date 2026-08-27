@@ -18,11 +18,11 @@ export function DashboardShell({ title, description, children }: { title: string
   const pathname = usePathname();
   return (
     <main className="min-h-svh bg-brand-homans-bg text-foreground">
-      <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 md:py-12">
+      <div className="mx-auto max-w-6xl px-4 py-4 md:px-6 md:py-8">
         <div className="mb-8 flex flex-col gap-2">
           <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to shopping</Link>
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
-          <p className="max-w-2xl text-muted-foreground">{description}</p>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
+          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
         <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
           <nav aria-label="Account dashboard" className="h-fit rounded-md border border-border bg-background p-2 shadow-sm">
