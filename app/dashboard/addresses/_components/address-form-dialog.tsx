@@ -45,9 +45,9 @@ export function AddressFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => (o ? onOpenChange(true) : onClose())}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[560px]">
+      <DialogContent className="top-0 right-0 left-auto h-svh max-h-none w-full max-w-none translate-x-0 translate-y-0 overflow-y-auto rounded-none p-5 sm:max-w-[480px] sm:p-6">
         <DialogHeader>
-          <DialogTitle>{editingId ? "Edit address" : "Add new address"}</DialogTitle>
+          <DialogTitle>{editingId ? "Edit Address" : "Add New Address"}</DialogTitle>
           <DialogDescription>
             {editingId
               ? "Update the details for this shipping destination."
