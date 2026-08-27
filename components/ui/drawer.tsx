@@ -45,7 +45,7 @@ export function DrawerCloseButton({
       size="icon-sm"
       aria-label={label}
       onClick={onClick}
-      className={cn("bg-background text-foreground hover:bg-muted", className)}
+      className={cn("bg-background text-foreground hover:bg-muted hover:text-foreground", className)}
     >
       <X aria-hidden="true" />
     </Button>
