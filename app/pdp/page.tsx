@@ -243,6 +243,24 @@ export default function PdpMasterPage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Link
+              href="/dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              Account section
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <Link
+              href="/search?q=blower%20motor&signedin=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              Open PLP
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <Link
               href="/components"
               target="_blank"
               rel="noopener noreferrer"
