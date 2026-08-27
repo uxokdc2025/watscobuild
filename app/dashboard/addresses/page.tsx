@@ -163,16 +163,11 @@ export default function AddressesPage() {
               · {userAddresses.length} saved by you · {accountAddresses.length} on account
             </span>
           </div>
-          <Button onClick={openAdd} className="min-h-11 w-full sm:w-auto" size="lg">
+          <Button onClick={openAdd} className="min-h-10 w-full px-3.5 sm:w-auto">
             <Plus aria-hidden="true" className="size-4" />
             Add new address
           </Button>
         </div>
-
-        <p className="text-sm text-muted-foreground">
-          <span className="text-primary hover:underline">Dashboard</span> /{" "}
-          <span className="font-medium text-foreground">Addresses</span>
-        </p>
 
         {/* User addresses — editable */}
         <section

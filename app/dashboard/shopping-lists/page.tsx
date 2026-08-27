@@ -120,10 +120,10 @@ export default function ShoppingListsPage() {
   };
   return (
     <DashboardShell title="Shopping Lists" description="Create, organize, and share the products your team orders most.">
-      <div className="mx-auto max-w-6xl py-8">
-        <div className="mb-6 flex justify-end">
+      <div className="space-y-6">
+        <div className="flex justify-end">
           <button
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground"
+            className="inline-flex min-h-10 items-center gap-2 rounded-md bg-primary px-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => setCreate(true)}
           >
             <Plus size={16} />
