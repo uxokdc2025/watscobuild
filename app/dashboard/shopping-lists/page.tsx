@@ -120,14 +120,8 @@ export default function ShoppingListsPage() {
   };
   return (
     <DashboardShell title="Shopping Lists" description="Create, organize, and share the products your team orders most.">
-      <main className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Dashboard / Shopping Lists
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold">My Shopping Lists</h1>
-          </div>
+      <div className="mx-auto max-w-6xl py-8">
+        <div className="mb-6 flex justify-end">
           <button
             className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground"
             onClick={() => setCreate(true)}
@@ -263,7 +257,7 @@ export default function ShoppingListsPage() {
             No more lists to load
           </div>
         </section>
-      </main>
+      </div>
       {create && (
         <div
           className="fixed inset-0 z-40 grid place-items-center bg-black/50 p-4"
