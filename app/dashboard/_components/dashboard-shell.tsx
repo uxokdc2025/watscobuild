@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowRight, LayoutDashboard, ListChecks, FileText, Truck, MapPin, CreditCard } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { LayoutDashboard, ListChecks, FileText, Truck, MapPin, CreditCard } from "lucide-react";
 
 const NAV = [
   { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboard },
@@ -12,6 +15,7 @@ const NAV = [
 ] as const;
 
 export function DashboardShell({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+  const pathname = usePathname();
   return (
     <main className="min-h-svh bg-brand-homans-bg text-foreground">
       <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 md:py-12">
@@ -23,10 +27,9 @@ export function DashboardShell({ title, description, children }: { title: string
         <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
           <nav aria-label="Account dashboard" className="h-fit rounded-md border border-border bg-background p-2 shadow-sm">
             {NAV.map(({ label, href, Icon }) => (
-              <Link key={href} href={href} className="flex min-h-11 items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                <Icon aria-hidden="true" className="size-4 text-muted-foreground" />
+              <Link key={href} href={href} aria-current={pathname === href.split("?")[0] ? "page" : undefined} className={`flex min-h-11 items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${pathname === href.split("?")[0] ? "bg-primary/10 font-semibold text-primary" : ""}`}>
+                <Icon aria-hidden="true" className={`size-4 ${pathname === href.split("?")[0] ? "text-primary" : "text-muted-foreground"}`} />
                 <span>{label}</span>
-                <ArrowRight aria-hidden="true" className="ml-auto size-3.5 text-muted-foreground" />
               </Link>
             ))}
           </nav>
