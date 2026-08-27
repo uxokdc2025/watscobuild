@@ -27,7 +27,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Category, Demo, Block } from "../_showcase";
-import { MegaMenu } from "@/components/ui/mega-menu";
 
 export function NavigationSection() {
   return (
@@ -36,10 +35,8 @@ export function NavigationSection() {
       title="Navigation"
       description="Wayfinding controls. Selected, disabled, and current-page states are shown; hover/focus are live."
     >
+      {/* Mega menu is a production navigation pattern rendered in the PLP/PDP site chrome, not a standalone sheet demo. */}
       {/* ── Tabs ── */}
-      <Demo name="Mega menu" slug="mega-menu" description="Hover or focus to preview categories; click a category to drill into a second-level panel with a smooth slide transition.">
-        <div className="w-full overflow-visible rounded-md bg-brand-homans-nav p-2"><MegaMenu /></div>
-      </Demo>
       <Demo name="Tabs" slug="tabs" className="items-stretch">
         <Block label="Default (tab 1 selected, tab 3 disabled)">
           <Tabs defaultValue="account">
