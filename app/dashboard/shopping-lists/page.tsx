@@ -120,7 +120,7 @@ export default function ShoppingListsPage() {
   };
   return (
     <DashboardShell title="Shopping Lists" description="Create, organize, and share the products your team orders most.">
-      <div className="space-y-6">
+      <div className="space-y-3">
         <div className="flex justify-end">
           <button
             className="inline-flex min-h-10 items-center gap-2 rounded-md bg-primary px-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
