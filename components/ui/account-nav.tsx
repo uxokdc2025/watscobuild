@@ -31,7 +31,7 @@ export function AccountNav({
           href={href}
           onClick={onNavigate}
           className={cn(
-            "flex min-h-12 w-full items-center justify-between bg-background text-left text-foreground transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+            "flex min-h-12 w-full items-center justify-between bg-background text-left text-foreground transition-colors hover:bg-muted hover:no-underline focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
             compact ? "px-5" : "px-5",
           )}
         >
