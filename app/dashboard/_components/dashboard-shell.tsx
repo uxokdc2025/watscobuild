@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListChecks, FileText, Truck, MapPin, CreditCard } from "lucide-react";
+import { LayoutDashboard, ListChecks, FileText, Truck, MapPin, CreditCard, ShoppingCart } from "lucide-react";
 
 const NAV = [
   { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboard },
   { label: "Shopping Lists", href: "/dashboard/shopping-lists", Icon: ListChecks },
-  { label: "Saved Carts", href: "/dashboard/saved-carts", Icon: ListChecks },
+  { label: "Saved Carts", href: "/dashboard/saved-carts", Icon: ShoppingCart },
   { label: "Quotes", href: "/dashboard/quotes", Icon: FileText },
   { label: "Open Orders", href: "/dashboard/orders?status=open", Icon: Truck },
   { label: "Address Book", href: "/dashboard/addresses", Icon: MapPin },
