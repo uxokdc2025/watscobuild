@@ -145,37 +145,17 @@ export default function AddressesPage() {
     <DashboardShell
       title="Address Book"
       description="Keep job sites, warehouses, and branch pickups ready for checkout. Manage your saved addresses and review the locations on file with your Homans account."
+      actions={<Button onClick={openAdd} className="min-h-10 w-full px-3.5 sm:w-auto">
+        <Plus aria-hidden="true" className="size-4" />
+        Add new address
+      </Button>}
     >
       <div className="space-y-6">
-        <div className="flex justify-end">
-          <Button onClick={openAdd} className="min-h-10 w-full px-3.5 sm:w-auto">
-            <Plus aria-hidden="true" className="size-4" />
-            Add new address
-          </Button>
-        </div>
-
         {/* User addresses — editable */}
         <section
-          aria-labelledby="user-addresses-heading"
+          aria-label="Saved addresses"
           className="space-y-3"
         >
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 id="user-addresses-heading" className="text-base font-semibold">
-                Your addresses
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Saved by you for faster checkout and deliveries.
-              </p>
-            </div>
-            <span
-              aria-label={`${userAddresses.length} saved addresses`}
-              className="inline-flex w-fit items-center rounded-full border bg-background px-3 py-1 text-xs font-medium"
-            >
-              {userAddresses.length} saved
-            </span>
-          </div>
-
           <div>
             {userAddresses.length === 0 ? (
               <div className="rounded-md border border-dashed bg-muted/20 px-6 py-12 text-center">

@@ -44,7 +44,7 @@ export function AddressCard(props: Props) {
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-              {isAccount ? "Account" : "Saved by you"}
+              {isAccount ? "Account" : "Saved for checkout"}
             </span>
           )}
         </div>

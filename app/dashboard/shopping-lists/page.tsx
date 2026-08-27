@@ -119,17 +119,14 @@ export default function ShoppingListsPage() {
     setMenu(null);
   };
   return (
-    <DashboardShell title="Shopping Lists" description="Create, organize, and share the products your team orders most.">
+    <DashboardShell title="Shopping Lists" description="Create, organize, and share the products your team orders most." actions={<button
+      className="inline-flex min-h-10 items-center gap-2 rounded-md bg-primary px-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      onClick={() => setCreate(true)}
+    >
+      <Plus size={16} />
+      Create list
+    </button>}>
       <div className="space-y-3">
-        <div className="flex justify-end">
-          <button
-            className="inline-flex min-h-10 items-center gap-2 rounded-md bg-primary px-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            onClick={() => setCreate(true)}
-          >
-            <Plus size={16} />
-            Create list
-          </button>
-        </div>
         <section className="rounded-lg border bg-background shadow-sm">
           <div className="flex flex-wrap items-center gap-3 border-b p-4">
             <label className="relative min-w-[240px] flex-1">
@@ -175,8 +172,10 @@ export default function ShoppingListsPage() {
                 {filtered.map((v) => (
                   <tr key={v.name} className="border-b last:border-0">
                     <td className="px-5 py-3 font-medium">
-                      <span className="mr-3 text-primary">⠿</span>
-                      {v.name}
+                      <span className="flex items-start gap-3">
+                        <span aria-hidden="true" className="shrink-0 text-primary">⠿</span>
+                        <span>{v.name}</span>
+                      </span>
                     </td>
                     <td className="relative px-5 py-3">
                       <button
