@@ -4,7 +4,7 @@ import {
   CheckCircle2,
   ChevronDown,
   Filter,
-  MoreHorizontal,
+  Pencil,
   Plus,
   Search,
   Settings2,
@@ -236,10 +236,10 @@ export default function ShoppingListsPage() {
                     </td>
                     <td className="px-5 py-5">
                       <button
-                        aria-label={`List actions for ${v.name}`}
+                        aria-label={`Edit ${v.name}`}
                         className="rounded p-2 hover:bg-muted"
                       >
-                        <MoreHorizontal size={18} />
+                        <Pencil size={18} />
                       </button>
                       <button
                         aria-label={`Delete ${v.name}`}
