@@ -106,12 +106,12 @@ export function AddressCard(props: Props) {
       ) : null}
 
       {/* Actions — account vs user distinction */}
-      <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3">
+      <div className="mt-auto flex min-h-11 flex-wrap items-center gap-2 border-t pt-3">
         {!addr.isDefault ? (
           <Button
             variant="outline"
             size="sm"
-            className="min-h-11 text-[13px]"
+            className="h-10 min-w-[132px] justify-center text-[13px]"
             onClick={onSetDefault}
             aria-label={`Set ${addr.label} as default`}
           >
@@ -119,7 +119,7 @@ export function AddressCard(props: Props) {
             Set as default
           </Button>
         ) : (
-            <span className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-primary/20 bg-primary/5 px-3 text-[13px] font-medium text-primary">
+            <span className="inline-flex h-10 min-w-[132px] items-center justify-center gap-1.5 rounded-md border border-primary/20 bg-primary/5 px-3 text-[13px] font-medium text-primary">
             <Check aria-hidden="true" className="size-4" />
             Default address
           </span>

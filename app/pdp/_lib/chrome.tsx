@@ -18,6 +18,7 @@ import {
   Video,
   Youtube,
 } from "lucide-react";
+import Link from "next/link";
 import { AccountFlyout, CartTrigger } from "./account-flyout";
 import { SearchAutocomplete } from "@/components/ui/search-autocomplete";
 import { MegaMenu } from "@/components/ui/mega-menu";
@@ -1150,10 +1151,10 @@ function HomansHeader({
           <SearchAutocomplete placeholder="Search item # or name" />
 
           {/* Lists */}
-          <button type="button" className="hidden flex-col items-center text-[11px] lg:flex">
+          <Link href="/dashboard/shopping-lists" className="hidden flex-col items-center text-[11px] hover:text-white/80 lg:flex">
             <ClipboardList className="size-5" />
             Lists
-          </button>
+          </Link>
 
           {/* Account */}
           <AccountFlyout signedIn={signedIn} />
