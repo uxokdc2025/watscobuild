@@ -438,6 +438,29 @@
   animation: drawer-panel-right-exit 460ms cubic-bezier(0.64, -0.08, 0.78, 1) both;
 }
 
+/* Radix keeps DialogContent mounted during its state transition. These
+   selectors replace the centered dialog's fade/zoom only when that content
+   is explicitly being used as a side drawer. */
+.drawer-dialog-left[data-state="open"] {
+  animation: drawer-panel-left-enter 460ms cubic-bezier(0.22, 1.08, 0.36, 1) both !important;
+  opacity: 1 !important;
+}
+
+.drawer-dialog-left[data-state="closed"] {
+  animation: drawer-panel-left-exit 460ms cubic-bezier(0.64, -0.08, 0.78, 1) both !important;
+  opacity: 1 !important;
+}
+
+.drawer-dialog-right[data-state="open"] {
+  animation: drawer-panel-right-enter 460ms cubic-bezier(0.22, 1.08, 0.36, 1) both !important;
+  opacity: 1 !important;
+}
+
+.drawer-dialog-right[data-state="closed"] {
+  animation: drawer-panel-right-exit 460ms cubic-bezier(0.64, -0.08, 0.78, 1) both !important;
+  opacity: 1 !important;
+}
+
 .drawer-overlay-exit .drawer-panel-left-enter {
   animation: drawer-panel-left-exit 460ms cubic-bezier(0.64, -0.08, 0.78, 1) both;
 }
