@@ -78,7 +78,7 @@ function PartCard({ item }: { item: PartItem }) {
 /** Grid of part cards, no heading — used inside the "Part Lists" tab. */
 export function PartsGrid({ parts }: { parts: PartItem[] }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 min-[1200px]:grid-cols-5">
       {parts.map((it) => (
         <PartCard key={it.id} item={it} />
       ))}

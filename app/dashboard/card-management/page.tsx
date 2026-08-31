@@ -185,7 +185,7 @@ export default function CardManagementPage() {
         </div>
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="top-0 right-0 left-auto h-svh max-h-none w-full max-w-none translate-x-0 translate-y-0 content-start overflow-y-auto rounded-none p-5 sm:max-w-[480px] sm:p-6">
+        <DialogContent drawerSide="right" className="top-0 right-0 left-auto h-svh max-h-none w-full max-w-none translate-x-0 translate-y-0 content-start overflow-y-auto rounded-none p-5 sm:max-w-[480px] sm:p-6">
           <DialogHeader>
             <DialogTitle>Add New Card</DialogTitle>
             <DialogDescription>

@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { DRAWER_MOTION_MS } from "@/components/ui/drawer";
 
 export const DRAWER_EXIT_EVENT = "watsco:drawer-exit";
-export const DRAWER_MOTION_MS = 520;
-
 export function DrawerOverlay({ children }: { children: React.ReactNode }) {
   const [closing, setClosing] = React.useState(false);
 
@@ -29,7 +28,7 @@ export function DrawerOverlay({ children }: { children: React.ReactNode }) {
         if (event.target === event.currentTarget) finishClose();
       }}
     >
-      <div className={closing ? "drawer-panel-exit" : undefined}>{children}</div>
+      {children}
     </div>
   );
 }

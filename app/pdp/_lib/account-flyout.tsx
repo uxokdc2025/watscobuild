@@ -91,7 +91,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <AccountNav onNavigate={closeAccount} />
               <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
             {shipToOpen ? (
-              <div className={`absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl drawer-panel-right-enter ${shipToClosing ? "drawer-panel-right-exit" : ""}`}>
+              <div className={drawerPanelClassName("right", shipToClosing, "absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl")}>
                 <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background px-5 py-4"><DrawerBackButton label="Back to account" onClick={closeShipTo} /><h3 className="text-[15px] leading-5 font-bold">Select Ship To</h3></div>
                 {SHIP_TO_OPTIONS.map((option) => <button key={option} type="button" onClick={closeShipTo} className="block w-full border-b px-5 py-3 text-left text-xs hover:bg-muted">{option}</button>)}
               </div>

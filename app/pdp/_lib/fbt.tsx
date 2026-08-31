@@ -96,13 +96,13 @@ export function CarouselStrip({
           opts={{ align: "start" }}
           className="overflow-x-clip"
         >
-          {/* Four cards keep PDP recommendation rails readable within the
-              intentionally capped 1400px product canvas. */}
+          {/* Five cards use the same dense product-row pattern as the PLP
+              while the PDP canvas remains capped at 1400px. */}
           <CarouselContent className="ml-0 gap-4 [&>*]:pl-0">
             {items.map((it) => (
               <CarouselItem
                 key={it.id}
-                className="basis-full sm:basis-[calc(50%-8px)] lg:basis-[calc(25%-12px)]"
+                className="basis-full sm:basis-[calc(50%-8px)] lg:basis-[calc(25%-12px)] min-[1200px]:basis-[calc(20%-13px)]"
               >
                 <ProductCard data={toCardData(it)} signedIn={signedIn} />
               </CarouselItem>
