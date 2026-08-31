@@ -447,11 +447,11 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 
 | Pattern | Class | Where |
 |---|---|---|
-| Default page container | `mx-auto max-w-6xl px-4 md:px-6` | `app/components/page.tsx` header+main, `app/pdp/_lib/chrome.tsx` all brand header/footers (`GemaireHeader`, `BakerHeader`, etc.), `app/typography/page.tsx`, `app/product/page.tsx`, `app/pdp/page.tsx` (master index), `/pdp/[slug]` template |
+| Default page container | `mx-auto max-w-[var(--layout-max-width)] px-4 md:px-6` | Account shell and shared Homans chrome; responsive through a 1920px canvas, with 16px mobile and 24px desktop outer padding |
 | Sticky header inner | `mx-auto max-w-6xl flex items-center ... px-4 py-3 md:px-6` | `app/components/page.tsx` header, `app/typography/page.tsx` |
 | Full-bleed bands | `border-b` / `border-t` outside `max-w-6xl` | Sticky headers, footer top border, tab bars |
 
-**Rule:** Never exceed `max-w-6xl` for content; padding is `px-4` mobile → `md:px-6` desktop. The `max-w-6xl` is consistent across every route checked — treat it as the system container.
+**Rule:** Use the shared `--layout-max-width: 1920px` canvas for the account shell and Homans chrome. Content stretches fluidly up to 1920px, then remains centered and static above that width. Padding is `px-4` mobile → `md:px-6` desktop.
 
 ### 5.2 Section rhythm
 
@@ -824,4 +824,3 @@ Per spec, coverage required:
 ### Verification
 
 Source files `app/`, `components/`, `lib/`, `globals.css`, `package.json`, `tsconfig.json`, `components.json` were not modified (read-only extraction). Only writes: `docs/design-system.md` + `docs/design-system-refs/` (pending screenshots). Build hygiene (`npm run build` / `lint` / `tsc --noEmit`) must remain green; re-check after any screenshot-asset addition.
-

@@ -18,7 +18,7 @@ export function DashboardShell({ title, description, actions, children }: { titl
   const pathname = usePathname();
   return (
     <main className="min-h-svh bg-brand-homans-bg text-foreground">
-      <div className="mx-auto max-w-6xl px-4 py-4 md:px-6 md:py-8">
+      <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-4 md:px-6 md:py-8">
         <div className="mb-8 flex flex-col gap-4">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="space-y-2">

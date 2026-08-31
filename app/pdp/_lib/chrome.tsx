@@ -1112,7 +1112,7 @@ function HomansHeader({
     <header>
       {/* Utility bar (white, centered) */}
       <div className="border-b bg-background">
-        <div className="mx-auto flex max-w-6xl items-center justify-start gap-6 overflow-x-auto px-4 py-2 text-xs text-muted-foreground [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:justify-center md:px-6">
+        <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center justify-start gap-6 overflow-x-auto px-4 py-2 text-xs text-muted-foreground [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:justify-center md:px-6">
           {HOMANS_UTIL.map((l) => (
             <a key={l} href="#" className="whitespace-nowrap hover:text-foreground">
               {l}
@@ -1123,7 +1123,7 @@ function HomansHeader({
 
       {/* Main bar (blue) */}
       <div className="bg-brand-homans text-brand-homans-foreground">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
+        <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-4 px-4 py-3 md:px-6">
           <a href="#" className="shrink-0" aria-label="Homans Associates home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={HOMANS_LOGO} alt="Homans Associates" className="h-9 w-auto" />
@@ -1165,7 +1165,7 @@ function HomansHeader({
 
       {/* Nav bar (darker navy) */}
       <nav aria-label="Primary" className="bg-brand-homans-nav text-brand-homans-foreground">
-        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 md:px-6">
+        <div className="mx-auto flex max-w-[var(--layout-max-width)] gap-1 overflow-x-auto px-4 md:px-6">
           {brand.nav.map((n) => n === "Products" ? <MegaMenu key={n} /> : (
             <button key={n} type="button" className="inline-flex items-center gap-1 px-3 py-3 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white">
               {n}{HOMANS_CARET.test(n) ? <ChevronDown className="size-3.5" /> : null}
@@ -1219,7 +1219,7 @@ function StoreBadge({ store }: { store: string }) {
 function HomansFooter({ brand }: { brand: BrandChrome }) {
   return (
     <footer className="mt-16 border-t bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
+      <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-12 md:px-6">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Columns 1 & 2: stacked link groups */}
           {HOMANS_FOOTER_COLS.map((groups, i) => (
@@ -1290,7 +1290,7 @@ function HomansFooter({ brand }: { brand: BrandChrome }) {
 
       {/* Navy bottom bar */}
       <div className="bg-brand-homans text-brand-homans-foreground">
-        <div className="mx-auto max-w-6xl px-4 py-5 text-center text-xs md:px-6">
+        <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-5 text-center text-xs md:px-6">
           <p>© {brand.copyright}</p>
           <p className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
             {["Privacy Policy", "Terms of Use", "Accessibility", "Help"].map((l, i) => (
