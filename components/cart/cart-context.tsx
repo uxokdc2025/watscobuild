@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Check, Minus, Plus, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DRAWER_MOTION_MS, DrawerCloseButton, DrawerPanel, drawerOverlayClassName } from "@/components/ui/drawer";
@@ -101,7 +102,7 @@ function CartDrawer() {
           <div className="mb-3 flex items-center justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span className="font-semibold">{formatUSD(totalPrice)}</span></div>
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={requestClose}>Keep shopping</Button>
-            <Button className="flex-1" onClick={requestClose}>View Cart</Button>
+            <Button asChild className="flex-1"><Link href="/checkout" onClick={requestClose}>View Cart</Link></Button>
           </div>
         </footer>
       </DrawerPanel>
