@@ -92,14 +92,15 @@ export function CarouselStrip({
       )}
       <div className="relative">
         <Carousel setApi={setApi} opts={{ align: "start" }}>
-          {/* Math: with 4 cards + 3 gaps of 16px between them, each card
-              must be `(100% - 48px) / 4`. `basis-1/4` alone would overflow
-              because the flex gap adds on top. */}
+          {/* Four cards are the desktop baseline. On the wide 1920px canvas,
+              the PDP can add a fifth card without making the recommendation
+              rail feel oversized. The gap-aware basis keeps every row flush
+              with the surrounding content. */}
           <CarouselContent className="ml-0 gap-4 [&>*]:pl-0">
             {items.map((it) => (
               <CarouselItem
                 key={it.id}
-                className="basis-full sm:basis-[calc(50%-8px)] lg:basis-[calc(25%-12px)]"
+                className="basis-full sm:basis-[calc(50%-8px)] lg:basis-[calc(25%-12px)] min-[1920px]:basis-[calc(20%-12.8px)]"
               >
                 <ProductCard data={toCardData(it)} signedIn={signedIn} />
               </CarouselItem>

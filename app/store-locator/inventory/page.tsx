@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function InventoryGalleryPage() {
   return (
     <div className="min-h-svh bg-background">
-      <main className="mx-auto max-w-[1400px] px-4 py-8 md:px-6">
+      <main className="mx-auto max-w-[var(--layout-max-width)] px-4 py-8 md:px-6">
         <div className="mb-6 flex items-center justify-between">
           <Link
             href="/store-locator"

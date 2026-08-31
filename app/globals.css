@@ -475,3 +475,10 @@
     text-decoration: underline;
   }
 }
+
+@layer utilities {
+  /* Backward-compatible alias: all legacy page shells now use the 1920px canvas. */
+  .max-w-6xl {
+    max-width: var(--layout-max-width);
+  }
+}

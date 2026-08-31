@@ -447,7 +447,7 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 
 | Pattern | Class | Where |
 |---|---|---|
-| Default page container | `mx-auto max-w-[var(--layout-max-width)] px-4 md:px-6` | Account shell and shared Homans chrome; responsive through a 1920px canvas, with 16px mobile and 24px desktop outer padding |
+| Default page container | `mx-auto max-w-[var(--layout-max-width)] px-4 md:px-6` | Every PDP, PLP, account, locator, showcase, and shared chrome shell; responsive through a 1920px canvas, with 16px mobile and 24px desktop outer padding |
 | Sticky header inner | `mx-auto max-w-6xl flex items-center ... px-4 py-3 md:px-6` | `app/components/page.tsx` header, `app/typography/page.tsx` |
 | Full-bleed bands | `border-b` / `border-t` outside `max-w-6xl` | Sticky headers, footer top border, tab bars |
 
@@ -543,7 +543,7 @@ Source: `app/components/page.tsx`, `app/pdp/[slug]/page.tsx`, `app/pdp/_lib/summ
 | **375 (mobile)** | Single column everywhere (`grid-cols-1`). Branch cards stacked; FBT 2-across; header Gemaire utility bar hides subnav overflow-x scroll; PDP gallery is full-width; qty stepper + Add to Cart stack if needed; nav in `/components` header scrolls horizontally (`overflow-x-auto`). No horizontal scroll. Touch targets: PDP qty stepper is 48px, primary CTA is 36–40px — CTA should be `size="lg"` or padded to 44px where the 44px rule applies. |
 | **768 (tablet, `md:`)** | Container padding `md:px-6`; showcase still 1 col; header Gemaire `md:block` search + `md:flex` account row appear; typography specimens remain single column; master index moves to `md:grid-cols-2`. |
 | **1024 (desktop, `lg:`)** | Showcase categories `lg:grid-cols-2` (two demo cards side-by-side); product/FBT/parts grids go `lg:grid-cols-4`; PDP switches to 2-col layout (sticky gallery + buy-box side-by-side; details tabs full width). |
-| **1280 (large)** | Screenshot reference width; `max-w-6xl` (1152px) caps content — no additional column change. Charts/sidebars if present would max out here. |
+| **1280 (large)** | Responsive canvas continues to expand with 24px outer padding; no additional column change. |
 
 **PDP-specific responsive:**
 - Sticky image column (`position: sticky` top) pins on `lg:` while buy-box scrolls (see §15 "sticky image column").
