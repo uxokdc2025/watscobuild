@@ -91,7 +91,11 @@ export function CarouselStrip({
         </div>
       )}
       <div className="relative">
-        <Carousel setApi={setApi} opts={{ align: "start" }}>
+        <Carousel
+          setApi={setApi}
+          opts={{ align: "start" }}
+          className="overflow-x-clip"
+        >
           {/* Four cards are the desktop baseline. On the wide 1920px canvas,
               the PDP can add a fifth card without making the recommendation
               rail feel oversized. The gap-aware basis keeps every row flush
