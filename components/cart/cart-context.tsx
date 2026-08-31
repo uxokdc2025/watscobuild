@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Check, Minus, Plus, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DRAWER_MOTION_MS, DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
+import { DRAWER_MOTION_MS, DrawerCloseButton, DrawerPanel, drawerOverlayClassName } from "@/components/ui/drawer";
 import { formatUSD } from "@/app/pdp/_lib/types";
 
 export type CartItem = {
@@ -55,7 +55,7 @@ function CartDrawer() {
   return (
     <div className={drawerOverlayClassName(closing, "z-[70]")}>
       <button aria-label="Close cart" className="absolute inset-0 cursor-default bg-black/50" onClick={requestClose} />
-      <aside role="dialog" aria-modal="true" aria-label="Shopping cart" className={drawerPanelClassName("right", closing, "absolute inset-y-0 right-0 flex w-full max-w-[430px] flex-col border-l bg-background shadow-2xl")}>
+      <DrawerPanel open={!closing} side="right" role="dialog" aria-modal="true" aria-label="Shopping cart" className="absolute inset-y-0 right-0 flex w-full max-w-[430px] flex-col border-l bg-background shadow-2xl">
         <header className="flex items-center justify-between border-b px-5 py-4">
           <div className="flex items-center gap-2 text-lg font-semibold"><ShoppingCart className="size-5" /> Cart ({totalCount})</div>
           <DrawerCloseButton label="Close cart" onClick={requestClose} />
@@ -104,7 +104,7 @@ function CartDrawer() {
             <Button className="flex-1" onClick={requestClose}>View Cart</Button>
           </div>
         </footer>
-      </aside>
+      </DrawerPanel>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import {
   Dialog,
@@ -161,13 +161,7 @@ export default function CardManagementPage() {
                   <p className="text-primary">{card.phone}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 border-t p-3">
-                <button
-                  type="button"
-                  className="min-h-11 flex-1 rounded-md bg-primary px-3 text-[13px] font-semibold text-primary-foreground hover:bg-primary/90"
-                >
-                  Edit
-                </button>
+              <div className="flex items-center justify-between border-t p-3">
                 <button
                   type="button"
                   onClick={() =>
@@ -175,9 +169,15 @@ export default function CardManagementPage() {
                       current.filter((item) => item.id !== card.id),
                     )
                   }
-                  className="inline-flex min-h-11 items-center gap-1.5 px-3 text-[13px] font-medium hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="inline-flex min-h-10 items-center gap-1.5 px-2 text-[13px] font-medium hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <Trash2 aria-hidden="true" className="size-4" /> Delete
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-10 w-[90px] items-center justify-center gap-1.5 rounded-md bg-primary px-2 text-[13px] font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  <Pencil aria-hidden="true" className="size-3.5" /> Edit
                 </button>
               </div>
             </article>

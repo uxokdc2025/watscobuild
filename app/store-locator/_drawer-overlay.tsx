@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { DRAWER_MOTION_MS } from "@/components/ui/drawer";
+import { DRAWER_MOTION_MS, DrawerBackdrop } from "@/components/ui/drawer";
 
 export const DRAWER_EXIT_EVENT = "watsco:drawer-exit";
 export function DrawerOverlay({ children }: { children: React.ReactNode }) {
@@ -21,16 +21,7 @@ export function DrawerOverlay({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener(DRAWER_EXIT_EVENT, finishClose);
   }, [finishClose]);
 
-  return (
-    <div
-      className={`drawer-overlay-enter fixed inset-0 z-50 bg-black/50 ${closing ? "drawer-overlay-exit" : ""}`}
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) finishClose();
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <DrawerBackdrop closing={closing} onClose={finishClose} className="drawer-overlay-enter">{children}</DrawerBackdrop>;
 }
 
 export function closeDrawer() {

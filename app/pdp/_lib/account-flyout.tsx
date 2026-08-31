@@ -4,7 +4,7 @@ import * as React from "react";
 import { Building2, Check, ChevronRight, ShoppingCart } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountNav } from "@/components/ui/account-nav";
-import { DRAWER_MOTION_MS, DrawerBackButton, DrawerCloseButton, drawerOverlayClassName, drawerPanelClassName } from "@/components/ui/drawer";
+import { DRAWER_MOTION_MS, DrawerBackButton, DrawerCloseButton, DrawerPanel, drawerOverlayClassName } from "@/components/ui/drawer";
 
 const SHIP_TO_OPTIONS = [
   "50 WILLIAMS STREET - CASH 1248 613 MAIN STREET ***ALL CASH SALES ARE FINAL***, WILMINGTON, US-MA, 01887",
@@ -70,7 +70,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
       </button>
       {open ? (
         <div className={drawerOverlayClassName(closing)} onMouseDown={(event) => event.target === event.currentTarget && closeAccount()}>
-          <aside role="dialog" aria-modal="true" aria-label="My Account" className={drawerPanelClassName("right", closing, "absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col bg-background text-foreground shadow-2xl")}>
+          <DrawerPanel open={!closing} side="right" role="dialog" aria-modal="true" aria-label="My Account" className="absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col bg-background text-foreground shadow-2xl">
             <header className="sticky top-0 z-10 flex items-center justify-between border-b px-5 py-4">
               <h2 className="text-lg font-bold text-neutral-900">My Account</h2>
               <DrawerCloseButton label="Close account" onClick={closeAccount} />
@@ -91,13 +91,13 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
               <AccountNav onNavigate={closeAccount} />
               <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
             {shipToOpen ? (
-              <div className={drawerPanelClassName("right", shipToClosing, "absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl")}>
+              <DrawerPanel open={!shipToClosing} side="right" className="absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl">
                 <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background px-5 py-4"><DrawerBackButton label="Back to account" onClick={closeShipTo} /><h3 className="text-[15px] leading-5 font-bold">Select Ship To</h3></div>
                 {SHIP_TO_OPTIONS.map((option) => <button key={option} type="button" onClick={closeShipTo} className="block w-full border-b px-5 py-3 text-left text-xs hover:bg-muted">{option}</button>)}
-              </div>
+              </DrawerPanel>
             ) : null}
             {accountOpen ? (
-              <div className={drawerPanelClassName("left", accountClosing, "absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl")}>
+              <DrawerPanel open={!accountClosing} side="right" className="absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl">
                 <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background px-5 py-4"><DrawerBackButton label="Back to account" onClick={closeAccountPicker} /><h3 className="text-[15px] leading-5 font-bold">Select account</h3></div>
                 <div className="space-y-3 p-5">
                   <p className="text-xs text-muted-foreground">Choose the account you want to use for this session.</p>
@@ -120,10 +120,10 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
                     );
                   })}
                 </div>
-              </div>
+              </DrawerPanel>
             ) : null}
             </div>
-          </aside>
+          </DrawerPanel>
         </div>
       ) : null}
     </>

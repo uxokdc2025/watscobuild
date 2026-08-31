@@ -1,11 +1,62 @@
+"use client";
+
 import * as React from "react";
 import { ChevronLeft, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /** Canonical motion timing for every side drawer in the system. */
 export const DRAWER_MOTION_MS = 460;
+export const DRAWER_SPRING = {
+  type: "spring" as const,
+  stiffness: 260,
+  damping: 28,
+  mass: 0.9,
+};
+const DrawerOverlayContext = React.createContext(false);
+
+export function DrawerPanel({
+  open,
+  side = "right",
+  children,
+  className,
+  role,
+  "aria-modal": ariaModal,
+  "aria-label": ariaLabel,
+}: {
+  open: boolean;
+  side?: "left" | "right";
+  children: React.ReactNode;
+  className?: string;
+  role?: string;
+  "aria-modal"?: React.AriaAttributes["aria-modal"];
+  "aria-label"?: string;
+}) {
+  const closedX = side === "right" ? "100%" : "-100%";
+  const overlayClosing = React.useContext(DrawerOverlayContext);
+  return (
+    <AnimatePresence initial={false}>
+      {open && !overlayClosing ? (
+        <motion.aside
+          key="drawer-panel"
+          initial={{ x: closedX }}
+          animate={{ x: 0 }}
+          exit={{ x: closedX }}
+          transition={DRAWER_SPRING}
+          style={{ opacity: 1 }}
+          className={className}
+          role={role}
+          aria-modal={ariaModal}
+          aria-label={ariaLabel}
+        >
+          {children}
+        </motion.aside>
+      ) : null}
+    </AnimatePresence>
+  );
+}
 
 export function drawerOverlayClassName(closing = false, className?: string) {
   return cn("fixed inset-0 z-50 bg-black/50", closing && "drawer-overlay-exit", className);
@@ -88,13 +139,15 @@ export function DrawerBackdrop({
   className?: string;
 }) {
   return (
-    <div
-      className={drawerOverlayClassName(closing, className)}
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      {children}
-    </div>
+    <DrawerOverlayContext.Provider value={closing}>
+      <div
+        className={drawerOverlayClassName(closing, className)}
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) onClose();
+        }}
+      >
+        {children}
+      </div>
+    </DrawerOverlayContext.Provider>
   );
 }

@@ -22,6 +22,10 @@ type ShoppingList = {
   activity: string;
   owner: string;
 };
+type ListLabel = {
+  name: string;
+  color: string | null;
+};
 const INITIAL: ShoppingList[] = [
   {
     name: "HVAC maintenance kit",
@@ -58,6 +62,39 @@ const COLORS = [
   "#ec4899",
   "#10b981",
 ];
+const INITIAL_LABELS: ListLabel[] = [
+  { name: "Preventative", color: "#60a5fa" },
+  { name: "Job supplies", color: "#f59e0b" },
+  { name: "Project", color: "#8b5cf6" },
+];
+function LabelDot({ color }: { color: string | null }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="size-2.5 shrink-0 rounded-full border border-current/30"
+      style={{ backgroundColor: color ?? "transparent" }}
+    />
+  );
+}
+function LabelPill({ label, fallback }: { label?: ListLabel; fallback: string }) {
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
+      style={
+        label?.color
+          ? {
+              backgroundColor: `${label.color}20`,
+              borderColor: `${label.color}55`,
+              color: label.color,
+            }
+          : undefined
+      }
+    >
+      <LabelDot color={label?.color ?? null} />
+      {label?.name ?? fallback}
+    </span>
+  );
+}
 export default function ShoppingListsPage() {
   const [q, setQ] = useState("");
   const [create, setCreate] = useState(false);
@@ -68,12 +105,10 @@ export default function ShoppingListsPage() {
   const [description, setDescription] = useState("");
   const [newLabel, setNewLabel] = useState("");
   const [selected, setSelected] = useState("");
-  const [color, setColor] = useState(COLORS[4]);
-  const [labels, setLabels] = useState([
-    "Preventative",
-    "Job supplies",
-    "Project",
-  ]);
+  const [color, setColor] = useState<string | null>(COLORS[4]);
+  const [labelMode, setLabelMode] = useState<"create" | "edit">("create");
+  const [editingLabel, setEditingLabel] = useState<string | null>(null);
+  const [labels, setLabels] = useState<ListLabel[]>(INITIAL_LABELS);
   const [lists, setLists] = useState(INITIAL);
   const filtered = useMemo(
     () => lists.filter((x) => x.name.toLowerCase().includes(q.toLowerCase())),
@@ -99,21 +134,53 @@ export default function ShoppingListsPage() {
   };
   const openLabel = (t: string | null) => {
     setTarget(t);
+    setLabelMode("create");
+    setEditingLabel(null);
     setNewLabel("");
+    setColor(COLORS[4]);
+    setLabelModal(true);
+    setMenu(null);
+  };
+  const editLabel = (label: ListLabel) => {
+    setTarget(null);
+    setLabelMode("edit");
+    setEditingLabel(label.name);
+    setNewLabel(label.name);
+    setColor(label.color);
     setLabelModal(true);
     setMenu(null);
   };
   const makeLabel = () => {
     if (!newLabel.trim()) return;
     const l = newLabel.trim();
-    setLabels((x) => (x.includes(l) ? x : [...x, l]));
-    if (target)
-      setLists((x) =>
-        x.map((v) => (v.name === target ? { ...v, label: l } : v)),
+    if (labelMode === "edit" && editingLabel) {
+      setLabels((x) =>
+        x.map((label) =>
+          label.name === editingLabel ? { name: l, color } : label,
+        ),
       );
+      if (l !== editingLabel) {
+        setLists((x) =>
+          x.map((v) => (v.label === editingLabel ? { ...v, label: l } : v)),
+        );
+      }
+    } else {
+      setLabels((x) =>
+        x.some((label) => label.name === l)
+          ? x
+          : [...x, { name: l, color }],
+      );
+      if (target)
+        setLists((x) =>
+          x.map((v) =>
+            v.name === target ? { ...v, label: l } : v,
+          ),
+        );
+    }
     setSelected(l);
     setLabelModal(false);
     setTarget(null);
+    setEditingLabel(null);
   };
   const assign = (n: string, l: string) => {
     setLists((x) => x.map((v) => (v.name === n ? { ...v, label: l } : v)));
@@ -184,18 +251,30 @@ export default function ShoppingListsPage() {
                         onClick={() => setMenu(menu === v.name ? null : v.name)}
                       >
                         <Tag size={16} />
-                        {v.label || "Add label"}
+                        {v.label ? (
+                          <LabelPill label={labels.find((label) => label.name === v.label)} fallback={v.label} />
+                        ) : "Add label"}
                       </button>
                       {menu === v.name && (
                         <div className="absolute left-4 top-16 z-20 w-56 rounded-md border bg-background p-1 shadow-lg">
                           {labels.map((l) => (
-                            <button
-                              key={l}
-                              className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-muted"
-                              onClick={() => assign(v.name, l)}
-                            >
-                              {l}
-                            </button>
+                            <div key={l.name} className="flex items-center gap-1 rounded hover:bg-muted">
+                              <button
+                                className="flex min-h-10 flex-1 items-center gap-2 px-3 py-2 text-left text-sm"
+                                onClick={() => assign(v.name, l.name)}
+                              >
+                                <LabelDot color={l.color} />
+                                {l.name}
+                              </button>
+                              <button
+                                type="button"
+                                aria-label={`Edit ${l.name} label`}
+                                className="mr-1 grid size-8 place-items-center rounded text-muted-foreground hover:bg-background hover:text-foreground"
+                                onClick={() => editLabel(l)}
+                              >
+                                <Pencil size={14} />
+                              </button>
+                            </div>
                           ))}
                           <button
                             className="flex w-full items-center gap-2 border-t px-3 py-2 text-left text-sm font-medium text-primary"
@@ -305,7 +384,7 @@ export default function ShoppingListsPage() {
                     <SelectTrigger className="h-11 w-full flex-1"><SelectValue placeholder="No label" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">No label</SelectItem>
-                      {labels.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+                      {labels.map((l) => <SelectItem key={l.name} value={l.name}>{l.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <button
@@ -350,10 +429,12 @@ export default function ShoppingListsPage() {
             <div className="flex items-start justify-between border-b pb-4">
               <div>
                 <h2 id="new-label-title" className="text-xl font-semibold">
-                  Create new label
+                  {labelMode === "edit" ? "Edit label" : "Create new label"}
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Add a new label to organize your products.
+                  {labelMode === "edit"
+                    ? "Update the label name or color used across your lists."
+                    : "Add a new label to organize your products."}
                 </p>
               </div>
               <button aria-label="Close" onClick={() => setLabelModal(false)}>
@@ -372,9 +453,17 @@ export default function ShoppingListsPage() {
             </label>
             <fieldset className="mt-5">
               <legend className="text-sm font-medium">
-                Color <span className="text-destructive">*</span>
+                Color <span className="text-muted-foreground">(optional)</span>
               </legend>
               <div className="mt-3 flex gap-3">
+                <button
+                  type="button"
+                  aria-label="Remove label color"
+                  className={`grid h-9 w-9 place-items-center rounded-md border bg-muted text-xs text-muted-foreground ${color === null ? "ring-2 ring-offset-2 ring-primary" : ""}`}
+                  onClick={() => setColor(null)}
+                >
+                  <X size={15} />
+                </button>
                 {COLORS.map((c) => (
                   <button
                     key={c}
@@ -399,7 +488,7 @@ export default function ShoppingListsPage() {
                 disabled={!newLabel.trim()}
                 onClick={makeLabel}
               >
-                Save
+                {labelMode === "edit" ? "Update label" : "Save"}
               </button>
             </div>
           </section>

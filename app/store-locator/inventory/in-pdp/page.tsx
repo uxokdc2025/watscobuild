@@ -14,7 +14,7 @@ import {
   InventoryCloseX,
 } from "../../_inventory-drawers";
 import { DrawerOverlay } from "../../_drawer-overlay";
-import { drawerPanelClassName } from "@/components/ui/drawer";
+import { DrawerPanel } from "@/components/ui/drawer";
 
 export const metadata: Metadata = {
   title: "Inventory Drawer — over PDP",
@@ -55,12 +55,12 @@ export default async function InventoryInPdpPage({
 
         {/* Scrim + right-side inventory drawer */}
         <DrawerOverlay>
-          <div className={drawerPanelClassName("right", false, "absolute inset-y-0 right-0 flex")}>
+          <DrawerPanel open side="right" className="absolute inset-y-0 right-0 flex">
             <div className="absolute top-4 -left-2">
               <InventoryCloseX />
             </div>
             <VariantDrawer v={variant} />
-          </div>
+          </DrawerPanel>
           <div className="absolute top-4 left-4 flex items-center gap-3 rounded-lg bg-background/95 px-3 py-2 shadow-lg">
             <Link
               href="/store-locator/inventory"
