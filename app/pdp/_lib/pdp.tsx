@@ -52,7 +52,7 @@ export function Pdp({
           <LegacyShell label={`Legacy header · ${product.brand}`} />
         )}
 
-        <main className="mx-auto max-w-[var(--layout-max-width)] px-4 py-6 md:px-6">
+        <main className="mx-auto max-w-[1400px] px-4 py-6 md:px-6">
           {/* Breadcrumb (store/location lives in the site header) */}
           <nav aria-label="Breadcrumb" className="text-sm">
             <ol className="flex items-center gap-1.5">

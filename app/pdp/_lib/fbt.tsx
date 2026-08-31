@@ -96,15 +96,13 @@ export function CarouselStrip({
           opts={{ align: "start" }}
           className="overflow-x-clip"
         >
-          {/* Four cards are the desktop baseline. On the wide 1920px canvas,
-              the PDP can add a fifth card without making the recommendation
-              rail feel oversized. The gap-aware basis keeps every row flush
-              with the surrounding content. */}
+          {/* Four cards keep PDP recommendation rails readable within the
+              intentionally capped 1400px product canvas. */}
           <CarouselContent className="ml-0 gap-4 [&>*]:pl-0">
             {items.map((it) => (
               <CarouselItem
                 key={it.id}
-                className="basis-full sm:basis-[calc(50%-8px)] lg:basis-[calc(25%-12px)] min-[1920px]:basis-[calc(20%-12.8px)]"
+                className="basis-full sm:basis-[calc(50%-8px)] lg:basis-[calc(25%-12px)]"
               >
                 <ProductCard data={toCardData(it)} signedIn={signedIn} />
               </CarouselItem>
