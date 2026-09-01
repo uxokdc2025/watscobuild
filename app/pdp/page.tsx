@@ -11,7 +11,7 @@ import {
 import { pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { BRANDS } from "./_lib/brands";
-import { CHECKOUT_PHASES, CHECKOUT_USE_CASES } from "./_lib/checkout-use-cases";
+import { CHECKOUT_USE_CASES } from "./_lib/checkout-use-cases";
 
 /** Product Listing Page (PLP) entries — /search route rendered inside a brand's chrome. */
 type PlpEntry = {
@@ -489,28 +489,25 @@ export default function PdpMasterPage() {
                     </p>
                   </div>
                   <Link
-                    href="/checkout"
+                    href="/checkout?demo=1&case=delivery-pickup-routing"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   >
-                    View checkout flow
+                    Open baseline checkout
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </div>
-                <ol className="mt-4 grid gap-2 sm:grid-cols-3">
-                  {CHECKOUT_PHASES.map(([number, title, description]) => (
-                    <li key={number} className="rounded-md border bg-background px-3 py-2">
-                      <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Step {number}</div>
-                      <div className="mt-1 text-sm font-semibold">{title}</div>
-                      <div className="mt-0.5 text-xs text-muted-foreground">{description}</div>
-                    </li>
-                  ))}
-                </ol>
               </div>
               <div className="mt-4 grid gap-3 pb-2 md:grid-cols-2">
                 {CHECKOUT_USE_CASES.map((useCase) => (
-                  <article key={useCase.title} className="rounded-lg border p-4">
+                  <Link
+                    key={useCase.title}
+                    href={`/checkout?demo=1&case=${useCase.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group rounded-lg border p-4 outline-none transition-colors hover:border-primary/50 hover:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  >
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-xs font-semibold tracking-wide text-primary uppercase">{useCase.phase}</span>
                       <span className="text-xs text-muted-foreground">{useCase.sources}</span>
@@ -518,7 +515,8 @@ export default function PdpMasterPage() {
                     <h3 className="mt-2 text-sm font-semibold">{useCase.title}</h3>
                     <p className="mt-1 text-sm text-muted-foreground">{useCase.pattern}</p>
                     <p className="mt-2 border-t pt-2 text-sm"><span className="font-medium">Recommended:</span> {useCase.decision}</p>
-                  </article>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary">Open checkout example <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></span>
+                  </Link>
                 ))}
               </div>
             </AccordionContent>

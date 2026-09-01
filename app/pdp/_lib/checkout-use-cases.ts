@@ -1,4 +1,5 @@
 export type CheckoutUseCase = {
+  slug: string;
   phase: string;
   title: string;
   sources: string;
@@ -12,6 +13,7 @@ export type CheckoutUseCase = {
  */
 export const CHECKOUT_USE_CASES: CheckoutUseCase[] = [
   {
+    slug: "account-job-context",
     phase: "1 · Fulfillment",
     title: "Account and job context",
     sources: "Baker · Peirce · Homan’s",
@@ -19,6 +21,7 @@ export const CHECKOUT_USE_CASES: CheckoutUseCase[] = [
     decision: "Keep account context at the top of checkout and validate PO input inline.",
   },
   {
+    slug: "delivery-pickup-routing",
     phase: "1 · Fulfillment",
     title: "Delivery, pickup, and routing",
     sources: "Baker · Homan’s · ECM",
@@ -26,6 +29,7 @@ export const CHECKOUT_USE_CASES: CheckoutUseCase[] = [
     decision: "Use one fulfillment selector with conditional fields instead of separate flows.",
   },
   {
+    slug: "availability-date-constraints",
     phase: "1 · Fulfillment",
     title: "Availability and date constraints",
     sources: "Baker · Peirce",
@@ -33,6 +37,7 @@ export const CHECKOUT_USE_CASES: CheckoutUseCase[] = [
     decision: "Keep availability messages outside the step content; synchronize date, distance, and method rules.",
   },
   {
+    slug: "terms-or-credit-card",
     phase: "2 · Payment",
     title: "Terms or credit card",
     sources: "Baker · Homan’s · ECM",
@@ -40,6 +45,7 @@ export const CHECKOUT_USE_CASES: CheckoutUseCase[] = [
     decision: "Present mutually exclusive payment choices and keep new-card entry in the established drawer pattern.",
   },
   {
+    slug: "review-coupon-special-handling",
     phase: "3 · Review",
     title: "Review, coupon, and special handling",
     sources: "Baker · ECM",
@@ -47,6 +53,7 @@ export const CHECKOUT_USE_CASES: CheckoutUseCase[] = [
     decision: "Use one final review with clear totals, editable sections, and explicit exception acknowledgement.",
   },
   {
+    slug: "order-confirmation",
     phase: "Confirmation",
     title: "Order confirmation",
     sources: "Baker · Peirce · Homan’s · ECM",
