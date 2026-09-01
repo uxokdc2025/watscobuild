@@ -262,15 +262,6 @@ export default function PdpMasterPage() {
               <ArrowUpRight className="size-3.5" />
             </Link>
             <Link
-              href="/checkout"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              Checkout flow
-              <ArrowUpRight className="size-3.5" />
-            </Link>
-            <Link
               href="/components"
               target="_blank"
               rel="noopener noreferrer"
@@ -482,11 +473,9 @@ export default function PdpMasterPage() {
           >
             <AccordionTrigger className="hover:no-underline">
               <span className="flex items-center gap-3">
-                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
-                  Checkout flow
-                </span>
-                <span className="text-lg font-bold tracking-tight">
-                  Canonical pattern &amp; use cases ({CHECKOUT_USE_CASES.length})
+                <span className="text-lg font-bold tracking-tight">Checkout Flow</span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  Canonical pattern &amp; {CHECKOUT_USE_CASES.length} use cases
                 </span>
               </span>
             </AccordionTrigger>
