@@ -261,6 +261,15 @@ export default function PdpMasterPage() {
               <ArrowUpRight className="size-3.5" />
             </Link>
             <Link
+              href="/checkout"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              Checkout flow
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <Link
               href="/components"
               target="_blank"
               rel="noopener noreferrer"

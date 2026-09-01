@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Check, ChevronLeft, LockKeyhole, MapPin, Package, Plus, ShieldCheck, Truck } from "lucide-react";
+import { Check, ChevronLeft, LockKeyhole, MapPin, Package, Plus, ShieldCheck, Truck, X } from "lucide-react";
 import { useCart, type CartItem } from "@/components/cart/cart-context";
 import { Button } from "@/components/ui/button";
 import { formatUSD } from "@/app/pdp/_lib/types";
@@ -22,6 +22,7 @@ export default function CheckoutClient() {
   const [saved, setSaved] = React.useState(false);
   const [fulfillment, setFulfillment] = React.useState<"delivery" | "pickup">("delivery");
   const [payment, setPayment] = React.useState<"terms" | "card">("terms");
+  const [visibleNotices, setVisibleNotices] = React.useState({ backorder: true, nearby: true });
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   if (submitted) return <main className="min-h-[60svh] bg-brand-homans-bg px-4 py-12 md:px-6"><div className="mx-auto max-w-[var(--layout-max-width)]"><section className="mx-auto max-w-2xl rounded-md border bg-background p-8 text-center shadow-sm"><div className="mx-auto grid size-12 place-items-center rounded-full bg-success/15 text-success"><Check aria-hidden="true" /></div><h1 className="mt-4 text-2xl font-bold">Order submitted</h1><p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">Your order is being reviewed. We&apos;ll send confirmation and fulfillment details to your account.</p><Button asChild className="mt-6" size="sm"><Link href="/dashboard/orders?status=open">View open orders</Link></Button></section></div></main>;
@@ -38,6 +39,7 @@ export default function CheckoutClient() {
       <ol aria-label="Checkout progress" className="mt-6 grid max-w-3xl grid-cols-3 gap-2 text-sm">
         {[{ id: "shipping", label: "Fulfillment" }, { id: "payment", label: "Payment" }, { id: "review", label: "Review" }].map((entry, index) => <li key={entry.id} className={`flex items-center gap-2 border-b-2 pb-3 ${step === entry.id ? "border-primary font-semibold text-foreground" : index < ["shipping", "payment", "review"].indexOf(step) ? "border-success text-success" : "border-border text-muted-foreground"}`}><span className="grid size-6 place-items-center rounded-full border text-xs">{index < ["shipping", "payment", "review"].indexOf(step) ? <Check className="size-3.5" /> : index + 1}</span>{entry.label}</li>)}
       </ol>
+      <CheckoutNotices visible={visibleNotices} onDismiss={(notice) => setVisibleNotices((current) => ({ ...current, [notice]: false }))} />
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section className="min-w-0 rounded-md border bg-background shadow-sm">
           {step === "shipping" ? <FulfillmentStep fulfillment={fulfillment} setFulfillment={setFulfillment} onNext={goNext} /> : null}
@@ -58,8 +60,23 @@ function Field({ label, required = false, placeholder, defaultValue, className =
   return <label className={`block text-sm font-medium ${className}`}>{label}{required ? <span className="ml-1 text-destructive">*</span> : null}<input required={required} defaultValue={defaultValue} placeholder={placeholder} className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" /></label>;
 }
 
+function CheckoutNotices({ visible, onDismiss }: { visible: { backorder: boolean; nearby: boolean }; onDismiss: (notice: "backorder" | "nearby") => void }) {
+  if (!visible.backorder && !visible.nearby) return null;
+  return <div className="mt-6 space-y-3" aria-label="Order availability notices">
+    {visible.backorder ? <CheckoutNotice title="Backorder" onDismiss={() => onDismiss("backorder")}>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</CheckoutNotice> : null}
+    {visible.nearby ? <CheckoutNotice title="Nearby branches" onDismiss={() => onDismiss("nearby")}>Some items are available at another branch. We&apos;ll contact you with an estimated availability date.</CheckoutNotice> : null}
+  </div>;
+}
+
+function CheckoutNotice({ title, children, onDismiss }: { title: string; children: React.ReactNode; onDismiss: () => void }) {
+  return <div role="status" className="relative rounded-md border border-warning/50 bg-warning/10 px-4 py-3 pr-12 text-sm leading-5 text-foreground">
+    <p><span className="font-semibold">{title}:</span> {children}</p>
+    <button type="button" onClick={onDismiss} className="absolute right-2 top-2 grid size-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-warning/20 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={`Dismiss ${title.toLowerCase()} notice`}><X className="size-4" aria-hidden="true" /></button>
+  </div>;
+}
+
 function FulfillmentStep({ fulfillment, setFulfillment, onNext }: { fulfillment: "delivery" | "pickup"; setFulfillment: (value: "delivery" | "pickup") => void; onNext: () => void }) {
-  return <><SectionHeading number="1" title="Fulfillment" /><div className="space-y-6 p-5"><div className="grid gap-3 sm:grid-cols-2"><button type="button" onClick={() => setFulfillment("delivery")} className={`rounded-md border p-4 text-left ${fulfillment === "delivery" ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"}`}><span className="flex items-center gap-2 font-semibold"><Truck className="size-4" aria-hidden="true" />Delivery</span><span className="mt-1 block text-sm text-muted-foreground">Standard delivery · Free</span></button><button type="button" onClick={() => setFulfillment("pickup")} className={`rounded-md border p-4 text-left ${fulfillment === "pickup" ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"}`}><span className="flex items-center gap-2 font-semibold"><MapPin className="size-4" aria-hidden="true" />Pickup</span><span className="mt-1 block text-sm text-muted-foreground">Manchester branch</span></button></div><div role="status" className="rounded-md border border-warning/40 bg-warning/10 p-3 text-sm leading-5 text-muted-foreground">Some items may ship from another branch. We&apos;ll confirm availability before submitting your order.</div><div className="grid gap-4 sm:grid-cols-2"><Field label="First name" required defaultValue="David" /><Field label="Last name" required defaultValue="Whiteside" /><Field label="Company" defaultValue="Whiteside Mechanical LLC" className="sm:col-span-2" /><Field label={fulfillment === "pickup" ? "Pickup branch" : "Street address"} required defaultValue={fulfillment === "pickup" ? "Manchester, NH - Homans" : "613 Main Street"} className="sm:col-span-2" /><Field label="City" required defaultValue={fulfillment === "pickup" ? "Manchester" : "Williston"} /><Field label="State" required defaultValue={fulfillment === "pickup" ? "NH" : "VT"} /><Field label="ZIP code" required defaultValue={fulfillment === "pickup" ? "03101" : "05495"} /><Field label="Phone" required defaultValue="+1 978 657 8990" /></div><div className="flex justify-end border-t pt-5"><Button size="sm" onClick={onNext}>Continue to payment</Button></div></div></>;
+  return <><SectionHeading number="1" title="Fulfillment" /><div className="space-y-6 p-5"><div className="grid gap-3 sm:grid-cols-2"><button type="button" onClick={() => setFulfillment("delivery")} className={`rounded-md border p-4 text-left ${fulfillment === "delivery" ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"}`}><span className="flex items-center gap-2 font-semibold"><Truck className="size-4" aria-hidden="true" />Delivery</span><span className="mt-1 block text-sm text-muted-foreground">Standard delivery · Free</span></button><button type="button" onClick={() => setFulfillment("pickup")} className={`rounded-md border p-4 text-left ${fulfillment === "pickup" ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"}`}><span className="flex items-center gap-2 font-semibold"><MapPin className="size-4" aria-hidden="true" />Pickup</span><span className="mt-1 block text-sm text-muted-foreground">Manchester branch</span></button></div><div className="grid gap-4 sm:grid-cols-2"><Field label="First name" required defaultValue="David" /><Field label="Last name" required defaultValue="Whiteside" /><Field label="Company" defaultValue="Whiteside Mechanical LLC" className="sm:col-span-2" /><Field label={fulfillment === "pickup" ? "Pickup branch" : "Street address"} required defaultValue={fulfillment === "pickup" ? "Manchester, NH - Homans" : "613 Main Street"} className="sm:col-span-2" /><Field label="City" required defaultValue={fulfillment === "pickup" ? "Manchester" : "Williston"} /><Field label="State" required defaultValue={fulfillment === "pickup" ? "NH" : "VT"} /><Field label="ZIP code" required defaultValue={fulfillment === "pickup" ? "03101" : "05495"} /><Field label="Phone" required defaultValue="+1 978 657 8990" /></div><div className="flex justify-end border-t pt-5"><Button size="sm" onClick={onNext}>Continue to payment</Button></div></div></>;
 }
 
 function PaymentStep({ payment, setPayment, onBack, onNext }: { payment: "terms" | "card"; setPayment: (value: "terms" | "card") => void; onBack: () => void; onNext: () => void }) {
