@@ -11,6 +11,7 @@ import {
 import { pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { BRANDS } from "./_lib/brands";
+import { CHECKOUT_PHASES, CHECKOUT_USE_CASES } from "./_lib/checkout-use-cases";
 
 /** Product Listing Page (PLP) entries — /search route rendered inside a brand's chrome. */
 type PlpEntry = {
@@ -471,6 +472,66 @@ export default function PdpMasterPage() {
                   <PlpCard key={p.brandKey} p={p} />
                 ))}
               </ul>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem
+            value="checkout"
+            id="checkout"
+            className="scroll-mt-6 rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  Checkout flow
+                </span>
+                <span className="text-lg font-bold tracking-tight">
+                  Canonical pattern &amp; use cases ({CHECKOUT_USE_CASES.length})
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="rounded-lg border bg-muted/30 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold">One responsive checkout, scenario-based states</p>
+                    <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                      The comparison points to one best-practice flow: fulfillment first, payment second, and a final review before submission. Transfer, backorder, freight, pickup, terms, coupon, and special-handling cases remain visible states within that flow.
+                    </p>
+                  </div>
+                  <Link
+                    href="/checkout"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  >
+                    View checkout flow
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </div>
+                <ol className="mt-4 grid gap-2 sm:grid-cols-3">
+                  {CHECKOUT_PHASES.map(([number, title, description]) => (
+                    <li key={number} className="rounded-md border bg-background px-3 py-2">
+                      <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Step {number}</div>
+                      <div className="mt-1 text-sm font-semibold">{title}</div>
+                      <div className="mt-0.5 text-xs text-muted-foreground">{description}</div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div className="mt-4 grid gap-3 pb-2 md:grid-cols-2">
+                {CHECKOUT_USE_CASES.map((useCase) => (
+                  <article key={useCase.title} className="rounded-lg border p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs font-semibold tracking-wide text-primary uppercase">{useCase.phase}</span>
+                      <span className="text-xs text-muted-foreground">{useCase.sources}</span>
+                    </div>
+                    <h3 className="mt-2 text-sm font-semibold">{useCase.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{useCase.pattern}</p>
+                    <p className="mt-2 border-t pt-2 text-sm"><span className="font-medium">Recommended:</span> {useCase.decision}</p>
+                  </article>
+                ))}
+              </div>
             </AccordionContent>
           </AccordionItem>
 
