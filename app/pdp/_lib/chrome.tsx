@@ -1133,12 +1133,12 @@ function HomansHeader({
           {/* Your store */}
           <a
             href="/store-locator/in-plp?v=c"
-            className="hidden items-center gap-2 text-xs leading-tight transition-opacity hover:opacity-80 xl:flex"
+            className="hidden items-center gap-2 rounded-md px-2 py-1 text-xs leading-tight transition-colors hover:bg-white/10 xl:flex"
           >
             <Home className="size-5 shrink-0" />
             <span>
               <span className="block opacity-90">Your store</span>
-              <span className="block font-bold underline underline-offset-2">
+              <span className="block font-bold">
                 Manchester, NH - Homans, NH
               </span>
               <span className="block text-[11px] font-semibold text-green-300">
@@ -1151,7 +1151,7 @@ function HomansHeader({
           <SearchAutocomplete placeholder="Search item # or name" />
 
           {/* Lists */}
-          <Link href="/dashboard/shopping-lists" className="hidden flex-col items-center text-[11px] hover:text-white/80 lg:flex">
+          <Link href="/dashboard/shopping-lists" className="hidden flex-col items-center rounded-md px-2 py-1 text-[11px] transition-colors hover:bg-white/10 lg:flex">
             <ClipboardList className="size-5" />
             Lists
           </Link>
@@ -1168,7 +1168,7 @@ function HomansHeader({
       <nav aria-label="Primary" className="bg-brand-homans-nav text-brand-homans-foreground">
         <div className="mx-auto flex max-w-[var(--layout-max-width)] gap-1 overflow-x-auto px-4 md:px-6">
           {brand.nav.map((n) => n === "Products" ? <MegaMenu key={n} /> : (
-            <button key={n} type="button" className="inline-flex items-center gap-1 px-3 py-3 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white">
+            <button key={n} type="button" className="my-1.5 inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white">
               {n}{HOMANS_CARET.test(n) ? <ChevronDown className="size-3.5" /> : null}
             </button>
           ))}

@@ -72,7 +72,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
 
   return (
     <>
-      <button type="button" onClick={openAccount} className="hidden text-left text-xs leading-tight sm:block">
+      <button type="button" onClick={openAccount} className="hidden rounded-md px-2 py-1 text-left text-xs leading-tight transition-colors hover:bg-white/10 sm:block">
         <span className="block opacity-90">Hello, David</span>
         <span className="block font-bold">My Account</span>
       </button>
@@ -141,7 +141,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
 export function CartTrigger({ signedIn }: { signedIn: boolean }) {
   const { totalCount, openCart } = useCart();
   return (
-    <button type="button" aria-label="Cart" onClick={openCart} className="flex items-center gap-1.5 text-[11px] leading-tight">
+    <button type="button" aria-label="Cart" onClick={openCart} className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] leading-tight transition-colors hover:bg-white/10">
       <ShoppingCart className="size-6 shrink-0" />
       <span className="hidden text-left sm:block">
         {signedIn ? <span className="block font-semibold">{totalCount} Item{totalCount === 1 ? "" : "s"}</span> : null}
