@@ -62,6 +62,9 @@ type BrandTheme = {
   wordmark: string;
   barClass: string;
   navClass: string;
+  /** Logo is a dark asset made for a white bar — set on a white chip so it reads
+   *  on the brand-colored bar. */
+  logoChip?: boolean;
 };
 
 const BRAND_THEME: Record<string, BrandTheme> = {
@@ -89,6 +92,7 @@ const BRAND_THEME: Record<string, BrandTheme> = {
     wordmark: "Peirce-Phelps",
     barClass: "bg-brand-peirce text-brand-peirce-foreground",
     navClass: "bg-black/10 text-brand-peirce-foreground",
+    logoChip: true,
   },
   ecmdi: {
     // Live ECMD site renders an inline data-URI wordmark (no stable asset URL).
@@ -102,6 +106,7 @@ const BRAND_THEME: Record<string, BrandTheme> = {
     wordmark: "DCNE",
     barClass: "bg-brand-dcne text-brand-dcne-foreground",
     navClass: "bg-black/10 text-brand-dcne-foreground",
+    logoChip: true,
   },
   homans: {
     logo: "https://www.homans.com/homansWhiteLogo-mER.png",
@@ -179,7 +184,14 @@ function UnifiedHeader({
         <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-3 px-4 py-3 md:gap-4 md:px-6">
           {/* LEFT: logo */}
           {theme.logo ? (
-            <Link href="/" className="shrink-0" aria-label={`${brand.name} home`}>
+            <Link
+              href="/"
+              className={cn(
+                "shrink-0",
+                theme.logoChip && "rounded-md bg-white px-2.5 py-1.5 shadow-sm"
+              )}
+              aria-label={`${brand.name} home`}
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={theme.logo}
