@@ -37,6 +37,7 @@ import {
   X,
 } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { closeDrawer } from "./_drawer-overlay";
 
@@ -255,12 +256,12 @@ export function InventoryDirection1() {
             {/* Select store — hidden by default so Direction 1 stays super
                 light; row hover reveals it (per-row commit without extra
                 chrome on rest state). */}
-            <button
-              type="button"
-              className="mt-0.5 hidden shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 group-hover:inline-flex"
+            <Button
+              size="sm"
+              className="mt-0.5 hidden h-7 shrink-0 px-3 text-xs group-hover:inline-flex"
             >
               Select store
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
@@ -308,9 +309,9 @@ export function InventoryDirection2() {
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold">{b.name}</p>
               {b.tag === "current" ? (
-                <span className="mt-0.5 inline-flex items-center rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
+                <Badge className="mt-0.5 rounded bg-in-stock px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
                   Currently shopping
-                </span>
+                </Badge>
               ) : (
                 <p className="text-xs text-muted-foreground">
                   {b.qty === 0
@@ -322,12 +323,9 @@ export function InventoryDirection2() {
               )}
             </div>
             {b.tag === "current" ? null : (
-              <button
-                type="button"
-                className="shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-              >
+              <Button size="sm" className="h-7 shrink-0 px-3 text-xs">
                 Select
-              </button>
+              </Button>
             )}
           </li>
         ))}
@@ -401,19 +399,11 @@ export function InventoryDirection3() {
         })}
       </ul>
       <div className="shrink-0 border-t p-3">
-        <button
-          type="button"
-          disabled={!canCommit}
-          className={
-            canCommit
-              ? "inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-              : "inline-flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-md border border-border bg-transparent px-4 py-2 text-sm font-medium text-muted-foreground"
-          }
-        >
+        <Button disabled={!canCommit} className="w-full">
           {canCommit
             ? `Set ${selectedBranch!.name} as my branch`
             : "Select a branch"}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -533,7 +523,8 @@ export function InventoryStoreLocatorDrawer() {
               {selectedStore === branch.name ? (
                 <Button
                   size="sm"
-                  className="h-7 -translate-y-px bg-emerald-600 px-3 text-xs text-white hover:bg-emerald-700"
+                  disabled
+                  className="h-7 -translate-y-px px-3 text-xs"
                 >
                   Current Store
                 </Button>

@@ -3,6 +3,10 @@
 import { FormEvent, useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -89,12 +93,11 @@ const INITIAL_CARDS: PaymentCard[] = [
 ];
 
 function CardMark({ brand }: { brand: string }) {
+  const color = brand === "VISA" || brand === "AMEX" ? "blue" : "slate";
   return (
-    <span
-      className={`inline-flex h-8 min-w-12 items-center justify-center rounded-sm px-1.5 text-[9px] font-bold ${brand === "VISA" ? "bg-blue-700 text-white" : brand === "AMEX" ? "bg-blue-700 text-white" : brand === "DISCOVER" ? "bg-zinc-700 text-white" : "bg-slate-700 text-white"}`}
-    >
+    <Badge variant="solid" color={color} className="h-8 min-w-12 rounded-sm px-1.5 text-[9px] font-bold">
       {brand === "MASTERCARD" ? "●●" : brand}
-    </span>
+    </Badge>
   );
 }
 
@@ -125,13 +128,9 @@ export default function CardManagementPage() {
       title="Card Management"
       description="Manage payment methods securely for your account."
       actions={
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="inline-flex min-h-10 items-center gap-2 rounded-md bg-primary px-3.5 text-[13px] font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
+        <Button type="button" onClick={() => setOpen(true)} className="min-h-10">
           <Plus aria-hidden="true" className="size-4" /> Add New Card
-        </button>
+        </Button>
       }
     >
       <div className="space-y-2">
@@ -162,23 +161,22 @@ export default function CardManagementPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between border-t p-3">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() =>
                     setCards((current) =>
                       current.filter((item) => item.id !== card.id),
                     )
                   }
-                  className="inline-flex min-h-10 items-center gap-1.5 px-2 text-[13px] font-medium hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="min-h-10 text-[13px] text-muted-foreground hover:text-destructive"
                 >
                   <Trash2 aria-hidden="true" className="size-4" /> Delete
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex h-10 w-[90px] items-center justify-center gap-1.5 rounded-md bg-primary px-2 text-[13px] font-semibold text-primary-foreground hover:bg-primary/90"
-                >
+                </Button>
+                <Button type="button" className="h-10 w-[90px] text-[13px]">
                   <Pencil aria-hidden="true" className="size-3.5" /> Edit
-                </button>
+                </Button>
               </div>
             </article>
           ))}
@@ -196,56 +194,56 @@ export default function CardManagementPage() {
             <section className="space-y-4">
               <h2 className="font-semibold">Card Information</h2>
               <div>
-                <label htmlFor="card-number" className="text-sm font-medium">
+                <Label htmlFor="card-number">
                   Card Number <span className="text-destructive">*</span>
-                </label>
-                <input
+                </Label>
+                <Input
                   required
                   id="card-number"
                   placeholder="1234-5678-9012-3456"
-                  className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="mt-2 min-h-11"
                 />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label htmlFor="card-month" className="text-sm font-medium">
+                  <Label htmlFor="card-month">
                     Exp Month *
-                  </label>
+                  </Label>
                   <Select defaultValue="01">
                     <SelectTrigger className="mt-2 h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent><SelectItem value="01">01</SelectItem><SelectItem value="02">02</SelectItem><SelectItem value="03">03</SelectItem></SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <label htmlFor="card-year" className="text-sm font-medium">
+                  <Label htmlFor="card-year">
                     Exp Year *
-                  </label>
+                  </Label>
                   <Select defaultValue="2029">
                     <SelectTrigger className="mt-2 h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent><SelectItem value="2028">2028</SelectItem><SelectItem value="2029">2029</SelectItem><SelectItem value="2030">2030</SelectItem></SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <label htmlFor="card-cvv" className="text-sm font-medium">
+                  <Label htmlFor="card-cvv">
                     CVV *
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     required
                     id="card-cvv"
                     inputMode="numeric"
-                    className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="mt-2 min-h-11"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="card-nickname" className="text-sm font-medium">
+                <Label htmlFor="card-nickname">
                   Card Nickname *
-                </label>
-                <input
+                </Label>
+                <Input
                   required
                   id="card-nickname"
                   placeholder="Store Supplies"
-                  className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="mt-2 min-h-11"
                 />
               </div>
             </section>
@@ -253,84 +251,69 @@ export default function CardManagementPage() {
               <h2 className="font-semibold">Billing Address</h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor="billing-first"
-                    className="text-sm font-medium"
-                  >
+                  <Label htmlFor="billing-first">
                     First Name *
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     required
                     id="billing-first"
-                    className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm"
+                    className="mt-2 min-h-11"
                   />
                 </div>
                 <div>
-                  <label htmlFor="billing-last" className="text-sm font-medium">
+                  <Label htmlFor="billing-last">
                     Last Name *
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     required
                     id="billing-last"
-                    className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm"
+                    className="mt-2 min-h-11"
                   />
                 </div>
               </div>
               <div>
-                <label
-                  htmlFor="billing-company"
-                  className="text-sm font-medium"
-                >
+                <Label htmlFor="billing-company">
                   Company
-                </label>
-                <input
+                </Label>
+                <Input
                   id="billing-company"
-                  className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm"
+                  className="mt-2 min-h-11"
                 />
               </div>
               <div>
-                <label
-                  htmlFor="billing-address"
-                  className="text-sm font-medium"
-                >
+                <Label htmlFor="billing-address">
                   Street Address *
-                </label>
-                <input
+                </Label>
+                <Input
                   required
                   id="billing-address"
-                  className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm"
+                  className="mt-2 min-h-11"
                 />
               </div>
               <div>
-                <label
-                  htmlFor="billing-address-2"
-                  className="text-sm font-medium"
-                >
+                <Label htmlFor="billing-address-2">
                   Street Address 2
-                </label>
-                <input
+                </Label>
+                <Input
                   id="billing-address-2"
-                  className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm"
+                  className="mt-2 min-h-11"
                 />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="billing-city" className="text-sm font-medium">
+                  <Label htmlFor="billing-city">
                     City *
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     required
                     id="billing-city"
-                    className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm"
+                    className="mt-2 min-h-11"
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="billing-state"
-                    className="text-sm font-medium"
-                  >
+                  <Label htmlFor="billing-state">
                     State *
-                  </label>
+                  </Label>
                   <Select defaultValue="NH">
                     <SelectTrigger className="mt-2 h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent><SelectItem value="NH">NH</SelectItem><SelectItem value="MA">MA</SelectItem><SelectItem value="VT">VT</SelectItem></SelectContent>
@@ -339,22 +322,19 @@ export default function CardManagementPage() {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="billing-zip" className="text-sm font-medium">
+                  <Label htmlFor="billing-zip">
                     Zip Code *
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     required
                     id="billing-zip"
-                    className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm"
+                    className="mt-2 min-h-11"
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="billing-country"
-                    className="text-sm font-medium"
-                  >
+                  <Label htmlFor="billing-country">
                     Country *
-                  </label>
+                  </Label>
                   <Select defaultValue="United States of America">
                     <SelectTrigger className="mt-2 h-11 w-full"><SelectValue /></SelectTrigger>
                     <SelectContent><SelectItem value="United States of America">United States of America</SelectItem></SelectContent>
@@ -362,22 +342,19 @@ export default function CardManagementPage() {
                 </div>
               </div>
               <div>
-                <label htmlFor="billing-phone" className="text-sm font-medium">
+                <Label htmlFor="billing-phone">
                   Phone *
-                </label>
-                <input
+                </Label>
+                <Input
                   required
                   id="billing-phone"
-                  className="mt-2 min-h-11 w-full rounded-md border px-3 text-sm"
+                  className="mt-2 min-h-11"
                 />
               </div>
             </section>
-            <button
-              type="submit"
-              className="sticky bottom-0 z-10 min-h-11 w-full border-t bg-background py-4 text-sm font-semibold text-primary hover:text-primary/80"
-            >
+            <Button type="submit" size="lg" className="sticky bottom-0 z-10 w-full">
               Save Card
-            </button>
+            </Button>
           </form>
         </DialogContent>
       </Dialog>

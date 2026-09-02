@@ -4,6 +4,7 @@ import * as React from "react";
 import { Maximize2, Minus, Plus, RotateCcw } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { NoImage } from "@/components/ui/label-badges";
 
 /**
@@ -40,13 +41,15 @@ function ZoomButton({
   children: React.ReactNode;
 }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon-sm"
       aria-label={label}
-      className="grid size-8 cursor-pointer place-items-center rounded-md text-muted-foreground outline-none transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-4"
+      className="text-muted-foreground"
     >
       {children}
-    </button>
+    </Button>
   );
 }
 

@@ -55,6 +55,7 @@ import * as React from "react";
 import { ImageOff, ListPlus, Minus, Plus, ShoppingCart } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   PointsBadge,
   ProEssentialsBadge,
@@ -163,15 +164,16 @@ function QtyPlusAdd({ data }: { data: ProductCardData }) {
           <Plus className="size-4" />
         </button>
       </div>
-      <button
+      <Button
         type="button"
+        size="sm"
         onClick={() => addItem({ id: data.id, title: data.title, brand: data.brand, image: data.image, price: data.price ?? 0 }, qty)}
-        className="inline-flex h-[34px] min-w-[72px] flex-1 items-center justify-center gap-1.5 rounded-md bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+        className="h-[34px] min-w-[72px] flex-1"
         style={{ flex: "1 1 0%", minWidth: 0 }}
       >
         <ShoppingCart className="size-4 shrink-0" />
         Add
-      </button>
+      </Button>
     </div>
   );
 }
@@ -255,7 +257,7 @@ export function ProductCard({
       {/* Pinned bottom — every subsequent slot reserves fixed height. */}
       <div className="mt-auto flex flex-col gap-1 pt-1">
         {/* 7. Your Branch stock — green, 12px/16px medium, real branch name. */}
-        <p className="min-h-4 truncate text-xs font-medium leading-4 text-emerald-600">
+        <p className="min-h-4 truncate text-xs font-medium leading-4 text-in-stock">
           {hasCommerce && data.yourBranchQty != null
             ? `${data.yourBranchQty.toLocaleString()} in ${data.branchName ?? "Your Branch"}`
             : null}

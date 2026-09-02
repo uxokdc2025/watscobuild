@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 
-import { ProductCardsSection } from "../_sections/product-cards";
+import ProductCardReference from "./product-card-reference";
 
 export const metadata: Metadata = {
   title: "Product Card — Watsco DS",
+  description:
+    "The canonical merchandising card: one component for the PLP grid, Frequently Bought Together, and Customers Also Purchased. Anatomy, states, and the exact code to paste.",
 };
 
-export default function Page() {
-  return (
-    <main className="mx-auto max-w-5xl px-4 py-10 md:px-8">
-      <ProductCardsSection />
-    </main>
-  );
+// Server Component so it can export metadata; all live rendering (which pulls
+// in app/pdp/_lib + radix via the cart context) lives in the client child,
+// keeping those out of the server graph.
+export default function ProductCardPage() {
+  return <ProductCardReference />;
 }

@@ -296,32 +296,26 @@ export function SearchBody({
                 aria-label="Result view"
                 className="inline-flex items-center gap-0.5 self-start rounded-md border bg-background p-0.5 md:self-auto"
               >
-                <button
+                <Button
                   type="button"
+                  variant={view === "grid" ? "default" : "ghost"}
+                  size="sm"
                   aria-pressed={view === "grid"}
                   onClick={() => setView("grid")}
-                  className={cn(
-                    "inline-flex h-8 items-center gap-1.5 rounded-sm px-3 text-sm font-medium transition-colors [&_svg]:size-4",
-                    view === "grid"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
+                  className={cn("rounded-sm", view !== "grid" && "text-muted-foreground")}
                 >
                   <LayoutGrid /> Grid
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant={view === "list" ? "default" : "ghost"}
+                  size="sm"
                   aria-pressed={view === "list"}
                   onClick={() => setView("list")}
-                  className={cn(
-                    "inline-flex h-8 items-center gap-1.5 rounded-sm px-3 text-sm font-medium transition-colors [&_svg]:size-4",
-                    view === "list"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
+                  className={cn("rounded-sm", view !== "list" && "text-muted-foreground")}
                 >
                   <ListIcon /> List
-                </button>
+                </Button>
               </div>
             </div>
             {appliedFilters.length ? (
@@ -646,34 +640,23 @@ function SearchPagination({
       aria-label="Pagination"
       className="mt-6 flex items-center justify-center gap-1 text-sm"
     >
-      <button
-        type="button"
-        className="rounded-md border px-3 py-1.5 text-muted-foreground hover:bg-muted"
-        disabled
-      >
+      <Button type="button" variant="outline" size="sm" disabled>
         Previous
-      </button>
+      </Button>
       {pageNumbers.map((n) => (
-        <button
+        <Button
           key={n}
           type="button"
+          variant={n === 1 ? "default" : "outline"}
+          size="sm"
           aria-current={n === 1 ? "page" : undefined}
-          className={cn(
-            "rounded-md border px-3 py-1.5",
-            n === 1
-              ? "bg-primary text-primary-foreground"
-              : "text-foreground hover:bg-muted",
-          )}
         >
           {n}
-        </button>
+        </Button>
       ))}
-      <button
-        type="button"
-        className="rounded-md border px-3 py-1.5 text-foreground hover:bg-muted"
-      >
+      <Button type="button" variant="outline" size="sm">
         Next
-      </button>
+      </Button>
     </nav>
   );
 }

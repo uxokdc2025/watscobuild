@@ -1,4 +1,7 @@
+"use client";
+
 import { DashboardShell } from "../_components/dashboard-shell";
+import { Badge } from "@/components/ui/badge";
 
 const QUOTES = [
   { quote: "Q-2026-0184", po: "PO-4819", created: "Aug 20, 2026", expires: "Sep 20, 2026", updated: "Today", buyer: "David Whiteside", email: "david@whitesidemechanical.com", subtotal: "$1,248.00" },
@@ -27,7 +30,7 @@ export default function QuotesPage() {
             <tbody>
               {QUOTES.map((item) => (
                 <tr key={item.quote} className="border-b last:border-0 hover:bg-muted/20">
-                  <td className="px-5 py-3 font-semibold text-primary">{item.quote}</td><td className="px-5 py-3">{item.po}</td><td className="px-5 py-3 whitespace-nowrap">{item.created}</td><td className="px-5 py-3 whitespace-nowrap">{item.expires}</td><td className="px-5 py-3 whitespace-nowrap">{item.updated}</td><td className="px-5 py-3"><span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">Active</span></td><td className="px-5 py-3 whitespace-nowrap">{item.buyer}</td><td className="px-5 py-3">{item.email}</td><td className="px-5 py-3 text-right font-semibold whitespace-nowrap">{item.subtotal}</td>
+                  <td className="px-5 py-3 font-semibold text-primary">{item.quote}</td><td className="px-5 py-3">{item.po}</td><td className="px-5 py-3 whitespace-nowrap">{item.created}</td><td className="px-5 py-3 whitespace-nowrap">{item.expires}</td><td className="px-5 py-3 whitespace-nowrap">{item.updated}</td><td className="px-5 py-3"><Badge variant="soft" color="green">Active</Badge></td><td className="px-5 py-3 whitespace-nowrap">{item.buyer}</td><td className="px-5 py-3">{item.email}</td><td className="px-5 py-3 text-right font-semibold whitespace-nowrap">{item.subtotal}</td>
                 </tr>
               ))}
             </tbody>

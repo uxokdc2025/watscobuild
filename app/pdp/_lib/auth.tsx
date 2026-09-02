@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Lock, LockOpen } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**
@@ -49,21 +50,21 @@ export function AuthToggle() {
       className="inline-flex items-center gap-0.5 rounded-md border bg-muted p-0.5 text-sm"
     >
       {opts.map(({ v, label, Icon }) => (
-        <button
+        <Button
           key={label}
           type="button"
+          variant={signedIn === v ? "default" : "ghost"}
+          size="sm"
           aria-pressed={signedIn === v}
           onClick={() => setSignedIn(v)}
           className={cn(
-            "inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-sm px-3 font-medium transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-3.5",
-            signedIn === v
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:text-foreground"
+            "rounded-sm [&_svg]:size-3.5",
+            signedIn !== v && "text-muted-foreground"
           )}
         >
           <Icon />
           {label}
-        </button>
+        </Button>
       ))}
     </div>
   );

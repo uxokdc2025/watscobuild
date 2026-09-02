@@ -14,6 +14,11 @@ import {
 } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 type ShoppingList = {
   name: string;
   label: string;
@@ -78,8 +83,8 @@ function LabelDot({ color }: { color: string | null }) {
 }
 function LabelPill({ label, fallback }: { label?: ListLabel; fallback: string }) {
   return (
-    <span
-      className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
+    <Badge
+      variant="outline"
       style={
         label?.color
           ? {
@@ -92,7 +97,7 @@ function LabelPill({ label, fallback }: { label?: ListLabel; fallback: string })
     >
       <LabelDot color={label?.color ?? null} />
       {label?.name ?? fallback}
-    </span>
+    </Badge>
   );
 }
 export default function ShoppingListsPage() {
@@ -187,13 +192,10 @@ export default function ShoppingListsPage() {
     setMenu(null);
   };
   return (
-    <DashboardShell title="Shopping Lists" description="Create, organize, and share the products your team orders most." actions={<button
-      className="inline-flex min-h-10 items-center gap-2 rounded-md bg-primary px-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      onClick={() => setCreate(true)}
-    >
+    <DashboardShell title="Shopping Lists" description="Create, organize, and share the products your team orders most." actions={<Button className="min-h-10" onClick={() => setCreate(true)}>
       <Plus size={16} />
       Create list
-    </button>}>
+    </Button>}>
       <div className="space-y-3">
         <section className="rounded-lg border bg-background shadow-sm">
           <div className="flex flex-wrap items-center gap-3 border-b p-4">
@@ -202,26 +204,26 @@ export default function ShoppingListsPage() {
                 size={16}
                 className="absolute left-3 top-3.5 text-muted-foreground"
               />
-              <input
-                className="h-11 w-full rounded-md border pl-9 pr-3 text-sm"
+              <Input
+                className="h-11 pl-9"
                 placeholder="Search lists by name…"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />
             </label>
-            <button className="inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm">
+            <Button variant="outline" className="min-h-11">
               <Filter size={16} />
               Filter
               <ChevronDown size={15} />
-            </button>
-            <button className="inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm">
+            </Button>
+            <Button variant="outline" className="min-h-11">
               <Tag size={16} />
               Group by label
-            </button>
-            <button className="inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm">
+            </Button>
+            <Button variant="outline" className="min-h-11">
               <Settings2 size={16} />
               Sort
-            </button>
+            </Button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-[13px]">
@@ -246,15 +248,17 @@ export default function ShoppingListsPage() {
                       </span>
                     </td>
                     <td className="relative px-5 py-3">
-                      <button
-                        className="inline-flex min-h-10 items-center gap-2 rounded-md px-2 text-sm text-muted-foreground hover:bg-muted"
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="min-h-10 text-muted-foreground"
                         onClick={() => setMenu(menu === v.name ? null : v.name)}
                       >
                         <Tag size={16} />
                         {v.label ? (
                           <LabelPill label={labels.find((label) => label.name === v.label)} fallback={v.label} />
                         ) : "Add label"}
-                      </button>
+                      </Button>
                       {menu === v.name && (
                         <div className="absolute left-4 top-16 z-20 w-56 rounded-md border bg-background p-1 shadow-lg">
                           {labels.map((l) => (
@@ -297,9 +301,7 @@ export default function ShoppingListsPage() {
                     </td>
                     <td className="px-5 py-3">{v.products}</td>
                     <td className="px-5 py-3">
-                      <span className="rounded-full border px-2.5 py-1 text-xs">
-                        {v.type}
-                      </span>
+                      <Badge variant="outline">{v.type}</Badge>
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
                       {v.activity}
@@ -308,18 +310,12 @@ export default function ShoppingListsPage() {
                       {v.owner}
                     </td>
                     <td className="px-5 py-3">
-                      <button
-                        aria-label={`Edit ${v.name}`}
-                        className="rounded p-2 hover:bg-muted"
-                      >
+                      <Button variant="ghost" size="icon" aria-label={`Edit ${v.name}`}>
                         <Pencil size={18} />
-                      </button>
-                      <button
-                        aria-label={`Delete ${v.name}`}
-                        className="ml-1 rounded p-2 hover:bg-muted"
-                      >
+                      </Button>
+                      <Button variant="ghost" size="icon" aria-label={`Delete ${v.name}`} className="ml-1">
                         <Trash2 size={17} />
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -353,16 +349,16 @@ export default function ShoppingListsPage() {
               <h2 id="create-list-title" className="text-xl font-semibold">
                 Create list
               </h2>
-              <button aria-label="Close" onClick={() => setCreate(false)}>
+              <Button variant="ghost" size="icon" aria-label="Close" onClick={() => setCreate(false)}>
                 <X />
-              </button>
+              </Button>
             </div>
             <div className="space-y-4 py-5">
               <label className="block text-sm font-medium">
                 Name <span className="text-destructive">*</span>
-                <input
+                <Input
                   autoFocus
-                  className="mt-2 h-11 w-full rounded-md border px-3"
+                  className="mt-2 h-11"
                   placeholder="Enter list name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -370,15 +366,15 @@ export default function ShoppingListsPage() {
               </label>
               <label className="block text-sm font-medium">
                 Description
-                <textarea
-                  className="mt-2 min-h-24 w-full rounded-md border p-3"
+                <Textarea
+                  className="mt-2 min-h-24"
                   placeholder="Enter list description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </label>
               <div>
-                <label className="text-sm font-medium">Label</label>
+                <Label>Label</Label>
                 <div className="mt-2 flex gap-2">
                   <Select value={selected || "none"} onValueChange={(value) => setSelected(value === "none" ? "" : value)}>
                     <SelectTrigger className="h-11 w-full flex-1"><SelectValue placeholder="No label" /></SelectTrigger>
@@ -387,29 +383,32 @@ export default function ShoppingListsPage() {
                       {labels.map((l) => <SelectItem key={l.name} value={l.name}>{l.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                  <button
-                    className="min-h-11 rounded-md border px-3 text-sm"
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="min-h-11"
                     onClick={() => openLabel(null)}
                   >
                     New label
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
             <div className="flex justify-end gap-3">
-              <button
-                className="min-h-11 rounded-md px-4 text-sm"
+              <Button
+                variant="ghost"
+                className="min-h-11"
                 onClick={() => setCreate(false)}
               >
                 Cancel
-              </button>
-              <button
-                className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+              </Button>
+              <Button
+                className="min-h-11"
                 disabled={!name.trim()}
                 onClick={makeList}
               >
                 Save
-              </button>
+              </Button>
             </div>
           </section>
         </div>
@@ -437,15 +436,15 @@ export default function ShoppingListsPage() {
                     : "Add a new label to organize your products."}
                 </p>
               </div>
-              <button aria-label="Close" onClick={() => setLabelModal(false)}>
+              <Button variant="ghost" size="icon" aria-label="Close" onClick={() => setLabelModal(false)}>
                 <X />
-              </button>
+              </Button>
             </div>
             <label className="mt-5 block text-sm font-medium">
               Label <span className="text-destructive">*</span>
-              <input
+              <Input
                 autoFocus
-                className="mt-2 h-12 w-full rounded-md border px-3"
+                className="mt-2 h-12"
                 placeholder="Enter label name"
                 value={newLabel}
                 onChange={(e) => setNewLabel(e.target.value)}
@@ -477,19 +476,20 @@ export default function ShoppingListsPage() {
               </div>
             </fieldset>
             <div className="mt-7 flex justify-end gap-3">
-              <button
-                className="min-h-11 rounded-md px-4 text-sm"
+              <Button
+                variant="ghost"
+                className="min-h-11"
                 onClick={() => setLabelModal(false)}
               >
                 Cancel
-              </button>
-              <button
-                className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+              </Button>
+              <Button
+                className="min-h-11"
                 disabled={!newLabel.trim()}
                 onClick={makeLabel}
               >
                 {labelMode === "edit" ? "Update label" : "Save"}
-              </button>
+              </Button>
             </div>
           </section>
         </div>

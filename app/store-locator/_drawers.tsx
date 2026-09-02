@@ -128,24 +128,18 @@ export function DirectionBDrawer() {
                   Chat
                 </a>
               </div>
-              <button
-                type="button"
-                className="inline-flex h-7 shrink-0 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-              >
+              <Button size="sm" className="h-7 shrink-0 px-3 text-xs">
                 Select
-              </button>
+              </Button>
             </div>
           </li>
         ))}
       </ul>
       <div className="shrink-0 border-t p-3">
-        <button
-          type="button"
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background"
-        >
+        <Button variant="secondary" className="h-10 w-full">
           See More Branches
           <ChevronRight className="size-4" />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -230,9 +224,13 @@ export function DirectionCDrawer() {
                   </a>
                 </span>
                 {isCurrent ? (
-                  <span className="absolute top-1/2 right-5 inline-flex h-7 -translate-y-1/2 items-center rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white">
+                  <Button
+                    size="sm"
+                    disabled
+                    className="absolute top-1/2 right-5 h-7 -translate-y-1/2 px-3 text-xs"
+                  >
                     Current Store
-                  </span>
+                  </Button>
                 ) : (
                   <Button size="sm" className="absolute top-1/2 right-5 h-7 -translate-y-1/2 px-3 text-xs">
                     Select Store

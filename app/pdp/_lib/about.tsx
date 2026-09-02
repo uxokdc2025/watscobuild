@@ -24,6 +24,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { PointsBadge } from "@/components/ui/label-badges";
 import {
   Accordion,
@@ -134,10 +135,10 @@ function Specifications({ product }: { product: PdpProduct }) {
     <div>
       <div className="relative max-w-lg">
         <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-        <input
+        <Input
           aria-label="Filter specifications"
           placeholder="Filter by name or value..."
-          className="h-11 w-full rounded-md border bg-background pr-3 pl-9 text-sm outline-none"
+          className="h-11 pr-3 pl-9"
         />
       </div>
       <div className="mt-4 overflow-hidden rounded-lg border">
@@ -181,12 +182,12 @@ function Documents({ documents }: { documents: PdpDocument[] }) {
     <div>
       <div className="relative">
         <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-        <input
+        <Input
           aria-label="Filter documents"
           placeholder="Filter by name, family, or file type..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="h-11 w-full rounded-md border bg-background pr-3 pl-9 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="h-11 pr-3 pl-9"
         />
       </div>
       {groups.length === 0 ? (
@@ -268,12 +269,9 @@ function PartRowSchema({ row }: { row: PartRow }) {
       <td className="px-4 py-4 align-top">
         <p className="text-sm font-medium">{row.item}</p>
         {row.hasSupersedes ? (
-          <button
-            type="button"
-            className="mt-1 rounded border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:bg-accent"
-          >
+          <Button type="button" variant="outline" size="xs" className="mt-1">
             View Supersedes
-          </button>
+          </Button>
         ) : null}
       </td>
       <td className="px-4 py-4 align-top">
@@ -344,23 +342,19 @@ function PartRowSchema({ row }: { row: PartRow }) {
             aria-label="Quantity"
             className="h-9 w-14 rounded-md border bg-background px-2 text-center text-sm disabled:bg-muted/30 disabled:text-muted-foreground"
           />
-          <button
-            type="button"
-            disabled={gated || row.price == null}
-            className="h-9 rounded-md bg-green-600 px-3 text-xs font-semibold text-white transition-colors hover:bg-green-700 disabled:bg-muted disabled:text-muted-foreground"
-          >
+          <Button type="button" disabled={gated || row.price == null}>
             Add To Cart
-          </button>
+          </Button>
         </div>
       </td>
       <td className="px-4 py-4 align-top">
-        <button
+        <Button
           type="button"
+          variant="outline"
           disabled={gated || row.price == null}
-          className="h-9 rounded-md border bg-muted/50 px-3 text-xs font-semibold text-foreground transition-colors hover:bg-muted disabled:text-muted-foreground"
         >
           Save To List
-        </button>
+        </Button>
       </td>
     </tr>
   );
@@ -437,12 +431,12 @@ function PartList({ catalog }: { catalog: PartsCatalog }) {
         </h3>
         <div className="relative">
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
+          <Input
             aria-label="Filter parts"
             placeholder="Filter by name or item number..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="h-11 w-full rounded-md border bg-background pr-3 pl-9 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className="h-11 pr-3 pl-9"
           />
         </div>
       </div>

@@ -1,14 +1,11 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { DirectionCDrawer } from "./_drawers";
 import { InventoryStoreLocatorDrawer } from "./_inventory-drawers";
-
-export const metadata: Metadata = {
-  title: "Store Locator and Inventory Drawer",
-  description: "Store locator and inventory drawer previews with PLP links.",
-};
 
 function DirectionColumn({
   label,
@@ -26,15 +23,16 @@ function DirectionColumn({
           (scroller, sticky header/footer) is visible. In /in-plp the same
           drawer inherits full viewport height. */}
       <div className="h-[720px]">{children}</div>
-      <Link
-        href="/store-locator/in-plp?v=c"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-      >
-        See in PLP
-        <ArrowUpRight className="size-3.5" />
-      </Link>
+      <Button asChild>
+        <Link
+          href="/store-locator/in-plp?v=c"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          See in PLP
+          <ArrowUpRight className="size-3.5" />
+        </Link>
+      </Button>
     </div>
   );
 }

@@ -4,6 +4,9 @@ import * as React from "react";
 import { MessageSquarePlus, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type QA = { id: string; q: string; a: string; custom?: boolean };
 
@@ -116,13 +119,16 @@ export function OpenQuestions() {
                 {i + 1}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium">{it.q}</p>
-                <textarea
+                <Label htmlFor={`oq-${it.id}`} className="block text-sm leading-snug font-medium">
+                  {it.q}
+                </Label>
+                <Textarea
+                  id={`oq-${it.id}`}
                   value={it.a}
                   onChange={(e) => setAnswer(it.id, e.target.value)}
                   placeholder="Add an answer or comment…"
                   rows={it.a ? 3 : 1}
-                  className="mt-2 w-full resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  className="mt-2 resize-y text-sm"
                 />
               </div>
             </div>
@@ -131,14 +137,18 @@ export function OpenQuestions() {
       </ol>
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <input
+        <Label htmlFor="oq-draft" className="sr-only">
+          Add a question or note
+        </Label>
+        <Input
+          id="oq-draft"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") addItem();
           }}
           placeholder="Add a question or note…"
-          className="h-10 flex-1 rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="h-10 flex-1 text-sm"
         />
         <Button onClick={addItem} className="h-10">
           <MessageSquarePlus className="size-4" />

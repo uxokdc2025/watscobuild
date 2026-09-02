@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight, Github } from "lucide-react";
 
@@ -8,6 +9,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { BRANDS } from "./_lib/brands";
@@ -71,33 +74,25 @@ function PlpCard({ p }: { p: PlpEntry }) {
           </span>
         ) : null}
         <span className="text-sm text-muted-foreground">{p.brand}</span>
-        <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
-          Search Results
-        </span>
+        <Badge className="px-2.5 py-0.5 font-semibold">Search Results</Badge>
       </div>
       <div className="mt-1 line-clamp-1 font-medium">{p.title}</div>
       <div className="mt-0.5 font-mono text-xs text-muted-foreground">
         Query &ldquo;{p.query}&rdquo; · {routeLabel}
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Link
-          href={signedOutHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
-          Signed out
-          <ArrowUpRight className="size-3.5" />
-        </Link>
-        <Link
-          href={signedInHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
-          Signed in
-          <ArrowUpRight className="size-3.5" />
-        </Link>
+        <Button asChild variant="outline" size="sm">
+          <Link href={signedOutHref} target="_blank" rel="noopener noreferrer">
+            Signed out
+            <ArrowUpRight className="size-3.5" />
+          </Link>
+        </Button>
+        <Button asChild size="sm">
+          <Link href={signedInHref} target="_blank" rel="noopener noreferrer">
+            Signed in
+            <ArrowUpRight className="size-3.5" />
+          </Link>
+        </Button>
       </div>
       <a
         href={p.sourceUrl}
@@ -111,11 +106,6 @@ function PlpCard({ p }: { p: PlpEntry }) {
     </li>
   );
 }
-
-export const metadata: Metadata = {
-  title: "Watsco Design Templates",
-  description: "Directory of every data-driven PDP template.",
-};
 
 // Business units we're actively designing the shared PDP content for.
 const IN_SCOPE = ["ecmdi", "baker", "homans", "peirce"];
@@ -145,17 +135,13 @@ function TemplateCard({
         ) : null}
         <span className="text-sm text-muted-foreground">{p.brand}</span>
         {p.useCase ? (
-          <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
-            {p.useCase}
-          </span>
+          <Badge className="px-2.5 py-0.5 font-semibold">{p.useCase}</Badge>
         ) : descoped ? (
-          <span className="rounded-full border border-amber-500/40 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">
-            Descoped
-          </span>
+          <Badge variant="soft" color="amber">Descoped</Badge>
         ) : (
-          <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
+          <Badge variant="outline" className="font-normal text-muted-foreground">
             {p.commerce?.price != null ? "priced + gated" : "gated"}
-          </span>
+          </Badge>
         )}
       </div>
       <div className="mt-1 line-clamp-1 font-medium">{p.title}</div>
@@ -164,25 +150,27 @@ function TemplateCard({
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {signedInOnly ? null : (
+          <Button asChild variant="outline" size="sm">
+            <Link
+              href={`/pdp/${p.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Signed out
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+          </Button>
+        )}
+        <Button asChild size="sm">
           <Link
-            href={`/pdp/${p.slug}`}
+            href={`/pdp/${p.slug}?signedin=1`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
-            Signed out
+            {signedInOnly ? "Open (signed in)" : "Signed in"}
             <ArrowUpRight className="size-3.5" />
           </Link>
-        )}
-        <Link
-          href={`/pdp/${p.slug}?signedin=1`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
-          {signedInOnly ? "Open (signed in)" : "Signed in"}
-          <ArrowUpRight className="size-3.5" />
-        </Link>
+        </Button>
       </div>
       {p.sourceUrl ? (
         <a
@@ -244,44 +232,48 @@ export default function PdpMasterPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/dashboard"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              Account section
-              <ArrowUpRight className="size-3.5" />
-            </Link>
-            <Link
-              href="/search?q=blower%20motor&signedin=1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              Open PLP
-              <ArrowUpRight className="size-3.5" />
-            </Link>
-            <Link
-              href="/components"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              Components
-              <ArrowUpRight className="size-3.5" />
-            </Link>
-            <a
-              href="https://github.com/uxokdc2025/watscobuild"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="View source on GitHub"
-              className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white outline-none transition-colors hover:bg-neutral-800 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-neutral-800 dark:hover:bg-neutral-700"
-            >
-              <Github className="size-3.5" />
-              GitHub
-              <ArrowUpRight className="size-3.5" />
-            </a>
+            <Button asChild variant="outline">
+              <Link
+                href="/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Account section
+                <ArrowUpRight className="size-3.5" />
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link
+                href="/search?q=blower%20motor&signedin=1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open PLP
+                <ArrowUpRight className="size-3.5" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link
+                href="/components"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Components
+                <ArrowUpRight className="size-3.5" />
+              </Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <a
+                href="https://github.com/uxokdc2025/watscobuild"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View source on GitHub"
+              >
+                <Github className="size-3.5" />
+                GitHub
+                <ArrowUpRight className="size-3.5" />
+              </a>
+            </Button>
           </div>
         </div>
 
@@ -299,9 +291,9 @@ export default function PdpMasterPage() {
           >
             <AccordionTrigger className="hover:no-underline">
               <span className="flex items-center gap-3">
-                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
                   Product Details Page
-                </span>
+                </Badge>
                 <span className="text-lg font-bold tracking-tight">
                   Baseline ({inScope.length})
                 </span>
@@ -324,9 +316,9 @@ export default function PdpMasterPage() {
             >
               <AccordionTrigger className="hover:no-underline">
                 <span className="flex items-center gap-3">
-                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
                     Product Details Page
-                  </span>
+                  </Badge>
                   <span className="text-lg font-bold tracking-tight">
                     Content patterns &amp; badges ({useCases.length})
                   </span>
@@ -358,9 +350,9 @@ export default function PdpMasterPage() {
             >
               <AccordionTrigger className="hover:no-underline">
                 <span className="flex items-center gap-3">
-                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
                     Product Details Page
-                  </span>
+                  </Badge>
                   <span className="text-lg font-bold tracking-tight">
                     In Review ({inReview.length})
                   </span>
@@ -389,9 +381,9 @@ export default function PdpMasterPage() {
             >
               <AccordionTrigger className="hover:no-underline">
                 <span className="flex items-center gap-3">
-                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
                     Product Details Page
-                  </span>
+                  </Badge>
                   <span className="text-lg font-bold tracking-tight">
                     Tabs &amp; Accordions ({tabsAccordions.length})
                   </span>
@@ -414,9 +406,9 @@ export default function PdpMasterPage() {
           >
             <AccordionTrigger className="hover:no-underline">
               <span className="flex items-center gap-3">
-                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
                   Shared Component
-                </span>
+                </Badge>
                 <span className="text-lg font-bold tracking-tight">
                   Store Locator + Inventory Drawer
                 </span>
@@ -430,15 +422,16 @@ export default function PdpMasterPage() {
                 surfaces from a PDP&apos;s Nearby Branches link or a PLP card.
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                <Link
-                  href="/store-locator"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                >
-                  View Store Locator + Inventory Drawer
-                  <ArrowUpRight className="size-3.5" />
-                </Link>
+                <Button asChild>
+                  <Link
+                    href="/store-locator"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View Store Locator + Inventory Drawer
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -450,9 +443,9 @@ export default function PdpMasterPage() {
           >
             <AccordionTrigger className="hover:no-underline">
               <span className="flex items-center gap-3">
-                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
                   Product Listing Page
-                </span>
+                </Badge>
                 <span className="text-lg font-bold tracking-tight">
                   Search results (PLP) ({PLP_ENTRIES.length})
                 </span>

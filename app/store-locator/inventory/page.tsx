@@ -1,13 +1,10 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { InventoryStoreLocatorDrawer } from "../_inventory-drawers";
-
-export const metadata: Metadata = {
-  title: "Inventory Drawer — Right-side directions",
-  description: "Inventory drawer using the store-locator branch finder pattern.",
-};
 
 export default function InventoryGalleryPage() {
   return (
@@ -31,15 +28,16 @@ export default function InventoryGalleryPage() {
             <div className="h-[720px]">
               <InventoryStoreLocatorDrawer />
             </div>
-            <Link
-              href="/store-locator/inventory/in-plp?v=c"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              See in PLP
-              <ArrowUpRight className="size-3.5" />
-            </Link>
+            <Button asChild>
+              <Link
+                href="/store-locator/inventory/in-plp?v=c"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                See in PLP
+                <ArrowUpRight className="size-3.5" />
+              </Link>
+            </Button>
           </div>
         </div>
       </main>

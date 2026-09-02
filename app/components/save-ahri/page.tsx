@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 
-import { PdpActionsSection } from "../_sections/pdp-actions";
+import SaveAhriReference from "./save-ahri-reference";
 
 export const metadata: Metadata = {
   title: "Save + AHRI — Watsco DS",
+  description:
+    "The canonical PDP secondary-actions row: a muted Save link beside a promoted violet Find-an-AHRI-Matched-System button, with the exact code to paste.",
 };
 
-export default function Page() {
-  return (
-    <main className="mx-auto max-w-5xl px-4 py-10 md:px-8">
-      <PdpActionsSection />
-    </main>
-  );
+// Server Component so it can export metadata; all live rendering lives in the
+// client child to keep the server graph clean and consistent with the other
+// reference pages.
+export default function SaveAhriPage() {
+  return <SaveAhriReference />;
 }

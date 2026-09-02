@@ -11,6 +11,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "./auth";
 import { ProductCard, type ProductCardData } from "./product-card";
@@ -158,12 +159,9 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="text-xl font-bold tracking-tight">Frequently Bought Together</h2>
         {suggest ? (
-          <button
-            type="button"
-            className="rounded bg-slate-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
-          >
+          <Button type="button" variant="secondary" size="sm">
             Suggest Products
-          </button>
+          </Button>
         ) : null}
       </div>
       {multiGroup ? (

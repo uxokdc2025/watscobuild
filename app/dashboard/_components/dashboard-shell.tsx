@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, ListChecks, FileText, Truck, MapPin, CreditCard, ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const NAV = [
   { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboard },
@@ -17,7 +18,7 @@ const NAV = [
 export function DashboardShell({ title, description, actions, children }: { title: string; description: string; actions?: React.ReactNode; children: React.ReactNode }) {
   const pathname = usePathname();
   return (
-    <main className="min-h-svh bg-brand-homans-bg text-foreground">
+    <main className="min-h-svh bg-muted/30 text-foreground">
       <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-4 md:px-6 md:py-8">
         <div className="mb-8 flex flex-col gap-4">
           <div className="flex flex-wrap items-end justify-between gap-4">
@@ -46,5 +47,5 @@ export function DashboardShell({ title, description, actions, children }: { titl
 }
 
 export function EmptyState({ title, body, action, href }: { title: string; body: string; action?: string; href?: string }) {
-  return <div className="rounded-md border border-dashed border-border bg-background px-6 py-14 text-center shadow-sm"><h2 className="text-xl font-semibold">{title}</h2><p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{body}</p>{action && href ? <Link href={href} className="mt-6 inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">{action}</Link> : null}</div>;
+  return <div className="rounded-md border border-dashed border-border bg-background px-6 py-14 text-center shadow-sm"><h2 className="text-xl font-semibold">{title}</h2><p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{body}</p>{action && href ? <Button asChild size="lg" className="mt-6 min-h-11"><Link href={href}>{action}</Link></Button> : null}</div>;
 }

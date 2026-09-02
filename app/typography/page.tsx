@@ -95,8 +95,8 @@ export default function TypographyPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/components"
-              className="inline-flex size-9 items-center justify-center rounded-md border text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
               aria-label="Back to components"
+              className="inline-flex size-9 items-center justify-center rounded-md border text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
             >
               <ChevronLeft className="size-4" />
             </Link>
