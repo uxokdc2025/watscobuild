@@ -43,8 +43,15 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
   const closeAccount = React.useCallback(() => {
     if (closing) return;
     setClosing(true);
-    window.setTimeout(() => setOpen(false), DRAWER_MOTION_MS);
+    // Reset `closing` too — otherwise the flyout stays flagged as closing and
+    // can never reopen (open={!closing} stays false on the next open).
+    window.setTimeout(() => { setOpen(false); setClosing(false); }, DRAWER_MOTION_MS);
   }, [closing]);
+
+  const openAccount = React.useCallback(() => {
+    setClosing(false);
+    setOpen(true);
+  }, []);
 
   const closeShipTo = React.useCallback(() => {
     if (shipToClosing) return;
@@ -64,7 +71,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="hidden text-left text-xs leading-tight sm:block">
+      <button type="button" onClick={openAccount} className="hidden text-left text-xs leading-tight sm:block">
         <span className="block opacity-90">Hello, David</span>
         <span className="block font-bold">My Account</span>
       </button>
@@ -89,7 +96,7 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
             </div>
             <div className="relative flex min-h-0 flex-1 flex-col">
               <AccountNav onNavigate={closeAccount} />
-              <div className="mt-auto border-t p-5"><button type="button" onClick={() => setOpen(false)} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
+              <div className="mt-auto border-t p-5"><button type="button" onClick={closeAccount} className="h-10 w-full rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted">Sign Out</button></div>
             {shipToOpen ? (
               <DrawerPanel open={!shipToClosing} side="right" className="absolute inset-0 z-20 flex flex-col overflow-y-auto bg-background shadow-2xl">
                 <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background px-5 py-4"><DrawerBackButton label="Back to account" onClick={closeShipTo} /><h3 className="text-[15px] leading-5 font-bold">Select Ship To</h3></div>

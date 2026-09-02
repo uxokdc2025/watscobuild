@@ -9,11 +9,12 @@ import { cn } from "@/lib/utils";
 
 /** Canonical motion timing for every side drawer in the system. */
 export const DRAWER_MOTION_MS = 460;
+/** Soft, fluid slide — not a rushed spring, not a fade. Same curve in and out,
+ *  so closing reverses the way it opened. */
 export const DRAWER_SPRING = {
-  type: "spring" as const,
-  stiffness: 260,
-  damping: 28,
-  mass: 0.9,
+  type: "tween" as const,
+  duration: DRAWER_MOTION_MS / 1000,
+  ease: [0.32, 0.72, 0, 1] as const,
 };
 const DrawerOverlayContext = React.createContext(false);
 
@@ -37,7 +38,10 @@ export function DrawerPanel({
   const closedX = side === "right" ? "100%" : "-100%";
   const overlayClosing = React.useContext(DrawerOverlayContext);
   return (
-    <AnimatePresence initial={false}>
+    // `initial` left on (default) so the panel actually slides IN when it
+    // mounts — initial={false} was suppressing the enter animation, which read
+    // as an instant/fade appearance.
+    <AnimatePresence>
       {open && !overlayClosing ? (
         <motion.aside
           key="drawer-panel"
