@@ -1,0 +1,585 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowUpRight, Github } from "lucide-react";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { pdps } from "./_lib/registry";
+import type { PdpProduct } from "./_lib/types";
+import { BRANDS } from "./_lib/brands";
+import { CHECKOUT_USE_CASES } from "./_lib/checkout-use-cases";
+
+/** Product Listing Page (PLP) entries — /search route rendered inside a brand's chrome. */
+type PlpEntry = {
+  brandKey: string;
+  brand: string;
+  title: string;
+  query: string;
+  pageSize?: number;
+  sourceUrl: string;
+};
+
+const PLP_ENTRIES: PlpEntry[] = [
+  {
+    brandKey: "homans",
+    brand: "Homans Associates",
+    title: "Search Results — Blower Motor (Homans)",
+    query: "blower motor",
+    sourceUrl: "https://arrow-sw-homans.wsm.wsoecom.ninja/search?q=blower%20motor",
+  },
+  {
+    brandKey: "peirce",
+    brand: "Peirce-Phelps",
+    title: "Search Results — Blower Motor (Peirce-Phelps)",
+    query: "blower motor",
+    pageSize: 18,
+    sourceUrl: "https://www.peirce.com/search?q=blower+motor&page_size=18",
+  },
+  {
+    brandKey: "ecmdi",
+    brand: "East Coast Metal Distributors",
+    title: "Search Results — Blower (ECMDI)",
+    query: "blower",
+    sourceUrl: "https://www.ecmdi.com/search?q=blower",
+  },
+];
+
+function PlpCard({ p }: { p: PlpEntry }) {
+  const b = BRANDS[p.brandKey];
+  const params = new URLSearchParams({ q: p.query, brand: p.brandKey });
+  if (p.pageSize) params.set("page_size", String(p.pageSize));
+  const signedOutHref = `/search?${params.toString()}`;
+  const signedInHref = `/search?${params.toString()}&signedin=1`;
+  const routeLabel = `/search?q=${encodeURIComponent(p.query)}&brand=${p.brandKey}${p.pageSize ? `&page_size=${p.pageSize}` : ""}`;
+
+  return (
+    <li className="rounded-xl border bg-card p-5">
+      <div className="flex flex-wrap items-center gap-2">
+        {b ? (
+          <span className="inline-flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className="size-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: b.accent }}
+            />
+            <span className="text-sm font-semibold">{b.name}</span>
+          </span>
+        ) : null}
+        <span className="text-sm text-muted-foreground">{p.brand}</span>
+        <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+          Search Results
+        </span>
+      </div>
+      <div className="mt-1 line-clamp-1 font-medium">{p.title}</div>
+      <div className="mt-0.5 font-mono text-xs text-muted-foreground">
+        Query &ldquo;{p.query}&rdquo; · {routeLabel}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Link
+          href={signedOutHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          Signed out
+          <ArrowUpRight className="size-3.5" />
+        </Link>
+        <Link
+          href={signedInHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          Signed in
+          <ArrowUpRight className="size-3.5" />
+        </Link>
+      </div>
+      <a
+        href={p.sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={p.sourceUrl}
+        className="mt-2 block truncate font-mono text-xs text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+      >
+        ↗ reference: {p.sourceUrl.replace(/^https?:\/\/(www\.)?/, "")}
+      </a>
+    </li>
+  );
+}
+
+export const metadata: Metadata = {
+  title: "Watsco Design Templates",
+  description: "Directory of every data-driven PDP template.",
+};
+
+// Business units we're actively designing the shared PDP content for.
+const IN_SCOPE = ["ecmdi", "baker", "homans", "peirce"];
+
+function TemplateCard({
+  p,
+  descoped = false,
+  signedInOnly = false,
+}: {
+  p: PdpProduct;
+  descoped?: boolean;
+  signedInOnly?: boolean;
+}) {
+  const b = p.brandKey ? BRANDS[p.brandKey] : undefined;
+  return (
+    <li className={`rounded-xl border bg-card p-5 ${descoped ? "opacity-70" : ""}`}>
+      <div className="flex flex-wrap items-center gap-2">
+        {b ? (
+          <span className="inline-flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className="size-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: b.accent }}
+            />
+            <span className="text-sm font-semibold">{b.name}</span>
+          </span>
+        ) : null}
+        <span className="text-sm text-muted-foreground">{p.brand}</span>
+        {p.useCase ? (
+          <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+            {p.useCase}
+          </span>
+        ) : descoped ? (
+          <span className="rounded-full border border-amber-500/40 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">
+            Descoped
+          </span>
+        ) : (
+          <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
+            {p.commerce?.price != null ? "priced + gated" : "gated"}
+          </span>
+        )}
+      </div>
+      <div className="mt-1 line-clamp-1 font-medium">{p.title}</div>
+      <div className="mt-0.5 font-mono text-xs text-muted-foreground">
+        Item {p.item} · /pdp/{p.slug}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {signedInOnly ? null : (
+          <Link
+            href={`/pdp/${p.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            Signed out
+            <ArrowUpRight className="size-3.5" />
+          </Link>
+        )}
+        <Link
+          href={`/pdp/${p.slug}?signedin=1`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          {signedInOnly ? "Open (signed in)" : "Signed in"}
+          <ArrowUpRight className="size-3.5" />
+        </Link>
+      </div>
+      {p.sourceUrl ? (
+        <a
+          href={p.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={p.sourceUrl}
+          className="mt-2 block truncate font-mono text-xs text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+        >
+          ↗ reference: {p.sourceUrl.replace(/^https?:\/\/(www\.)?/, "")}
+        </a>
+      ) : null}
+    </li>
+  );
+}
+
+export default function PdpMasterPage() {
+  // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
+  const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
+  // In-review bucket: the PDP(s) David is actively reviewing right now.
+  // `uc-ahri-matched-system` is the canonical review PDP — it renders the
+  // full AHRI discovery pattern (Find AHRI outline button, matchup badge)
+  // that is the current review target.
+  const inReviewSlugs = ["uc-ahri-matched-system"];
+  const tabsAccordionsSlugs = ["uc-tabs-accordions"];
+  const inReview = templates.filter((p) => inReviewSlugs.includes(p.slug));
+  const tabsAccordions = templates.filter((p) =>
+    tabsAccordionsSlugs.includes(p.slug),
+  );
+  const useCases = templates.filter(
+    (p) =>
+      p.useCase &&
+      !inReviewSlugs.includes(p.slug) &&
+      !tabsAccordionsSlugs.includes(p.slug),
+  );
+  const rest = templates.filter(
+    (p) =>
+      p.slug !== "ecmdi-pro-flush-v2" &&
+      !p.useCase &&
+      !inReviewSlugs.includes(p.slug) &&
+      !tabsAccordionsSlugs.includes(p.slug),
+  );
+  const inScope = rest
+    .filter((p) => IN_SCOPE.includes(p.brandKey ?? ""))
+    .sort(
+      (a, b) => IN_SCOPE.indexOf(a.brandKey ?? "") - IN_SCOPE.indexOf(b.brandKey ?? "")
+    );
+  const descoped = rest.filter((p) => !IN_SCOPE.includes(p.brandKey ?? ""));
+
+  return (
+    <div className="min-h-svh bg-background">
+      <main className="mx-auto max-w-4xl px-4 py-10 md:px-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Watsco Design Templates</h1>
+            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+              One data-driven template · {inScope.length} in-scope business units,
+              each rendered inside its own header / footer.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              Account section
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <Link
+              href="/search?q=blower%20motor&signedin=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              Open PLP
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <Link
+              href="/components"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              Components
+              <ArrowUpRight className="size-3.5" />
+            </Link>
+            <a
+              href="https://github.com/uxokdc2025/watscobuild"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white outline-none transition-colors hover:bg-neutral-800 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+            >
+              <Github className="size-3.5" />
+              GitHub
+              <ArrowUpRight className="size-3.5" />
+            </a>
+          </div>
+        </div>
+
+        {/* Each section is its own accordion panel. "In Review" opens by
+            default — that is where every active design decision lands. All
+            other panels start collapsed to keep the review focused. */}
+        <Accordion
+          type="multiple"
+          defaultValue={[]}
+          className="mt-8 flex flex-col gap-3"
+        >
+          <AccordionItem
+            value="in-scope"
+            className="rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  Product Details Page
+                </span>
+                <span className="text-lg font-bold tracking-tight">
+                  Baseline ({inScope.length})
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <ul className="flex flex-col gap-3 pb-2">
+                {inScope.map((p) => (
+                  <TemplateCard key={p.slug} p={p} />
+                ))}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+
+          {useCases.length ? (
+            <AccordionItem
+              value="use-cases"
+              id="use-cases"
+              className="scroll-mt-6 rounded-xl border bg-card px-5"
+            >
+              <AccordionTrigger className="hover:no-underline">
+                <span className="flex items-center gap-3">
+                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                    Product Details Page
+                  </span>
+                  <span className="text-lg font-bold tracking-tight">
+                    Content patterns &amp; badges ({useCases.length})
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="max-w-2xl text-sm text-muted-foreground">
+                  One PDP per pattern — each demonstrates a specific state or badge
+                  (Replacement, AHRI matched system, pack size, bundle &amp; rebate,
+                  points, non-sellable, requires-license, strike-thru pricing). Open
+                  ours (signed in) next to the{" "}
+                  <span className="font-medium text-foreground">reference</span> link
+                  to compare.
+                </p>
+                <ul className="mt-4 flex flex-col gap-3 pb-2">
+                  {useCases.map((p) => (
+                    <TemplateCard key={p.slug} p={p} signedInOnly />
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ) : null}
+
+          {inReview.length ? (
+            <AccordionItem
+              value="in-review"
+              id="in-review"
+              className="scroll-mt-6 rounded-xl border-2 border-primary/40 bg-card px-5"
+            >
+              <AccordionTrigger className="hover:no-underline">
+                <span className="flex items-center gap-3">
+                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                    Product Details Page
+                  </span>
+                  <span className="text-lg font-bold tracking-tight">
+                    In Review ({inReview.length})
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="max-w-2xl text-sm text-muted-foreground">
+                  Active review target. AHRI matched-system flow, buy-box
+                  layout, product cards, and the Find-AHRI outline button all
+                  render on this PDP.
+                </p>
+                <ul className="mt-4 flex flex-col gap-3 pb-2">
+                  {inReview.map((p) => (
+                    <TemplateCard key={p.slug} p={p} signedInOnly />
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ) : null}
+
+          {tabsAccordions.length ? (
+            <AccordionItem
+              value="tabs-accordions"
+              id="tabs-accordions"
+              className="scroll-mt-6 rounded-xl border bg-card px-5"
+            >
+              <AccordionTrigger className="hover:no-underline">
+                <span className="flex items-center gap-3">
+                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                    Product Details Page
+                  </span>
+                  <span className="text-lg font-bold tracking-tight">
+                    Tabs &amp; Accordions ({tabsAccordions.length})
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <ul className="flex flex-col gap-3 pb-2">
+                  {tabsAccordions.map((p) => (
+                    <TemplateCard key={p.slug} p={p} signedInOnly />
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ) : null}
+
+          <AccordionItem
+            value="store-locator"
+            id="store-locator"
+            className="scroll-mt-6 rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  Shared Component
+                </span>
+                <span className="text-lg font-bold tracking-tight">
+                  Store Locator + Inventory Drawer
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                Two related components, three directions each. Store Locator
+                slides in from the LEFT (branch selection). Inventory Drawer
+                slides in from the RIGHT (per-branch stock for one product) —
+                surfaces from a PDP&apos;s Nearby Branches link or a PLP card.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Link
+                  href="/store-locator"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  View Store Locator + Inventory Drawer
+                  <ArrowUpRight className="size-3.5" />
+                </Link>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem
+            value="plp"
+            id="plp"
+            className="scroll-mt-6 rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-primary-foreground uppercase">
+                  Product Listing Page
+                </span>
+                <span className="text-lg font-bold tracking-tight">
+                  Search results (PLP) ({PLP_ENTRIES.length})
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <ul className="flex flex-col gap-3 pb-2">
+                {PLP_ENTRIES.map((p) => (
+                  <PlpCard key={p.brandKey} p={p} />
+                ))}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem
+            value="checkout"
+            id="checkout"
+            className="scroll-mt-6 rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <span className="text-lg font-bold tracking-tight">Checkout Flow</span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  Canonical pattern &amp; {CHECKOUT_USE_CASES.length} use cases
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="rounded-lg border bg-muted/30 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold">One responsive checkout, scenario-based states</p>
+                    <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                      The comparison points to one best-practice flow: fulfillment first, payment second, and a final review before submission. Transfer, backorder, freight, pickup, terms, coupon, and special-handling cases remain visible states within that flow.
+                    </p>
+                  </div>
+                  <Link
+                    href="/checkout?demo=1&case=delivery-pickup-routing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  >
+                    Open baseline checkout
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </div>
+              </div>
+              <div className="mt-4 grid gap-3 pb-2 md:grid-cols-2">
+                {CHECKOUT_USE_CASES.map((useCase) => (
+                  <Link
+                    key={useCase.title}
+                    href={`/checkout?demo=1&case=${useCase.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group rounded-lg border p-4 outline-none transition-colors hover:border-primary/50 hover:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs font-semibold tracking-wide text-primary uppercase">{useCase.phase}</span>
+                      <span className="text-xs text-muted-foreground">{useCase.sources}</span>
+                    </div>
+                    <h3 className="mt-2 text-sm font-semibold">{useCase.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{useCase.pattern}</p>
+                    <p className="mt-2 border-t pt-2 text-sm"><span className="font-medium">Recommended:</span> {useCase.decision}</p>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary">Open checkout example <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></span>
+                  </Link>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {descoped.length ? (
+            <AccordionItem
+              value="descoped"
+              className="rounded-xl border bg-card px-5"
+            >
+              <AccordionTrigger className="text-sm font-semibold tracking-wide text-muted-foreground uppercase hover:no-underline">
+                Descoped · building independently ({descoped.length})
+              </AccordionTrigger>
+              <AccordionContent>
+                <ul className="flex flex-col gap-3 pb-2">
+                  {descoped.map((p) => (
+                    <TemplateCard key={p.slug} p={p} descoped />
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ) : null}
+        </Accordion>
+
+        {/* Project footer — persistent credits + provenance. Kept terse so
+            the review page ends with signal, not chrome. */}
+        <footer className="mt-16 border-t pt-8 pb-4 text-sm text-muted-foreground">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <p className="font-semibold text-foreground">
+                Watsco Prototype
+              </p>
+              <p className="mt-1">
+                Started July 23, 2026 · Design-system prototype for the Watsco
+                distributor storefronts.
+              </p>
+            </div>
+            <dl className="grid grid-cols-2 gap-x-8 gap-y-1 text-xs sm:text-sm">
+              <dt className="font-semibold text-foreground">Client</dt>
+              <dd>Ryan · Watsco</dd>
+              <dt className="font-semibold text-foreground">UX Designer</dt>
+              <dd>David Cervantes</dd>
+              <dt className="font-semibold text-foreground">Stack</dt>
+              <dd>Next.js 15 · React 19 · Tailwind v4 · shadcn</dd>
+              <dt className="font-semibold text-foreground">Source</dt>
+              <dd>
+                <a
+                  href="https://github.com/uxokdc2025/watscobuild"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline-offset-4 hover:underline"
+                >
+                  github.com/uxokdc2025/watscobuild
+                </a>
+              </dd>
+            </dl>
+          </div>
+          <p className="mt-6 text-xs">
+            Prototype · not for production. Product data is representative,
+            not live inventory.
+          </p>
+        </footer>
+      </main>
+    </div>
+  );
+}
