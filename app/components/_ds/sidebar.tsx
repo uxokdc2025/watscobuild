@@ -42,8 +42,8 @@ const NAV: NavGroup[] = [
   {
     title: "Blocks",
     items: [
-      { label: "Store Locator", href: "/store-locator" },
-      { label: "Checkout", href: "/checkout?demo=1" },
+      { label: "Store Locator", href: "/components/store-locator" },
+      { label: "Checkout", href: "/components/checkout" },
     ],
   },
 ];
