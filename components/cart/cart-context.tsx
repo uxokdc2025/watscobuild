@@ -79,7 +79,7 @@ function CartDrawer() {
                       <span className="grid h-full w-8 place-items-center border-x text-sm">{item.quantity}</span>
                       <button className="grid size-8 place-items-center" onClick={() => setQuantity(item.id, item.quantity + 1)} aria-label="Increase quantity"><Plus className="size-3.5" /></button>
                     </div>
-                    <button className="text-sm text-primary underline-offset-4 hover:underline" onClick={() => removeItem(item.id)}>Remove</button>
+                    <button className="text-sm font-medium text-primary transition-colors hover:text-primary/80" onClick={() => removeItem(item.id)}>Remove</button>
                   </div>
                 </div>
               </div>
@@ -89,10 +89,10 @@ function CartDrawer() {
             <h2 className="text-lg font-semibold">You may also need</h2>
             <div className="mt-3 flex flex-col gap-3">
               {recommendations.map((item) => (
-                <div key={item.id} className="flex items-center gap-3 rounded-md border p-3">
+                <div key={item.id} className="flex items-center gap-3 rounded-md border p-3 transition-colors hover:bg-muted/40">
                   <div className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-md bg-muted"><img src={item.image} alt="" className="max-h-full max-w-full object-contain" /></div>
                   <div className="min-w-0 flex-1"><p className="text-sm font-medium">{item.title}</p><p className="text-sm text-muted-foreground">{formatUSD(item.price)}</p></div>
-                  <button className="text-sm font-semibold text-primary underline-offset-4 hover:underline" onClick={() => addItem(item)}>Add</button>
+                  <button className="text-sm font-semibold text-primary transition-colors hover:text-primary/80" onClick={() => addItem(item)}>Add</button>
                 </div>
               ))}
             </div>

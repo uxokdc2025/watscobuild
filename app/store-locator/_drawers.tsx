@@ -82,10 +82,16 @@ export function DirectionBDrawer() {
         </a>
       </div>
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
-        {BRANCHES.map((s) => (
+        {BRANCHES.map((s, i) => {
+          // Row states: current (active store — grey fill, not selectable),
+          // selectable (default), hover (light grey). Only the current row is
+          // filled; selectable rows fill on hover.
+          const isCurrent = i === 0;
+          return (
           <li
             key={s.name}
-            className="flex flex-col gap-1 px-5 py-2.5 transition-colors hover:bg-muted/40"
+            aria-current={isCurrent ? "true" : undefined}
+            className={`flex flex-col gap-1 px-5 py-2.5 transition-colors ${isCurrent ? "bg-muted/60" : "hover:bg-muted/40"}`}
           >
             {/* Branch identity and availability stay on the top rail. */}
             <div className="flex items-start justify-between gap-3">
@@ -128,12 +134,19 @@ export function DirectionBDrawer() {
                   Chat
                 </a>
               </div>
-              <Button size="sm" className="h-7 shrink-0 px-3 text-xs">
-                Select
-              </Button>
+              {isCurrent ? (
+                <Button size="sm" variant="secondary" disabled className="h-7 shrink-0 px-3 text-xs">
+                  Current Store
+                </Button>
+              ) : (
+                <Button size="sm" className="h-7 shrink-0 px-3 text-xs">
+                  Select Store
+                </Button>
+              )}
             </div>
           </li>
-        ))}
+          );
+        })}
       </ul>
       <div className="shrink-0 border-t p-3">
         <Button variant="secondary" className="h-10 w-full">
