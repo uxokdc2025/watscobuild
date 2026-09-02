@@ -40,6 +40,12 @@ const NAV: NavGroup[] = [
     ],
   },
   {
+    title: "Chrome",
+    items: [
+      { label: "Headers & Footers", href: "/components/headers" },
+    ],
+  },
+  {
     title: "Blocks",
     items: [
       { label: "Buy Box", href: "/components/buy-box" },

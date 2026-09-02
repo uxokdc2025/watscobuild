@@ -24,6 +24,10 @@ const COMPONENTS = [
   { label: "Overlays", href: "/components/overlays", desc: "Dialog, sheet, drawer, popover." },
 ];
 
+const CHROME = [
+  { label: "Headers & Footers", href: "/components/headers", desc: "One unified chrome, themed per brand — open any brand to preview." },
+];
+
 const BLOCKS = [
   { label: "Buy Box", href: "/components/buy-box", desc: "The PDP purchase panel — badges, price, availability, Add to Cart." },
   { label: "Branch Selector", href: "/components/branch-selector", desc: "Global branch finder — slides in from the left." },
@@ -86,6 +90,13 @@ export default function ComponentsOverview() {
           Components
         </h2>
         <CardGrid items={COMPONENTS} />
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          Chrome
+        </h2>
+        <CardGrid items={CHROME} />
       </section>
 
       <section className="space-y-4">
