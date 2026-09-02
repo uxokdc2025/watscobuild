@@ -52,6 +52,7 @@ const NAV: NavGroup[] = [
       { label: "Branch Selector", href: "/components/branch-selector" },
       { label: "Inventory Drawer", href: "/components/inventory-drawer" },
       { label: "Account Drawer", href: "/components/account-drawer" },
+      { label: "Cart Drawer", href: "/components/cart-drawer" },
       { label: "Checkout", href: "/components/checkout" },
     ],
   },
