@@ -15,9 +15,13 @@ const buttonVariants = cva(
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
-          "border border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background",
+          "border border-input bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        // Tertiary: white by default, light-grey fill on hover. Never underlines.
+        tertiary:
+          "text-foreground hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        // The ONLY variant that underlines — reserved for blue inline links.
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

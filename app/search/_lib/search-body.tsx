@@ -298,21 +298,31 @@ export function SearchBody({
               >
                 <Button
                   type="button"
-                  variant={view === "grid" ? "default" : "ghost"}
+                  variant="ghost"
                   size="sm"
                   aria-pressed={view === "grid"}
                   onClick={() => setView("grid")}
-                  className={cn("rounded-sm", view !== "grid" && "text-muted-foreground")}
+                  className={cn(
+                    "rounded-sm",
+                    view === "grid"
+                      ? "bg-background text-foreground shadow-sm hover:bg-background"
+                      : "text-muted-foreground"
+                  )}
                 >
                   <LayoutGrid /> Grid
                 </Button>
                 <Button
                   type="button"
-                  variant={view === "list" ? "default" : "ghost"}
+                  variant="ghost"
                   size="sm"
                   aria-pressed={view === "list"}
                   onClick={() => setView("list")}
-                  className={cn("rounded-sm", view !== "list" && "text-muted-foreground")}
+                  className={cn(
+                    "rounded-sm",
+                    view === "list"
+                      ? "bg-background text-foreground shadow-sm hover:bg-background"
+                      : "text-muted-foreground"
+                  )}
                 >
                   <ListIcon /> List
                 </Button>
@@ -647,9 +657,13 @@ function SearchPagination({
         <Button
           key={n}
           type="button"
-          variant={n === 1 ? "default" : "outline"}
+          variant="ghost"
           size="sm"
           aria-current={n === 1 ? "page" : undefined}
+          className={cn(
+            "min-w-9",
+            n === 1 && "bg-accent text-accent-foreground hover:bg-accent"
+          )}
         >
           {n}
         </Button>

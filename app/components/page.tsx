@@ -25,8 +25,10 @@ const COMPONENTS = [
 ];
 
 const BLOCKS = [
+  { label: "Buy Box", href: "/components/buy-box", desc: "The PDP purchase panel — badges, price, availability, Add to Cart." },
   { label: "Branch Selector", href: "/components/branch-selector", desc: "Global branch finder — slides in from the left." },
   { label: "Inventory Drawer", href: "/components/inventory-drawer", desc: "Per-branch stock — slides in from the right." },
+  { label: "Account Drawer", href: "/components/account-drawer", desc: "Global account panel — switch account, ship-to, nav." },
   { label: "Checkout", href: "/components/checkout", desc: "Delivery / pickup routing and use cases." },
 ];
 

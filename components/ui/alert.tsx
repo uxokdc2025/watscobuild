@@ -8,9 +8,24 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-card text-card-foreground",
+        // Neutral, lightly filled.
+        default:
+          "bg-muted/50 border-border text-foreground *:data-[slot=alert-description]:text-muted-foreground",
+        // Informational — blue.
+        info:
+          "bg-blue-500/8 border-blue-500/30 text-blue-800 dark:text-blue-300 *:data-[slot=alert-description]:text-foreground/70",
+        // Positive — green.
+        success:
+          "bg-in-stock/10 border-in-stock/35 text-in-stock *:data-[slot=alert-description]:text-foreground/70",
+        // Caution — yellow.
+        warning:
+          "bg-yellow-400/12 border-yellow-500/40 text-yellow-800 dark:text-yellow-300 *:data-[slot=alert-description]:text-foreground/70",
+        // Stronger caution — orange.
+        caution:
+          "bg-orange-400/12 border-orange-500/40 text-orange-800 dark:text-orange-300 *:data-[slot=alert-description]:text-foreground/70",
+        // Error — red.
         destructive:
-          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
+          "bg-destructive/10 border-destructive/30 text-destructive *:data-[slot=alert-description]:text-destructive/80 [&>svg]:text-current",
       },
     },
     defaultVariants: {

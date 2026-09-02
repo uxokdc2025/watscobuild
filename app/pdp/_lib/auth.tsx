@@ -53,13 +53,15 @@ export function AuthToggle() {
         <Button
           key={label}
           type="button"
-          variant={signedIn === v ? "default" : "ghost"}
+          variant="ghost"
           size="sm"
           aria-pressed={signedIn === v}
           onClick={() => setSignedIn(v)}
           className={cn(
             "rounded-sm [&_svg]:size-3.5",
-            signedIn !== v && "text-muted-foreground"
+            signedIn === v
+              ? "bg-background text-foreground shadow-sm hover:bg-background"
+              : "text-muted-foreground"
           )}
         >
           <Icon />

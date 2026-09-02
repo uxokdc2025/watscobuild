@@ -2,11 +2,14 @@
 
 import * as React from "react";
 import {
-  AlertCircle,
-  CheckCircle2,
-  Terminal,
-  PackageOpen,
+  AlertTriangle,
+  CircleAlert,
+  CircleCheck,
   ExternalLink,
+  Info,
+  PackageOpen,
+  Terminal,
+  TriangleAlert,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -107,31 +110,49 @@ export default function FeedbackReference() {
         <section className="space-y-4">
           <H2 id="alert">Alert</H2>
           <p className="text-sm text-muted-foreground">
-            Two real variants — <code className="rounded bg-muted px-1 py-0.5 text-xs">default</code>{" "}
-            and <code className="rounded bg-muted px-1 py-0.5 text-xs">destructive</code>. A success
-            tone is not a variant; it&apos;s the default alert tinted with the{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-xs">in-stock</code> token, so status
-            color stays consistent with the rest of the storefront.
+            Six lightly-filled tones, each with its own icon:{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">default</code>,{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">info</code> (blue),{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">success</code> (green),{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">warning</code> (yellow),{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">caution</code> (orange), and{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">destructive</code> (red). Always
+            include a title; the description is optional.
           </p>
           <PreviewCode
             previewClassName="items-stretch"
-            code={`{/* Default */}
-<Alert>
+            code={`<Alert>
   <Terminal />
   <AlertTitle>Heads up</AlertTitle>
   <AlertDescription>You can add components to your app using the CLI.</AlertDescription>
 </Alert>
 
-{/* Success — default alert + in-stock text token (not a variant) */}
-<Alert className="text-in-stock *:data-[slot=alert-description]:text-in-stock/90">
-  <CheckCircle2 />
+<Alert variant="info">
+  <Info />
+  <AlertTitle>Order in review</AlertTitle>
+  <AlertDescription>The following item requires your review before checkout.</AlertDescription>
+</Alert>
+
+<Alert variant="success">
+  <CircleCheck />
   <AlertTitle>Payment received</AlertTitle>
   <AlertDescription>Your order is confirmed.</AlertDescription>
 </Alert>
 
-{/* Destructive */}
+<Alert variant="warning">
+  <TriangleAlert />
+  <AlertTitle>Backorder</AlertTitle>
+  <AlertDescription>Some items ship on backorder; we&apos;ll confirm the date.</AlertDescription>
+</Alert>
+
+<Alert variant="caution">
+  <AlertTriangle />
+  <AlertTitle>Cutoff time approaching</AlertTitle>
+  <AlertDescription>Order within 45 minutes for same-day branch transfer.</AlertDescription>
+</Alert>
+
 <Alert variant="destructive">
-  <AlertCircle />
+  <CircleAlert />
   <AlertTitle>Something went wrong</AlertTitle>
   <AlertDescription>Your session expired. Please log in again.</AlertDescription>
 </Alert>`}
@@ -139,21 +160,32 @@ export default function FeedbackReference() {
             <Alert>
               <Terminal />
               <AlertTitle>Heads up</AlertTitle>
-              <AlertDescription>
-                You can add components to your app using the CLI.
-              </AlertDescription>
+              <AlertDescription>You can add components to your app using the CLI.</AlertDescription>
             </Alert>
-            <Alert className="text-in-stock *:data-[slot=alert-description]:text-in-stock/90">
-              <CheckCircle2 />
+            <Alert variant="info">
+              <Info />
+              <AlertTitle>Order in review</AlertTitle>
+              <AlertDescription>The following item requires your review before checkout.</AlertDescription>
+            </Alert>
+            <Alert variant="success">
+              <CircleCheck />
               <AlertTitle>Payment received</AlertTitle>
               <AlertDescription>Your order is confirmed.</AlertDescription>
             </Alert>
+            <Alert variant="warning">
+              <TriangleAlert />
+              <AlertTitle>Backorder</AlertTitle>
+              <AlertDescription>Some items ship on backorder; we&apos;ll confirm the date.</AlertDescription>
+            </Alert>
+            <Alert variant="caution">
+              <AlertTriangle />
+              <AlertTitle>Cutoff time approaching</AlertTitle>
+              <AlertDescription>Order within 45 minutes for same-day branch transfer.</AlertDescription>
+            </Alert>
             <Alert variant="destructive">
-              <AlertCircle />
+              <CircleAlert />
               <AlertTitle>Something went wrong</AlertTitle>
-              <AlertDescription>
-                Your session expired. Please log in again.
-              </AlertDescription>
+              <AlertDescription>Your session expired. Please log in again.</AlertDescription>
             </Alert>
           </PreviewCode>
         </section>
