@@ -355,9 +355,9 @@ export function SearchBody({
                 ))}
               </ul>
             ) : (
-              <ul className="divide-y rounded-lg border bg-card">
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {results.map((r, i) => (
-                  <li key={r.id}>
+                  <li key={r.id} className="overflow-hidden rounded-lg border bg-card">
                     <ProductRow result={r} signedIn={signedIn} index={i} brandKey={brandKey} />
                   </li>
                 ))}
