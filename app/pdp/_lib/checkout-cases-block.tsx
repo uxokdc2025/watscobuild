@@ -43,10 +43,7 @@ export function CheckoutCasesBlock({ cases }: { cases: readonly UseCase[] }) {
             </div>
             <h3 className="mt-2 text-sm font-semibold">{useCase.title}</h3>
             <p className="mt-1 text-sm text-muted-foreground">{useCase.pattern}</p>
-            <p className="mt-2 border-t pt-2 text-sm">
-              <span className="font-medium">Recommended:</span> {useCase.decision}
-            </p>
-            <div className="mt-3">
+            <div className="mt-4">
               <Button asChild variant="outline" size="sm">
                 <a href={`/checkout?demo=1&case=${useCase.slug}`} target="_blank" rel="noopener noreferrer">
                   Open checkout example

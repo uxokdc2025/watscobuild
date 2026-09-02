@@ -21,12 +21,12 @@ export default function InventoryDrawerBlock() {
           Nearby Branches link or a PLP card — and shows availability by branch with a Select action.
         </p>
         <Link
-          href="/store-locator/inventory/in-pdp"
+          href="/store-locator/inventory/in-plp"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
-          Open full-screen in a PDP
+          Open full-screen in a PLP
           <ArrowUpRight className="size-3.5" />
         </Link>
       </header>

@@ -264,8 +264,8 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
         {(notices.backorder || notices.nearby) ? (
           <div className="mt-6 space-y-3">
             {notices.backorder ? (
-              <Alert className="border-low-stock/40">
-                <TriangleAlert className="size-4 text-low-stock" />
+              <Alert variant="warning">
+                <TriangleAlert />
                 <AlertTitle>Backorder</AlertTitle>
                 <AlertDescription>
                   Some items are available on backorder. We&apos;ll contact you with an estimated availability date.
@@ -273,8 +273,8 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
               </Alert>
             ) : null}
             {notices.nearby ? (
-              <Alert className="border-low-stock/40">
-                <MapPin className="size-4 text-low-stock" />
+              <Alert variant="warning">
+                <MapPin />
                 <AlertTitle>Nearby branches</AlertTitle>
                 <AlertDescription>
                   Some items are available at another branch and may ship separately.
@@ -402,8 +402,8 @@ function FulfillmentStep({
         </div>
 
         {availabilityConstraint ? (
-          <Alert className="border-low-stock/40">
-            <TriangleAlert className="size-4 text-low-stock" />
+          <Alert variant="warning">
+                <TriangleAlert />
             <AlertTitle>Availability depends on branch transfer and cutoff time</AlertTitle>
             <AlertDescription>We&apos;ll confirm the earliest available date before your order is submitted.</AlertDescription>
           </Alert>

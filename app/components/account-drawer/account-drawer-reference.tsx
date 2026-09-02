@@ -18,7 +18,7 @@ export default function AccountDrawerReference() {
         <p className="mb-4 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           Header control
         </p>
-        <div className="inline-flex items-center gap-2 rounded-md bg-foreground px-4 py-2 text-background">
+        <div className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-primary-foreground">
           <AccountFlyout signedIn />
         </div>
         <p className="mt-4 text-sm text-muted-foreground">
