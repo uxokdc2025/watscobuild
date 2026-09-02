@@ -9,19 +9,19 @@ export const metadata: Metadata = {
 };
 
 const FOUNDATIONS = [
-  { label: "Typography", href: "/typography", desc: "Type scale, weights, and usage." },
-  { label: "Color & tokens", href: "/components/all", desc: "Semantic tokens and status colors.", soon: true },
+  { label: "Color & tokens", href: "/components/colors", desc: "Semantic, status, and brand-chrome tokens." },
+  { label: "Typography", href: "/components/typography", desc: "Type scale, weights, and usage." },
 ];
 
 const COMPONENTS = [
   { label: "Button", href: "/components/button", desc: "Every variant, size, and state — with real code." },
-  { label: "Badge", href: "/components/all#labels", desc: "Status labels, Pro Essentials, Best Value." },
-  { label: "Product Card", href: "/components/all#product-cards", desc: "The core PDP/PLP merchandising card." },
-  { label: "PLP Patterns", href: "/components/all#plp", desc: "Search rows, filters, grid/list toggle." },
-  { label: "Save + AHRI", href: "/components/all#pdp-actions", desc: "Save, share, AHRI matched-system actions." },
-  { label: "Forms", href: "/components/all#forms", desc: "Inputs, selects, checkboxes, quantity." },
-  { label: "Feedback", href: "/components/all#feedback", desc: "Alerts, toasts, skeletons, empty states." },
-  { label: "Overlays", href: "/components/all#overlays", desc: "Dialog, sheet, drawer, popover." },
+  { label: "Badge", href: "/components/badge", desc: "Status labels, Pro Essentials, Best Value." },
+  { label: "Product Card", href: "/components/product-card", desc: "The core PDP/PLP merchandising card." },
+  { label: "PLP Patterns", href: "/components/plp", desc: "Search rows, filters, grid/list toggle." },
+  { label: "Save + AHRI", href: "/components/save-ahri", desc: "Save, share, AHRI matched-system actions." },
+  { label: "Forms", href: "/components/forms", desc: "Inputs, selects, checkboxes, quantity." },
+  { label: "Feedback", href: "/components/feedback", desc: "Alerts, toasts, skeletons, empty states." },
+  { label: "Overlays", href: "/components/overlays", desc: "Dialog, sheet, drawer, popover." },
 ];
 
 const BLOCKS = [
