@@ -664,12 +664,9 @@ export function Substitutes({ product }: { product: PdpProduct }) {
                 ) : null}
                 {s.points ? <PointsBadge points={s.points} /> : null}
               </div>
-              <a
-                href="#"
-                className="rounded-md border px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              >
-                View Product
-              </a>
+              <Button asChild variant="outline" size="sm">
+                <a href="#">View Product</a>
+              </Button>
             </div>
           </div>
         ))}
@@ -701,12 +698,9 @@ export function Replacements({ product }: { product: PdpProduct }) {
                 Item: {s.item} &nbsp; MFG: {s.mfg}
               </p>
             </div>
-            <a
-              href="#"
-              className="rounded-md border px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              View Product
-            </a>
+            <Button asChild variant="outline" size="sm">
+              <a href="#">View Product</a>
+            </Button>
           </div>
         ))}
       </div>
@@ -738,12 +732,9 @@ export function BundleComponents({ product }: { product: PdpProduct }) {
                 Item: {s.item} &nbsp; MFG: {s.mfg}
               </p>
             </div>
-            <a
-              href="#"
-              className="rounded-md border px-3 py-1.5 text-sm font-medium whitespace-nowrap outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              View Product
-            </a>
+            <Button asChild variant="outline" size="sm">
+              <a href="#">View Product</a>
+            </Button>
           </div>
         ))}
       </div>

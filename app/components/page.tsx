@@ -1,97 +1,96 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Type } from "lucide-react";
-
-import { ThemeToggle } from "./_showcase";
-import { ActionsSection } from "./_sections/actions";
-import { LabelsSection } from "./_sections/labels";
-import { FormsSection } from "./_sections/forms";
-import { FeedbackSection } from "./_sections/feedback";
-import { OverlaysSection } from "./_sections/overlays";
-import { DataSection } from "./_sections/data";
-import { NavigationSection } from "./_sections/navigation";
-import { MediaSection } from "./_sections/media";
-import { ProductCardsSection } from "./_sections/product-cards";
-import { PdpActionsSection } from "./_sections/pdp-actions";
-import { PlpSection } from "./_sections/plp";
+import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Components — watscobuild",
+  title: "Watsco Design System",
   description:
-    "Every shadcn/ui component in the registry, shown across all its states.",
+    "The Watsco design system — foundations, components, and composed ecommerce blocks. Preview, copy the exact code, ship.",
 };
 
-const NAV = [
-  { id: "product-cards", label: "Product Card" },
-  { id: "plp", label: "PLP Patterns" },
-  { id: "pdp-actions", label: "Save + AHRI" },
-  { id: "actions", label: "Actions" },
-  { id: "labels", label: "Badges" },
-  { id: "forms", label: "Forms" },
-  { id: "feedback", label: "Feedback" },
-  { id: "overlays", label: "Overlays" },
-  { id: "data", label: "Data" },
-  { id: "navigation", label: "Navigation" },
-  { id: "media", label: "Media" },
+const FOUNDATIONS = [
+  { label: "Typography", href: "/typography", desc: "Type scale, weights, and usage." },
+  { label: "Color & tokens", href: "/components/all", desc: "Semantic tokens and status colors.", soon: true },
 ];
 
-export default function ComponentsPage() {
+const COMPONENTS = [
+  { label: "Button", href: "/components/button", desc: "Every variant, size, and state — with real code." },
+  { label: "Badge", href: "/components/all#labels", desc: "Status labels, Pro Essentials, Best Value." },
+  { label: "Product Card", href: "/components/all#product-cards", desc: "The core PDP/PLP merchandising card." },
+  { label: "PLP Patterns", href: "/components/all#plp", desc: "Search rows, filters, grid/list toggle." },
+  { label: "Save + AHRI", href: "/components/all#pdp-actions", desc: "Save, share, AHRI matched-system actions." },
+  { label: "Forms", href: "/components/all#forms", desc: "Inputs, selects, checkboxes, quantity." },
+  { label: "Feedback", href: "/components/all#feedback", desc: "Alerts, toasts, skeletons, empty states." },
+  { label: "Overlays", href: "/components/all#overlays", desc: "Dialog, sheet, drawer, popover." },
+];
+
+const BLOCKS = [
+  { label: "Store Locator", href: "/store-locator", desc: "Branch selection + inventory drawer." },
+  { label: "Checkout", href: "/checkout?demo=1", desc: "Delivery / pickup routing and use cases." },
+];
+
+function CardGrid({
+  items,
+}: {
+  items: { label: string; href: string; desc: string; soon?: boolean }[];
+}) {
   return (
-    <div className="min-h-svh bg-background">
-      <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:px-6">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h1 className="text-lg font-semibold tracking-tight">Components</h1>
-              <p className="text-xs text-muted-foreground">
-                27 components · every state
-              </p>
-            </div>
-            <ThemeToggle />
-          </div>
-          <nav
-            aria-label="Component categories"
-            className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0"
-          >
-            {NAV.map((n) => (
-              <a
-                key={n.id}
-                href={`#${n.id}`}
-                className="rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
-              >
-                {n.label}
-              </a>
-            ))}
-            <span aria-hidden className="mx-1 w-px shrink-0 self-stretch bg-border" />
-            <Link
-              href="/typography"
-              className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
-            >
-              <Type className="size-3.5" />
-              Typography
-            </Link>
-          </nav>
-        </div>
+    <div className="grid gap-3 sm:grid-cols-2">
+      {items.map((c) => (
+        <Link
+          key={c.label}
+          href={c.href}
+          className="group flex flex-col gap-1 rounded-xl border bg-card p-4 transition-colors hover:border-foreground/20 hover:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+        >
+          <span className="flex items-center gap-1.5 text-sm font-semibold">
+            {c.label}
+            {c.soon ? (
+              <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+                Soon
+              </span>
+            ) : (
+              <ArrowRight className="size-3.5 -translate-x-0.5 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-60" />
+            )}
+          </span>
+          <span className="text-sm text-muted-foreground">{c.desc}</span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+export default function ComponentsOverview() {
+  return (
+    <main className="mx-auto max-w-4xl space-y-12 px-4 py-10 md:px-8">
+      <header className="max-w-2xl">
+        <h1 className="text-3xl font-bold tracking-tight">Watsco Design System</h1>
+        <p className="mt-2 text-muted-foreground">
+          The single source of truth for the Watsco storefronts. Every component ships a
+          live preview and the <span className="font-medium text-foreground">exact code</span> to
+          paste — so what devs build always matches the library.
+        </p>
       </header>
 
-      <main className="mx-auto max-w-6xl space-y-16 px-4 py-10 md:px-6">
-        <ProductCardsSection />
-        <PlpSection />
-        <PdpActionsSection />
-        <ActionsSection />
-        <LabelsSection />
-        <FormsSection />
-        <FeedbackSection />
-        <OverlaysSection />
-        <DataSection />
-        <NavigationSection />
-        <MediaSection />
+      <section className="space-y-4">
+        <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          Foundations
+        </h2>
+        <CardGrid items={FOUNDATIONS} />
+      </section>
 
-        <footer className="border-t pt-6 text-sm text-muted-foreground">
-          Click any <span className="font-mono text-xs">add …</span> chip to copy
-          its install command.
-        </footer>
-      </main>
-    </div>
+      <section className="space-y-4">
+        <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          Components
+        </h2>
+        <CardGrid items={COMPONENTS} />
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          Blocks
+        </h2>
+        <CardGrid items={BLOCKS} />
+      </section>
+    </main>
   );
 }
