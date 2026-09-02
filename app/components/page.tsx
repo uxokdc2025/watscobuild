@@ -25,8 +25,9 @@ const COMPONENTS = [
 ];
 
 const BLOCKS = [
-  { label: "Store Locator", href: "/store-locator", desc: "Branch selection + inventory drawer." },
-  { label: "Checkout", href: "/checkout?demo=1", desc: "Delivery / pickup routing and use cases." },
+  { label: "Branch Selector", href: "/components/branch-selector", desc: "Global branch finder — slides in from the left." },
+  { label: "Inventory Drawer", href: "/components/inventory-drawer", desc: "Per-branch stock — slides in from the right." },
+  { label: "Checkout", href: "/components/checkout", desc: "Delivery / pickup routing and use cases." },
 ];
 
 function CardGrid({
