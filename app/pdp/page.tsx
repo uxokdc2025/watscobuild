@@ -547,7 +547,7 @@ export default function PdpMasterPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="font-semibold text-foreground">
-                Watsco PDP Prototype
+                Watsco Prototype
               </p>
               <p className="mt-1">
                 Started July 23, 2026 · Design-system prototype for the Watsco
