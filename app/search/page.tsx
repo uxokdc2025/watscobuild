@@ -42,7 +42,7 @@ export default async function SearchPage({
   if (!brand) notFound();
 
   const pageSize = Math.max(1, Math.min(48, Number.parseInt(pageSizeParam ?? "24", 10) || 24));
-  const signedIn = signedin === "1" || signedin === "true";
+  const signedIn = signedin !== "0" && signedin !== "false";
 
   // Slice the mock set to page_size so the grid respects the URL.
   const results = MOCK_RESULTS.slice(0, pageSize);

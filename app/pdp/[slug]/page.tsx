@@ -31,6 +31,6 @@ export default async function PdpSlugPage({
   const product = getPdp(slug);
   if (!product) notFound();
   return (
-    <Pdp product={product} signedIn={signedin === "1" || signedin === "true"} />
+    <Pdp product={product} signedIn={signedin !== "0" && signedin !== "false"} />
   );
 }

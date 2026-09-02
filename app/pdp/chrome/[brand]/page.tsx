@@ -36,7 +36,7 @@ export default async function BrandPdpPage({
   const product = pdps.find((p) => p.brandKey === brand);
   if (product) {
     return (
-      <Pdp product={product} signedIn={signedin === "1" || signedin === "true"} />
+      <Pdp product={product} signedIn={signedin !== "0" && signedin !== "false"} />
     );
   }
 
