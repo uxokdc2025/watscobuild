@@ -9,6 +9,7 @@ export function ProductListRow({
   title,
   item,
   mfg,
+  meta,
   actions,
 }: {
   image?: string;
@@ -17,6 +18,8 @@ export function ProductListRow({
   title: ReactNode;
   item: string;
   mfg: string;
+  /** Extra content in the middle column, under item/mfg (e.g. branch stock). */
+  meta?: ReactNode;
   actions: ReactNode;
 }) {
   return (
@@ -31,6 +34,7 @@ export function ProductListRow({
         <p className="text-xs font-medium text-primary">{brand}</p>
         <div className="text-sm font-semibold leading-snug">{title}</div>
         <p className="mt-1 text-xs text-muted-foreground">Item: {item} · MFG: {mfg}</p>
+        {meta ? <div className="mt-2">{meta}</div> : null}
       </div>
       <div className="text-sm sm:text-right">{actions}</div>
     </article>

@@ -554,9 +554,10 @@ function ProductRow({
       title={<Link href={`/pdp/tradepro-${result.item.toLowerCase()}`} className="hover:text-primary">{result.title}</Link>}
       item={result.item}
       mfg={result.mfg}
+      meta={signedIn ? <StockLine result={result} /> : undefined}
       actions={
         signedIn ? (
-          <SignedInCommerce result={result} align="right" />
+          <SignedInCommerce result={result} align="right" showStock={false} />
         ) : (
           <p>
             <span className="font-medium">Sign in</span>{" "}
@@ -571,9 +572,11 @@ function ProductRow({
 function SignedInCommerce({
   result,
   align = "left",
+  showStock = true,
 }: {
   result: SearchResult;
   align?: "left" | "right";
+  showStock?: boolean;
 }) {
   const { addItem } = useCart();
   return (
@@ -589,7 +592,7 @@ function SignedInCommerce({
           Earn {result.points.toLocaleString()} points
         </p>
       ) : null}
-      <StockLine result={result} />
+      {showStock ? <StockLine result={result} /> : null}
       <Button
         size="sm"
         className="mt-2"
