@@ -148,6 +148,9 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
   const notices = cfg.notices;
   const [po, setPo] = React.useState("PO-2048");
   const [poError, setPoError] = React.useState<string | undefined>();
+  const [confirmed, setConfirmed] = React.useState(false);
+  const [coupon, setCoupon] = React.useState("");
+  const [appliedCoupon, setAppliedCoupon] = React.useState<string | null>(null);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * TAX_RATE;
@@ -210,6 +213,15 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
     setPoError(undefined);
     setStep("payment");
   };
+
+  // The sticky order-summary CTA is context-aware: it carries the forward action
+  // for the current step, so on a long review the Place-order button stays pinned.
+  const primary =
+    step === "shipping"
+      ? { label: "Continue to payment", onClick: goToPayment, disabled: false }
+      : step === "payment"
+        ? { label: "Continue to review", onClick: () => setStep("review"), disabled: false }
+        : { label: "Place order", onClick: () => setSubmitted(true), disabled: !confirmed };
 
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
@@ -296,28 +308,39 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
                 seededJob={cfg.seededJob}
                 seededDate={cfg.seededDate}
                 availabilityConstraint={cfg.availabilityConstraint}
-                onNext={goToPayment}
               />
             ) : null}
             {step === "payment" ? (
-              <PaymentStep payment={payment} setPayment={setPayment} onBack={() => setStep("shipping")} onNext={() => setStep("review")} />
+              <PaymentStep payment={payment} setPayment={setPayment} onBack={() => setStep("shipping")} />
             ) : null}
             {step === "review" ? (
               <ReviewStep
                 items={items}
                 fulfillment={fulfillment}
                 payment={payment}
-                showCoupon={cfg.showCoupon}
                 showSpecialHandling={cfg.showSpecialHandling}
+                confirmed={confirmed}
+                setConfirmed={setConfirmed}
                 onBack={() => setStep("payment")}
                 onEditFulfillment={() => setStep("shipping")}
                 onEditPayment={() => setStep("payment")}
-                onSubmit={() => setSubmitted(true)}
               />
             ) : null}
           </section>
 
-          <OrderSummary items={items} subtotal={subtotal} tax={tax} total={total} saved={saved} onSave={() => setSaved(true)} />
+          <OrderSummary
+            items={items}
+            subtotal={subtotal}
+            tax={tax}
+            total={total}
+            saved={saved}
+            onSave={() => setSaved(true)}
+            primary={primary}
+            coupon={coupon}
+            setCoupon={setCoupon}
+            appliedCoupon={appliedCoupon}
+            onApplyCoupon={() => coupon.trim() && setAppliedCoupon(coupon.trim().toUpperCase())}
+          />
         </div>
       </div>
     </main>
@@ -346,7 +369,6 @@ function FulfillmentStep({
   seededJob,
   seededDate,
   availabilityConstraint,
-  onNext,
 }: {
   fulfillment: "delivery" | "pickup";
   setFulfillment: (v: "delivery" | "pickup") => void;
@@ -356,7 +378,6 @@ function FulfillmentStep({
   seededJob: string;
   seededDate: string;
   availabilityConstraint: boolean;
-  onNext: () => void;
 }) {
   const isPickup = fulfillment === "pickup";
   return (
@@ -408,16 +429,12 @@ function FulfillmentStep({
             <AlertDescription>We&apos;ll confirm the earliest available date before your order is submitted.</AlertDescription>
           </Alert>
         ) : null}
-
-        <div className="flex justify-end border-t pt-5">
-          <Button size="sm" onClick={onNext}>Continue to payment</Button>
-        </div>
       </div>
     </>
   );
 }
 
-function PaymentStep({ payment, setPayment, onBack, onNext }: { payment: "terms" | "card"; setPayment: (v: "terms" | "card") => void; onBack: () => void; onNext: () => void }) {
+function PaymentStep({ payment, setPayment, onBack }: { payment: "terms" | "card"; setPayment: (v: "terms" | "card") => void; onBack: () => void }) {
   const [card, setCard] = React.useState<string>(SAVED_CARDS[0].id);
   return (
     <>
@@ -462,9 +479,8 @@ function PaymentStep({ payment, setPayment, onBack, onNext }: { payment: "terms"
           </div>
         ) : null}
 
-        <div className="flex justify-between border-t pt-5">
+        <div className="flex justify-start border-t pt-5">
           <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
-          <Button size="sm" onClick={onNext}>Continue to review</Button>
         </div>
       </div>
     </>
@@ -475,24 +491,23 @@ function ReviewStep({
   items,
   fulfillment,
   payment,
-  showCoupon,
   showSpecialHandling,
+  confirmed,
+  setConfirmed,
   onBack,
   onEditFulfillment,
   onEditPayment,
-  onSubmit,
 }: {
   items: CartItem[];
   fulfillment: string;
   payment: string;
-  showCoupon: boolean;
   showSpecialHandling: boolean;
+  confirmed: boolean;
+  setConfirmed: (v: boolean) => void;
   onBack: () => void;
   onEditFulfillment: () => void;
   onEditPayment: () => void;
-  onSubmit: () => void;
 }) {
-  const [confirmed, setConfirmed] = React.useState(false);
   return (
     <>
       <SectionHeading number="3" title="Review & submit" />
@@ -510,16 +525,11 @@ function ReviewStep({
           </div>
         </div>
 
-        {showCoupon || showSpecialHandling ? (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {showCoupon ? <Field id="coupon" label="Coupon code" placeholder="Enter coupon code" /> : null}
-            {showSpecialHandling ? (
-              <Label className="flex items-center gap-3 rounded-md border p-3 text-sm font-normal sm:mt-8">
-                <Checkbox />
-                Order requires special handling
-              </Label>
-            ) : null}
-          </div>
+        {showSpecialHandling ? (
+          <Label className="flex items-center gap-3 rounded-md border p-3 text-sm font-normal">
+            <Checkbox />
+            Order requires special handling
+          </Label>
         ) : null}
 
         <div className="rounded-md border">
@@ -544,9 +554,8 @@ function ReviewStep({
           <span>I confirm the order details are correct and agree to the account terms.</span>
         </Label>
 
-        <div className="flex justify-between border-t pt-5">
+        <div className="flex justify-start border-t pt-5">
           <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
-          <Button size="sm" onClick={onSubmit} disabled={!confirmed}>Place order</Button>
         </div>
       </div>
     </>
@@ -560,6 +569,11 @@ function OrderSummary({
   total,
   saved,
   onSave,
+  primary,
+  coupon,
+  setCoupon,
+  appliedCoupon,
+  onApplyCoupon,
 }: {
   items: CartItem[];
   subtotal: number;
@@ -567,6 +581,11 @@ function OrderSummary({
   total: number;
   saved: boolean;
   onSave: () => void;
+  primary: { label: string; onClick: () => void; disabled: boolean };
+  coupon: string;
+  setCoupon: (v: string) => void;
+  appliedCoupon: string | null;
+  onApplyCoupon: () => void;
 }) {
   return (
     <aside className="h-fit rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
@@ -606,13 +625,49 @@ function OrderSummary({
             <span>{formatUSD(total)}</span>
           </div>
         </div>
+        {/* Coupon — lives in the summary, near the total. */}
+        <div className="border-t pt-4">
+          <div className="flex gap-2">
+            <Input
+              value={coupon}
+              onChange={(e) => setCoupon(e.target.value)}
+              placeholder="Coupon code"
+              aria-label="Coupon code"
+              className="h-9"
+            />
+            <Button variant="outline" size="sm" className="h-9 shrink-0" onClick={onApplyCoupon} disabled={!coupon.trim()}>
+              Apply
+            </Button>
+          </div>
+          {appliedCoupon ? (
+            <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-in-stock">
+              <Check className="size-3.5" />
+              Coupon {appliedCoupon} applied
+            </p>
+          ) : null}
+        </div>
+
         <div className="rounded-md bg-muted/50 p-3 text-xs leading-5 text-muted-foreground">
           <ShieldCheck className="mr-1 inline size-4 text-in-stock" aria-hidden="true" />
           Your total is shown before payment details, with no surprise fees.
         </div>
-        <Button variant="outline" size="sm" className="w-full" onClick={onSave} disabled={saved}>
-          {saved ? <><Check className="size-4" />Cart saved</> : "Save cart for later"}
+
+        {/* Sticky primary CTA — the strongest action, always reachable. */}
+        <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
+          {primary.label}
         </Button>
+
+        {/* Save for later — a de-emphasized link, not a competing button. */}
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saved}
+            className="text-sm font-medium text-primary transition-colors hover:text-primary/80 disabled:text-muted-foreground"
+          >
+            {saved ? "Cart saved" : "Save cart for later"}
+          </button>
+        </div>
       </div>
     </aside>
   );
