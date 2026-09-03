@@ -332,11 +332,24 @@ export function MegaMenu({
         aria-haspopup="menu"
         onClick={toggle}
         className={cn(
-          "group my-1.5 inline-flex min-h-9 items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
-          open && "bg-white/10 text-white",
+          // Top-level nav gets its OWN treatment — an Ulta-style indicator bar
+          // below the item on hover/open, NOT the bg-fill/underline used by the
+          // location/list/account/cart controls.
+          "group relative my-1.5 inline-flex min-h-9 items-center gap-1 px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
+          open && "text-white",
         )}
       >
-        <span className="underline-offset-4 group-hover:underline">{label}</span>
+        <span>{label}</span>
+        {/* Indicator line (Ulta pattern): a short bar under the item, offset
+            below the text — appears on hover and stays while open. Not an
+            underline on the text itself. */}
+        <span
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute inset-x-3 bottom-0 h-[3px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100",
+            open && "opacity-100",
+          )}
+        />
         {/* Caret nudges UP on hover and stays up while open — it never rotates.
             Wrapped in an inline-flex span because CSS transforms don't move the
             <svg> root itself reliably. */}

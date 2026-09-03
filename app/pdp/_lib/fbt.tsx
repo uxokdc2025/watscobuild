@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "./auth";
 import { ProductCard, type ProductCardData } from "./product-card";
@@ -46,10 +47,17 @@ export function CarouselStrip({
   items,
   title,
   extraHeader,
+  hideHeader,
+  onApiChange,
 }: {
   items: FbtProduct[];
   title?: React.ReactNode;
   extraHeader?: React.ReactNode;
+  /** When the arrows live on an outer row (e.g. the tab row), skip the
+   *  strip's own header so there's no empty band above the cards. */
+  hideHeader?: boolean;
+  /** Surface this strip's Embla api so an outer control row can drive it. */
+  onApiChange?: (api: CarouselApi | undefined) => void;
 }) {
   const { signedIn } = useAuth();
   const [api, setApi] = React.useState<CarouselApi>();
@@ -57,6 +65,7 @@ export function CarouselStrip({
   const [snaps, setSnaps] = React.useState<number[]>([]);
 
   React.useEffect(() => {
+    onApiChange?.(api);
     if (!api) return;
     const sync = () => {
       setSelected(api.selectedScrollSnap());
@@ -65,7 +74,7 @@ export function CarouselStrip({
     sync();
     api.on("select", sync);
     api.on("reInit", sync);
-  }, [api]);
+  }, [api, onApiChange]);
 
   if (!items.length) {
     return (
@@ -83,7 +92,7 @@ export function CarouselStrip({
       opts={{ align: "start" }}
       className="flex flex-col gap-3 overflow-x-clip"
     >
-      {(title || extraHeader || showControls) && (
+      {!hideHeader && (title || extraHeader || showControls) && (
         <CarouselHeader>
           <div className="flex flex-wrap items-center gap-3">
             {title}
@@ -126,11 +135,6 @@ export function CarouselStrip({
   );
 }
 
-// Back-compat alias — some content still calls FbtRail.
-const FbtRail = ({ items }: { items: FbtProduct[] }) => (
-  <CarouselStrip items={items} />
-);
-
 export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
   if (!product.fbt?.length) return null;
   const suggest = product.detailsStyle === "about";
@@ -158,15 +162,52 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
     );
   }
 
-  // Multiple groups: heading stays above the tabs; each tab's strip carries
-  // its own top-right arrows for the cards it shows.
+  // Multiple groups: heading stays above the tabs; the prev/next arrows sit on
+  // the tab row itself (tabs left, arrows right) driving the active tab's
+  // carousel — no empty header band between the tabs and the cards.
+  return (
+    <MultiGroupFbt product={product} heading={heading} suggestBtn={suggestBtn} />
+  );
+}
+
+function MultiGroupFbt({
+  product,
+  heading,
+  suggestBtn,
+}: {
+  product: PdpProduct;
+  heading: React.ReactNode;
+  suggestBtn: React.ReactNode;
+}) {
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [canPrev, setCanPrev] = React.useState(false);
+  const [canNext, setCanNext] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!api) {
+      setCanPrev(false);
+      setCanNext(false);
+      return;
+    }
+    const sync = () => {
+      setCanPrev(api.canScrollPrev());
+      setCanNext(api.canScrollNext());
+    };
+    sync();
+    api.on("select", sync);
+    api.on("reInit", sync);
+  }, [api]);
+
+  const overflow = canPrev || canNext;
+
   return (
     <section aria-label="Frequently bought together" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         {heading}
         {suggestBtn}
       </div>
-      <Tabs defaultValue={product.fbt[0].label}>
+      <Tabs defaultValue={product.fbt![0].label}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
           <TabsList
             className={cn(
               // Track: rounded pill container, subtle muted background, small
@@ -194,15 +235,40 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
               "[&_[data-slot=tabs-trigger][data-state=active]]:shadow-sm",
             )}
           >
-            {product.fbt.map((g) => (
+            {product.fbt!.map((g) => (
               <TabsTrigger key={g.label} value={g.label}>
                 {g.label}
               </TabsTrigger>
             ))}
           </TabsList>
-          {product.fbt.map((g) => (
-            <TabsContent key={g.label} value={g.label} className="mt-4">
-              <FbtRail items={g.items} />
+          {overflow ? (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                aria-label="Previous"
+                disabled={!canPrev}
+                onClick={() => api?.scrollPrev()}
+              >
+                <ChevronLeft className="size-4" aria-hidden="true" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                aria-label="Next"
+                disabled={!canNext}
+                onClick={() => api?.scrollNext()}
+              >
+                <ChevronRight className="size-4" aria-hidden="true" />
+              </Button>
+            </div>
+          ) : null}
+          </div>
+          {product.fbt!.map((g) => (
+            <TabsContent key={g.label} value={g.label} className="mt-3">
+              <CarouselStrip items={g.items} hideHeader onApiChange={setApi} />
             </TabsContent>
           ))}
         </Tabs>

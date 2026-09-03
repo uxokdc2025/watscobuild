@@ -296,9 +296,16 @@ function UnifiedHeader({
               <button
                 key={n}
                 type="button"
-                className="group my-1.5 inline-flex min-h-9 items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="group relative my-1.5 inline-flex min-h-9 items-center gap-1 px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
-                <span className="underline-offset-4 group-hover:underline">{n}</span>
+                <span>{n}</span>
+                {/* Indicator line (Ulta pattern): a short bar below the item on
+                    hover — NOT a text underline, and no bg-fill. Matches the
+                    Products MegaMenu trigger. */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-3 bottom-0 h-[3px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                />
                 {NAV_CARET.test(n) ? (
                   // Caret nudges UP on hover — matches the Products trigger; no
                   // rotation. Wrapped in an inline-flex span because CSS
