@@ -147,14 +147,17 @@ function FbtTabsDemo() {
   return (
     <div className="w-full">
       <Tabs defaultValue="best-sellers">
-        {/* Arrows live ON the tab row: TabsList left, prev/next cluster right. */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <TabsList>
-            <TabsTrigger value="best-sellers">Best Sellers</TabsTrigger>
-            <TabsTrigger value="pads-blocks">Pads &amp; Blocks</TabsTrigger>
-            <TabsTrigger value="refrigerant-oils">Refrigerant &amp; Oils</TabsTrigger>
-          </TabsList>
-          <div className="flex items-center gap-2">
+        {/* Arrows live ON the tab row: TabsList left (scrolls if cramped),
+            prev/next cluster right (shrink-0 so it never wraps off the row). */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 overflow-x-auto">
+            <TabsList>
+              <TabsTrigger value="best-sellers">Best Sellers</TabsTrigger>
+              <TabsTrigger value="pads-blocks">Pads &amp; Blocks</TabsTrigger>
+              <TabsTrigger value="refrigerant-oils">Refrigerant &amp; Oils</TabsTrigger>
+            </TabsList>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
             <Button
               type="button"
               variant="outline"
@@ -352,14 +355,18 @@ React.useEffect(() => {
 
 return (
   <Tabs defaultValue={groups[0].value}>
-    {/* Arrows live ON the tab row: TabsList left, prev/next cluster right. */}
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <TabsList>
-        {groups.map((g) => (
-          <TabsTrigger key={g.value} value={g.value}>{g.label}</TabsTrigger>
-        ))}
-      </TabsList>
-      <div className="flex items-center gap-2">
+    {/* Arrows live ON the tab row. No flex-wrap: the TabsList sits in a
+        min-w-0 overflow-x-auto wrapper (scrolls the chips if the row is
+        cramped) and the arrows cluster is shrink-0, so it never wraps below. */}
+    <div className="flex items-center justify-between gap-3">
+      <div className="min-w-0 overflow-x-auto">
+        <TabsList>
+          {groups.map((g) => (
+            <TabsTrigger key={g.value} value={g.value}>{g.label}</TabsTrigger>
+          ))}
+        </TabsList>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
         <Button
           type="button" variant="outline" size="icon" aria-label="Previous"
           disabled={!canPrev} onClick={() => api?.scrollPrev()}
