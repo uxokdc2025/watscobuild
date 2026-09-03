@@ -74,6 +74,7 @@ export default function ButtonReference() {
 <Button variant="secondary">See More Branches</Button>
 <Button variant="outline">View Product</Button>
 <Button variant="ghost">Ghost</Button>
+<Button variant="ahri">Find an AHRI Matched System</Button>
 <Button variant="link">Inline link</Button>
 <Button variant="destructive">Delete</Button>`}
           >
@@ -81,6 +82,7 @@ export default function ButtonReference() {
             <Button variant="secondary">See More Branches</Button>
             <Button variant="outline">View Product</Button>
             <Button variant="ghost">Ghost</Button>
+            <Button variant="ahri">Find an AHRI Matched System</Button>
             <Button variant="link">Inline link</Button>
             <Button variant="destructive">Delete</Button>
           </PreviewCode>
@@ -255,6 +257,7 @@ export default function ButtonReference() {
               { name: "secondary", type: "outline-fill", description: "Secondary action — bordered, fills on hover (See More Branches)." },
               { name: "outline", type: "bordered", description: "Low-emphasis action on cards (View Product)." },
               { name: "ghost", type: "text", description: "Minimal — steppers, toolbar toggles, icon buttons." },
+              { name: "ahri", type: "violet outline", description: "Discovery CTA (AHRI matched system) — violet outline, light-purple hover." },
               { name: "link", type: "text", description: "Inline navigation that reads as a link." },
               { name: "destructive", type: "danger", description: "Irreversible/removal actions (Delete)." },
             ]}

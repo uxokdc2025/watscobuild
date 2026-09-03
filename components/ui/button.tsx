@@ -21,6 +21,7 @@ const buttonVariants = cva(
         // Tertiary: white by default, light-grey fill on hover. Never underlines.
         tertiary:
           "text-foreground hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        ahri: "border border-violet-500 bg-transparent font-semibold text-violet-700 hover:bg-violet-50 hover:text-violet-800 dark:border-violet-400 dark:text-violet-300 dark:hover:bg-violet-950/40",
         // The ONLY variant that underlines — reserved for blue inline links.
         link: "text-primary underline-offset-4 hover:underline",
       },

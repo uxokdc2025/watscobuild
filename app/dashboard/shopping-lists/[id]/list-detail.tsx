@@ -7,8 +7,9 @@ import {
   FolderInput,
   Minus,
   Plus,
-  Repeat,
+  Replace,
   Settings2,
+  Shuffle,
   ShoppingCart,
   Tag,
   Trash2,
@@ -19,11 +20,19 @@ import { AccountSearchInput } from "../../_components/account-table";
 import { getListMeta } from "../_list-meta";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductListRow } from "@/components/ui/product-list-row";
-import { StockStatus, SubstituteBadge } from "@/components/ui/label-badges";
+import { StockStatus } from "@/components/ui/label-badges";
 import {
   DRAWER_MOTION_MS,
   DrawerCloseButton,
@@ -221,14 +230,30 @@ function QtyStepper({
   );
 }
 
+/* ─────────────────────────── Replacement badge ───────────────────────────
+ * Replacement theme uses the `Replace` icon (blue); substitutes use `Shuffle`
+ * (green). Kept visually distinct so the two never read as the same thing. */
+
+function ReplacementBadge() {
+  return (
+    <Badge variant="soft" color="blue">
+      <Replace className="size-3" />
+      Replacement
+    </Badge>
+  );
+}
+
 /* ─────────────────────────── Availability drawer row ─────────────────────────── */
-/* Reuses ProductListRow for the substitute/replacement drawer entries. */
+/* Reuses ProductListRow for the substitute/replacement drawer entries. The CTA
+ * reads "Replace" (Replace icon) or "Substitute" (Shuffle icon) per `kind`. */
 
 function AltRow({
   product,
+  kind,
   onAdd,
 }: {
   product: AltProduct;
+  kind: "replacement" | "substitute";
   onAdd: (product: AltProduct) => void;
 }) {
   return (
@@ -257,8 +282,17 @@ function AltRow({
             disabled={product.qty <= 0}
             onClick={() => onAdd(product)}
           >
-            <Plus />
-            Add
+            {kind === "replacement" ? (
+              <>
+                <Replace className="size-3.5" />
+                Replace
+              </>
+            ) : (
+              <>
+                <Shuffle className="size-3.5" />
+                Substitute
+              </>
+            )}
           </Button>
         }
       />
@@ -301,11 +335,11 @@ function ReplacementsDrawer({
     >
       <DrawerPanel
         open={!closing}
-        side="left"
+        side="right"
         role="dialog"
         aria-modal="true"
         aria-label="Replacements"
-        className="absolute inset-y-0 left-0 flex w-full max-w-[440px] flex-col bg-background text-foreground shadow-2xl"
+        className="absolute inset-y-0 right-0 flex w-full max-w-[440px] flex-col bg-background text-foreground shadow-2xl"
       >
         <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-5 py-4">
           <h1 className="text-lg font-bold">Replacements</h1>
@@ -342,12 +376,12 @@ function ReplacementsDrawer({
           {replacements.length > 0 ? (
             <section className="px-5 py-4">
               <h2 className="mb-3 flex items-center gap-2 text-sm font-bold">
-                <Repeat className="size-4 text-muted-foreground" />
+                <Replace className="size-4 text-muted-foreground" />
                 Replacements
               </h2>
               <div className="space-y-3">
                 {replacements.map((r) => (
-                  <AltRow key={r.id} product={r} onAdd={onAdd} />
+                  <AltRow key={r.id} product={r} kind="replacement" onAdd={onAdd} />
                 ))}
               </div>
             </section>
@@ -356,12 +390,12 @@ function ReplacementsDrawer({
           {substitutes.length > 0 ? (
             <section className="border-t px-5 py-4">
               <h2 className="mb-3 flex items-center gap-2 text-sm font-bold">
-                <Repeat className="size-4 text-muted-foreground" />
+                <Shuffle className="size-4 text-muted-foreground" />
                 Substitutes
               </h2>
               <div className="space-y-3">
                 {substitutes.map((s) => (
-                  <AltRow key={s.id} product={s} onAdd={onAdd} />
+                  <AltRow key={s.id} product={s} kind="substitute" onAdd={onAdd} />
                 ))}
               </div>
             </section>
@@ -397,8 +431,8 @@ function DetailRow({
   const [comment, setComment] = React.useState("");
 
   return (
-    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-1 border-b last:border-0">
-      <div className="flex flex-col items-center gap-2 pt-6 pl-3">
+    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start border-b last:border-0">
+      <div className="flex flex-col items-center gap-2 pt-4 pl-4">
         <Checkbox
           checked={selected}
           onCheckedChange={(v) => onToggle(v === true)}
@@ -471,41 +505,43 @@ function DetailRow({
             <StockStatus qty={product.qty}>
               {product.qty > 0 ? "In stock" : "Out of stock"}
             </StockStatus>
-            {product.replacement ? <SubstituteBadge /> : null}
+            {product.replacement ? <ReplacementBadge /> : null}
           </div>
         }
         actions={
-          <div className="flex flex-col items-start gap-3 sm:items-end">
+          <div className="flex w-full flex-col items-start gap-2.5 sm:w-auto sm:items-end">
             <span className="text-base font-semibold">
               {formatUSD(product.price)}
             </span>
-            <QtyStepper value={qty} onChange={onQty} label={product.mfg} />
             <div className="flex items-center gap-2">
+              <QtyStepper value={qty} onChange={onQty} label={product.mfg} />
               <Button size="sm" className="min-h-11" onClick={onAdd}>
                 <Plus />
                 Add
               </Button>
+            </div>
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 aria-label={`Remove ${product.mfg}`}
                 onClick={onRemove}
               >
                 <Trash2 />
               </Button>
+              {product.replacement ? (
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  className="h-auto px-0"
+                  onClick={onViewSubstitutes}
+                >
+                  <Replace className="size-3.5" />
+                  View substitutes
+                </Button>
+              ) : null}
             </div>
-            {product.replacement ? (
-              <Button
-                type="button"
-                variant="link"
-                size="sm"
-                className="h-auto px-0"
-                onClick={onViewSubstitutes}
-              >
-                <Repeat className="size-3.5" />
-                View substitutes
-              </Button>
-            ) : null}
           </div>
         }
       />
@@ -593,39 +629,58 @@ export function ListDetail({ id }: { id: string }) {
     <DashboardShell
       title={meta.name}
       description="Review, restock, and reorder the products saved to this list."
-      actions={
-        <Button className="min-h-11" onClick={addAll}>
-          <ShoppingCart size={16} />
-          Add all items to cart
-        </Button>
+      breadcrumb={
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard/shopping-lists">Shopping Lists</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{meta.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       }
     >
       <div className="space-y-3">
-        {/* Header meta strip */}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-          <Link
-            href="/dashboard/shopping-lists"
-            className="text-primary hover:underline"
-          >
-            ← All shopping lists
-          </Link>
-          <span aria-hidden="true">·</span>
-          <span>Created {meta.created}</span>
-          <Badge variant="outline">{meta.type}</Badge>
-          <span aria-hidden="true">·</span>
-          <span>
-            {rows.length} product{rows.length === 1 ? "" : "s"}
-          </span>
-          <span className="ml-auto text-foreground">
-            List total:{" "}
-            <span className="text-base font-semibold">{formatUSD(total)}</span>
-          </span>
+        {/* Meta row — left: created · type · count · right: primary action + total. */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
+            <span>Created {meta.created}</span>
+            <span aria-hidden="true">·</span>
+            <Badge variant="outline">{meta.type}</Badge>
+            <span aria-hidden="true">·</span>
+            <span>
+              {rows.length} product{rows.length === 1 ? "" : "s"}
+            </span>
+          </div>
+          <div className="flex flex-col items-start gap-1 sm:items-end">
+            <Button className="min-h-11" onClick={addAll}>
+              <ShoppingCart size={16} />
+              Add all items to cart
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              List total{" "}
+              <span className="font-semibold text-foreground">
+                {formatUSD(total)}
+              </span>
+            </span>
+          </div>
         </div>
 
         {/* Replacements review banner (yellow warning tone). */}
         {bannerProducts.length > 0 ? (
           <Alert variant="warning">
-            <Repeat />
+            <Replace />
             <AlertTitle>Replacements available</AlertTitle>
             <AlertDescription>
               <p>The following items have a replacement or substitute.</p>
@@ -667,11 +722,12 @@ export function ListDetail({ id }: { id: string }) {
                         Dismiss
                       </Button>
                       <Button
+                        variant="secondary"
                         size="sm"
                         className="min-h-11"
                         onClick={() => setDrawerFor(p)}
                       >
-                        <Repeat className="size-3.5" />
+                        <Replace className="size-3.5" />
                         View substitutes
                       </Button>
                     </div>

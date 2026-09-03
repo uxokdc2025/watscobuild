@@ -39,8 +39,8 @@ export default async function InventoryInPlpPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { v = "1" } = await searchParams;
-  const variant = ["1", "2", "3", "c"].includes(v) ? v : "1";
+  const { v = "c" } = await searchParams;
+  const variant = ["1", "2", "3", "c"].includes(v) ? v : "c";
   const brand = getBrand("homans");
   if (!brand) notFound();
 
@@ -70,10 +70,13 @@ export default async function InventoryInPlpPage({
         {/* Scrim + right-side drawer */}
         <DrawerOverlay>
           <DrawerPanel open side="right" className="absolute inset-y-0 right-0 flex">
-            {/* Close X floats on the scrim, LEFT of the drawer edge. */}
-            <div className="absolute top-4 -left-2">
-              <InventoryCloseX />
-            </div>
+            {/* Variants without their own header X get the floating scrim close
+                control; the store-locator drawer ("c") has its own header X. */}
+            {variant !== "c" ? (
+              <div className="absolute top-4 -left-2">
+                <InventoryCloseX />
+              </div>
+            ) : null}
             <VariantDrawer v={variant} />
           </DrawerPanel>
         </DrawerOverlay>

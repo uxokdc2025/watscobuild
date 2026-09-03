@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   TriangleAlert,
   Truck,
+  X,
 } from "lucide-react";
 
 import { useCart, type CartItem } from "@/components/cart/cart-context";
@@ -133,6 +134,20 @@ function RadioCard({
   );
 }
 
+/** Small dismiss control for a lightly-filled Alert (inherits the alert tone). */
+function DismissButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="absolute top-2 right-2 grid size-7 place-items-center rounded-md text-current/70 transition-colors hover:bg-black/5 hover:text-current focus-visible:ring-2 focus-visible:ring-current/40 focus-visible:outline-none"
+    >
+      <X className="size-4" />
+    </button>
+  );
+}
+
 /* ───────────────────────── Main ───────────────────────── */
 
 export default function CheckoutClient({ scenario, demo = false }: { scenario?: CheckoutCase; demo?: boolean }) {
@@ -145,7 +160,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
   const [saved, setSaved] = React.useState(false);
   const [fulfillment, setFulfillment] = React.useState(cfg.fulfillment);
   const [payment, setPayment] = React.useState(cfg.payment);
-  const notices = cfg.notices;
+  const [notices, setNotices] = React.useState(cfg.notices);
   const [po, setPo] = React.useState("PO-2048");
   const [poError, setPoError] = React.useState<string | undefined>();
   const [confirmed, setConfirmed] = React.useState(false);
@@ -153,8 +168,10 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
   const [appliedCoupon, setAppliedCoupon] = React.useState<string | null>(null);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
+  // Applied coupon takes 10% off the subtotal.
+  const discount = appliedCoupon ? subtotal * 0.1 : 0;
+  const tax = (subtotal - discount) * TAX_RATE;
+  const total = subtotal - discount + tax;
 
   if (submitted) {
     return (
@@ -276,21 +293,23 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
         {(notices.backorder || notices.nearby) ? (
           <div className="mt-6 space-y-3">
             {notices.backorder ? (
-              <Alert variant="warning">
+              <Alert variant="destructive" className="pr-10">
                 <TriangleAlert />
                 <AlertTitle>Backorder</AlertTitle>
                 <AlertDescription>
                   Some items are available on backorder. We&apos;ll contact you with an estimated availability date.
                 </AlertDescription>
+                <DismissButton label="Dismiss backorder notice" onClick={() => setNotices((n) => ({ ...n, backorder: false }))} />
               </Alert>
             ) : null}
             {notices.nearby ? (
-              <Alert variant="warning">
+              <Alert variant="warning" className="pr-10">
                 <MapPin />
                 <AlertTitle>Nearby branches</AlertTitle>
                 <AlertDescription>
                   Some items are available at another branch and may ship separately.
                 </AlertDescription>
+                <DismissButton label="Dismiss nearby branches notice" onClick={() => setNotices((n) => ({ ...n, nearby: false }))} />
               </Alert>
             ) : null}
           </div>
@@ -319,8 +338,6 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
                 fulfillment={fulfillment}
                 payment={payment}
                 showSpecialHandling={cfg.showSpecialHandling}
-                confirmed={confirmed}
-                setConfirmed={setConfirmed}
                 onBack={() => setStep("payment")}
                 onEditFulfillment={() => setStep("shipping")}
                 onEditPayment={() => setStep("payment")}
@@ -331,6 +348,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
           <OrderSummary
             items={items}
             subtotal={subtotal}
+            discount={discount}
             tax={tax}
             total={total}
             saved={saved}
@@ -340,6 +358,9 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
             setCoupon={setCoupon}
             appliedCoupon={appliedCoupon}
             onApplyCoupon={() => coupon.trim() && setAppliedCoupon(coupon.trim().toUpperCase())}
+            showConfirm={step === "review"}
+            confirmed={confirmed}
+            setConfirmed={setConfirmed}
           />
         </div>
       </div>
@@ -492,8 +513,6 @@ function ReviewStep({
   fulfillment,
   payment,
   showSpecialHandling,
-  confirmed,
-  setConfirmed,
   onBack,
   onEditFulfillment,
   onEditPayment,
@@ -502,8 +521,6 @@ function ReviewStep({
   fulfillment: string;
   payment: string;
   showSpecialHandling: boolean;
-  confirmed: boolean;
-  setConfirmed: (v: boolean) => void;
   onBack: () => void;
   onEditFulfillment: () => void;
   onEditPayment: () => void;
@@ -549,11 +566,6 @@ function ReviewStep({
           ))}
         </div>
 
-        <Label className="flex gap-3 text-sm font-normal">
-          <Checkbox checked={confirmed} onCheckedChange={(v) => setConfirmed(v === true)} className="mt-0.5" />
-          <span>I confirm the order details are correct and agree to the account terms.</span>
-        </Label>
-
         <div className="flex justify-start border-t pt-5">
           <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
         </div>
@@ -565,6 +577,7 @@ function ReviewStep({
 function OrderSummary({
   items,
   subtotal,
+  discount,
   tax,
   total,
   saved,
@@ -574,9 +587,13 @@ function OrderSummary({
   setCoupon,
   appliedCoupon,
   onApplyCoupon,
+  showConfirm,
+  confirmed,
+  setConfirmed,
 }: {
   items: CartItem[];
   subtotal: number;
+  discount: number;
   tax: number;
   total: number;
   saved: boolean;
@@ -586,6 +603,9 @@ function OrderSummary({
   setCoupon: (v: string) => void;
   appliedCoupon: string | null;
   onApplyCoupon: () => void;
+  showConfirm: boolean;
+  confirmed: boolean;
+  setConfirmed: (v: boolean) => void;
 }) {
   return (
     <aside className="h-fit rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
@@ -612,6 +632,12 @@ function OrderSummary({
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatUSD(subtotal)}</span>
           </div>
+          {discount > 0 ? (
+            <div className="flex justify-between text-in-stock">
+              <span>Discount{appliedCoupon ? ` (${appliedCoupon})` : ""}</span>
+              <span>−{formatUSD(discount)}</span>
+            </div>
+          ) : null}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Shipping</span>
             <span>Free</span>
@@ -651,6 +677,14 @@ function OrderSummary({
           <ShieldCheck className="mr-1 inline size-4 text-in-stock" aria-hidden="true" />
           Your total is shown before payment details, with no surprise fees.
         </div>
+
+        {/* Confirm gate sits right above Place order, so the grey→blue is clear. */}
+        {showConfirm ? (
+          <Label className="flex gap-2.5 text-sm font-normal">
+            <Checkbox checked={confirmed} onCheckedChange={(v) => setConfirmed(v === true)} className="mt-0.5" />
+            <span>I confirm the order details are correct and agree to the account terms.</span>
+          </Label>
+        ) : null}
 
         {/* Sticky primary CTA — the strongest action, always reachable. */}
         <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>

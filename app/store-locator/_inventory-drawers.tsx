@@ -426,6 +426,11 @@ export function InventoryStoreLocatorDrawer() {
 
   return (
     <div className={SHELL}>
+      {/* Title header — matches the Branch Selector ("Find a branch" + X). */}
+      <header className="flex shrink-0 items-center justify-between border-b px-5 py-3.5">
+        <p className="text-base font-bold">Product Availability</p>
+        <DrawerCloseButton label="Close" onClick={closeDrawer} />
+      </header>
       <ProductHeader />
       <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
         <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
