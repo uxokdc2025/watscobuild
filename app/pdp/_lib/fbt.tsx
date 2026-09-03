@@ -207,7 +207,8 @@ function MultiGroupFbt({
         {suggestBtn}
       </div>
       <Tabs defaultValue={product.fbt![0].label}>
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 overflow-x-auto">
           <TabsList
             className={cn(
               // Track: rounded pill container, subtle muted background, small
@@ -241,8 +242,9 @@ function MultiGroupFbt({
               </TabsTrigger>
             ))}
           </TabsList>
+          </div>
           {overflow ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <Button
                 type="button"
                 variant="outline"
