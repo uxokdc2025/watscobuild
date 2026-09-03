@@ -247,7 +247,7 @@ function UnifiedHeader({
           {/* LEFT: logo / brand mark */}
           <Link
             href="/"
-            className="shrink-0 rounded-md px-1 transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="shrink-0 rounded-md px-1 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             aria-label={`${brand.name} home`}
           >
             <BrandMark brand={brand} theme={theme} />
