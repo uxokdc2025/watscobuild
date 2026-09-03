@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import {
+  BookOpen,
+  Boxes,
+  ClipboardList,
+  ExternalLink,
+  FileText,
+  Wrench,
+} from "lucide-react";
 
 import {
   Table,
@@ -40,6 +47,14 @@ const ROWS = [
   { id: "INV-002", status: "Pending", total: "$150.00" },
   { id: "INV-003", status: "Unpaid", total: "$350.00" },
   { id: "INV-004", status: "Paid", total: "$120.00" },
+];
+
+// One tab per collection; each tab reveals its own carousel of products —
+// the "Frequently Bought Together" pattern from the PDP.
+const FBT_GROUPS = [
+  { value: "best-sellers", label: "Best Sellers", items: ["Equipment Pad 40×40", "Whip 6 ft", "Thermostat"] },
+  { value: "pads-blocks", label: "Pads & Blocks", items: ["Rubber Block", "Anti-Vib Pad", "Riser Block"] },
+  { value: "refrigerant-oils", label: "Refrigerant & Oils", items: ["R-410A 25 lb", "POE Oil 1 qt", "Leak Sealant"] },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -175,6 +190,79 @@ export default function DataReference() {
               </Tabs>
             </div>
           </PreviewCode>
+
+          <h3 className="pt-2 text-base font-semibold tracking-tight">
+            Tabs — group multiple carousels
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            The canonical storefront usage: one section holds several parallel collections,
+            and each tab reveals its own product carousel. This is the{" "}
+            <span className="font-medium text-foreground">Frequently Bought Together</span>{" "}
+            pattern on the PDP — swap the placeholder strip below for the real{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">Carousel</code>.
+          </p>
+          <PreviewCode
+            install="tabs"
+            previewClassName="items-stretch"
+            code={`<Tabs defaultValue="best-sellers">
+  <TabsList>
+    <TabsTrigger value="best-sellers">Best Sellers</TabsTrigger>
+    <TabsTrigger value="pads-blocks">Pads & Blocks</TabsTrigger>
+    <TabsTrigger value="refrigerant-oils">Refrigerant & Oils</TabsTrigger>
+  </TabsList>
+  {groups.map((g) => (
+    <TabsContent key={g.value} value={g.value} className="pt-4">
+      {/* Each tab holds its own carousel — here a lightweight scroll-row. */}
+      <div className="flex gap-3 overflow-x-auto pb-1">
+        {g.items.map((name) => (
+          <div key={name} className="w-40 shrink-0 rounded-lg border p-3">
+            <div className="aspect-square w-full rounded bg-muted" />
+            <p className="mt-2 line-clamp-2 text-sm font-medium">{name}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">Item 00-0000</p>
+          </div>
+        ))}
+      </div>
+    </TabsContent>
+  ))}
+</Tabs>`}
+          >
+            <div className="w-full">
+              <Tabs defaultValue="best-sellers">
+                <TabsList>
+                  <TabsTrigger value="best-sellers">Best Sellers</TabsTrigger>
+                  <TabsTrigger value="pads-blocks">Pads &amp; Blocks</TabsTrigger>
+                  <TabsTrigger value="refrigerant-oils">Refrigerant &amp; Oils</TabsTrigger>
+                </TabsList>
+                {FBT_GROUPS.map((g) => (
+                  <TabsContent key={g.value} value={g.value} className="pt-4">
+                    <div className="flex gap-3 overflow-x-auto pb-1">
+                      {g.items.map((name) => (
+                        <div key={name} className="w-40 shrink-0 rounded-lg border p-3">
+                          <div className="aspect-square w-full rounded bg-muted" />
+                          <p className="mt-2 line-clamp-2 text-sm font-medium">{name}</p>
+                          <p className="mt-0.5 text-xs text-muted-foreground">Item 00-0000</p>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </div>
+          </PreviewCode>
+          <p className="text-sm text-muted-foreground">
+            Use Tabs when a section holds several parallel carousels/collections (e.g.
+            Frequently Bought Together on the PDP).
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/pdp/uc-tabs-accordions?signedin=1"
+              target="_blank"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              In production — PDP: Frequently Bought Together
+              <ExternalLink className="size-3.5" />
+            </Link>
+          </div>
         </section>
 
         {/* ── Accordion ── */}
@@ -233,6 +321,151 @@ export default function DataReference() {
               </Accordion>
             </div>
           </PreviewCode>
+
+          <h3 className="pt-2 text-base font-semibold tracking-tight">
+            Accordion — product info sections
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            The canonical storefront usage: the PDP&apos;s{" "}
+            <span className="font-medium text-foreground">About This Product</span> block.
+            Each long-form panel — Description, Specifications, Documents, Part List, Where
+            Used — is one item, with a lucide icon on its trigger and the first panel open.
+          </p>
+          <PreviewCode
+            install="accordion"
+            previewClassName="items-stretch"
+            code={`<Accordion type="single" collapsible defaultValue="description">
+  <AccordionItem value="description">
+    <AccordionTrigger className="hover:no-underline">
+      <span className="flex items-center gap-3">
+        <FileText className="size-4 shrink-0 text-muted-foreground" />
+        Description
+      </span>
+    </AccordionTrigger>
+    <AccordionContent className="pl-7 text-muted-foreground">
+      Overview copy, feature bullets, and compliance notes.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="specifications">
+    <AccordionTrigger className="hover:no-underline">
+      <span className="flex items-center gap-3">
+        <ClipboardList className="size-4 shrink-0 text-muted-foreground" />
+        Specifications
+      </span>
+    </AccordionTrigger>
+    <AccordionContent className="pl-7 text-muted-foreground">
+      Filterable spec tables grouped by category.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="documents">
+    <AccordionTrigger className="hover:no-underline">
+      <span className="flex items-center gap-3">
+        <BookOpen className="size-4 shrink-0 text-muted-foreground" />
+        Documents
+      </span>
+    </AccordionTrigger>
+    <AccordionContent className="pl-7 text-muted-foreground">
+      Spec sheets, manuals, and warranty PDFs.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="part-list">
+    <AccordionTrigger className="hover:no-underline">
+      <span className="flex items-center gap-3">
+        <Wrench className="size-4 shrink-0 text-muted-foreground" />
+        Part List
+      </span>
+    </AccordionTrigger>
+    <AccordionContent className="pl-7 text-muted-foreground">
+      Matching-model parts with inventory and price.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="where-used">
+    <AccordionTrigger className="hover:no-underline">
+      <span className="flex items-center gap-3">
+        <Boxes className="size-4 shrink-0 text-muted-foreground" />
+        Where Used
+      </span>
+    </AccordionTrigger>
+    <AccordionContent className="pl-7 text-muted-foreground">
+      Models and assemblies this part appears in.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>`}
+          >
+            <div className="w-full max-w-md">
+              <Accordion type="single" collapsible defaultValue="description">
+                <AccordionItem value="description">
+                  <AccordionTrigger className="hover:no-underline">
+                    <span className="flex items-center gap-3">
+                      <FileText className="size-4 shrink-0 text-muted-foreground" />
+                      Description
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pl-7 text-muted-foreground">
+                    Overview copy, feature bullets, and compliance notes.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="specifications">
+                  <AccordionTrigger className="hover:no-underline">
+                    <span className="flex items-center gap-3">
+                      <ClipboardList className="size-4 shrink-0 text-muted-foreground" />
+                      Specifications
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pl-7 text-muted-foreground">
+                    Filterable spec tables grouped by category.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="documents">
+                  <AccordionTrigger className="hover:no-underline">
+                    <span className="flex items-center gap-3">
+                      <BookOpen className="size-4 shrink-0 text-muted-foreground" />
+                      Documents
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pl-7 text-muted-foreground">
+                    Spec sheets, manuals, and warranty PDFs.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="part-list">
+                  <AccordionTrigger className="hover:no-underline">
+                    <span className="flex items-center gap-3">
+                      <Wrench className="size-4 shrink-0 text-muted-foreground" />
+                      Part List
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pl-7 text-muted-foreground">
+                    Matching-model parts with inventory and price.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="where-used">
+                  <AccordionTrigger className="hover:no-underline">
+                    <span className="flex items-center gap-3">
+                      <Boxes className="size-4 shrink-0 text-muted-foreground" />
+                      Where Used
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pl-7 text-muted-foreground">
+                    Models and assemblies this part appears in.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+          </PreviewCode>
+          <p className="text-sm text-muted-foreground">
+            Use an Accordion for long-form product info panels (Description, Specifications,
+            Documents, Part List, Where Used) — the &ldquo;About This Product&rdquo; pattern.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/pdp/uc-tabs-accordions?signedin=1"
+              target="_blank"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              In production — PDP: About This Product
+              <ExternalLink className="size-3.5" />
+            </Link>
+          </div>
         </section>
 
         {/* ── Guidance ── */}

@@ -188,9 +188,11 @@ export function MegaMenu({
   }
 
   function selectCategory(next: TaxonomyNode) {
+    // One panel per click: selecting a Tier-1 category reveals ONLY Tier-2.
+    // Nothing in Tier-2 is pre-expanded — Tier-3 waits for an explicit click.
+    if (category?.slug === next.slug) return;
     setCategory(next);
-    // Pre-open the first branch child so the cascade reads immediately.
-    setSubcategory(next.children?.find((item) => item.children?.length) ?? null);
+    setSubcategory(null);
   }
 
   const subcategories = category?.children ?? [];
@@ -330,15 +332,22 @@ export function MegaMenu({
         aria-haspopup="menu"
         onClick={toggle}
         className={cn(
-          "my-1.5 inline-flex min-h-9 items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
+          "group my-1.5 inline-flex min-h-9 items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
           open && "bg-white/10 text-white",
         )}
       >
-        {label}
-        <ChevronDown
-          aria-hidden="true"
-          className={cn("size-3.5 transition-transform", open && "rotate-180")}
-        />
+        <span className="underline-offset-4 group-hover:underline">{label}</span>
+        {/* Caret nudges UP on hover and stays up while open — it never rotates.
+            Wrapped in an inline-flex span because CSS transforms don't move the
+            <svg> root itself reliably. */}
+        <span
+          className={cn(
+            "inline-flex transition-transform duration-200 group-hover:[transform:translateY(-2px)]",
+            open && "[transform:translateY(-2px)]",
+          )}
+        >
+          <ChevronDown aria-hidden="true" className="size-3.5" />
+        </span>
       </button>
       {overlay}
     </div>

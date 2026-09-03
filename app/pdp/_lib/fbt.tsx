@@ -5,9 +5,9 @@ import * as React from "react";
 import {
   Carousel,
   CarouselContent,
+  CarouselControls,
+  CarouselHeader,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -37,10 +37,11 @@ function toCardData(item: FbtProduct): ProductCardData {
   };
 }
 
-/** First card aligns flush-left with the surrounding container (no
- *  wrapper padding). Arrows overlay on the L/R edges of the first/last
- *  visible card, vertically centered. Default state = translucent
- *  outline; hover fills with primary blue. Dots sit centered below. */
+/** Product rail. Title sits on the left of a header row; the prev/next
+ *  arrows sit top-right of that same row as clearly-visible DS buttons that
+ *  disable (dim, not clickable) at the ends of the track. Cards use the
+ *  shared `ProductCard`, whose fixed-height slots keep every card in a row
+ *  the same height. Pagination dots sit centered below for swipe feedback. */
 export function CarouselStrip({
   items,
   title,
@@ -74,56 +75,36 @@ export function CarouselStrip({
     );
   }
 
-  const arrowClass = cn(
-    "size-10 rounded-full border-border bg-background/80 text-foreground shadow-sm backdrop-blur",
-    "hover:bg-primary hover:text-primary-foreground hover:border-primary",
-    "disabled:opacity-40",
-    // Arrows sit 44px above vertical center so they visually land on the
-    // image band of the cards, not the price/CTA cluster.
-    "top-[calc(50%-44px)]",
-  );
+  const showControls = snaps.length > 1;
 
   return (
-    <div className="flex flex-col gap-3">
-      {(title || extraHeader) && (
-        <div className="flex flex-wrap items-center gap-3">
-          {title}
-          {extraHeader}
-        </div>
+    <Carousel
+      setApi={setApi}
+      opts={{ align: "start" }}
+      className="flex flex-col gap-3 overflow-x-clip"
+    >
+      {(title || extraHeader || showControls) && (
+        <CarouselHeader>
+          <div className="flex flex-wrap items-center gap-3">
+            {title}
+            {extraHeader}
+          </div>
+          {showControls ? <CarouselControls /> : null}
+        </CarouselHeader>
       )}
-      <div className="relative">
-        <Carousel
-          setApi={setApi}
-          opts={{ align: "start" }}
-          className="overflow-x-clip"
-        >
-          {/* Five cards use the same dense product-row pattern as the PLP
-              while the PDP canvas remains capped at 1400px. */}
-          <CarouselContent className="ml-0 gap-4 [&>*]:pl-0">
-            {items.map((it) => (
-              <CarouselItem
-                key={it.id}
-                className="basis-full sm:basis-[calc(50%-8px)] lg:basis-[calc(25%-12px)] min-[1200px]:basis-[calc(20%-13px)]"
-              >
-                <ProductCard data={toCardData(it)} signedIn={signedIn} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          {snaps.length > 1 ? (
-            <>
-              <CarouselPrevious
-                aria-label="Previous"
-                className={cn(arrowClass, "left-0 -translate-x-1/2")}
-              />
-              <CarouselNext
-                aria-label="Next"
-                className={cn(arrowClass, "right-0 translate-x-1/2")}
-              />
-            </>
-          ) : null}
-        </Carousel>
-      </div>
-      {snaps.length > 1 ? (
+      {/* Up to five cards per view — same dense product-row pattern as the
+          PLP while the PDP canvas remains capped at 1400px. */}
+      <CarouselContent className="ml-0 gap-4 [&>*]:pl-0">
+        {items.map((it) => (
+          <CarouselItem
+            key={it.id}
+            className="basis-full sm:basis-[calc(50%-8px)] lg:basis-[calc(25%-12px)] min-[1200px]:basis-[calc(20%-13px)]"
+          >
+            <ProductCard data={toCardData(it)} signedIn={signedIn} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      {showControls ? (
         <div className="flex items-center justify-center gap-1.5">
           {snaps.map((_, i) => (
             <button
@@ -141,7 +122,7 @@ export function CarouselStrip({
           ))}
         </div>
       ) : null}
-    </div>
+    </Carousel>
   );
 }
 
@@ -154,18 +135,38 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
   if (!product.fbt?.length) return null;
   const suggest = product.detailsStyle === "about";
   const multiGroup = product.fbt.length > 1;
+  const suggestBtn = suggest ? (
+    <Button type="button" variant="secondary" size="sm">
+      Suggest Products
+    </Button>
+  ) : null;
+  const heading = (
+    <h2 className="text-xl font-bold tracking-tight">Frequently Bought Together</h2>
+  );
+
+  // Single group: the heading + Suggest button live in the strip's own header
+  // row so the prev/next arrows sit top-right, aligned with the title.
+  if (!multiGroup) {
+    return (
+      <section aria-label="Frequently bought together">
+        <CarouselStrip
+          items={product.fbt[0].items}
+          title={heading}
+          extraHeader={suggestBtn}
+        />
+      </section>
+    );
+  }
+
+  // Multiple groups: heading stays above the tabs; each tab's strip carries
+  // its own top-right arrows for the cards it shows.
   return (
     <section aria-label="Frequently bought together" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-xl font-bold tracking-tight">Frequently Bought Together</h2>
-        {suggest ? (
-          <Button type="button" variant="secondary" size="sm">
-            Suggest Products
-          </Button>
-        ) : null}
+        {heading}
+        {suggestBtn}
       </div>
-      {multiGroup ? (
-        <Tabs defaultValue={product.fbt[0].label}>
+      <Tabs defaultValue={product.fbt[0].label}>
           <TabsList
             className={cn(
               // Track: rounded pill container, subtle muted background, small
@@ -205,11 +206,6 @@ export function FrequentlyBoughtTogether({ product }: { product: PdpProduct }) {
             </TabsContent>
           ))}
         </Tabs>
-      ) : (
-        <div className="pt-2">
-          <FbtRail items={product.fbt[0].items} />
-        </div>
-      )}
     </section>
   );
 }

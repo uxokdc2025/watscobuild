@@ -14,9 +14,9 @@ import {
 import {
   Carousel,
   CarouselContent,
+  CarouselControls,
+  CarouselHeader,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { PreviewCode, PropsTable, Guidance } from "../_ds/code";
@@ -191,8 +191,12 @@ export default function MediaReference() {
         <section className="space-y-4">
           <H2 id="carousel">Carousel</H2>
           <p className="text-sm text-muted-foreground">
-            A swipeable rail (Embla). At the first slide the Previous control is disabled —
-            use the arrows or drag. Set{" "}
+            A swipeable rail (Embla). Put the title and a{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">CarouselControls</code> inside a{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">CarouselHeader</code> so the
+            prev/next arrows sit top-right, aligned with the heading — not tiny circles overlapping
+            the cards. At the first slide the Previous control is disabled; use the arrows or drag.
+            Set{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">opts={"{{ align: \"start\" }}"}</code>{" "}
             and a <code className="rounded bg-muted px-1 py-0.5 text-xs">basis-*</code> on each item
             for multi-up product rails.
@@ -200,8 +204,12 @@ export default function MediaReference() {
           <PreviewCode
             install="carousel"
             previewClassName="items-stretch"
-            code={`{/* Single-item gallery */}
-<Carousel className="w-full max-w-xs">
+            code={`{/* Single-item gallery — controls in the header row */}
+<Carousel className="flex flex-col gap-3">
+  <CarouselHeader>
+    <span className="text-sm font-medium">Gallery</span>
+    <CarouselControls />
+  </CarouselHeader>
   <CarouselContent>
     {items.map((n) => (
       <CarouselItem key={n}>
@@ -213,12 +221,14 @@ export default function MediaReference() {
       </CarouselItem>
     ))}
   </CarouselContent>
-  <CarouselPrevious />
-  <CarouselNext />
 </Carousel>`}
           >
-            <div className="flex w-full justify-center px-10">
-              <Carousel className="w-full max-w-xs">
+            <div className="mx-auto w-full max-w-xs">
+              <Carousel className="flex flex-col gap-3">
+                <CarouselHeader>
+                  <span className="text-sm font-medium">Gallery</span>
+                  <CarouselControls />
+                </CarouselHeader>
                 <CarouselContent>
                   {Array.from({ length: 5 }).map((_, i) => (
                     <CarouselItem key={i}>
@@ -230,8 +240,6 @@ export default function MediaReference() {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
               </Carousel>
             </div>
           </PreviewCode>
@@ -239,7 +247,11 @@ export default function MediaReference() {
           <p className="pt-2 text-sm font-medium">Multiple items per view (product rails)</p>
           <PreviewCode
             previewClassName="items-stretch"
-            code={`<Carousel opts={{ align: "start" }} className="w-full">
+            code={`<Carousel opts={{ align: "start" }} className="flex flex-col gap-3">
+  <CarouselHeader>
+    <h3 className="text-xl font-bold tracking-tight">Frequently Bought Together</h3>
+    <CarouselControls />
+  </CarouselHeader>
   <CarouselContent>
     {items.map((n) => (
       <CarouselItem key={n} className="basis-1/2 sm:basis-1/3 lg:basis-1/4">
@@ -251,12 +263,14 @@ export default function MediaReference() {
       </CarouselItem>
     ))}
   </CarouselContent>
-  <CarouselPrevious />
-  <CarouselNext />
 </Carousel>`}
           >
-            <div className="w-full px-10">
-              <Carousel opts={{ align: "start" }} className="w-full">
+            <div className="w-full">
+              <Carousel opts={{ align: "start" }} className="flex w-full flex-col gap-3">
+                <CarouselHeader>
+                  <span className="text-sm font-medium">Products</span>
+                  <CarouselControls />
+                </CarouselHeader>
                 <CarouselContent>
                   {Array.from({ length: 8 }).map((_, i) => (
                     <CarouselItem key={i} className="basis-1/2 sm:basis-1/3 lg:basis-1/4">
@@ -268,8 +282,6 @@ export default function MediaReference() {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
               </Carousel>
             </div>
           </PreviewCode>
@@ -321,8 +333,10 @@ export default function MediaReference() {
             rows={[
               { name: "Carousel opts", type: "Embla options", description: "e.g. { align: \"start\", loop: true }." },
               { name: "Carousel orientation", type: "horizontal | vertical", description: "Scroll axis. Defaults to horizontal." },
+              { name: "CarouselHeader", type: "div", description: "Header row — title left, controls right." },
+              { name: "CarouselControls", type: "div", description: "Prev + next cluster for the header row." },
               { name: "CarouselItem className", type: "basis-*", description: "Controls items-per-view for rails." },
-              { name: "CarouselPrevious / CarouselNext", type: "button", description: "Auto-disable at the ends." },
+              { name: "CarouselPrevious / CarouselNext", type: "button", description: "Outline icon buttons; auto-disable (dim) at the ends." },
             ]}
           />
         </section>

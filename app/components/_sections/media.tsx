@@ -5,9 +5,9 @@ import * as React from "react";
 import {
   Carousel,
   CarouselContent,
+  CarouselControls,
+  CarouselHeader,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Category, Demo, Block } from "../_showcase";
@@ -21,8 +21,12 @@ export function MediaSection() {
     >
       <Demo name="Carousel" slug="carousel" className="items-stretch">
         <Block label="Default (Previous disabled at start)">
-          <div className="flex justify-center px-10">
-            <Carousel className="w-full max-w-xs">
+          <div className="mx-auto w-full max-w-xs">
+            <Carousel className="flex flex-col gap-3">
+              <CarouselHeader>
+                <span className="text-sm font-medium">Gallery</span>
+                <CarouselControls />
+              </CarouselHeader>
               <CarouselContent>
                 {Array.from({ length: 5 }).map((_, i) => (
                   <CarouselItem key={i}>
@@ -34,29 +38,27 @@ export function MediaSection() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
             </Carousel>
           </div>
         </Block>
         <Block label="Multiple items per view (product rails)">
-          <div className="px-10">
-            <Carousel opts={{ align: "start" }} className="w-full">
-              <CarouselContent>
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <CarouselItem key={i} className="basis-1/2 sm:basis-1/3 lg:basis-1/4">
-                    <Card>
-                      <CardContent className="flex aspect-square items-center justify-center p-6">
-                        <span className="text-2xl font-semibold">{i + 1}</span>
-                      </CardContent>
-                    </Card>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </div>
+          <Carousel opts={{ align: "start" }} className="flex w-full flex-col gap-3">
+            <CarouselHeader>
+              <span className="text-sm font-medium">Products</span>
+              <CarouselControls />
+            </CarouselHeader>
+            <CarouselContent>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <CarouselItem key={i} className="basis-1/2 sm:basis-1/3 lg:basis-1/4">
+                  <Card>
+                    <CardContent className="flex aspect-square items-center justify-center p-6">
+                      <span className="text-2xl font-semibold">{i + 1}</span>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </Block>
       </Demo>
     </Category>
