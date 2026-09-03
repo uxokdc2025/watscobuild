@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
  *
  * Design rules baked in here:
  *  - Filled hover on every interactive header control
- *    (`rounded-md px-2 py-1 transition-colors hover:bg-white/10`) — never an
+ *    (`rounded-md px-2 py-1 transition-colors hover:bg-white/10 hover:no-underline`) — never an
  *    underline. Underline is reserved for real inline text links (the footer
  *    legal/column links may underline on hover; header controls never do).
  *  - Brand color ONLY via the token classes in BRAND_THEME — never a hex.
@@ -171,7 +171,7 @@ function UnifiedHeader({
             <a
               key={l}
               href="#"
-              className="rounded-md px-2 py-1 whitespace-nowrap transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-md px-2 py-1 whitespace-nowrap transition-colors hover:bg-muted hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {l}
             </a>
@@ -202,7 +202,7 @@ function UnifiedHeader({
           ) : (
             <Link
               href="/"
-              className="shrink-0 rounded-md px-1 text-lg font-black tracking-tight whitespace-nowrap transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="shrink-0 rounded-md px-1 text-lg font-black tracking-tight whitespace-nowrap transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               aria-label={`${brand.name} home`}
             >
               {theme.wordmark}
@@ -212,7 +212,7 @@ function UnifiedHeader({
           {/* LEFT: store / branch selector — immediately after the logo on EVERY brand */}
           <a
             href="/store-locator/in-plp?v=c"
-            className="hidden items-center gap-2 rounded-md px-2 py-1 text-xs leading-tight transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
+            className="hidden items-center gap-2 rounded-md px-2 py-1 text-xs leading-tight transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
           >
             <Home className="size-5 shrink-0" aria-hidden />
             <span>
@@ -232,7 +232,7 @@ function UnifiedHeader({
           {/* RIGHT: Lists · Account · Cart */}
           <Link
             href="/dashboard/shopping-lists"
-            className="hidden flex-col items-center rounded-md px-2 py-1 text-[11px] transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
+            className="hidden flex-col items-center rounded-md px-2 py-1 text-[11px] transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
           >
             <ClipboardList className="size-5" aria-hidden />
             Lists
@@ -252,7 +252,7 @@ function UnifiedHeader({
               <button
                 key={n}
                 type="button"
-                className="my-1.5 inline-flex min-h-9 items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="my-1.5 inline-flex min-h-9 items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:no-underline hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 {n}
                 {NAV_CARET.test(n) ? (
