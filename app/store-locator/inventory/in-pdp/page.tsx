@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 import { getPdp } from "@/app/pdp/_lib/registry";
 import { PdpAuthProvider } from "@/app/pdp/_lib/auth";
@@ -11,6 +9,7 @@ import {
   InventoryDirection1,
   InventoryDirection2,
   InventoryDirection3,
+  InventoryStoreLocatorDrawer,
   InventoryCloseX,
 } from "../../_inventory-drawers";
 import { DrawerOverlay } from "../../_drawer-overlay";
@@ -18,20 +17,15 @@ import { DrawerPanel } from "@/components/ui/drawer";
 
 export const metadata: Metadata = {
   title: "Inventory Drawer — over PDP",
-  description: "Preview an inventory drawer variant overlaid on a Carrier PDP.",
+  description: "The Product Availability drawer overlaid on a Carrier PDP.",
 };
 
 type SearchParams = { v?: string; slug?: string };
 
-const VARIANT_TITLE: Record<string, string> = {
-  "1": "Direction 1 — Reference literal (East Coast)",
-  "2": "Direction 2 — Tabbed, per-row commit",
-  "3": "Direction 3 — Dense picker",
-};
-
 function VariantDrawer({ v }: { v: string }) {
   if (v === "1") return <InventoryDirection1 />;
   if (v === "2") return <InventoryDirection2 />;
+  if (v === "c") return <InventoryStoreLocatorDrawer />;
   return <InventoryDirection3 />;
 }
 
@@ -40,8 +34,8 @@ export default async function InventoryInPdpPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { v = "1", slug = "uc-tabs-accordions" } = await searchParams;
-  const variant = ["1", "2", "3"].includes(v) ? v : "1";
+  const { v = "c", slug = "uc-tabs-accordions" } = await searchParams;
+  const variant = ["1", "2", "3", "c"].includes(v) ? v : "c";
   const product = getPdp(slug);
   if (!product) notFound();
 
@@ -53,26 +47,18 @@ export default async function InventoryInPdpPage({
           <Pdp product={product} signedIn />
         </div>
 
-        {/* Scrim + right-side inventory drawer */}
+        {/* Scrim + right-side Product Availability drawer */}
         <DrawerOverlay>
           <DrawerPanel open side="right" className="absolute inset-y-0 right-0 flex">
-            <div className="absolute top-4 -left-2">
-              <InventoryCloseX />
-            </div>
+            {/* The current availability drawer ("c") has its own header X; the
+                legacy variants use the floating scrim close control. */}
+            {variant !== "c" ? (
+              <div className="absolute top-4 -left-2">
+                <InventoryCloseX />
+              </div>
+            ) : null}
             <VariantDrawer v={variant} />
           </DrawerPanel>
-          <div className="absolute top-4 left-4 flex items-center gap-3 rounded-lg bg-background/95 px-3 py-2 shadow-lg">
-            <Link
-              href="/store-locator/inventory"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
-            >
-              <ArrowLeft className="size-3.5" />
-              Back to gallery
-            </Link>
-            <span className="text-xs text-muted-foreground">
-              {VARIANT_TITLE[variant]}
-            </span>
-          </div>
         </DrawerOverlay>
       </div>
     </PdpAuthProvider>

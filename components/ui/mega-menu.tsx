@@ -1,55 +1,337 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, Command, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { PRODUCT_TAXONOMY, taxonomyHref, type TaxonomyNode } from "./mega-taxonomy";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
-function TaxonomyLink({ node, active = false }: { node: TaxonomyNode; active?: boolean }) {
-  return <Link role="menuitem" href={taxonomyHref(node)} className={cn("flex min-h-10 items-center justify-between rounded-sm px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active && "bg-accent font-semibold text-primary")}>
-    <span>{node.label}</span>{node.children?.length ? <ChevronRight aria-hidden="true" className="size-3.5 text-muted-foreground" /> : null}
-  </Link>;
+import { cn } from "@/lib/utils";
+import { DRAWER_SPRING } from "@/components/ui/drawer";
+import {
+  PRODUCT_TAXONOMY,
+  taxonomyHref,
+  type TaxonomyNode,
+} from "./mega-taxonomy";
+
+/* ────────────────────────────────────────────────────────────────────────
+   Ulta-style cascading mega menu.
+
+   Click-driven (never hover): clicking "Products" opens a full-page dimmed
+   scrim with a left-docked panel that slides in. Tier-1 categories live in a
+   white column; clicking one slides out a tinted Tier-2 column to its right;
+   clicking a Tier-2 with children slides out a Tier-3 column. Separation is by
+   tint only — no vertical divider rules. Neutral surfaces throughout: the
+   brand color lives on the header bar, never inside the panel body.
+   ──────────────────────────────────────────────────────────────────────── */
+
+/** Soft column reveal — same easing curve as the system drawers, quicker. */
+const COLUMN_MOTION = {
+  type: "tween" as const,
+  duration: 0.3,
+  ease: [0.32, 0.72, 0, 1] as const,
+};
+
+const itemBase =
+  "flex min-h-11 w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
+/** A leaf category (no children): a real navigation link. */
+function LeafLink({
+  node,
+  onNavigate,
+}: {
+  node: TaxonomyNode;
+  onNavigate: () => void;
+}) {
+  return (
+    <Link
+      role="menuitem"
+      href={taxonomyHref(node)}
+      onClick={onNavigate}
+      className={cn(itemBase, "text-foreground/90")}
+    >
+      <span>{node.label}</span>
+    </Link>
+  );
 }
 
-export function MegaMenu({ label = "Products", className }: { label?: string; className?: string }) {
+/** A branch category: a button that drills into the next column. */
+function BranchButton({
+  node,
+  active,
+  onSelect,
+}: {
+  node: TaxonomyNode;
+  active: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="menuitem"
+      aria-haspopup="true"
+      aria-expanded={active}
+      onClick={onSelect}
+      className={cn(
+        itemBase,
+        "font-medium",
+        active && "bg-accent font-semibold text-foreground",
+      )}
+    >
+      <span>{node.label}</span>
+      <ChevronRight
+        aria-hidden="true"
+        className={cn(
+          "size-4 shrink-0 text-muted-foreground",
+          active && "text-foreground",
+        )}
+      />
+    </button>
+  );
+}
+
+/** Renders one taxonomy node either as a branch button or a leaf link. */
+function ColumnItem({
+  node,
+  active,
+  onSelect,
+  onNavigate,
+}: {
+  node: TaxonomyNode;
+  active: boolean;
+  onSelect: () => void;
+  onNavigate: () => void;
+}) {
+  return node.children?.length ? (
+    <BranchButton node={node} active={active} onSelect={onSelect} />
+  ) : (
+    <LeafLink node={node} onNavigate={onNavigate} />
+  );
+}
+
+/** "View all …" link that heads a drilled column. */
+function ColumnHeader({
+  node,
+  onNavigate,
+}: {
+  node: TaxonomyNode;
+  onNavigate: () => void;
+}) {
+  return (
+    <Link
+      href={taxonomyHref(node)}
+      onClick={onNavigate}
+      className="mb-1 flex min-h-11 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      View all {node.label.toLowerCase()}
+      <ChevronRight aria-hidden="true" className="size-4 text-muted-foreground" />
+    </Link>
+  );
+}
+
+export function MegaMenu({
+  label = "Products",
+  className,
+}: {
+  label?: string;
+  className?: string;
+}) {
+  const [mounted, setMounted] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [category, setCategory] = React.useState<TaxonomyNode | null>(null);
   const [subcategory, setSubcategory] = React.useState<TaxonomyNode | null>(null);
-  const rootRef = React.useRef<HTMLDivElement>(null);
-  const close = React.useCallback(() => { setOpen(false); setCategory(null); setSubcategory(null); }, []);
+  const [topOffset, setTopOffset] = React.useState(0);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+
+  const close = React.useCallback(() => {
+    setOpen(false);
+    setCategory(null);
+    setSubcategory(null);
+  }, []);
+
+  React.useEffect(() => setMounted(true), []);
+
+  // Dock the scrim + panel directly beneath the header (the trigger sits in the
+  // last header row), so the whole header stays visible above the dim.
+  const measure = React.useCallback(() => {
+    const rect = triggerRef.current?.getBoundingClientRect();
+    if (rect) setTopOffset(rect.bottom);
+  }, []);
 
   React.useEffect(() => {
-    const onPointerDown = (event: PointerEvent) => { if (!rootRef.current?.contains(event.target as Node)) close(); };
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") close(); };
-    document.addEventListener("pointerdown", onPointerDown); document.addEventListener("keydown", onKeyDown);
-    return () => { document.removeEventListener("pointerdown", onPointerDown); document.removeEventListener("keydown", onKeyDown); };
-  }, [close]);
+    if (!open) return;
+    measure();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        close();
+        triggerRef.current?.focus();
+      }
+    };
+    window.addEventListener("resize", measure);
+    window.addEventListener("keydown", onKeyDown);
+    // Lock body scroll while the menu owns the viewport.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open, measure, close]);
 
   function selectCategory(next: TaxonomyNode) {
-    setCategory(next); setSubcategory(next.children?.find((item) => item.children?.length) ?? null);
+    setCategory(next);
+    // Pre-open the first branch child so the cascade reads immediately.
+    setSubcategory(next.children?.find((item) => item.children?.length) ?? null);
   }
+
   const subcategories = category?.children ?? [];
   const details = subcategory?.children ?? [];
 
-  return <div ref={rootRef} className={cn("relative", className)} onMouseEnter={() => setOpen(true)}>
-    <button type="button" aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen((value) => !value)} className="inline-flex items-center gap-1 px-3 py-3 text-sm font-medium whitespace-nowrap text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
-      {label}<ChevronDown aria-hidden="true" className={cn("size-3.5 transition-transform", open && "rotate-180")} />
-    </button>
-    {open ? <div role="menu" aria-label="Product categories" className="absolute top-full left-0 z-[60] max-h-[calc(100svh-8rem)] w-[min(920px,calc(100vw-2rem))] overflow-y-auto rounded-b-md border bg-popover text-popover-foreground shadow-2xl">
-      <div className="grid grid-cols-1 md:min-h-[390px] md:grid-cols-[220px_300px_1fr]">
-        <div className="border-r bg-muted/30 p-2">
-          <p className="px-3 py-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Shop products</p>
-          {PRODUCT_TAXONOMY.map((node) => <div key={node.slug} onFocus={() => selectCategory(node)} onMouseEnter={() => selectCategory(node)}><TaxonomyLink node={node} active={category?.slug === node.slug} /></div>)}
-        </div>
-        <div className="border-r p-2">
-          {category ? <><div className="flex items-center justify-between border-b px-3 py-3"><Link role="menuitem" href={taxonomyHref(category)} className="text-sm font-semibold text-primary hover:underline">{category.label}</Link><span className="text-xs text-muted-foreground">{subcategories.length} groups</span></div><div className="pt-2">{subcategories.map((node) => <div key={node.slug} onFocus={() => setSubcategory(node.children?.length ? node : null)} onMouseEnter={() => setSubcategory(node.children?.length ? node : null)}><TaxonomyLink node={node} active={subcategory?.slug === node.slug} /></div>)}</div></> : <div className="flex h-full flex-col justify-center px-4"><Command aria-hidden="true" className="size-5 text-primary" /><p className="mt-3 text-lg font-semibold">Find the right products</p><p className="mt-1 text-sm text-muted-foreground">Browse equipment, parts, and supplies by category.</p></div>}
-        </div>
-        <div className="p-5">
-          {subcategory ? <div><div className="flex items-center justify-between border-b pb-3"><Link role="menuitem" href={taxonomyHref(subcategory)} className="text-base font-semibold text-primary hover:underline">{subcategory.label}</Link><span className="text-xs text-muted-foreground">{details.length} options</span></div><div className="grid grid-cols-2 gap-x-4 gap-y-1 pt-3">{details.map((node) => <TaxonomyLink key={node.slug} node={node} />)}</div><Link role="menuitem" href={taxonomyHref(subcategory)} className="mt-5 inline-flex items-center gap-1 px-3 text-sm font-semibold text-primary hover:underline">View all {subcategory.label.toLowerCase()} <ChevronRight aria-hidden="true" className="size-4" /></Link></div> : <div className="flex h-full min-h-[300px] flex-col items-center justify-center text-center"><Search aria-hidden="true" className="size-6 text-muted-foreground" /><p className="mt-3 text-base font-semibold">Choose a product group</p><p className="mt-1 max-w-xs text-sm text-muted-foreground">Hover a category to explore its product groups and subcategories.</p></div>}
-        </div>
-      </div>
-      <div className="flex items-center justify-between border-t bg-muted/20 px-5 py-3 text-sm"><span className="text-muted-foreground">Need help choosing?</span><Link role="menuitem" href="/store-locator" onClick={close} className="font-semibold text-primary hover:underline">Talk to an expert</Link></div>
-    </div> : null}
-  </div>;
+  // Roving keyboard support inside the panel (nice-to-have).
+  function onPanelKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    const { key } = event;
+    if (key !== "ArrowDown" && key !== "ArrowUp") return;
+    const items = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+    );
+    if (items.length === 0) return;
+    const index = items.indexOf(document.activeElement as HTMLElement);
+    event.preventDefault();
+    const nextIndex =
+      key === "ArrowDown"
+        ? (index + 1) % items.length
+        : (index - 1 + items.length) % items.length;
+    items[nextIndex]?.focus();
+  }
+
+  const overlay =
+    mounted && open
+      ? createPortal(
+          <AnimatePresence>
+            <React.Fragment key="mega-overlay">
+              {/* Scrim — dims the page below the header. */}
+              <motion.div
+                key="mega-scrim"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.24, ease: "easeOut" }}
+                onClick={close}
+                aria-hidden="true"
+                className="fixed inset-x-0 bottom-0 z-[70] bg-black/40"
+                style={{ top: topOffset }}
+              />
+              {/* Panel — slides in from the left. */}
+              <motion.div
+                key="mega-panel"
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={DRAWER_SPRING}
+                role="menu"
+                aria-label="Product categories"
+                onKeyDown={onPanelKeyDown}
+                className="fixed left-0 z-[71] flex w-[min(940px,100vw)] flex-col overflow-hidden bg-popover text-popover-foreground shadow-2xl md:flex-row"
+                style={{
+                  top: topOffset,
+                  height: `calc(100dvh - ${topOffset}px)`,
+                }}
+              >
+                {/* Tier 1 — white column. */}
+                <div className="w-full shrink-0 overflow-y-auto bg-popover p-2 md:w-64">
+                  <p className="px-3 pt-2 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                    Shop products
+                  </p>
+                  {PRODUCT_TAXONOMY.map((node) => (
+                    <ColumnItem
+                      key={node.slug}
+                      node={node}
+                      active={category?.slug === node.slug}
+                      onSelect={() => selectCategory(node)}
+                      onNavigate={close}
+                    />
+                  ))}
+                </div>
+
+                {/* Tier 2 — tinted column, no divider rule. */}
+                <AnimatePresence mode="wait">
+                  {category ? (
+                    <motion.div
+                      key={category.slug}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -12 }}
+                      transition={COLUMN_MOTION}
+                      className="w-full shrink-0 overflow-y-auto bg-muted/40 p-2 md:w-72"
+                    >
+                      <ColumnHeader node={category} onNavigate={close} />
+                      {subcategories.map((node) => (
+                        <ColumnItem
+                          key={node.slug}
+                          node={node}
+                          active={subcategory?.slug === node.slug}
+                          onSelect={() =>
+                            setSubcategory(node.children?.length ? node : null)
+                          }
+                          onNavigate={close}
+                        />
+                      ))}
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+
+                {/* Tier 3 — deeper tint, still borderless. */}
+                <AnimatePresence mode="wait">
+                  {subcategory && details.length ? (
+                    <motion.div
+                      key={subcategory.slug}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -12 }}
+                      transition={COLUMN_MOTION}
+                      className="w-full flex-1 overflow-y-auto bg-muted/60 p-2"
+                    >
+                      <ColumnHeader node={subcategory} onNavigate={close} />
+                      <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+                        {details.map((node) => (
+                          <LeafLink
+                            key={node.slug}
+                            node={node}
+                            onNavigate={close}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+              </motion.div>
+            </React.Fragment>
+          </AnimatePresence>,
+          document.body,
+        )
+      : null;
+
+  return (
+    <div className={cn("relative", className)}>
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        onClick={() => (open ? close() : setOpen(true))}
+        className={cn(
+          "my-1.5 inline-flex min-h-9 items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
+          open && "bg-white/10 text-white",
+        )}
+      >
+        {label}
+        <ChevronDown
+          aria-hidden="true"
+          className={cn("size-3.5 transition-transform", open && "rotate-180")}
+        />
+      </button>
+      {overlay}
+    </div>
+  );
 }
