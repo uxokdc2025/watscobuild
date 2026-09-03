@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 
 import {
   Tabs,
@@ -34,6 +34,7 @@ const TOC = [
   { id: "breadcrumb", label: "Breadcrumb" },
   { id: "pagination", label: "Pagination" },
   { id: "tabs-nav", label: "Tabs as nav" },
+  { id: "nav-indicator", label: "Nav indicator line" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
   { id: "in-production", label: "In production" },
@@ -278,6 +279,82 @@ export default function NavigationReference() {
           </PreviewCode>
         </section>
 
+        {/* ── Nav indicator line ── */}
+        <section className="space-y-4">
+          <H2 id="nav-indicator">Nav indicator line</H2>
+          <p className="text-sm text-muted-foreground">
+            Top-level items in the site&apos;s brand nav bar get their own hover/open affordance —
+            an <span className="font-medium text-foreground">Ulta-style indicator bar</span>: a
+            2px rounded line that fades in{" "}
+            <span className="font-medium text-foreground">below</span> the item, offset from the
+            text. It is <span className="font-medium text-foreground">not</span> a text-underline
+            and <span className="font-medium text-foreground">not</span> a background fill — those
+            treatments are reserved for the location / list / account / cart controls elsewhere in
+            the header. Category items (Products, Brands, Resources…) also carry a caret that nudges
+            up on hover. Shipped in{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">chrome.tsx</code> +{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">mega-menu.tsx</code>.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            The demo renders on a brand-colored strip because the indicator (
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">bg-white</code>) is built for the
+            dark brand bar. Hover an item to reveal its bar.
+          </p>
+          <PreviewCode
+            previewClassName="items-stretch"
+            code={`{/* On the brand nav bar. The button is \`group relative\`; the indicator is a
+    pointer-events-none span pinned to the bottom edge, fading in on hover. */}
+<button
+  type="button"
+  className="group relative my-1.5 inline-flex min-h-9 items-center gap-1 px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+>
+  <span>Products</span>
+  {/* Indicator line (Ulta pattern) — NOT an underline, NOT a bg-fill. */}
+  <span
+    aria-hidden="true"
+    className="pointer-events-none absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+  />
+  {/* Caret nudges up on hover (category items only). */}
+  <span className="inline-flex transition-transform duration-200 group-hover:[transform:translateY(-2px)]">
+    <ChevronDown aria-hidden="true" className="size-3.5" />
+  </span>
+</button>`}
+          >
+            <div className="w-full">
+              <div className="flex flex-wrap items-center gap-1 rounded-lg bg-primary px-4 py-2 text-primary-foreground">
+                {[
+                  { label: "Products", caret: true },
+                  { label: "Brands", caret: true },
+                  { label: "Resources", caret: true },
+                  { label: "Deals", caret: false },
+                ].map((n) => (
+                  <button
+                    key={n.label}
+                    type="button"
+                    className="group relative my-1.5 inline-flex min-h-9 items-center gap-1 px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  >
+                    <span>{n.label}</span>
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                    />
+                    {n.caret ? (
+                      <span className="inline-flex transition-transform duration-200 group-hover:[transform:translateY(-2px)]">
+                        <ChevronDown aria-hidden="true" className="size-3.5" />
+                      </span>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </PreviewCode>
+          <p className="text-sm text-muted-foreground">
+            Give brand-bar nav items the indicator line, never a text-underline or a background
+            fill — the fill/underline hover is the header&apos;s utility-control treatment
+            (location, Lists, Account, Cart), kept deliberately distinct from primary navigation.
+          </p>
+        </section>
+
         {/* ── Guidance ── */}
         <section className="space-y-4">
           <H2 id="guidance">Guidance</H2>
@@ -287,12 +364,14 @@ export default function NavigationReference() {
               <>Collapse long trails with a <code className="rounded bg-muted px-1 py-0.5 text-xs">BreadcrumbEllipsis</code> between the root and the tail.</>,
               <>Set <code className="rounded bg-muted px-1 py-0.5 text-xs">isActive</code> on exactly one <code className="rounded bg-muted px-1 py-0.5 text-xs">PaginationLink</code>.</>,
               <>Use the <code className="rounded bg-muted px-1 py-0.5 text-xs">line</code> variant for category section nav; <code className="rounded bg-muted px-1 py-0.5 text-xs">segmented</code> for mutually-exclusive options like pack size.</>,
+              <>Give brand-bar nav items the <code className="rounded bg-muted px-1 py-0.5 text-xs">group relative</code> + indicator-line treatment on hover/open, not an underline.</>,
             ]}
             donts={[
               <>Drop the <code className="rounded bg-muted px-1 py-0.5 text-xs">BreadcrumbSeparator</code> between items — it is a real list item, not a pseudo-element.</>,
               <>Mark two pagination links active at once.</>,
               <>Reach for the <code className="rounded bg-muted px-1 py-0.5 text-xs">default</code> Tabs variant when the tabs are wayfinding — that reads as a content switcher.</>,
               <>Hand-roll pagination buttons; <code className="rounded bg-muted px-1 py-0.5 text-xs">PaginationLink</code> already maps to the Button variants.</>,
+              <>Give top-level nav items a text-underline or a background fill on hover — that is the utility-control treatment, not primary nav.</>,
             ]}
           />
         </section>

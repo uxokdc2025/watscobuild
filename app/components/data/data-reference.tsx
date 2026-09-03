@@ -1,9 +1,12 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   BookOpen,
   Boxes,
+  ChevronLeft,
+  ChevronRight,
   ClipboardList,
   ExternalLink,
   FileText,
@@ -30,6 +33,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
 import { PreviewCode, PropsTable, Guidance } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
 
@@ -50,18 +60,131 @@ const ROWS = [
 ];
 
 // One tab per collection; each tab reveals its own carousel of products —
-// the "Frequently Bought Together" pattern from the PDP.
+// the "Frequently Bought Together" pattern from the PDP. Enough items per group
+// that the rail overflows, so the shared prev/next arrows on the tab row are live.
 const FBT_GROUPS = [
-  { value: "best-sellers", label: "Best Sellers", items: ["Equipment Pad 40×40", "Whip 6 ft", "Thermostat"] },
-  { value: "pads-blocks", label: "Pads & Blocks", items: ["Rubber Block", "Anti-Vib Pad", "Riser Block"] },
-  { value: "refrigerant-oils", label: "Refrigerant & Oils", items: ["R-410A 25 lb", "POE Oil 1 qt", "Leak Sealant"] },
+  {
+    value: "best-sellers",
+    label: "Best Sellers",
+    items: ["Equipment Pad 40×40", "Whip 6 ft", "Thermostat", "Line Set 3/8", "Condensate Pump", "Filter Drier"],
+  },
+  {
+    value: "pads-blocks",
+    label: "Pads & Blocks",
+    items: ["Rubber Block", "Anti-Vib Pad", "Riser Block", "Composite Pad", "Snow Legs", "Wall Bracket"],
+  },
+  {
+    value: "refrigerant-oils",
+    label: "Refrigerant & Oils",
+    items: ["R-410A 25 lb", "POE Oil 1 qt", "Leak Sealant", "R-32 10 lb", "Vacuum Pump Oil", "Dye Cartridge"],
+  },
 ];
+
+// Shared "About This Product" trigger treatment (mirrors about.tsx): no
+// underline, primary-blue label + icon when open, colour transitions on the icon.
+const ABOUT_TRIGGER =
+  "hover:no-underline data-[state=open]:text-primary [&_svg]:transition-colors data-[state=open]:[&_svg]:text-primary";
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
   return (
     <h2 id={id} className="scroll-mt-8 text-xl font-semibold tracking-tight">
       {children}
     </h2>
+  );
+}
+
+/* ── Grouped-carousel tab demo — the shipped FBT composition (fbt.tsx
+ *    `MultiGroupFbt`): the prev/next arrows sit ON the tab row, driving the
+ *    active tab's carousel. No empty arrows-only band under the tabs. ── */
+function FbtStrip({
+  items,
+  onApiChange,
+}: {
+  items: string[];
+  onApiChange: (api: CarouselApi | undefined) => void;
+}) {
+  const [api, setApi] = React.useState<CarouselApi>();
+  React.useEffect(() => {
+    onApiChange(api);
+  }, [api, onApiChange]);
+  return (
+    <Carousel setApi={setApi} opts={{ align: "start" }} className="flex flex-col gap-3 overflow-x-clip">
+      <CarouselContent className="ml-0 gap-4 [&>*]:pl-0">
+        {items.map((name) => (
+          <CarouselItem key={name} className="basis-1/2 sm:basis-1/3 lg:basis-1/4">
+            <div className="rounded-lg border p-3">
+              <div className="aspect-square w-full rounded bg-muted" />
+              <p className="mt-2 line-clamp-2 text-sm font-medium">{name}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">Item 00-0000</p>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
+  );
+}
+
+function FbtTabsDemo() {
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [canPrev, setCanPrev] = React.useState(false);
+  const [canNext, setCanNext] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!api) {
+      setCanPrev(false);
+      setCanNext(false);
+      return;
+    }
+    const sync = () => {
+      setCanPrev(api.canScrollPrev());
+      setCanNext(api.canScrollNext());
+    };
+    sync();
+    api.on("select", sync);
+    api.on("reInit", sync);
+  }, [api]);
+
+  return (
+    <div className="w-full">
+      <Tabs defaultValue="best-sellers">
+        {/* Arrows live ON the tab row: TabsList left, prev/next cluster right. */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <TabsList>
+            <TabsTrigger value="best-sellers">Best Sellers</TabsTrigger>
+            <TabsTrigger value="pads-blocks">Pads &amp; Blocks</TabsTrigger>
+            <TabsTrigger value="refrigerant-oils">Refrigerant &amp; Oils</TabsTrigger>
+          </TabsList>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label="Previous"
+              disabled={!canPrev}
+              onClick={() => api?.scrollPrev()}
+            >
+              <ChevronLeft className="size-4" aria-hidden="true" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label="Next"
+              disabled={!canNext}
+              onClick={() => api?.scrollNext()}
+            >
+              <ChevronRight className="size-4" aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
+        {/* Tight gap (mt-3) straight to the cards — no empty header band. */}
+        {FBT_GROUPS.map((g) => (
+          <TabsContent key={g.value} value={g.value} className="mt-3">
+            <FbtStrip items={g.items} onApiChange={setApi} />
+          </TabsContent>
+        ))}
+      </Tabs>
+    </div>
   );
 }
 
@@ -198,56 +321,70 @@ export default function DataReference() {
             The canonical storefront usage: one section holds several parallel collections,
             and each tab reveals its own product carousel. This is the{" "}
             <span className="font-medium text-foreground">Frequently Bought Together</span>{" "}
-            pattern on the PDP — swap the placeholder strip below for the real{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-xs">Carousel</code>.
+            pattern on the PDP. The shipped treatment puts the prev/next arrows{" "}
+            <span className="font-medium text-foreground">on the tab row itself</span> —{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">TabsList</code> on the left, an
+            arrows cluster (two{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">Button variant=&quot;outline&quot; size=&quot;icon&quot;</code>{" "}
+            controls, disabled at the ends) on the right — driving the active tab&apos;s carousel.
+            There is no empty arrows-only band under the tabs; the gap to the cards is tight
+            (<code className="rounded bg-muted px-1 py-0.5 text-xs">mt-3</code>).
           </p>
           <PreviewCode
-            install="tabs"
+            install="tabs carousel"
             previewClassName="items-stretch"
-            code={`<Tabs defaultValue="best-sellers">
-  <TabsList>
-    <TabsTrigger value="best-sellers">Best Sellers</TabsTrigger>
-    <TabsTrigger value="pads-blocks">Pads & Blocks</TabsTrigger>
-    <TabsTrigger value="refrigerant-oils">Refrigerant & Oils</TabsTrigger>
-  </TabsList>
-  {groups.map((g) => (
-    <TabsContent key={g.value} value={g.value} className="pt-4">
-      {/* Each tab holds its own carousel — here a lightweight scroll-row. */}
-      <div className="flex gap-3 overflow-x-auto pb-1">
-        {g.items.map((name) => (
-          <div key={name} className="w-40 shrink-0 rounded-lg border p-3">
-            <div className="aspect-square w-full rounded bg-muted" />
-            <p className="mt-2 line-clamp-2 text-sm font-medium">{name}</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">Item 00-0000</p>
-          </div>
+            code={`// The active strip surfaces its Embla api via onApiChange; the arrows on
+// the tab row read canScrollPrev/Next off it and drive scrollPrev/Next.
+const [api, setApi] = React.useState<CarouselApi>();
+const [canPrev, setCanPrev] = React.useState(false);
+const [canNext, setCanNext] = React.useState(false);
+
+React.useEffect(() => {
+  if (!api) { setCanPrev(false); setCanNext(false); return; }
+  const sync = () => {
+    setCanPrev(api.canScrollPrev());
+    setCanNext(api.canScrollNext());
+  };
+  sync();
+  api.on("select", sync);
+  api.on("reInit", sync);
+}, [api]);
+
+return (
+  <Tabs defaultValue={groups[0].value}>
+    {/* Arrows live ON the tab row: TabsList left, prev/next cluster right. */}
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <TabsList>
+        {groups.map((g) => (
+          <TabsTrigger key={g.value} value={g.value}>{g.label}</TabsTrigger>
         ))}
+      </TabsList>
+      <div className="flex items-center gap-2">
+        <Button
+          type="button" variant="outline" size="icon" aria-label="Previous"
+          disabled={!canPrev} onClick={() => api?.scrollPrev()}
+        >
+          <ChevronLeft className="size-4" aria-hidden="true" />
+        </Button>
+        <Button
+          type="button" variant="outline" size="icon" aria-label="Next"
+          disabled={!canNext} onClick={() => api?.scrollNext()}
+        >
+          <ChevronRight className="size-4" aria-hidden="true" />
+        </Button>
       </div>
-    </TabsContent>
-  ))}
-</Tabs>`}
+    </div>
+    {/* Tight gap (mt-3) straight to the cards — no empty header band. The strip
+        runs hideHeader because the arrows already live on the tab row. */}
+    {groups.map((g) => (
+      <TabsContent key={g.value} value={g.value} className="mt-3">
+        <CarouselStrip items={g.items} hideHeader onApiChange={setApi} />
+      </TabsContent>
+    ))}
+  </Tabs>
+);`}
           >
-            <div className="w-full">
-              <Tabs defaultValue="best-sellers">
-                <TabsList>
-                  <TabsTrigger value="best-sellers">Best Sellers</TabsTrigger>
-                  <TabsTrigger value="pads-blocks">Pads &amp; Blocks</TabsTrigger>
-                  <TabsTrigger value="refrigerant-oils">Refrigerant &amp; Oils</TabsTrigger>
-                </TabsList>
-                {FBT_GROUPS.map((g) => (
-                  <TabsContent key={g.value} value={g.value} className="pt-4">
-                    <div className="flex gap-3 overflow-x-auto pb-1">
-                      {g.items.map((name) => (
-                        <div key={name} className="w-40 shrink-0 rounded-lg border p-3">
-                          <div className="aspect-square w-full rounded bg-muted" />
-                          <p className="mt-2 line-clamp-2 text-sm font-medium">{name}</p>
-                          <p className="mt-0.5 text-xs text-muted-foreground">Item 00-0000</p>
-                        </div>
-                      ))}
-                    </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
-            </div>
+            <FbtTabsDemo />
           </PreviewCode>
           <p className="text-sm text-muted-foreground">
             Use Tabs when a section holds several parallel carousels/collections (e.g.
@@ -327,66 +464,77 @@ export default function DataReference() {
           </h3>
           <p className="text-sm text-muted-foreground">
             The canonical storefront usage: the PDP&apos;s{" "}
-            <span className="font-medium text-foreground">About This Product</span> block.
-            Each long-form panel — Description, Specifications, Documents, Part List, Where
-            Used — is one item, with a lucide icon on its trigger and the first panel open.
+            <span className="font-medium text-foreground">About This Product</span> block
+            (<code className="rounded bg-muted px-1 py-0.5 text-xs">about.tsx</code>). Each
+            long-form panel — Description, Specifications, Documents, Part List, Where Used — is
+            one item; the trigger carries a lucide icon and a{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">text-base font-semibold</code>{" "}
+            title, turns{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">text-primary</code> when open,
+            and never underlines (<code className="rounded bg-muted px-1 py-0.5 text-xs">hover:no-underline</code>).
+            The first panel is open (<code className="rounded bg-muted px-1 py-0.5 text-xs">defaultValue</code>).
           </p>
           <PreviewCode
             install="accordion"
             previewClassName="items-stretch"
-            code={`<Accordion type="single" collapsible defaultValue="description">
+            code={`// One shared trigger class keeps every About panel consistent (about.tsx).
+const TRIGGER =
+  "hover:no-underline data-[state=open]:text-primary " +
+  "[&_svg]:transition-colors data-[state=open]:[&_svg]:text-primary";
+
+<Accordion type="single" collapsible defaultValue="description">
   <AccordionItem value="description">
-    <AccordionTrigger className="hover:no-underline">
-      <span className="flex items-center gap-3">
+    <AccordionTrigger className={TRIGGER}>
+      <span className="flex items-center gap-4">
         <FileText className="size-4 shrink-0 text-muted-foreground" />
-        Description
+        <span className="text-base font-semibold">Description</span>
       </span>
     </AccordionTrigger>
-    <AccordionContent className="pl-7 text-muted-foreground">
+    <AccordionContent className="pt-4 pl-10 text-muted-foreground">
       Overview copy, feature bullets, and compliance notes.
     </AccordionContent>
   </AccordionItem>
   <AccordionItem value="specifications">
-    <AccordionTrigger className="hover:no-underline">
-      <span className="flex items-center gap-3">
+    <AccordionTrigger className={TRIGGER}>
+      <span className="flex items-center gap-4">
         <ClipboardList className="size-4 shrink-0 text-muted-foreground" />
-        Specifications
+        <span className="text-base font-semibold">Specifications</span>
       </span>
     </AccordionTrigger>
-    <AccordionContent className="pl-7 text-muted-foreground">
+    <AccordionContent className="pt-4 pl-10 text-muted-foreground">
       Filterable spec tables grouped by category.
     </AccordionContent>
   </AccordionItem>
   <AccordionItem value="documents">
-    <AccordionTrigger className="hover:no-underline">
-      <span className="flex items-center gap-3">
+    <AccordionTrigger className={TRIGGER}>
+      <span className="flex items-center gap-4">
         <BookOpen className="size-4 shrink-0 text-muted-foreground" />
-        Documents
+        <span className="text-base font-semibold">Documents</span>
       </span>
     </AccordionTrigger>
-    <AccordionContent className="pl-7 text-muted-foreground">
+    <AccordionContent className="pt-4 pl-10 text-muted-foreground">
       Spec sheets, manuals, and warranty PDFs.
     </AccordionContent>
   </AccordionItem>
   <AccordionItem value="part-list">
-    <AccordionTrigger className="hover:no-underline">
-      <span className="flex items-center gap-3">
+    <AccordionTrigger className={TRIGGER}>
+      <span className="flex items-center gap-4">
         <Wrench className="size-4 shrink-0 text-muted-foreground" />
-        Part List
+        <span className="text-base font-semibold">Part List</span>
       </span>
     </AccordionTrigger>
-    <AccordionContent className="pl-7 text-muted-foreground">
+    <AccordionContent className="pt-4 pl-10 text-muted-foreground">
       Matching-model parts with inventory and price.
     </AccordionContent>
   </AccordionItem>
   <AccordionItem value="where-used">
-    <AccordionTrigger className="hover:no-underline">
-      <span className="flex items-center gap-3">
+    <AccordionTrigger className={TRIGGER}>
+      <span className="flex items-center gap-4">
         <Boxes className="size-4 shrink-0 text-muted-foreground" />
-        Where Used
+        <span className="text-base font-semibold">Where Used</span>
       </span>
     </AccordionTrigger>
-    <AccordionContent className="pl-7 text-muted-foreground">
+    <AccordionContent className="pt-4 pl-10 text-muted-foreground">
       Models and assemblies this part appears in.
     </AccordionContent>
   </AccordionItem>
@@ -395,57 +543,57 @@ export default function DataReference() {
             <div className="w-full max-w-md">
               <Accordion type="single" collapsible defaultValue="description">
                 <AccordionItem value="description">
-                  <AccordionTrigger className="hover:no-underline">
-                    <span className="flex items-center gap-3">
+                  <AccordionTrigger className={ABOUT_TRIGGER}>
+                    <span className="flex items-center gap-4">
                       <FileText className="size-4 shrink-0 text-muted-foreground" />
-                      Description
+                      <span className="text-base font-semibold">Description</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="pl-7 text-muted-foreground">
+                  <AccordionContent className="pt-4 pl-10 text-muted-foreground">
                     Overview copy, feature bullets, and compliance notes.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="specifications">
-                  <AccordionTrigger className="hover:no-underline">
-                    <span className="flex items-center gap-3">
+                  <AccordionTrigger className={ABOUT_TRIGGER}>
+                    <span className="flex items-center gap-4">
                       <ClipboardList className="size-4 shrink-0 text-muted-foreground" />
-                      Specifications
+                      <span className="text-base font-semibold">Specifications</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="pl-7 text-muted-foreground">
+                  <AccordionContent className="pt-4 pl-10 text-muted-foreground">
                     Filterable spec tables grouped by category.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="documents">
-                  <AccordionTrigger className="hover:no-underline">
-                    <span className="flex items-center gap-3">
+                  <AccordionTrigger className={ABOUT_TRIGGER}>
+                    <span className="flex items-center gap-4">
                       <BookOpen className="size-4 shrink-0 text-muted-foreground" />
-                      Documents
+                      <span className="text-base font-semibold">Documents</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="pl-7 text-muted-foreground">
+                  <AccordionContent className="pt-4 pl-10 text-muted-foreground">
                     Spec sheets, manuals, and warranty PDFs.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="part-list">
-                  <AccordionTrigger className="hover:no-underline">
-                    <span className="flex items-center gap-3">
+                  <AccordionTrigger className={ABOUT_TRIGGER}>
+                    <span className="flex items-center gap-4">
                       <Wrench className="size-4 shrink-0 text-muted-foreground" />
-                      Part List
+                      <span className="text-base font-semibold">Part List</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="pl-7 text-muted-foreground">
+                  <AccordionContent className="pt-4 pl-10 text-muted-foreground">
                     Matching-model parts with inventory and price.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="where-used">
-                  <AccordionTrigger className="hover:no-underline">
-                    <span className="flex items-center gap-3">
+                  <AccordionTrigger className={ABOUT_TRIGGER}>
+                    <span className="flex items-center gap-4">
                       <Boxes className="size-4 shrink-0 text-muted-foreground" />
-                      Where Used
+                      <span className="text-base font-semibold">Where Used</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="pl-7 text-muted-foreground">
+                  <AccordionContent className="pt-4 pl-10 text-muted-foreground">
                     Models and assemblies this part appears in.
                   </AccordionContent>
                 </AccordionItem>

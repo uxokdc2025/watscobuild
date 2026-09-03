@@ -195,11 +195,18 @@ export default function MediaReference() {
             <code className="rounded bg-muted px-1 py-0.5 text-xs">CarouselControls</code> inside a{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">CarouselHeader</code> so the
             prev/next arrows sit top-right, aligned with the heading — not tiny circles overlapping
-            the cards. At the first slide the Previous control is disabled; use the arrows or drag.
-            Set{" "}
+            the cards. The arrows are inline{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">Button variant=&quot;outline&quot; size=&quot;icon&quot;</code>{" "}
+            controls (36px, visible border, grey hover) with{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">ChevronLeft</code> /{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">ChevronRight</code>; at the first
+            slide the Previous control is disabled (dim, not clickable). Set{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">opts={"{{ align: \"start\" }}"}</code>{" "}
             and a <code className="rounded bg-muted px-1 py-0.5 text-xs">basis-*</code> on each item
-            for multi-up product rails.
+            for multi-up product rails. For touch, compose centered pagination dots below the rail
+            (read <code className="rounded bg-muted px-1 py-0.5 text-xs">api.scrollSnapList()</code> /{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">api.selectedScrollSnap()</code>) so
+            swipe position stays legible — the shipped Frequently Bought Together strip does this.
           </p>
           <PreviewCode
             install="carousel"
@@ -285,6 +292,21 @@ export default function MediaReference() {
               </Carousel>
             </div>
           </PreviewCode>
+
+          <p className="rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">Grouped under tabs?</span> When several
+            of these rails live in one section behind tabs (Frequently Bought Together), the
+            arrows move out of the header and{" "}
+            <span className="font-medium text-foreground">onto the tab row</span> — one shared
+            cluster drives the active tab&apos;s carousel. See{" "}
+            <Link
+              href="/components/data#tabs"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              Data display → Tabs — group multiple carousels
+            </Link>
+            .
+          </p>
         </section>
 
         {/* ── Guidance ── */}
