@@ -160,7 +160,6 @@ export function MegaMenu({
 
   React.useEffect(() => {
     if (!open) return;
-    measure();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         close();
@@ -178,6 +177,15 @@ export function MegaMenu({
       document.body.style.overflow = previousOverflow;
     };
   }, [open, measure, close]);
+
+  function toggle() {
+    if (open) {
+      close();
+      return;
+    }
+    measure(); // set the dock offset before the panel mounts — no first-frame flash
+    setOpen(true);
+  }
 
   function selectCategory(next: TaxonomyNode) {
     setCategory(next);
@@ -205,24 +213,25 @@ export function MegaMenu({
     items[nextIndex]?.focus();
   }
 
-  const overlay =
-    mounted && open
-      ? createPortal(
-          <AnimatePresence>
-            <React.Fragment key="mega-overlay">
-              {/* Scrim — dims the page below the header. */}
-              <motion.div
-                key="mega-scrim"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.24, ease: "easeOut" }}
-                onClick={close}
-                aria-hidden="true"
-                className="fixed inset-x-0 bottom-0 z-[70] bg-black/40"
-                style={{ top: topOffset }}
-              />
-              {/* Panel — slides in from the left. */}
+  const overlay = mounted
+    ? createPortal(
+        <AnimatePresence>
+          {/* Scrim — dims the page below the header. */}
+          {open ? (
+            <motion.div
+              key="mega-scrim"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.24, ease: "easeOut" }}
+              onClick={close}
+              aria-hidden="true"
+              className="fixed inset-x-0 bottom-0 z-[70] bg-black/40"
+              style={{ top: topOffset }}
+            />
+          ) : null}
+          {/* Panel — slides in from the left. */}
+          {open ? (
               <motion.div
                 key="mega-panel"
                 initial={{ x: "-100%" }}
@@ -306,11 +315,11 @@ export function MegaMenu({
                   ) : null}
                 </AnimatePresence>
               </motion.div>
-            </React.Fragment>
-          </AnimatePresence>,
-          document.body,
-        )
-      : null;
+          ) : null}
+        </AnimatePresence>,
+        document.body,
+      )
+    : null;
 
   return (
     <div className={cn("relative", className)}>
@@ -319,7 +328,7 @@ export function MegaMenu({
         type="button"
         aria-expanded={open}
         aria-haspopup="menu"
-        onClick={() => (open ? close() : setOpen(true))}
+        onClick={toggle}
         className={cn(
           "my-1.5 inline-flex min-h-9 items-center gap-1 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
           open && "bg-white/10 text-white",

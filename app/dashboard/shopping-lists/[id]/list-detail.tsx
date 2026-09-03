@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/drawer";
 import { useCart } from "@/components/cart/cart-context";
 import { formatUSD } from "@/app/pdp/_lib/types";
+import { toast } from "sonner";
 
 /* ─────────────────────────── Demo data ─────────────────────────── */
 
@@ -250,11 +251,11 @@ function ReplacementBadge() {
 function AltRow({
   product,
   kind,
-  onAdd,
+  onChoose,
 }: {
   product: AltProduct;
   kind: "replacement" | "substitute";
-  onAdd: (product: AltProduct) => void;
+  onChoose: (product: AltProduct, kind: "replacement" | "substitute") => void;
 }) {
   return (
     <div className="rounded-md border">
@@ -280,7 +281,7 @@ function AltRow({
             size="sm"
             className="min-h-11"
             disabled={product.qty <= 0}
-            onClick={() => onAdd(product)}
+            onClick={() => onChoose(product, kind)}
           >
             {kind === "replacement" ? (
               <>
@@ -305,11 +306,11 @@ function AltRow({
 function ReplacementsDrawer({
   product,
   onClose,
-  onAdd,
+  onChoose,
 }: {
   product: Product | null;
   onClose: () => void;
-  onAdd: (product: AltProduct) => void;
+  onChoose: (product: AltProduct, kind: "replacement" | "substitute") => void;
 }) {
   const [closing, setClosing] = React.useState(false);
 
@@ -381,7 +382,7 @@ function ReplacementsDrawer({
               </h2>
               <div className="space-y-3">
                 {replacements.map((r) => (
-                  <AltRow key={r.id} product={r} kind="replacement" onAdd={onAdd} />
+                  <AltRow key={r.id} product={r} kind="replacement" onChoose={onChoose} />
                 ))}
               </div>
             </section>
@@ -395,7 +396,7 @@ function ReplacementsDrawer({
               </h2>
               <div className="space-y-3">
                 {substitutes.map((s) => (
-                  <AltRow key={s.id} product={s} kind="substitute" onAdd={onAdd} />
+                  <AltRow key={s.id} product={s} kind="substitute" onChoose={onChoose} />
                 ))}
               </div>
             </section>
@@ -598,9 +599,25 @@ export function ListDetail({ id }: { id: string }) {
     addItem(toCartItem(p), qtys[p.id] ?? 1);
     openCart();
   };
-  const addAlt = (p: AltProduct) => {
-    addItem(toCartItem(p), 1);
-    openCart();
+  // Replace / Substitute: swap the chosen alternative into the list row in
+  // place, close the drawer, and confirm with a toast — no extra overlay.
+  const chooseAlt = (alt: AltProduct, kind: "replacement" | "substitute") => {
+    const original = drawerFor;
+    if (original) {
+      setRows((prev) =>
+        prev.map((r) =>
+          r.id === original.id
+            ? { ...r, ...alt, id: r.id, replacement: undefined }
+            : r
+        )
+      );
+      setBanner((prev) => prev.filter((b) => b !== original.id));
+      const name = (s: string) => s.split("—")[0].trim();
+      toast.success(
+        `${name(original.title)} ${kind === "replacement" ? "replaced with" : "substituted with"} ${name(alt.title)}`
+      );
+    }
+    setDrawerFor(null);
   };
   const addAll = () => {
     rows.forEach((p) => addItem(toCartItem(p), qtys[p.id] ?? 1));
@@ -652,8 +669,9 @@ export function ListDetail({ id }: { id: string }) {
       }
     >
       <div className="space-y-3">
-        {/* Meta row — left: created · type · count · right: primary action + total. */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        {/* Meta row — one line: created · type · count on the left; list total +
+            primary action (total to the left of the button) on the right. */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
             <span>Created {meta.created}</span>
             <span aria-hidden="true">·</span>
@@ -663,17 +681,15 @@ export function ListDetail({ id }: { id: string }) {
               {rows.length} product{rows.length === 1 ? "" : "s"}
             </span>
           </div>
-          <div className="flex flex-col items-start gap-1 sm:items-end">
-            <Button className="min-h-11" onClick={addAll}>
-              <ShoppingCart size={16} />
-              Add all items to cart
-            </Button>
+          <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
               List total{" "}
-              <span className="font-semibold text-foreground">
-                {formatUSD(total)}
-              </span>
+              <span className="font-semibold text-foreground">{formatUSD(total)}</span>
             </span>
+            <Button className="min-h-11" onClick={addAll}>
+              <ShoppingCart size={16} />
+              Add all to cart
+            </Button>
           </div>
         </div>
 
@@ -688,7 +704,7 @@ export function ListDetail({ id }: { id: string }) {
                 {bannerProducts.map((p) => (
                   <div
                     key={p.id}
-                    className="flex flex-col gap-3 rounded-md border border-yellow-500/40 bg-background/70 p-3 sm:flex-row sm:items-center"
+                    className="flex flex-col gap-3 rounded-md border border-border bg-background p-3 sm:flex-row sm:items-center"
                   >
                     <div className="grid size-12 shrink-0 place-items-center rounded-md bg-muted/40 p-1">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -846,7 +862,7 @@ export function ListDetail({ id }: { id: string }) {
       <ReplacementsDrawer
         product={drawerFor}
         onClose={() => setDrawerFor(null)}
-        onAdd={addAlt}
+        onChoose={chooseAlt}
       />
     </DashboardShell>
   );
