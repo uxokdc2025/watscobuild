@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
-import { ArrowUpRight, Info, RotateCcw, Search, Truck } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowUpRight, Info, Truck } from "lucide-react";
 import { DashboardShell } from "./_components/dashboard-shell";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { AccountSearchInput } from "./_components/account-table";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 
@@ -37,49 +35,22 @@ function SectionHeading({ id, title, href }: { id: string; title: string; href?:
 
 export default function DashboardPage() {
   const [orderQuery, setOrderQuery] = useState("");
-  const [submittedOrderQuery, setSubmittedOrderQuery] = useState("");
   const [listQuery, setListQuery] = useState("");
   const visibleOrders = useMemo(
-    () => ORDERS.filter((order) => order.number.includes(submittedOrderQuery.trim())),
-    [submittedOrderQuery],
+    () => ORDERS.filter((order) => order.number.includes(orderQuery.trim())),
+    [orderQuery],
   );
-
-  function searchOrders(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmittedOrderQuery(orderQuery);
-  }
-
-  function resetOrders() {
-    setOrderQuery("");
-    setSubmittedOrderQuery("");
-  }
 
   const showList = "test".includes(listQuery.trim().toLowerCase());
 
   return (
     <DashboardShell title="Dashboard" description="A single place to manage your account, purchasing tools, and orders.">
       <div className="space-y-6">
-        <section aria-labelledby="find-order-heading" className="rounded-lg border bg-background p-4 shadow-sm sm:p-6">
-          <SectionHeading id="find-order-heading" title="Find an Order" />
-          <form onSubmit={searchOrders} className="mt-5 max-w-xl">
-            <Label htmlFor="order-search" className="sr-only">Search by order number or PO number</Label>
-            <div className="relative mt-2">
-              <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input id="order-search" value={orderQuery} onChange={(event) => setOrderQuery(event.target.value)} placeholder="Search by Order # or PO #" className="min-h-11 pl-10" />
-            </div>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Button type="submit" className="min-h-11">
-                <Search aria-hidden="true" className="size-4" /> Search
-              </Button>
-              <Button type="button" variant="outline" onClick={resetOrders} className="min-h-11">
-                <RotateCcw aria-hidden="true" className="size-4" /> Reset
-              </Button>
-            </div>
-          </form>
-        </section>
-
         <section aria-labelledby="recent-orders-heading" className="rounded-lg border bg-background p-4 shadow-sm sm:p-6">
           <SectionHeading id="recent-orders-heading" title="Recent Orders" href="/dashboard/orders" />
+          <div className="mt-4">
+            <AccountSearchInput value={orderQuery} onChange={setOrderQuery} placeholder="Search by Order # or PO #" />
+          </div>
           <Alert className="mt-4">
             <Info aria-hidden="true" className="size-4 shrink-0" />
             <AlertTitle>{visibleOrders.length} Orders Available</AlertTitle>
@@ -104,11 +75,9 @@ export default function DashboardPage() {
 
         <section aria-labelledby="shopping-lists-heading" className="rounded-lg border bg-background p-4 shadow-sm sm:p-6">
           <SectionHeading id="shopping-lists-heading" title="My Shopping Lists" href="/dashboard/shopping-lists" />
-          <form onSubmit={(event) => event.preventDefault()} className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-end">
-            <Label htmlFor="list-search" className="sr-only">Search lists by name</Label>
-            <Input id="list-search" value={listQuery} onChange={(event) => setListQuery(event.target.value)} placeholder="Search lists by name..." className="min-h-11 sm:w-64" />
-            <Button type="submit" className="min-h-11">Search</Button>
-          </form>
+          <div className="mt-4">
+            <AccountSearchInput value={listQuery} onChange={setListQuery} placeholder="Search lists by name…" />
+          </div>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[560px] border-collapse text-[13px]"><colgroup><col className="w-[28%]" /><col /><col /><col /></colgroup>
               <thead><tr className="border-b text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Name</th><th className="px-2 py-3">Products</th><th className="px-2 py-3">Latest Activity</th><th className="px-2 py-3">Created By</th></tr></thead>

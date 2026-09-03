@@ -1,6 +1,10 @@
 "use client";
 
+import { useMemo, useState } from "react";
+import { CheckCircle2, Download, Eye } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
+import { AccountTableToolbar, accountTable } from "../_components/account-table";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 const QUOTES = [
@@ -10,33 +14,99 @@ const QUOTES = [
 ];
 
 export default function QuotesPage() {
+  const [q, setQ] = useState("");
+  const filtered = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    if (!term) return QUOTES;
+    return QUOTES.filter((item) =>
+      [item.quote, item.po, item.buyer].some((field) =>
+        field.toLowerCase().includes(term),
+      ),
+    );
+  }, [q]);
+
   return (
-    <DashboardShell title="Quotes" description="Review pricing and quote details in one clear, searchable view.">
-      <div className="overflow-hidden rounded-lg border bg-background shadow-sm">
-        <div className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-          <div>
-            <h2 className="font-semibold">Recent quotes</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Quotes saved for your account.</p>
-          </div>
-          <span className="text-sm text-muted-foreground">{QUOTES.length} quotes</span>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1100px] border-collapse text-[13px]">
-            <thead>
-              <tr className="border-b bg-muted/20 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                <th className="px-5 py-3 text-[11px]">Quote #</th><th className="px-5 py-3 text-[11px]">PO #</th><th className="px-5 py-3 text-[11px]">Created</th><th className="px-5 py-3 text-[11px]">Expires</th><th className="px-5 py-3 text-[11px]">Last Updated</th><th className="px-5 py-3 text-[11px]">Status</th><th className="px-5 py-3 text-[11px]">Buyer</th><th className="px-5 py-3 text-[11px]">Buyer Email</th><th className="px-5 py-3 text-right text-[11px]">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              {QUOTES.map((item) => (
-                <tr key={item.quote} className="border-b last:border-0 hover:bg-muted/20">
-                  <td className="px-5 py-3 font-semibold text-primary">{item.quote}</td><td className="px-5 py-3">{item.po}</td><td className="px-5 py-3 whitespace-nowrap">{item.created}</td><td className="px-5 py-3 whitespace-nowrap">{item.expires}</td><td className="px-5 py-3 whitespace-nowrap">{item.updated}</td><td className="px-5 py-3"><Badge variant="soft" color="green">Active</Badge></td><td className="px-5 py-3 whitespace-nowrap">{item.buyer}</td><td className="px-5 py-3">{item.email}</td><td className="px-5 py-3 text-right font-semibold whitespace-nowrap">{item.subtotal}</td>
+    <DashboardShell
+      title="Quotes"
+      description="Review pricing and quote details in one clear, searchable view."
+    >
+      <div className="space-y-3">
+        <section className={accountTable.card}>
+          <AccountTableToolbar
+            value={q}
+            onChange={setQ}
+            placeholder="Search quotes by Quote #, PO #, or buyer…"
+          />
+          <div className={accountTable.scroll}>
+            <table className={`${accountTable.table} min-w-[1180px]`}>
+              <thead>
+                <tr className={accountTable.headRow}>
+                  <th className={accountTable.headCell}>Quote #</th>
+                  <th className={accountTable.headCell}>PO #</th>
+                  <th className={accountTable.headCell}>Created</th>
+                  <th className={accountTable.headCell}>Expires</th>
+                  <th className={accountTable.headCell}>Last Updated</th>
+                  <th className={accountTable.headCell}>Status</th>
+                  <th className={accountTable.headCell}>Buyer</th>
+                  <th className={accountTable.headCell}>Buyer Email</th>
+                  <th className={`${accountTable.headCell} text-right`}>Subtotal</th>
+                  <th className={accountTable.headCell}>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex items-center justify-between border-t px-5 py-3 text-sm text-muted-foreground"><span>Showing 1–{QUOTES.length} of {QUOTES.length}</span><span>Updated today</span></div>
+              </thead>
+              <tbody>
+                {filtered.map((item) => (
+                  <tr key={item.quote} className={accountTable.row}>
+                    <td className={`${accountTable.cell} font-semibold text-primary`}>
+                      {item.quote}
+                    </td>
+                    <td className={accountTable.cell}>{item.po}</td>
+                    <td className={`${accountTable.cell} whitespace-nowrap`}>
+                      {item.created}
+                    </td>
+                    <td className={`${accountTable.cell} whitespace-nowrap`}>
+                      {item.expires}
+                    </td>
+                    <td className={`${accountTable.cell} whitespace-nowrap`}>
+                      {item.updated}
+                    </td>
+                    <td className={accountTable.cell}>
+                      <Badge variant="soft" color="green">Active</Badge>
+                    </td>
+                    <td className={`${accountTable.cell} whitespace-nowrap`}>
+                      {item.buyer}
+                    </td>
+                    <td className={accountTable.cell}>{item.email}</td>
+                    <td className={`${accountTable.cell} text-right font-semibold whitespace-nowrap`}>
+                      {item.subtotal}
+                    </td>
+                    <td className={accountTable.cell}>
+                      <Button variant="ghost" size="icon" aria-label={`View quote ${item.quote}`}>
+                        <Eye size={18} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Download quote ${item.quote}`}
+                        className="ml-1"
+                      >
+                        <Download size={17} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {!filtered.length && (
+            <div className="p-12 text-center text-muted-foreground">
+              No quotes found.
+            </div>
+          )}
+          <div className={accountTable.footer}>
+            <CheckCircle2 size={18} />
+            No more quotes to load
+          </div>
+        </section>
       </div>
     </DashboardShell>
   );

@@ -2,17 +2,14 @@
 import { useMemo, useState } from "react";
 import {
   CheckCircle2,
-  ChevronDown,
-  Filter,
   Pencil,
   Plus,
-  Search,
-  Settings2,
   Tag,
   Trash2,
   X,
 } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
+import { AccountTableToolbar, accountTable } from "../_components/account-table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -197,35 +194,18 @@ export default function ShoppingListsPage() {
       Create list
     </Button>}>
       <div className="space-y-3">
-        <section className="rounded-lg border bg-background shadow-sm">
-          <div className="flex flex-wrap items-center gap-3 border-b p-4">
-            <label className="relative min-w-[240px] flex-1">
-              <Search
-                size={16}
-                className="absolute left-3 top-3.5 text-muted-foreground"
-              />
-              <Input
-                className="h-11 pl-9"
-                placeholder="Search lists by name…"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-              />
-            </label>
-            <Button variant="outline" className="min-h-11">
-              <Filter size={16} />
-              Filter
-              <ChevronDown size={15} />
-            </Button>
+        <section className={accountTable.card}>
+          <AccountTableToolbar
+            value={q}
+            onChange={setQ}
+            placeholder="Search lists by name…"
+          >
             <Button variant="outline" className="min-h-11">
               <Tag size={16} />
               Group by label
             </Button>
-            <Button variant="outline" className="min-h-11">
-              <Settings2 size={16} />
-              Sort
-            </Button>
-          </div>
-          <div className="overflow-x-auto">
+          </AccountTableToolbar>
+          <div className={accountTable.scroll}>
             <table className="w-full min-w-[760px] text-left text-[13px]">
               <thead>
                 <tr className="border-b bg-muted/30 text-muted-foreground">
@@ -327,7 +307,7 @@ export default function ShoppingListsPage() {
               No shopping lists found.
             </div>
           )}
-          <div className="flex items-center justify-center gap-2 p-5 text-sm text-muted-foreground">
+          <div className={accountTable.footer}>
             <CheckCircle2 size={18} />
             No more lists to load
           </div>
