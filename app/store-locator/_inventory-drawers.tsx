@@ -34,11 +34,11 @@ import {
   Phone,
   Search,
   Truck,
-  X,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DrawerCloseButton } from "@/components/ui/drawer";
 import { closeDrawer } from "./_drawer-overlay";
 
 /** Same 10-branch mock the left drawers use so the two experiences can be
@@ -551,18 +551,15 @@ export function InventoryStoreLocatorDrawer() {
   );
 }
 
-/** Shared close-X for the /in-plp overlay — matches the store-locator scrim. */
+/** Shared close control for the inventory overlays — the DS DrawerCloseButton,
+ *  same X pattern the account flyout and cart drawer use. Rounded + shadowed so
+ *  it still reads as a floating control over the scrim. */
 export function InventoryCloseX() {
   return (
-    <Button
-      type="button"
-      aria-label="Close"
+    <DrawerCloseButton
+      label="Close"
       onClick={closeDrawer}
-      variant="outline"
-      size="icon-sm"
-      className="rounded-full border-border bg-background p-0 text-foreground shadow-md hover:bg-muted hover:text-foreground dark:bg-background dark:hover:bg-muted"
-    >
-      <X className="size-4" />
-    </Button>
+      className="rounded-full shadow-md"
+    />
   );
 }

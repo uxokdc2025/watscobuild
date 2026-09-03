@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   CheckCircle2,
@@ -16,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { slugifyList } from "./_list-meta";
 type ShoppingList = {
   name: string;
   label: string;
@@ -224,7 +226,12 @@ export default function ShoppingListsPage() {
                     <td className="px-5 py-3 font-medium">
                       <span className="flex items-start gap-3">
                         <span aria-hidden="true" className="shrink-0 text-primary">⠿</span>
-                        <span>{v.name}</span>
+                        <Link
+                          href={`/dashboard/shopping-lists/${slugifyList(v.name)}`}
+                          className="hover:underline"
+                        >
+                          {v.name}
+                        </Link>
                       </span>
                     </td>
                     <td className="relative px-5 py-3">
