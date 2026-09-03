@@ -346,7 +346,7 @@ export function MegaMenu({
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute inset-x-3 bottom-0 h-[3px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100",
+            "pointer-events-none absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100",
             open && "opacity-100",
           )}
         />
