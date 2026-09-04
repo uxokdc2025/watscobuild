@@ -14,15 +14,17 @@ const CHECKOUT_CASES = [
 export type CheckoutCase = (typeof CHECKOUT_CASES)[number];
 
 export const metadata: Metadata = {
-  title: "Checkout | Homans Associates",
+  title: "Checkout | Watsco",
   description: "Review your order and complete checkout.",
 };
 
-export default async function CheckoutPage({ searchParams }: { searchParams: Promise<{ case?: string; demo?: string }> }) {
-  const brand = getBrand("homans");
+// The unified checkout renders in any distributor's chrome — only the
+// header/footer skin changes per brand; the flow underneath is identical.
+export default async function CheckoutPage({ searchParams }: { searchParams: Promise<{ case?: string; demo?: string; brand?: string }> }) {
+  const params = await searchParams;
+  const brand = getBrand(params.brand ?? "homans") ?? getBrand("homans");
   if (!brand) return null;
 
-  const params = await searchParams;
   const scenario = CHECKOUT_CASES.includes(params.case as CheckoutCase)
     ? (params.case as CheckoutCase)
     : undefined;

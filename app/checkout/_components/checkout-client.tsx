@@ -11,7 +11,6 @@ import {
   Package,
   ShieldCheck,
   TriangleAlert,
-  Truck,
   X,
 } from "lucide-react";
 
@@ -25,6 +24,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import type { CheckoutCase } from "../page";
+import {
+  FulfillmentSection,
+  METHOD_RATE,
+  methodLabel,
+  isDeliveryMethod,
+  type FulfillmentMethod,
+} from "./fulfillment";
 
 /* ───────────────────────── Demo data ───────────────────────── */
 
@@ -50,11 +56,10 @@ type Step = "shipping" | "payment" | "review";
 type ScenarioConfig = {
   initialStep: Step;
   submitted: boolean;
-  fulfillment: "delivery" | "pickup";
+  method: FulfillmentMethod;
   payment: "terms" | "card";
   notices: { backorder: boolean; nearby: boolean };
   seededJob: string;
-  seededDate: string;
   availabilityConstraint: boolean;
   showCoupon: boolean;
   showSpecialHandling: boolean;
@@ -63,11 +68,10 @@ type ScenarioConfig = {
 const BASE: ScenarioConfig = {
   initialStep: "shipping",
   submitted: false,
-  fulfillment: "delivery",
+  method: "pickup",
   payment: "terms",
   notices: { backorder: true, nearby: true },
   seededJob: "",
-  seededDate: "As soon as available",
   availabilityConstraint: false,
   showCoupon: false,
   showSpecialHandling: false,
@@ -75,8 +79,10 @@ const BASE: ScenarioConfig = {
 
 const CHECKOUT_SCENARIOS: Record<CheckoutCase, Partial<ScenarioConfig>> = {
   "account-job-context": { notices: { backorder: false, nearby: false }, seededJob: "Spring maintenance" },
-  "delivery-pickup-routing": { fulfillment: "pickup" },
-  "availability-date-constraints": { seededDate: "September 3, 2026", availabilityConstraint: true },
+  // Opens on Fulfillment with a delivery method already selected (routing to a grouped address).
+  "delivery-pickup-routing": { method: "ups", notices: { backorder: false, nearby: false } },
+  // Opens on Fulfillment with the date-cutoff messaging visible on a delivery method.
+  "availability-date-constraints": { method: "truck", availabilityConstraint: true, notices: { backorder: false, nearby: false } },
   "terms-or-credit-card": { initialStep: "payment", payment: "card", notices: { backorder: false, nearby: false } },
   "review-coupon-special-handling": { initialStep: "review", notices: { backorder: false, nearby: false }, showCoupon: true, showSpecialHandling: true },
   "order-confirmation": { initialStep: "review", submitted: true, notices: { backorder: false, nearby: false } },
@@ -158,7 +164,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
   const [step, setStep] = React.useState<Step>(cfg.initialStep);
   const [submitted, setSubmitted] = React.useState(cfg.submitted);
   const [saved, setSaved] = React.useState(false);
-  const [fulfillment, setFulfillment] = React.useState(cfg.fulfillment);
+  const [method, setMethod] = React.useState<FulfillmentMethod>(cfg.method);
   const [payment, setPayment] = React.useState(cfg.payment);
   const [notices, setNotices] = React.useState(cfg.notices);
   const [po, setPo] = React.useState("PO-2048");
@@ -171,7 +177,9 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
   // Applied coupon takes 10% off the subtotal.
   const discount = appliedCoupon ? subtotal * 0.1 : 0;
   const tax = (subtotal - discount) * TAX_RATE;
-  const total = subtotal - discount + tax;
+  // Shipping reflects the chosen fulfillment method's rate.
+  const shipping = METHOD_RATE[method];
+  const total = subtotal - discount + tax + shipping;
 
   if (submitted) {
     return (
@@ -319,13 +327,12 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
           <section className="min-w-0 rounded-md border bg-background shadow-sm">
             {step === "shipping" ? (
               <FulfillmentStep
-                fulfillment={fulfillment}
-                setFulfillment={setFulfillment}
+                method={method}
+                setMethod={setMethod}
                 po={po}
                 setPo={setPo}
                 poError={poError}
                 seededJob={cfg.seededJob}
-                seededDate={cfg.seededDate}
                 availabilityConstraint={cfg.availabilityConstraint}
               />
             ) : null}
@@ -335,7 +342,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
             {step === "review" ? (
               <ReviewStep
                 items={items}
-                fulfillment={fulfillment}
+                method={method}
                 payment={payment}
                 showSpecialHandling={cfg.showSpecialHandling}
                 onBack={() => setStep("payment")}
@@ -350,6 +357,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
             subtotal={subtotal}
             discount={discount}
             tax={tax}
+            shipping={shipping}
             total={total}
             saved={saved}
             onSave={() => setSaved(true)}
@@ -381,76 +389,35 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
   );
 }
 
+/** The Fulfillment step: order-level details (PO / job) above the one unified
+ *  fulfillment section (method selector + method panel). The section owns all
+ *  method/address/date/modifier logic; this wrapper only supplies the header
+ *  and the PO gate. */
 function FulfillmentStep({
-  fulfillment,
-  setFulfillment,
+  method,
+  setMethod,
   po,
   setPo,
   poError,
   seededJob,
-  seededDate,
   availabilityConstraint,
 }: {
-  fulfillment: "delivery" | "pickup";
-  setFulfillment: (v: "delivery" | "pickup") => void;
+  method: FulfillmentMethod;
+  setMethod: (m: FulfillmentMethod) => void;
   po: string;
   setPo: (v: string) => void;
   poError?: string;
   seededJob: string;
-  seededDate: string;
   availabilityConstraint: boolean;
 }) {
-  const isPickup = fulfillment === "pickup";
   return (
     <>
       <SectionHeading number="1" title="Fulfillment" />
-      <div className="space-y-6 p-5">
-        <RadioGroup value={fulfillment} onValueChange={(v) => setFulfillment(v as "delivery" | "pickup")} className="grid gap-3 sm:grid-cols-2">
-          <RadioCard value="delivery" selected={!isPickup}>
-            <span className="flex items-center gap-2 font-semibold">
-              <Truck className="size-4" aria-hidden="true" />
-              Delivery
-            </span>
-            <span className="mt-1 block text-sm text-muted-foreground">Standard delivery · Free</span>
-          </RadioCard>
-          <RadioCard value="pickup" selected={isPickup}>
-            <span className="flex items-center gap-2 font-semibold">
-              <MapPin className="size-4" aria-hidden="true" />
-              Pickup
-            </span>
-            <span className="mt-1 block text-sm text-muted-foreground">Manchester branch · choose a date</span>
-          </RadioCard>
-        </RadioGroup>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
-          <Field id="job" label="Job name" placeholder="Optional job name" defaultValue={seededJob || undefined} />
-
-          {isPickup ? (
-            <>
-              <Field id="branch" label="Pickup branch" required defaultValue="Manchester, NH - Homans" className="sm:col-span-2" />
-              <Field id="pickup-date" label="Pickup date" required defaultValue={seededDate} />
-              <Field id="contact" label="Contact phone" required defaultValue="+1 978 657 8990" />
-            </>
-          ) : (
-            <>
-              <Field id="address" label="Street address" required defaultValue="613 Main Street" className="sm:col-span-2" />
-              <Field id="city" label="City" required defaultValue="Williston" />
-              <Field id="state" label="State" required defaultValue="VT" />
-              <Field id="zip" label="ZIP code" required defaultValue="05495" />
-              <Field id="delivery-date" label="Delivery date" required defaultValue={seededDate} />
-            </>
-          )}
-        </div>
-
-        {availabilityConstraint ? (
-          <Alert variant="warning">
-                <TriangleAlert />
-            <AlertTitle>Availability depends on branch transfer and cutoff time</AlertTitle>
-            <AlertDescription>We&apos;ll confirm the earliest available date before your order is submitted.</AlertDescription>
-          </Alert>
-        ) : null}
+      <div className="grid gap-4 border-b p-5 sm:grid-cols-2">
+        <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
+        <Field id="job" label="Job name" placeholder="Optional job name" defaultValue={seededJob || undefined} />
       </div>
+      <FulfillmentSection method={method} setMethod={setMethod} availabilityConstraint={availabilityConstraint} />
     </>
   );
 }
@@ -510,7 +477,7 @@ function PaymentStep({ payment, setPayment, onBack }: { payment: "terms" | "card
 
 function ReviewStep({
   items,
-  fulfillment,
+  method,
   payment,
   showSpecialHandling,
   onBack,
@@ -518,7 +485,7 @@ function ReviewStep({
   onEditPayment,
 }: {
   items: CartItem[];
-  fulfillment: string;
+  method: FulfillmentMethod;
   payment: string;
   showSpecialHandling: boolean;
   onBack: () => void;
@@ -532,7 +499,9 @@ function ReviewStep({
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-md border p-4">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Fulfillment</p>
-            <p className="mt-2 font-medium">{fulfillment === "pickup" ? "Pickup — Manchester branch" : "Delivery — Standard"}</p>
+            <p className="mt-2 font-medium">
+              {isDeliveryMethod(method) ? `Delivery — ${methodLabel(method)}` : "Pickup — Manchester branch"}
+            </p>
             <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditFulfillment}>Edit</Button>
           </div>
           <div className="rounded-md border p-4">
@@ -579,6 +548,7 @@ function OrderSummary({
   subtotal,
   discount,
   tax,
+  shipping,
   total,
   saved,
   onSave,
@@ -595,6 +565,7 @@ function OrderSummary({
   subtotal: number;
   discount: number;
   tax: number;
+  shipping: number;
   total: number;
   saved: boolean;
   onSave: () => void;
@@ -640,7 +611,7 @@ function OrderSummary({
           ) : null}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Shipping</span>
-            <span>Free</span>
+            <span>{shipping > 0 ? formatUSD(shipping) : "Free"}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Estimated tax</span>
