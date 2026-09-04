@@ -3,13 +3,19 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  Banknote,
+  Building2,
   Check,
   ChevronLeft,
   CreditCard,
   LockKeyhole,
   MapPin,
   Package,
+  PackageCheck,
+  Plus,
+  Printer,
   ShieldCheck,
+  Trash2,
   TriangleAlert,
   X,
 } from "lucide-react";
@@ -19,8 +25,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import type { CheckoutCase } from "../page";
@@ -39,9 +55,28 @@ const DEMO_ITEMS: CartItem[] = [
   { id: "checkout-wire-rope", title: "Duro Dyne® Cable Lock Wire Rope - 500' Roll", brand: "Duro Dyne", price: 277, quantity: 1, image: "/peirce-search/blower-motor-17.avif" },
 ];
 
+/* Saved cards are modeled as SHARED FROM THE COMPANY — the account, not the
+ * individual, owns the card on file (ECM pattern). */
 const SAVED_CARDS = [
-  { id: "visa-4242", label: "Visa ending 4242", meta: "Exp 08/28" },
-  { id: "mc-8801", label: "Mastercard ending 8801", meta: "Exp 02/27" },
+  { id: "visa-6177", tail: "6177", expires: "4/2028" },
+  { id: "mc-8801", tail: "8801", expires: "2/2027" },
+];
+
+/* Accounts reachable from the in-checkout switch-account control (Homans
+ * pattern). Superset of contexts: account / ship-to / company / location. */
+type SwitchAccount = {
+  id: string;
+  name: string;
+  kind: "Account" | "Ship-to" | "Company" | "Location";
+  detail: string;
+};
+
+const SWITCH_ACCOUNTS: SwitchAccount[] = [
+  { id: "hom509973", name: "Homans Associates", kind: "Account", detail: "#HOM509973 · Manchester, NH" },
+  { id: "hom-613main", name: "613 Main Street", kind: "Ship-to", detail: "Manchester, NH 03101" },
+  { id: "hom-north", name: "North warehouse", kind: "Location", detail: "42 Industrial Way, Concord, NH" },
+  { id: "hom-parent", name: "Homans — New England", kind: "Company", detail: "Parent company · 12 branches" },
+  { id: "hom-portsmouth", name: "Portsmouth branch", kind: "Location", detail: "155 Heritage Ave, Portsmouth, NH" },
 ];
 
 const ORDER_NUMBER = "HOM-2026-04871";
@@ -52,12 +87,13 @@ const TAX_RATE = 0.0625;
  * single config entry — no scattered `scenario === "…"` branching in the JSX. */
 
 type Step = "shipping" | "payment" | "review";
+type Payment = "terms" | "cash" | "card";
 
 type ScenarioConfig = {
   initialStep: Step;
   submitted: boolean;
   method: FulfillmentMethod;
-  payment: "terms" | "card";
+  payment: Payment;
   notices: { backorder: boolean; nearby: boolean };
   seededJob: string;
   availabilityConstraint: boolean;
@@ -165,13 +201,18 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
   const [submitted, setSubmitted] = React.useState(cfg.submitted);
   const [saved, setSaved] = React.useState(false);
   const [method, setMethod] = React.useState<FulfillmentMethod>(cfg.method);
-  const [payment, setPayment] = React.useState(cfg.payment);
+  const [payment, setPayment] = React.useState<Payment>(cfg.payment);
   const [notices, setNotices] = React.useState(cfg.notices);
   const [po, setPo] = React.useState("PO-2048");
+  const [job, setJob] = React.useState(cfg.seededJob);
   const [poError, setPoError] = React.useState<string | undefined>();
   const [confirmed, setConfirmed] = React.useState(false);
   const [coupon, setCoupon] = React.useState("");
   const [appliedCoupon, setAppliedCoupon] = React.useState<string | null>(null);
+  // Special handling (Homans): checking it reveals a REQUIRED branch-comments
+  // field that blocks Place order until filled.
+  const [specialHandling, setSpecialHandling] = React.useState(false);
+  const [handlingComments, setHandlingComments] = React.useState("");
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   // Applied coupon takes 10% off the subtotal.
@@ -197,9 +238,15 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
               Track status and delivery updates from Open Orders.
             </p>
-            <Button asChild className="mt-6" size="sm">
-              <Link href="/dashboard/orders?status=open">View open orders</Link>
-            </Button>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Button asChild size="sm">
+                <Link href="/dashboard/orders?status=open">View open orders</Link>
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => window.print()}>
+                <Printer className="size-4" aria-hidden="true" />
+                Print order confirmation
+              </Button>
+            </div>
           </section>
         </div>
       </main>
@@ -239,6 +286,9 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
     setStep("payment");
   };
 
+  // Special handling requires branch comments before the order can be placed.
+  const handlingBlocks = cfg.showSpecialHandling && specialHandling && !handlingComments.trim();
+
   // The sticky order-summary CTA is context-aware: it carries the forward action
   // for the current step, so on a long review the Place-order button stays pinned.
   const primary =
@@ -246,7 +296,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
       ? { label: "Continue to payment", onClick: goToPayment, disabled: false }
       : step === "payment"
         ? { label: "Continue to review", onClick: () => setStep("review"), disabled: false }
-        : { label: "Place order", onClick: () => setSubmitted(true), disabled: !confirmed };
+        : { label: "Place order", onClick: () => setSubmitted(true), disabled: !confirmed || handlingBlocks };
 
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
@@ -267,15 +317,8 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
           </div>
         </div>
 
-        {/* Account context — a read-only summary, not a form (the global account
-            component owns account switching). */}
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
-          <div>
-            <span className="font-semibold">Homans Associates</span>
-            <span className="text-muted-foreground"> · #HOM509973 · Manchester, NH</span>
-          </div>
-          <span className="text-xs text-muted-foreground">Ship to 613 Main Street · change from the account menu</span>
-        </div>
+        {/* Account context — with an in-checkout Switch account control. */}
+        <AccountContextRow />
 
         <ol aria-label="Checkout progress" className="mt-6 grid max-w-3xl grid-cols-3 gap-2 text-sm">
           {steps.map((entry, index) => (
@@ -321,7 +364,18 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
               </Alert>
             ) : null}
           </div>
-        ) : null}
+        ) : (
+          // No stock warnings → positive inventory confirmation (Peirce pattern).
+          <div className="mt-6">
+            <Alert variant="success">
+              <PackageCheck />
+              <AlertTitle>Inventory confirmed — all items available</AlertTitle>
+              <AlertDescription>
+                Every item on this order is in stock at your branch and ready to fulfill.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="min-w-0 rounded-md border bg-background shadow-sm">
@@ -331,8 +385,9 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
                 setMethod={setMethod}
                 po={po}
                 setPo={setPo}
+                job={job}
+                setJob={setJob}
                 poError={poError}
-                seededJob={cfg.seededJob}
                 availabilityConstraint={cfg.availabilityConstraint}
               />
             ) : null}
@@ -344,7 +399,13 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
                 items={items}
                 method={method}
                 payment={payment}
+                po={po}
+                job={job}
                 showSpecialHandling={cfg.showSpecialHandling}
+                specialHandling={specialHandling}
+                setSpecialHandling={setSpecialHandling}
+                handlingComments={handlingComments}
+                setHandlingComments={setHandlingComments}
                 onBack={() => setStep("payment")}
                 onEditFulfillment={() => setStep("shipping")}
                 onEditPayment={() => setStep("payment")}
@@ -398,40 +459,253 @@ function FulfillmentStep({
   setMethod,
   po,
   setPo,
+  job,
+  setJob,
   poError,
-  seededJob,
   availabilityConstraint,
 }: {
   method: FulfillmentMethod;
   setMethod: (m: FulfillmentMethod) => void;
   po: string;
   setPo: (v: string) => void;
+  job: string;
+  setJob: (v: string) => void;
   poError?: string;
-  seededJob: string;
   availabilityConstraint: boolean;
 }) {
   return (
     <>
       <SectionHeading number="1" title="Fulfillment" />
-      <div className="grid gap-4 border-b p-5 sm:grid-cols-2">
-        <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
-        <Field id="job" label="Job name" placeholder="Optional job name" defaultValue={seededJob || undefined} />
+      <div className="space-y-5 border-b p-5">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
+          <Field id="job" label="Job name" placeholder="Optional job name" value={job} onChange={(e) => setJob(e.target.value)} />
+        </div>
+        <OrderDetailsExtras />
       </div>
       <FulfillmentSection method={method} setMethod={setMethod} availabilityConstraint={availabilityConstraint} />
     </>
   );
 }
 
-function PaymentStep({ payment, setPayment, onBack }: { payment: "terms" | "card"; setPayment: (v: "terms" | "card") => void; onBack: () => void }) {
+const MAX_NOTES = 2000;
+
+/** Order Details extras — the superset of order-level options across brands:
+ *  order notes (Peirce), plus confirmation email + additional recipients +
+ *  notify-salesperson (ECM). Self-contained: none of these gate submit. */
+function OrderDetailsExtras() {
+  const [notes, setNotes] = React.useState("");
+  const [sendEmail, setSendEmail] = React.useState(true);
+  const [notifyRep, setNotifyRep] = React.useState(false);
+  const [recipients, setRecipients] = React.useState<string[]>([]);
+
+  const addRecipient = () => setRecipients((r) => [...r, ""]);
+  const removeRecipient = (index: number) => setRecipients((r) => r.filter((_, i) => i !== index));
+  const setRecipient = (index: number, value: string) =>
+    setRecipients((r) => r.map((v, i) => (i === index ? value : v)));
+
+  return (
+    <div className="space-y-5">
+      {/* Order notes (Peirce) */}
+      <div className="space-y-2">
+        <div className="flex items-baseline justify-between gap-2">
+          <Label htmlFor="order-notes">Order notes</Label>
+          <span className="text-xs text-muted-foreground" aria-live="polite">
+            {notes.length}/{MAX_NOTES}
+          </span>
+        </div>
+        <Textarea
+          id="order-notes"
+          value={notes}
+          maxLength={MAX_NOTES}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Add a note for this order (visible to your branch)"
+          className="min-h-20"
+        />
+      </div>
+
+      {/* Confirmation email + recipients + notify salesperson (ECM) */}
+      <div className="space-y-3 rounded-md border bg-muted/30 p-4">
+        <Label className="flex items-start gap-3 text-sm font-normal">
+          <Checkbox checked={sendEmail} onCheckedChange={(v) => setSendEmail(v === true)} className="mt-0.5" />
+          <span>
+            <span className="block font-medium text-foreground">Send order confirmation email</span>
+            <span className="block text-xs text-muted-foreground">A copy of this order goes to your account email.</span>
+          </span>
+        </Label>
+
+        {sendEmail ? (
+          <div className="space-y-2 pl-7">
+            {recipients.map((email, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setRecipient(index, e.target.value)}
+                  placeholder="name@company.com"
+                  aria-label={`Additional recipient ${index + 1}`}
+                  className="h-9"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  onClick={() => removeRecipient(index)}
+                  aria-label={`Remove recipient ${index + 1}`}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
+            ))}
+            <Button type="button" variant="outline" size="sm" onClick={addRecipient}>
+              <Plus className="size-4" />
+              Add recipient
+            </Button>
+          </div>
+        ) : null}
+
+        <Label className="flex items-start gap-3 border-t pt-3 text-sm font-normal">
+          <Checkbox checked={notifyRep} onCheckedChange={(v) => setNotifyRep(v === true)} className="mt-0.5" />
+          <span>
+            <span className="block font-medium text-foreground">Notify your salesperson (Dana Whitfield)</span>
+            <span className="block text-xs text-muted-foreground">Send a heads-up to your assigned rep when this order is placed.</span>
+          </span>
+        </Label>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Account context + switch account ───────────────────────── */
+
+function AccountContextRow() {
+  const [open, setOpen] = React.useState(false);
+  const [currentId, setCurrentId] = React.useState(SWITCH_ACCOUNTS[0].id);
+  const [defaultId, setDefaultId] = React.useState(SWITCH_ACCOUNTS[0].id);
+  const current = SWITCH_ACCOUNTS.find((a) => a.id === currentId) ?? SWITCH_ACCOUNTS[0];
+
+  return (
+    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
+      <div className="min-w-0">
+        <span className="font-semibold">{current.name}</span>
+        <span className="text-muted-foreground"> · {current.detail}</span>
+      </div>
+      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+        <Building2 className="size-4" aria-hidden="true" />
+        Switch account
+      </Button>
+      <SwitchAccountDialog
+        open={open}
+        onOpenChange={setOpen}
+        currentId={currentId}
+        defaultId={defaultId}
+        onSelect={setCurrentId}
+        onSetDefault={setDefaultId}
+      />
+    </div>
+  );
+}
+
+function SwitchAccountDialog({
+  open,
+  onOpenChange,
+  currentId,
+  defaultId,
+  onSelect,
+  onSetDefault,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  currentId: string;
+  defaultId: string;
+  onSelect: (id: string) => void;
+  onSetDefault: (id: string) => void;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Switch account</DialogTitle>
+          <DialogDescription>Choose the account, ship-to, company, or location for this order.</DialogDescription>
+        </DialogHeader>
+        <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
+          {SWITCH_ACCOUNTS.map((a) => {
+            const isCurrent = a.id === currentId;
+            const isDefault = a.id === defaultId;
+            return (
+              <li key={a.id}>
+                <div
+                  className={cn(
+                    "flex flex-wrap items-center justify-between gap-3 rounded-md border p-3",
+                    isCurrent && "border-primary bg-primary/5"
+                  )}
+                >
+                  <div className="min-w-0">
+                    <p className="flex flex-wrap items-center gap-2 font-medium">
+                      {a.name}
+                      <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                        {a.kind}
+                      </span>
+                      {isDefault ? (
+                        <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
+                          Default
+                        </span>
+                      ) : null}
+                    </p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{a.detail}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {!isDefault ? (
+                      <Button size="sm" variant="tertiary" onClick={() => onSetDefault(a.id)}>
+                        Set default
+                      </Button>
+                    ) : null}
+                    <Button
+                      size="sm"
+                      variant={isCurrent ? "outline" : "default"}
+                      disabled={isCurrent}
+                      onClick={() => {
+                        onSelect(a.id);
+                        onOpenChange(false);
+                      }}
+                    >
+                      {isCurrent ? "Selected" : "Select"}
+                    </Button>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" variant="outline">
+              Cancel
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function PaymentStep({ payment, setPayment, onBack }: { payment: Payment; setPayment: (v: Payment) => void; onBack: () => void }) {
   const [card, setCard] = React.useState<string>(SAVED_CARDS[0].id);
   return (
     <>
       <SectionHeading number="2" title="Payment" />
       <div className="space-y-5 p-5">
-        <RadioGroup value={payment} onValueChange={(v) => setPayment(v as "terms" | "card")} className="grid gap-3">
+        <RadioGroup value={payment} onValueChange={(v) => setPayment(v as Payment)} className="grid gap-3">
           <RadioCard value="terms" selected={payment === "terms"}>
             <span className="block font-semibold">Account terms, COD</span>
             <span className="mt-1 block text-sm text-muted-foreground">Charge this order to your Homans account.</span>
+          </RadioCard>
+          <RadioCard value="cash" selected={payment === "cash"}>
+            <span className="flex items-center gap-2 font-semibold">
+              <Banknote className="size-4" aria-hidden="true" />
+              Cash on pickup
+            </span>
+            <span className="mt-1 block text-sm text-muted-foreground">Pay at the branch counter when you collect the order.</span>
           </RadioCard>
           <RadioCard value="card" selected={payment === "card"}>
             <span className="flex items-center gap-2 font-semibold">
@@ -447,9 +721,12 @@ function PaymentStep({ payment, setPayment, onBack }: { payment: "terms" | "card
             <RadioGroup value={card} onValueChange={setCard} className="grid gap-2">
               {SAVED_CARDS.map((c) => (
                 <RadioCard key={c.id} value={c.id} selected={card === c.id} className="bg-background">
-                  <span className="flex items-center justify-between gap-2">
-                    <span className="font-medium">{c.label}</span>
-                    <span className="text-xs text-muted-foreground">{c.meta}</span>
+                  <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="font-medium">•••• {c.tail}</span>
+                    <span className="text-xs text-muted-foreground">· expires {c.expires} ·</span>
+                    <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                      Shared from the company
+                    </span>
                   </span>
                 </RadioCard>
               ))}
@@ -475,28 +752,55 @@ function PaymentStep({ payment, setPayment, onBack }: { payment: "terms" | "card
   );
 }
 
+function paymentLabel(payment: Payment): string {
+  if (payment === "card") return "Credit card";
+  if (payment === "cash") return "Cash on pickup";
+  return "Account terms, COD";
+}
+
+const MAX_HANDLING_COMMENTS = 300;
+
 function ReviewStep({
   items,
   method,
   payment,
+  po,
+  job,
   showSpecialHandling,
+  specialHandling,
+  setSpecialHandling,
+  handlingComments,
+  setHandlingComments,
   onBack,
   onEditFulfillment,
   onEditPayment,
 }: {
   items: CartItem[];
   method: FulfillmentMethod;
-  payment: string;
+  payment: Payment;
+  po: string;
+  job: string;
   showSpecialHandling: boolean;
+  specialHandling: boolean;
+  setSpecialHandling: (v: boolean) => void;
+  handlingComments: string;
+  setHandlingComments: (v: string) => void;
   onBack: () => void;
   onEditFulfillment: () => void;
   onEditPayment: () => void;
 }) {
+  const commentsMissing = specialHandling && !handlingComments.trim();
   return (
     <>
       <SectionHeading number="3" title="Review & submit" />
       <div className="space-y-5 p-5">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-md border p-4">
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Order details</p>
+            <p className="mt-2 font-medium">PO {po || "—"}</p>
+            <p className="text-sm text-muted-foreground">{job ? `Job: ${job}` : "No job name"}</p>
+            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditFulfillment}>Edit</Button>
+          </div>
           <div className="rounded-md border p-4">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Fulfillment</p>
             <p className="mt-2 font-medium">
@@ -506,16 +810,46 @@ function ReviewStep({
           </div>
           <div className="rounded-md border p-4">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Payment</p>
-            <p className="mt-2 font-medium">{payment === "card" ? "Credit card" : "Account terms, COD"}</p>
+            <p className="mt-2 font-medium">{paymentLabel(payment)}</p>
             <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditPayment}>Edit</Button>
           </div>
         </div>
 
         {showSpecialHandling ? (
-          <Label className="flex items-center gap-3 rounded-md border p-3 text-sm font-normal">
-            <Checkbox />
-            Order requires special handling
-          </Label>
+          <div className="space-y-3 rounded-md border p-4">
+            <Label className="flex items-center gap-3 text-sm font-normal">
+              <Checkbox checked={specialHandling} onCheckedChange={(v) => setSpecialHandling(v === true)} />
+              Order requires special handling
+            </Label>
+            {specialHandling ? (
+              <div className="space-y-2 pl-7">
+                <div className="flex items-baseline justify-between gap-2">
+                  <Label htmlFor="handling-comments">
+                    Comments for branch
+                    <span className="ml-0.5 text-destructive">*</span>
+                  </Label>
+                  <span className="text-xs text-muted-foreground" aria-live="polite">
+                    {handlingComments.length}/{MAX_HANDLING_COMMENTS}
+                  </span>
+                </div>
+                <Textarea
+                  id="handling-comments"
+                  required
+                  value={handlingComments}
+                  maxLength={MAX_HANDLING_COMMENTS}
+                  onChange={(e) => setHandlingComments(e.target.value)}
+                  aria-invalid={commentsMissing ? true : undefined}
+                  placeholder="Tell the branch what this order needs (e.g. crated, appointment delivery, dock hours)."
+                  className="min-h-20"
+                />
+                {commentsMissing ? (
+                  <p className="text-xs font-medium text-destructive">
+                    Comments are required before this order can be placed.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
         ) : null}
 
         <div className="rounded-md border">
