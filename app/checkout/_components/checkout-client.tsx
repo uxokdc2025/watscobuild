@@ -47,6 +47,7 @@ import {
   isDeliveryMethod,
   type FulfillmentMethod,
 } from "./fulfillment";
+import { StockUnavailablePanel } from "./stock-unavailable";
 
 /* ───────────────────────── Demo data ───────────────────────── */
 
@@ -363,6 +364,9 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
                 <DismissButton label="Dismiss nearby branches notice" onClick={() => setNotices((n) => ({ ...n, nearby: false }))} />
               </Alert>
             ) : null}
+            {/* Itemized detail: which items are short at the current store, and the
+             * options to proceed. Stacks beneath the summary alerts; not dismissable. */}
+            <StockUnavailablePanel items={items} />
           </div>
         ) : (
           // No stock warnings → positive inventory confirmation (Peirce pattern).
