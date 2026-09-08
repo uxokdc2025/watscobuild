@@ -11,6 +11,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     key: "carrier",
     name: "Carrier Enterprise",
     accent: "#3d2762",
+    defaultBranch: "Miami, FL #101",
     hasCompare: true,
     nav: [
       "Residential Equipment",
@@ -36,6 +37,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     key: "homans",
     name: "Homans Associates",
     accent: "#003874",
+    defaultBranch: "Wilmington, MA #1248",
     nav: [
       "Products",
       "Brands",
@@ -58,6 +60,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     name: "DCNE",
     accent: "#124b8f",
     phone: "781-322-8800",
+    defaultBranch: "Canton, MA #820",
     nav: [
       "Shop Residential",
       "Shop Commercial",
@@ -79,6 +82,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     key: "ecmdi",
     name: "East Coast Metal Distributors",
     accent: "#cb0015",
+    defaultBranch: "Durham, NC #1",
     nav: [
       "Categories",
       "Brands",
@@ -101,6 +105,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     name: "Peirce-Phelps",
     accent: "#00539b",
     phone: "1 (800) 342-2304",
+    defaultBranch: "Camp Hill, PA #144",
     nav: [
       "Specials",
       "Find A Local Dealer",
@@ -123,6 +128,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     name: "Baker Distributing",
     accent: "#c8102e",
     phone: "(800) 217-4698",
+    defaultBranch: "Baker Jacksonville #301",
     nav: [
       "HVAC",
       "Refrigeration",
@@ -148,6 +154,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     name: "Gemaire",
     accent: "#0080df",
     phone: "(888) 601-0038",
+    defaultBranch: "Deerfield Beach, FL #201",
     nav: [
       "Shop for Products",
       "Brands",

@@ -42,6 +42,11 @@ export type BrandChrome = {
   /** Approximate brand accent (kept for callers; chrome uses tokens, not this). */
   accent: string;
   phone?: string;
+  /** The brand's own "home" branch (label incl. city/state + store number),
+   *  shown in the header store pill when signed in. Region-correct per brand —
+   *  never another brand's store — and, for brands with a checkout profile,
+   *  matches that profile's current branch so header and checkout agree. */
+  defaultBranch: string;
   nav: string[];
   footerColumns: FooterColumn[];
   copyright: string;
@@ -219,7 +224,7 @@ function UnifiedHeader({
   signedIn?: boolean;
 }) {
   const theme = themeFor(brand);
-  const branch = signedIn ? "Wilmington, MA #1248" : "Select your store";
+  const branch = signedIn ? brand.defaultBranch : "Select your store";
 
   return (
     <header>
