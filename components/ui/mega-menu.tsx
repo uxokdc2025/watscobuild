@@ -7,7 +7,6 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
-import { DRAWER_SPRING } from "@/components/ui/drawer";
 import {
   PRODUCT_TAXONOMY,
   taxonomyHref,
@@ -24,6 +23,15 @@ import {
    tint only — no vertical divider rules. Neutral surfaces throughout: the
    brand color lives on the header bar, never inside the panel body.
    ──────────────────────────────────────────────────────────────────────── */
+
+/** ONE shared slide for the panel and every column reveal, so all three tiers
+ *  animate identically. A tween (not a spring) so the pace is tunable — 0.6s
+ *  reads as a deliberate, slow slide. */
+const MENU_SLIDE = {
+  type: "tween" as const,
+  duration: 0.6,
+  ease: [0.32, 0.72, 0, 1] as const,
+};
 
 const itemBase =
   "flex min-h-11 w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -232,7 +240,7 @@ export function MegaMenu({
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
-                transition={DRAWER_SPRING}
+                transition={MENU_SLIDE}
                 role="menu"
                 aria-label="Product categories"
                 onKeyDown={onPanelKeyDown}
@@ -267,7 +275,7 @@ export function MegaMenu({
                       initial={{ x: "-100%" }}
                       animate={{ x: 0 }}
                       exit={{ x: "-100%" }}
-                      transition={DRAWER_SPRING}
+                      transition={MENU_SLIDE}
                       className="relative z-20 w-full shrink-0 overflow-y-auto bg-muted/40 p-2 md:w-72"
                     >
                       <ColumnHeader node={category} onNavigate={close} />
@@ -294,7 +302,7 @@ export function MegaMenu({
                       initial={{ x: "-100%" }}
                       animate={{ x: 0 }}
                       exit={{ x: "-100%" }}
-                      transition={DRAWER_SPRING}
+                      transition={MENU_SLIDE}
                       className="relative z-10 w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-72"
                     >
                       <ColumnHeader node={subcategory} onNavigate={close} />
