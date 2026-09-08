@@ -16,30 +16,29 @@ import {
   Truck,
 } from "lucide-react";
 
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import type {
   BrandAddress,
-  BrandAddressGroup,
   BrandBranch,
   BrandCheckoutConfig,
 } from "../_lib/brand-checkout";
+import {
+  AddAddressDrawer,
+  AddressBookDrawer,
+  AddressRow,
+  GROUP_LABEL,
+  GROUP_ORDER,
+  StoreFinderDrawer,
+} from "./checkout-drawers";
 
 /* ───────────────────────── Fulfillment domain model ─────────────────────────
  * ONE unified fulfillment section. Method is the top-level choice (ECM pattern),
@@ -93,16 +92,6 @@ const METHOD_RATE_LABEL: Record<FulfillmentMethod, string> = {
 export function methodLabel(m: FulfillmentMethod): string {
   return METHOD_META[m]?.label ?? "Delivery";
 }
-
-/* ── Grouped address book (superset: Job account · Account · Billing) ── */
-
-const GROUP_LABEL: Record<BrandAddressGroup, string> = {
-  job: "Job account",
-  account: "Account",
-  billing: "Billing",
-};
-
-const GROUP_ORDER: BrandAddressGroup[] = ["job", "account", "billing"];
 
 /* ───────────────────────── Calendar (date validation) ─────────────────────────
  * Fixed "today" keeps the prototype deterministic (no SSR/CSR hydration drift and
@@ -299,26 +288,6 @@ function DateField({
   );
 }
 
-/* ───────────────────────── Small shared field (add-address dialog) ───────────────────────── */
-
-function TextField({
-  id,
-  label,
-  required = false,
-  className,
-  ...props
-}: React.ComponentProps<typeof Input> & { id: string; label: string; required?: boolean; className?: string }) {
-  return (
-    <div className={cn("space-y-2", className)}>
-      <Label htmlFor={id}>
-        {label}
-        {required ? <span className="ml-0.5 text-destructive">*</span> : null}
-      </Label>
-      <Input id={id} required={required} {...props} />
-    </div>
-  );
-}
-
 /* ───────────────────────── Pickup panel ───────────────────────── */
 
 function PickupPanel({
@@ -384,112 +353,15 @@ function PickupPanel({
         </Label>
       ) : null}
 
-      <StoreFinderDialog open={open} onOpenChange={setOpen} branches={branches} current={branch} onSelect={onChangeBranch} />
+      <StoreFinderDrawer open={open} onClose={() => setOpen(false)} branches={branches} current={branch} onSelect={onChangeBranch} />
     </div>
-  );
-}
-
-function StoreFinderDialog({
-  open,
-  onOpenChange,
-  branches,
-  current,
-  onSelect,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  branches: BrandBranch[];
-  current: BrandBranch;
-  onSelect: (b: BrandBranch) => void;
-}) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Choose a pickup branch</DialogTitle>
-          <DialogDescription>Sorted by distance from your account.</DialogDescription>
-        </DialogHeader>
-        <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
-          {branches.map((b) => {
-            const isCurrent = b.id === current.id;
-            return (
-              <li key={b.id}>
-                <div
-                  className={cn(
-                    "flex flex-wrap items-center justify-between gap-3 rounded-md border p-3",
-                    isCurrent && "border-primary bg-primary/5"
-                  )}
-                >
-                  <div className="min-w-0">
-                    <p className="flex items-center gap-2 font-medium">
-                      {b.name}
-                      {isCurrent ? (
-                        <span className="rounded-sm bg-primary/10 px-1.5 py-0.5 text-[11px] font-semibold text-primary">
-                          Current
-                        </span>
-                      ) : null}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{b.address}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      {b.miles === 0 ? "Your branch" : `${b.miles} mi away`} · {b.hours}
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant={isCurrent ? "outline" : "default"}
-                    disabled={isCurrent}
-                    onClick={() => {
-                      onSelect(b);
-                      onOpenChange(false);
-                    }}
-                  >
-                    {isCurrent ? "Selected" : "Select this store"}
-                  </Button>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </DialogContent>
-    </Dialog>
   );
 }
 
 /* ───────────────────────── Delivery panel ───────────────────────── */
 
-function AddressRow({ address, selected }: { address: BrandAddress; selected: boolean }) {
-  return (
-    <Label
-      className={cn(
-        "flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors",
-        selected ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
-      )}
-    >
-      <RadioGroupItem value={address.id} className="mt-0.5" />
-      <span className="min-w-0 flex-1">
-        <span className="flex flex-wrap items-center gap-2">
-          <span className="font-medium">{address.name}</span>
-          {address.isDefault ? (
-            <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
-              Default
-            </span>
-          ) : null}
-          {address.outOfRadius ? (
-            <span className="rounded-sm bg-yellow-400/20 px-1.5 py-0.5 text-[11px] font-semibold text-yellow-800 dark:text-yellow-300">
-              Outside radius
-            </span>
-          ) : null}
-        </span>
-        <span className="mt-0.5 block text-sm text-muted-foreground">
-          {address.line1}, {address.city}, {address.state} {address.zip}
-        </span>
-        {address.contact ? (
-          <span className="block text-xs text-muted-foreground">{address.contact}</span>
-        ) : null}
-      </span>
-    </Label>
-  );
-}
+/** Addresses shown inline per group before the "See all" drawer takes over. */
+const INLINE_PER_GROUP = 3;
 
 function DeliveryPanel({
   method,
@@ -527,6 +399,7 @@ function DeliveryPanel({
   outOfRadius: boolean;
 }) {
   const [addOpen, setAddOpen] = React.useState(false);
+  const [bookOpen, setBookOpen] = React.useState(false);
   const rateLabel = method === "truck" && truckLabel ? truckLabel : METHOD_RATE_LABEL[method];
 
   return (
@@ -555,20 +428,42 @@ function DeliveryPanel({
           {GROUP_ORDER.map((group) => {
             const rows = addresses.filter((a) => a.group === group);
             if (!rows.length) return null;
+            // The selected address always shows inline even if it sorts past the
+            // inline cap, so the current choice is never hidden behind "See all".
+            const inline = rows.slice(0, INLINE_PER_GROUP);
+            if (!inline.some((a) => a.id === addressId)) {
+              const chosen = rows.find((a) => a.id === addressId);
+              if (chosen) inline[inline.length - 1] = chosen;
+            }
+            const hidden = rows.length - inline.length;
             return (
               <div key={group} className="space-y-2">
                 <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   {GROUP_LABEL[group]}
                 </p>
                 <div className="grid gap-2">
-                  {rows.map((a) => (
+                  {inline.map((a) => (
                     <AddressRow key={a.id} address={a} selected={a.id === addressId} />
                   ))}
                 </div>
+                {hidden > 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    +{hidden} more in this group
+                  </p>
+                ) : null}
               </div>
             );
           })}
         </RadioGroup>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => setBookOpen(true)}
+        >
+          See all ({addresses.length}) addresses
+        </Button>
       </div>
 
       {/* Requested date + rate. Peirce's ship date is CSR-confirmed, not picked. */}
@@ -641,7 +536,14 @@ function DeliveryPanel({
         </div>
       ) : null}
 
-      <AddAddressDialog open={addOpen} onOpenChange={setAddOpen} />
+      <AddAddressDrawer open={addOpen} onClose={() => setAddOpen(false)} />
+      <AddressBookDrawer
+        open={bookOpen}
+        onClose={() => setBookOpen(false)}
+        addresses={addresses}
+        addressId={addressId}
+        onSelect={onSelectAddress}
+      />
     </div>
   );
 }
@@ -681,52 +583,6 @@ function ModifierGroup({
         })}
       </RadioGroup>
     </fieldset>
-  );
-}
-
-function AddAddressDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
-        <DialogHeader>
-          <DialogTitle>Add a delivery address</DialogTitle>
-          <DialogDescription>Add a one-time address or save it to your address book.</DialogDescription>
-        </DialogHeader>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onOpenChange(false);
-          }}
-          className="space-y-4"
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            <TextField id="new-first" label="First name" required placeholder="First name" autoFocus />
-            <TextField id="new-last" label="Last name" required placeholder="Last name" />
-            <TextField id="new-company" label="Company" placeholder="Company (optional)" className="sm:col-span-2" />
-            <TextField id="new-phone" label="Phone" required placeholder="(603) 555-0100" type="tel" />
-            <TextField id="new-country" label="Country" required defaultValue="United States" />
-            <TextField id="new-street1" label="Street address" required placeholder="Street address" className="sm:col-span-2" />
-            <TextField id="new-street2" label="Street address 2" placeholder="Suite, unit, building (optional)" />
-            <TextField id="new-apt" label="Apt / Suite" placeholder="Apt, suite" />
-            <TextField id="new-city" label="City" required placeholder="City" />
-            <TextField id="new-state" label="State" required placeholder="State" />
-            <TextField id="new-zip" label="ZIP code" required placeholder="ZIP" />
-          </div>
-          <Label className="flex items-center gap-3 rounded-md border p-3 text-sm font-normal">
-            <Checkbox defaultChecked />
-            Save this address to my address book
-          </Label>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit">Save address</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   );
 }
 
@@ -801,58 +657,68 @@ export function FulfillmentSection({
     if (addr?.outOfRadius) setMethod("freight");
   };
 
-  return (
-    <div className="space-y-6 p-5">
-      <div>
-        <p className="text-sm font-semibold">How would you like to receive this order?</p>
-        <RadioGroup
-          value={method}
-          onValueChange={(v) => setMethod(v as FulfillmentMethod)}
-          className="mt-3 gap-2"
-          aria-label="Fulfillment method"
-        >
-          {config.methods.map((id) => (
-            <MethodRow key={id} meta={METHOD_META[id]} selected={id === method} />
-          ))}
-        </RadioGroup>
-      </div>
+  // Changing the pickup branch is a lightweight commit — a toast, no refresh.
+  const changeBranch = (b: BrandBranch) => {
+    setBranch(b);
+    toast.success(`Now shopping ${b.name}`);
+  };
 
-      {/* Selecting a method expands its panel; the others collapse. */}
-      <div className="border-t pt-6">
-        {method === "pickup" ? (
-          <PickupPanel
-            branch={branch}
-            branches={config.branches}
-            onChangeBranch={setBranch}
-            pickupDate={pickupDate}
-            setPickupDate={setPickupDate}
-            earliest={earliest}
-            dateReason={pickupReason}
-            addon={config.pickupAddon}
-            addonOn={expressOn}
-            setAddonOn={setExpressOn}
-          />
-        ) : (
-          <DeliveryPanel
-            method={method}
-            addresses={config.addresses}
-            addressId={addressId}
-            onSelectAddress={selectAddress}
-            deliveryDate={deliveryDate}
-            setDeliveryDate={setDeliveryDate}
-            earliest={earliest}
-            dateReason={dateReason}
-            dateMode={config.deliveryDateMode}
-            showModifiers={config.deliveryModifiers}
-            truckLabel={config.truckLabel}
-            split={split}
-            setSplit={setSplit}
-            liftgate={liftgate}
-            setLiftgate={setLiftgate}
-            outOfRadius={outOfRadius}
-          />
-        )}
-      </div>
+  // The panel for whichever method is selected. Rendered directly UNDER that
+  // method's row (expand-in-place), the same way each delivery method reveals
+  // its address/date panel — never a detached block at the bottom.
+  const panelFor = (id: FulfillmentMethod) =>
+    id === "pickup" ? (
+      <PickupPanel
+        branch={branch}
+        branches={config.branches}
+        onChangeBranch={changeBranch}
+        pickupDate={pickupDate}
+        setPickupDate={setPickupDate}
+        earliest={earliest}
+        dateReason={pickupReason}
+        addon={config.pickupAddon}
+        addonOn={expressOn}
+        setAddonOn={setExpressOn}
+      />
+    ) : (
+      <DeliveryPanel
+        method={id}
+        addresses={config.addresses}
+        addressId={addressId}
+        onSelectAddress={selectAddress}
+        deliveryDate={deliveryDate}
+        setDeliveryDate={setDeliveryDate}
+        earliest={earliest}
+        dateReason={dateReason}
+        dateMode={config.deliveryDateMode}
+        showModifiers={config.deliveryModifiers}
+        truckLabel={config.truckLabel}
+        split={split}
+        setSplit={setSplit}
+        liftgate={liftgate}
+        setLiftgate={setLiftgate}
+        outOfRadius={outOfRadius}
+      />
+    );
+
+  return (
+    <div className="space-y-4 p-5">
+      <p className="text-sm font-semibold">How would you like to receive this order?</p>
+      <RadioGroup
+        value={method}
+        onValueChange={(v) => setMethod(v as FulfillmentMethod)}
+        className="gap-2"
+        aria-label="Fulfillment method"
+      >
+        {config.methods.map((id) => (
+          <div key={id} className="space-y-4">
+            <MethodRow meta={METHOD_META[id]} selected={id === method} />
+            {id === method ? (
+              <div className="rounded-md border border-dashed bg-muted/20 p-4">{panelFor(id)}</div>
+            ) : null}
+          </div>
+        ))}
+      </RadioGroup>
     </div>
   );
 }

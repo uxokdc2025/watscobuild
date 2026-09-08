@@ -5,6 +5,7 @@ import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 
 import type { CartItem } from "@/components/cart/cart-context";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Table,
   TableBody,
@@ -59,28 +60,16 @@ export function StockUnavailablePanel({
   if (!resolved.length) return null;
 
   return (
-    <section
-      aria-labelledby="stock-unavailable-heading"
-      className={cn(
-        "overflow-hidden rounded-lg border border-border border-l-4 border-l-yellow-500 bg-muted/30",
-        className
-      )}
-    >
-      <div className="flex items-start gap-3 px-4 py-3">
-        <TriangleAlert
-          className="mt-0.5 size-4 shrink-0 text-yellow-800 dark:text-yellow-300"
-          aria-hidden="true"
-        />
-        <h3
-          id="stock-unavailable-heading"
-          className="text-sm font-semibold text-yellow-800 dark:text-yellow-300"
-        >
-          These items are not available at your current store in requested quantities:
-        </h3>
-      </div>
-
-      <div className="px-4 pb-4">
-        <div className="overflow-hidden rounded-md border border-border bg-background">
+    // Caution/amber BACKGROUND fill on the outer container with white inner
+    // cards — the same treatment as the shopping-list "Replacements available"
+    // panel (DS `Alert variant="warning"`). No left rail.
+    <Alert variant="warning" aria-labelledby="stock-unavailable-heading" className={className}>
+      <TriangleAlert />
+      <AlertTitle id="stock-unavailable-heading" className="line-clamp-none">
+        These items are not available at your current store in requested quantities:
+      </AlertTitle>
+      <AlertDescription className="mt-3 w-full">
+        <div className="w-full overflow-hidden rounded-md border border-border bg-background">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
@@ -166,7 +155,7 @@ export function StockUnavailablePanel({
             <li>Continue and submit this purchase on backorder. You may incur additional charges.</li>
           </ul>
         </div>
-      </div>
-    </section>
+      </AlertDescription>
+    </Alert>
   );
 }

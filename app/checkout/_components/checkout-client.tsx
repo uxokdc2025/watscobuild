@@ -28,15 +28,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import type { CheckoutCase } from "../page";
@@ -48,6 +39,7 @@ import {
   type FulfillmentMethod,
 } from "./fulfillment";
 import { StockUnavailablePanel } from "./stock-unavailable";
+import { SwitchAccountDrawer, CreditCardDrawer } from "./checkout-drawers";
 import { getBrandCheckout, type BrandCheckoutConfig } from "../_lib/brand-checkout";
 
 /* ───────────────────────── Demo data ───────────────────────── */
@@ -206,6 +198,7 @@ export default function CheckoutClient({
   const [notices, setNotices] = React.useState(cfg.notices);
   const [po, setPo] = React.useState("PO-2048");
   const [job, setJob] = React.useState(cfg.seededJob);
+  const [reference, setReference] = React.useState("");
   const [poError, setPoError] = React.useState<string | undefined>();
   const [confirmed, setConfirmed] = React.useState(false);
   const [coupon, setCoupon] = React.useState("");
@@ -232,20 +225,22 @@ export default function CheckoutClient({
               <Check aria-hidden="true" />
             </div>
             <h1 className="mt-4 text-2xl font-bold">Order submitted</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground text-balance">
               Order <span className="font-semibold text-foreground">{brand.orderNumber}</span> is being reviewed.
               We&apos;ll send confirmation and fulfillment details to your account.
             </p>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground text-balance">
               Track status and delivery updates from Open Orders.
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <Button asChild size="sm">
-                <Link href="/dashboard/orders?status=open">View open orders</Link>
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => window.print()}>
+            {/* Primary ("View open orders") on the RIGHT, secondary on the LEFT,
+                equal width — the global button-pair rule. */}
+            <div className="mx-auto mt-6 grid max-w-md grid-cols-2 gap-3">
+              <Button variant="outline" size="sm" className="w-full" onClick={() => window.print()}>
                 <Printer className="size-4" aria-hidden="true" />
-                Print order confirmation
+                Print confirmation
+              </Button>
+              <Button asChild size="sm" className="w-full">
+                <Link href="/dashboard/orders?status=open">View open orders</Link>
               </Button>
             </div>
           </section>
@@ -342,7 +337,9 @@ export default function CheckoutClient({
           ))}
         </ol>
 
-        {(notices.backorder || notices.nearby) ? (
+        {/* Stock notices belong to the Fulfillment step only — once the user
+         * has advanced past it they've decided how to proceed, so hide them. */}
+        {step === "shipping" ? ((notices.backorder || notices.nearby) ? (
           <div className="mt-6 space-y-3">
             {notices.backorder ? (
               <Alert variant="destructive" className="pr-10">
@@ -379,7 +376,7 @@ export default function CheckoutClient({
               </AlertDescription>
             </Alert>
           </div>
-        )}
+        )) : null}
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="min-w-0 rounded-md border bg-background shadow-sm">
@@ -392,6 +389,8 @@ export default function CheckoutClient({
                 setPo={setPo}
                 job={job}
                 setJob={setJob}
+                reference={reference}
+                setReference={setReference}
                 poError={poError}
                 availabilityConstraint={cfg.availabilityConstraint}
               />
@@ -407,6 +406,7 @@ export default function CheckoutClient({
                 payment={payment}
                 po={po}
                 job={job}
+                reference={reference}
                 showSpecialHandling={cfg.showSpecialHandling}
                 specialHandling={specialHandling}
                 setSpecialHandling={setSpecialHandling}
@@ -460,6 +460,8 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
  *  fulfillment section (method selector + method panel). The section owns all
  *  method/address/date/modifier logic; this wrapper only supplies the header
  *  and the PO gate. */
+const MAX_REFERENCE = 24;
+
 function FulfillmentStep({
   config,
   method,
@@ -468,6 +470,8 @@ function FulfillmentStep({
   setPo,
   job,
   setJob,
+  reference,
+  setReference,
   poError,
   availabilityConstraint,
 }: {
@@ -478,6 +482,8 @@ function FulfillmentStep({
   setPo: (v: string) => void;
   job: string;
   setJob: (v: string) => void;
+  reference: string;
+  setReference: (v: string) => void;
   poError?: string;
   availabilityConstraint: boolean;
 }) {
@@ -488,6 +494,14 @@ function FulfillmentStep({
         <div className="grid gap-4 sm:grid-cols-2">
           <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
           <Field id="job" label="Job name" placeholder="Optional job name" value={job} onChange={(e) => setJob(e.target.value)} />
+          <Field
+            id="reference"
+            label="Reference"
+            placeholder="Optional reference"
+            maxLength={MAX_REFERENCE}
+            value={reference}
+            onChange={(e) => setReference(e.target.value)}
+          />
         </div>
         <OrderDetailsExtras />
       </div>
@@ -603,9 +617,9 @@ function AccountContextRow({ brand }: { brand: BrandCheckoutConfig }) {
         <Building2 className="size-4" aria-hidden="true" />
         Switch account
       </Button>
-      <SwitchAccountDialog
+      <SwitchAccountDrawer
         open={open}
-        onOpenChange={setOpen}
+        onClose={() => setOpen(false)}
         accounts={accounts}
         currentId={currentId}
         defaultId={defaultId}
@@ -616,90 +630,7 @@ function AccountContextRow({ brand }: { brand: BrandCheckoutConfig }) {
   );
 }
 
-function SwitchAccountDialog({
-  open,
-  onOpenChange,
-  accounts,
-  currentId,
-  defaultId,
-  onSelect,
-  onSetDefault,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  accounts: BrandCheckoutConfig["switchAccounts"];
-  currentId: string;
-  defaultId: string;
-  onSelect: (id: string) => void;
-  onSetDefault: (id: string) => void;
-}) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Switch account</DialogTitle>
-          <DialogDescription>Choose the account, ship-to, company, or location for this order.</DialogDescription>
-        </DialogHeader>
-        <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
-          {accounts.map((a) => {
-            const isCurrent = a.id === currentId;
-            const isDefault = a.id === defaultId;
-            return (
-              <li key={a.id}>
-                <div
-                  className={cn(
-                    "flex flex-wrap items-center justify-between gap-3 rounded-md border p-3",
-                    isCurrent && "border-primary bg-primary/5"
-                  )}
-                >
-                  <div className="min-w-0">
-                    <p className="flex flex-wrap items-center gap-2 font-medium">
-                      {a.name}
-                      <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                        {a.kind}
-                      </span>
-                      {isDefault ? (
-                        <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
-                          Default
-                        </span>
-                      ) : null}
-                    </p>
-                    <p className="mt-0.5 text-sm text-muted-foreground">{a.detail}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {!isDefault ? (
-                      <Button size="sm" variant="tertiary" onClick={() => onSetDefault(a.id)}>
-                        Set default
-                      </Button>
-                    ) : null}
-                    <Button
-                      size="sm"
-                      variant={isCurrent ? "outline" : "default"}
-                      disabled={isCurrent}
-                      onClick={() => {
-                        onSelect(a.id);
-                        onOpenChange(false);
-                      }}
-                    >
-                      {isCurrent ? "Selected" : "Select"}
-                    </Button>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="outline">
-              Cancel
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
+type CardOption = { id: string; tail: string; expires: string; added?: boolean };
 
 function PaymentStep({
   brand,
@@ -712,7 +643,20 @@ function PaymentStep({
   setPayment: (v: Payment) => void;
   onBack: () => void;
 }) {
+  const [addedCards, setAddedCards] = React.useState<CardOption[]>([]);
   const [card, setCard] = React.useState<string>(SAVED_CARDS[0].id);
+  const [cardDrawerOpen, setCardDrawerOpen] = React.useState(false);
+  const [billingSame, setBillingSame] = React.useState(true);
+
+  const cards: CardOption[] = [...SAVED_CARDS, ...addedCards];
+  const billingAddress = brand.addresses.find((a) => a.group === "billing");
+
+  const addCard = (tail: string) => {
+    const id = `card-${tail}-${addedCards.length}`;
+    setAddedCards((prev) => [...prev, { id, tail, expires: "—", added: true }]);
+    setCard(id);
+  };
+
   return (
     <>
       <SectionHeading number="2" title="Payment" />
@@ -739,30 +683,39 @@ function PaymentStep({
         </RadioGroup>
 
         {payment === "card" ? (
-          <div className="space-y-3 rounded-md bg-muted/40 p-4">
+          <div className="space-y-4 rounded-md bg-muted/40 p-4">
             <RadioGroup value={card} onValueChange={setCard} className="grid gap-2">
-              {SAVED_CARDS.map((c) => (
+              {cards.map((c) => (
                 <RadioCard key={c.id} value={c.id} selected={card === c.id} className="bg-background">
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="font-medium">•••• {c.tail}</span>
-                    <span className="text-xs text-muted-foreground">· expires {c.expires} ·</span>
+                    {c.expires !== "—" ? (
+                      <span className="text-xs text-muted-foreground">· expires {c.expires} ·</span>
+                    ) : null}
                     <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                      Shared from the company
+                      {c.added ? "Added this order" : "Shared from the company"}
                     </span>
                   </span>
                 </RadioCard>
               ))}
-              <RadioCard value="new" selected={card === "new"} className="bg-background">
-                <span className="font-medium">Add a new card</span>
-              </RadioCard>
             </RadioGroup>
-            {card === "new" ? (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field id="card-number" label="Card number" required placeholder="1234 5678 9012 3456" className="sm:col-span-2" />
-                <Field id="card-exp" label="Expiration" required placeholder="MM / YY" />
-                <Field id="card-cvv" label="CVV" required placeholder="123" />
-              </div>
-            ) : null}
+            <Button variant="outline" size="sm" onClick={() => setCardDrawerOpen(true)}>
+              <Plus className="size-4" aria-hidden="true" />
+              Add a new card
+            </Button>
+
+            {/* Billing address — same as shipping by default; unchecking reveals
+                an editable billing block. */}
+            <div className="space-y-3 rounded-md border bg-background p-4">
+              <Label className="flex items-start gap-3 text-sm font-normal">
+                <Checkbox checked={billingSame} onCheckedChange={(v) => setBillingSame(v === true)} className="mt-0.5" />
+                <span>
+                  <span className="block font-medium text-foreground">My billing and shipping address are the same</span>
+                  <span className="block text-xs text-muted-foreground">We&apos;ll bill the delivery/pickup address on this order.</span>
+                </span>
+              </Label>
+              {!billingSame ? <BillingAddressBlock billingAddress={billingAddress} /> : null}
+            </div>
           </div>
         ) : null}
 
@@ -770,7 +723,49 @@ function PaymentStep({
           <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
         </div>
       </div>
+
+      <CreditCardDrawer open={cardDrawerOpen} onClose={() => setCardDrawerOpen(false)} onSave={addCard} />
     </>
+  );
+}
+
+/** Editable billing address — a summary the buyer can expand into fields. */
+function BillingAddressBlock({ billingAddress }: { billingAddress?: BrandCheckoutConfig["addresses"][number] }) {
+  const [editing, setEditing] = React.useState(false);
+
+  if (editing) {
+    return (
+      <div className="grid gap-4 border-t pt-3 sm:grid-cols-2">
+        <Field id="bill-name" label="Name / company" required defaultValue={billingAddress?.name} className="sm:col-span-2" />
+        <Field id="bill-street" label="Street address" required defaultValue={billingAddress?.line1} className="sm:col-span-2" />
+        <Field id="bill-city" label="City" required defaultValue={billingAddress?.city} />
+        <Field id="bill-state" label="State" required defaultValue={billingAddress?.state} />
+        <Field id="bill-zip" label="ZIP code" required defaultValue={billingAddress?.zip} />
+        <div className="sm:col-span-2">
+          <Button type="button" size="sm" onClick={() => setEditing(false)}>Done</Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-start justify-between gap-3 border-t pt-3">
+      <div className="min-w-0 text-sm">
+        {billingAddress ? (
+          <>
+            <p className="font-medium">{billingAddress.name}</p>
+            <p className="text-muted-foreground">
+              {billingAddress.line1}, {billingAddress.city}, {billingAddress.state} {billingAddress.zip}
+            </p>
+          </>
+        ) : (
+          <p className="text-muted-foreground">No billing address on file.</p>
+        )}
+      </div>
+      <Button type="button" variant="outline" size="sm" onClick={() => setEditing(true)}>
+        Edit
+      </Button>
+    </div>
   );
 }
 
@@ -789,6 +784,7 @@ function ReviewStep({
   payment,
   po,
   job,
+  reference,
   showSpecialHandling,
   specialHandling,
   setSpecialHandling,
@@ -804,6 +800,7 @@ function ReviewStep({
   payment: Payment;
   po: string;
   job: string;
+  reference: string;
   showSpecialHandling: boolean;
   specialHandling: boolean;
   setSpecialHandling: (v: boolean) => void;
@@ -823,6 +820,7 @@ function ReviewStep({
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Order details</p>
             <p className="mt-2 font-medium">PO {po || "—"}</p>
             <p className="text-sm text-muted-foreground">{job ? `Job: ${job}` : "No job name"}</p>
+            {reference ? <p className="text-sm text-muted-foreground">Ref: {reference}</p> : null}
             <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditFulfillment}>Edit</Button>
           </div>
           <div className="rounded-md border p-4">

@@ -89,7 +89,7 @@ const PRODUCT = {
 const SHELL =
   "flex h-full w-[404px] flex-col overflow-hidden border bg-background shadow-xl";
 
-function ProductHeader() {
+function ProductHeader({ product = PRODUCT }: { product?: typeof PRODUCT }) {
   return (
     <div className="flex shrink-0 items-start gap-3 border-b bg-muted/40 px-4 py-3">
       <div className="grid size-12 shrink-0 place-items-center rounded-md border bg-background text-xs font-semibold text-muted-foreground">
@@ -97,13 +97,13 @@ function ProductHeader() {
       </div>
       <div className="min-w-0">
         <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-          {PRODUCT.brand}
+          {product.brand}
         </p>
         <p className="mt-0.5 text-sm leading-tight font-semibold">
-          {PRODUCT.title}
+          {product.title}
         </p>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          Item {PRODUCT.item} · MFG {PRODUCT.mfg}
+          Item {product.item} · MFG {product.mfg}
         </p>
       </div>
     </div>
@@ -409,33 +409,79 @@ export function InventoryDirection3() {
   );
 }
 
+/** A branch as consumed by the store-locator drawer. `qty` is optional so the
+ *  same component can serve availability-scoped inventory (with counts) OR a
+ *  plain branch picker (checkout pickup) that carries no per-item stock. */
+export type LocatorBranch = {
+  name: string;
+  qty?: number;
+  miles: number;
+  tag?: "current";
+  address?: string;
+  hours?: string;
+  phone?: string;
+};
+
 /** Store-locator-first inventory drawer: product context sits above the
- * branch-finder pattern, with inventory filter and sort controls preserved. */
-export function InventoryStoreLocatorDrawer() {
+ * branch-finder pattern, with inventory filter and sort controls preserved.
+ *
+ * Reusable: every piece of demo data is a prop with a default, so the same
+ * component backs the inventory galleries AND the checkout pickup "Change"
+ * picker (seeded with the brand's own branches, product header off, no stock
+ * counts). Nothing is a parallel mock — this IS the store-locator picker. */
+export function InventoryStoreLocatorDrawer({
+  branches = BRANCHES,
+  product = PRODUCT,
+  heading = "Product Availability",
+  zip = "33605",
+  showProductHeader = true,
+  showStock = true,
+  selectedStore: selectedStoreProp,
+  onSelectStore,
+  onClose = closeDrawer,
+}: {
+  branches?: LocatorBranch[];
+  product?: { brand: string; title: string; item: string; mfg: string };
+  heading?: string;
+  zip?: string;
+  showProductHeader?: boolean;
+  showStock?: boolean;
+  /** Controlled selection (checkout). Falls back to the first branch. */
+  selectedStore?: string;
+  /** When provided, "Select Store" commits through this instead of local state. */
+  onSelectStore?: (name: string) => void;
+  onClose?: () => void;
+} = {}) {
   const [inStockOnly, setInStockOnly] = React.useState(true);
   const [sortBy, setSortBy] = React.useState<"miles" | "availability">("miles");
   const [sortOpen, setSortOpen] = React.useState(false);
-  const [selectedStore, setSelectedStore] = React.useState(BRANCHES[0].name);
+  const [selectedLocal, setSelectedLocal] = React.useState(branches[0]?.name ?? "");
+  const selectedStore = selectedStoreProp ?? selectedLocal;
 
   const displayed = React.useMemo(() => {
-    const filtered = inStockOnly ? BRANCHES.filter((b) => b.qty > 0) : BRANCHES;
+    const filtered = showStock && inStockOnly ? branches.filter((b) => (b.qty ?? 0) > 0) : branches;
     return [...filtered].sort((a, b) =>
-      sortBy === "miles" ? a.miles - b.miles : b.qty - a.qty,
+      showStock && sortBy === "availability" ? (b.qty ?? 0) - (a.qty ?? 0) : a.miles - b.miles,
     );
-  }, [inStockOnly, sortBy]);
+  }, [branches, inStockOnly, sortBy, showStock]);
+
+  const selectStore = (name: string) => {
+    if (onSelectStore) onSelectStore(name);
+    else setSelectedLocal(name);
+  };
 
   return (
     <div className={SHELL}>
       {/* Title header — matches the Branch Selector ("Find a branch" + X). */}
       <header className="flex shrink-0 items-center justify-between border-b px-5 py-3.5">
-        <p className="text-base font-bold">Product Availability</p>
-        <DrawerCloseButton label="Close" onClick={closeDrawer} />
+        <p className="text-base font-bold">{heading}</p>
+        <DrawerCloseButton label="Close" onClick={onClose} />
       </header>
-      <ProductHeader />
+      {showProductHeader ? <ProductHeader product={product} /> : null}
       <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
         <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
           <Search className="size-4 text-muted-foreground" />
-          <span className="flex-1 text-foreground">33605</span>
+          <span className="flex-1 text-foreground">{zip}</span>
         </div>
         <a
           href="#"
@@ -445,66 +491,76 @@ export function InventoryStoreLocatorDrawer() {
           Use my current location
         </a>
       </div>
-      <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
-        <button
-          type="button"
-          aria-pressed={inStockOnly}
-          onClick={() => setInStockOnly((value) => !value)}
-          className={
-            inStockOnly
-              ? "inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
-              : "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-          }
-        >
-          {inStockOnly ? <Check className="size-3" /> : null}
-          In Stock
-        </button>
-        <div className="relative">
+      {showStock ? (
+        <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
           <button
             type="button"
-            onClick={() => setSortOpen((value) => !value)}
-            aria-expanded={sortOpen}
-            className="inline-flex translate-y-px items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            aria-pressed={inStockOnly}
+            onClick={() => setInStockOnly((value) => !value)}
+            className={
+              inStockOnly
+                ? "inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
+                : "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            }
           >
-            <ArrowDownUp className="size-3.5" />
-            Sort: {sortBy === "miles" ? "Miles" : "Availability"}
-            <ChevronDown className={`size-3 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
+            {inStockOnly ? <Check className="size-3" /> : null}
+            In Stock
           </button>
-          {sortOpen ? (
-            <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
-              {(["miles", "availability"] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => {
-                    setSortBy(option);
-                    setSortOpen(false);
-                  }}
-                  className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${sortBy === option ? "font-medium text-primary" : "text-foreground"}`}
-                >
-                  {option === "miles" ? "Miles" : "Availability"}
-                  {sortBy === option ? <Check className="size-3.5" /> : null}
-                </button>
-              ))}
-            </div>
-          ) : null}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setSortOpen((value) => !value)}
+              aria-expanded={sortOpen}
+              className="inline-flex translate-y-px items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowDownUp className="size-3.5" />
+              Sort: {sortBy === "miles" ? "Miles" : "Availability"}
+              <ChevronDown className={`size-3 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
+            </button>
+            {sortOpen ? (
+              <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
+                {(["miles", "availability"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => {
+                      setSortBy(option);
+                      setSortOpen(false);
+                    }}
+                    className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${sortBy === option ? "font-medium text-primary" : "text-foreground"}`}
+                  >
+                    {option === "miles" ? "Miles" : "Availability"}
+                    {sortBy === option ? <Check className="size-3.5" /> : null}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
         </div>
-      </div>
+      ) : (
+        <p className="shrink-0 border-b px-5 py-2 text-xs font-medium text-muted-foreground">
+          Sorted by distance
+        </p>
+      )}
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
         {displayed.map((branch) => (
           <li key={branch.name} className="flex flex-col gap-2 px-5 py-3 transition-colors hover:bg-muted/40">
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm font-semibold">{branch.name}</p>
-              <span className={`text-xs font-semibold tabular-nums ${stockColor(branch.qty)}`}>
-                {branch.qty} available
-              </span>
+              {showStock && branch.qty != null ? (
+                <span className={`text-xs font-semibold tabular-nums ${stockColor(branch.qty)}`}>
+                  {branch.qty} available
+                </span>
+              ) : null}
             </div>
             <details className="group text-xs">
               <summary className="flex w-fit cursor-pointer list-none items-center gap-1 font-medium text-black/70 outline-none focus-visible:underline [&::-webkit-details-marker]:hidden">
                 Store Hours
                 <ChevronDown className="size-3.5 text-black/70 transition-transform group-open:rotate-180" />
               </summary>
-              <p className="mt-1 text-muted-foreground">Mon–Fri 7am–6pm · Sat 8am–12pm · Sun Closed</p>
+              <p className="mt-1 text-muted-foreground">
+                {branch.hours ?? "Mon–Fri 7am–6pm · Sat 8am–12pm · Sun Closed"}
+              </p>
             </details>
             <div className="flex items-center text-xs">
               <span className="text-muted-foreground tabular-nums">{branch.miles} mi</span>
@@ -518,7 +574,7 @@ export function InventoryStoreLocatorDrawer() {
               <span className="flex items-center gap-2 text-xs">
                 <a href={`tel:${branch.name}`} className="inline-flex items-center gap-1 font-medium text-primary">
                   <Phone className="size-3.5" />
-                  (919) 555-0100
+                  {branch.phone ?? "(919) 555-0100"}
                 </a>
                 <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
                   <MessageSquare className="size-3.5" />
@@ -536,7 +592,7 @@ export function InventoryStoreLocatorDrawer() {
               ) : (
                 <Button
                   size="sm"
-                  onClick={() => setSelectedStore(branch.name)}
+                  onClick={() => selectStore(branch.name)}
                   className="h-7 -translate-y-px px-3 text-xs"
                 >
                   Select Store
