@@ -9,15 +9,11 @@ import {
   ChevronLeft,
   CreditCard,
   LockKeyhole,
-  MapPin,
   Package,
-  PackageCheck,
   Plus,
   Printer,
   ShieldCheck,
   Trash2,
-  TriangleAlert,
-  X,
 } from "lucide-react";
 
 import { useCart, type CartItem } from "@/components/cart/cart-context";
@@ -27,7 +23,6 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import type { CheckoutCase } from "../page";
@@ -38,7 +33,6 @@ import {
   isDeliveryMethod,
   type FulfillmentMethod,
 } from "./fulfillment";
-import { StockUnavailablePanel } from "./stock-unavailable";
 import { SwitchAccountDrawer, CreditCardDrawer } from "./checkout-drawers";
 import { getBrandCheckout, type BrandCheckoutConfig } from "../_lib/brand-checkout";
 
@@ -72,7 +66,6 @@ type ScenarioConfig = {
   submitted: boolean;
   method: FulfillmentMethod;
   payment: Payment;
-  notices: { backorder: boolean; nearby: boolean };
   seededJob: string;
   availabilityConstraint: boolean;
   showCoupon: boolean;
@@ -84,7 +77,6 @@ const BASE: ScenarioConfig = {
   submitted: false,
   method: "pickup",
   payment: "terms",
-  notices: { backorder: true, nearby: true },
   seededJob: "",
   availabilityConstraint: false,
   showCoupon: false,
@@ -92,14 +84,14 @@ const BASE: ScenarioConfig = {
 };
 
 const CHECKOUT_SCENARIOS: Record<CheckoutCase, Partial<ScenarioConfig>> = {
-  "account-job-context": { notices: { backorder: false, nearby: false }, seededJob: "Spring maintenance" },
+  "account-job-context": { seededJob: "Spring maintenance" },
   // Opens on Fulfillment with a delivery method already selected (routing to a grouped address).
-  "delivery-pickup-routing": { method: "ups", notices: { backorder: false, nearby: false } },
+  "delivery-pickup-routing": { method: "ups" },
   // Opens on Fulfillment with the date-cutoff messaging visible on a delivery method.
-  "availability-date-constraints": { method: "truck", availabilityConstraint: true, notices: { backorder: false, nearby: false } },
-  "terms-or-credit-card": { initialStep: "payment", payment: "card", notices: { backorder: false, nearby: false } },
-  "review-coupon-special-handling": { initialStep: "review", notices: { backorder: false, nearby: false }, showCoupon: true, showSpecialHandling: true },
-  "order-confirmation": { initialStep: "review", submitted: true, notices: { backorder: false, nearby: false } },
+  "availability-date-constraints": { method: "truck", availabilityConstraint: true },
+  "terms-or-credit-card": { initialStep: "payment", payment: "card" },
+  "review-coupon-special-handling": { initialStep: "review", showCoupon: true, showSpecialHandling: true },
+  "order-confirmation": { initialStep: "review", submitted: true },
 };
 
 function resolveScenario(scenario?: CheckoutCase): ScenarioConfig {
@@ -154,20 +146,6 @@ function RadioCard({
   );
 }
 
-/** Small dismiss control for a lightly-filled Alert (inherits the alert tone). */
-function DismissButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="absolute top-2 right-2 grid size-7 place-items-center rounded-md text-current/70 transition-colors hover:bg-black/5 hover:text-current focus-visible:ring-2 focus-visible:ring-current/40 focus-visible:outline-none"
-    >
-      <X className="size-4" />
-    </button>
-  );
-}
-
 /* ───────────────────────── Main ───────────────────────── */
 
 export default function CheckoutClient({
@@ -195,7 +173,6 @@ export default function CheckoutClient({
   const [saved, setSaved] = React.useState(false);
   const [method, setMethod] = React.useState<FulfillmentMethod>(initialMethod);
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);
-  const [notices, setNotices] = React.useState(cfg.notices);
   const [po, setPo] = React.useState("PO-2048");
   const [job, setJob] = React.useState(cfg.seededJob);
   const [reference, setReference] = React.useState("");
@@ -335,47 +312,6 @@ export default function CheckoutClient({
             </li>
           ))}
         </ol>
-
-        {/* Stock notices belong to the Fulfillment step only — once the user
-         * has advanced past it they've decided how to proceed, so hide them. */}
-        {step === "shipping" ? ((notices.backorder || notices.nearby) ? (
-          <div className="mt-6 space-y-3">
-            {notices.backorder ? (
-              <Alert variant="destructive" className="pr-10">
-                <TriangleAlert />
-                <AlertTitle>Backorder</AlertTitle>
-                <AlertDescription>
-                  Some items are available on backorder. We&apos;ll contact you with an estimated availability date.
-                </AlertDescription>
-                <DismissButton label="Dismiss backorder notice" onClick={() => setNotices((n) => ({ ...n, backorder: false }))} />
-              </Alert>
-            ) : null}
-            {notices.nearby ? (
-              <Alert variant="warning" className="pr-10">
-                <MapPin />
-                <AlertTitle>Nearby branches</AlertTitle>
-                <AlertDescription>
-                  Some items are available at another branch and may ship separately.
-                </AlertDescription>
-                <DismissButton label="Dismiss nearby branches notice" onClick={() => setNotices((n) => ({ ...n, nearby: false }))} />
-              </Alert>
-            ) : null}
-            {/* Itemized detail: which items are short at the current store, and the
-             * options to proceed. Stacks beneath the summary alerts; not dismissable. */}
-            <StockUnavailablePanel items={items} brandKey={brandKey} />
-          </div>
-        ) : (
-          // No stock warnings → positive inventory confirmation (Peirce pattern).
-          <div className="mt-6">
-            <Alert variant="success">
-              <PackageCheck />
-              <AlertTitle>Inventory confirmed — all items available</AlertTitle>
-              <AlertDescription>
-                Every item on this order is in stock at your branch and ready to fulfill.
-              </AlertDescription>
-            </Alert>
-          </div>
-        )) : null}
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="min-w-0 rounded-md border bg-background shadow-sm">

@@ -12,6 +12,8 @@ import {
   Replace,
   ShieldCheck,
   Trash2,
+  TriangleAlert,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -22,10 +24,25 @@ import { StockStatus } from "@/components/ui/label-badges";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import { getBrandCheckout } from "../checkout/_lib/brand-checkout";
 import { SwitchAccountDrawer } from "../checkout/_components/checkout-drawers";
+import { StockUnavailablePanel } from "../checkout/_components/stock-unavailable";
 import { SubstitutesDrawer } from "./_substitutes-drawer";
 import { DEMO_CART, type AltProduct, type CartLine } from "./_cart-data";
 
 const SHOP_HREF = "/search?q=blower%20motor&signedin=1";
+
+/** Small dismiss control for a lightly-filled Alert (inherits the alert tone). */
+function DismissButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="absolute top-2 right-2 grid size-7 place-items-center rounded-md text-current/70 transition-colors hover:bg-black/5 hover:text-current focus-visible:ring-2 focus-visible:ring-current/40 focus-visible:outline-none"
+    >
+      <X className="size-4" />
+    </button>
+  );
+}
 
 /* ───────────────────────── Quantity stepper ─────────────────────────
  * Mirrors the shopping-list / cart-drawer stepper markup so the control reads
@@ -237,6 +254,9 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
   const [lines, setLines] = React.useState<CartLine[]>(DEMO_CART);
   const [dismissed, setDismissed] = React.useState<string[]>([]);
   const [drawerFor, setDrawerFor] = React.useState<CartLine | null>(null);
+  // Stock/availability notices — moved here from checkout. Backorder + nearby
+  // are dismissible summaries; the itemized panel below them is not.
+  const [notices, setNotices] = React.useState({ backorder: true, nearby: true });
 
   const subtotal = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);
   const tax = subtotal * brand.taxRate;
@@ -291,6 +311,33 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
           </div>
         ) : (
           <>
+            {/* Stock / availability — the backorder + nearby summaries (dismissible)
+                and the itemized "not available at your current store" panel, which
+                carries its own store-locator drawer wiring. */}
+            <div className="mt-6 space-y-3">
+              {notices.backorder ? (
+                <Alert variant="destructive" className="pr-10">
+                  <TriangleAlert />
+                  <AlertTitle>Backorder</AlertTitle>
+                  <AlertDescription>
+                    Some items are available on backorder. We&apos;ll contact you with an estimated availability date.
+                  </AlertDescription>
+                  <DismissButton label="Dismiss backorder notice" onClick={() => setNotices((n) => ({ ...n, backorder: false }))} />
+                </Alert>
+              ) : null}
+              {notices.nearby ? (
+                <Alert variant="warning" className="pr-10">
+                  <MapPin />
+                  <AlertTitle>Nearby branches</AlertTitle>
+                  <AlertDescription>
+                    Some items are available at another branch and may ship separately.
+                  </AlertDescription>
+                  <DismissButton label="Dismiss nearby branches notice" onClick={() => setNotices((n) => ({ ...n, nearby: false }))} />
+                </Alert>
+              ) : null}
+              <StockUnavailablePanel items={lines} brandKey={brandKey} />
+            </div>
+
             {/* Yellow "Replacements available" panel — same fill treatment as
                 the shopping-list detail (no left bar). */}
             {bannerLines.length > 0 ? (

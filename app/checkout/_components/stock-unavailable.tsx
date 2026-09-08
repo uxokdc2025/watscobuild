@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 
 import type { CartItem } from "@/components/cart/cart-context";
@@ -157,14 +156,7 @@ export function StockUnavailablePanel({
                 Change your selected store
               </button>
             </li>
-            <li>
-              <Link
-                href={`/cart?brand=${brandKey}`}
-                className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
-              >
-                Change quantities by returning to your cart
-              </Link>
-            </li>
+            <li>Adjust quantities below.</li>
             <li>Continue and submit this purchase on backorder. You may incur additional charges.</li>
           </ul>
         </div>
