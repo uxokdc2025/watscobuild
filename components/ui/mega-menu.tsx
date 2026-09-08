@@ -294,10 +294,10 @@ export function MegaMenu({
                       animate={{ x: 0 }}
                       exit={{ x: "-100%" }}
                       transition={DRAWER_SPRING}
-                      className="w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-96"
+                      className="w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-72"
                     >
                       <ColumnHeader node={subcategory} onNavigate={close} />
-                      <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+                      <div>
                         {details.map((node) => (
                           <LeafLink
                             key={node.slug}
