@@ -25,6 +25,15 @@ import {
    brand color lives on the header bar, never inside the panel body.
    ──────────────────────────────────────────────────────────────────────── */
 
+/** Column reveal — a gentle fade + short slide so each new column emerges in
+ *  place beside the previous one (never a full-width slide over the top of it).
+ *  Deliberately slow/soft. */
+const COLUMN_MOTION = {
+  type: "tween" as const,
+  duration: 0.45,
+  ease: [0.32, 0.72, 0, 1] as const,
+};
+
 const itemBase =
   "flex min-h-11 w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
@@ -263,10 +272,10 @@ export function MegaMenu({
                   {category ? (
                     <motion.div
                       key={category.slug}
-                      initial={{ x: "-100%" }}
-                      animate={{ x: 0 }}
-                      exit={{ x: "-100%" }}
-                      transition={DRAWER_SPRING}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -12 }}
+                      transition={COLUMN_MOTION}
                       className="w-full shrink-0 overflow-y-auto bg-muted/40 p-2 md:w-72"
                     >
                       <ColumnHeader node={category} onNavigate={close} />
@@ -290,10 +299,10 @@ export function MegaMenu({
                   {subcategory && details.length ? (
                     <motion.div
                       key={subcategory.slug}
-                      initial={{ x: "-100%" }}
-                      animate={{ x: 0 }}
-                      exit={{ x: "-100%" }}
-                      transition={DRAWER_SPRING}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -12 }}
+                      transition={COLUMN_MOTION}
                       className="w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-72"
                     >
                       <ColumnHeader node={subcategory} onNavigate={close} />
