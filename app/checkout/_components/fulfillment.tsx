@@ -34,16 +34,22 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
+import type {
+  BrandAddress,
+  BrandAddressGroup,
+  BrandBranch,
+  BrandCheckoutConfig,
+} from "../_lib/brand-checkout";
 
 /* ───────────────────────── Fulfillment domain model ─────────────────────────
- * ONE unified fulfillment section — the SUPERSET across Baker / Peirce / Homans
- * / ECM. Method is the top-level choice (ECM pattern), not a Pickup/Delivery
- * toggle. Every scenario renders this same component; behavior is data-driven,
- * so there is no scattered `scenario === "…"` branching in the markup. */
+ * ONE unified fulfillment section. Method is the top-level choice (ECM pattern),
+ * not a Pickup/Delivery toggle. WHICH methods appear, and all demo data (stores,
+ * addresses), come from the per-brand config — so each brand shows only its own
+ * methods, and there is no scattered `brand === "…"` branching in the markup. */
 
-export type FulfillmentMethod = "pickup" | "truck" | "freight" | "ups" | "local";
+export type FulfillmentMethod = "pickup" | "truck" | "freight" | "ups" | "local" | "delivery";
 
-const DELIVERY_METHODS: FulfillmentMethod[] = ["truck", "freight", "ups", "local"];
+const DELIVERY_METHODS: FulfillmentMethod[] = ["truck", "freight", "ups", "local", "delivery"];
 export function isDeliveryMethod(m: FulfillmentMethod): boolean {
   return DELIVERY_METHODS.includes(m);
 }
@@ -55,13 +61,14 @@ type MethodMeta = {
   Icon: React.ComponentType<{ className?: string }>;
 };
 
-const METHODS: MethodMeta[] = [
-  { id: "pickup", label: "Pickup", blurb: "Pick up at your branch counter", Icon: Store },
-  { id: "truck", label: "Truck", blurb: "Company truck delivery", Icon: Truck },
-  { id: "freight", label: "Freight / LTL", blurb: "Palletized freight carrier", Icon: Container },
-  { id: "ups", label: "UPS", blurb: "UPS small-parcel", Icon: Package },
-  { id: "local", label: "Local Delivery", blurb: "Local courier, same metro", Icon: Bike },
-];
+const METHOD_META: Record<FulfillmentMethod, MethodMeta> = {
+  pickup: { id: "pickup", label: "Pickup", blurb: "Pick up at your branch counter", Icon: Store },
+  truck: { id: "truck", label: "Truck", blurb: "Company truck delivery", Icon: Truck },
+  freight: { id: "freight", label: "Freight / LTL", blurb: "Palletized freight carrier", Icon: Container },
+  ups: { id: "ups", label: "UPS", blurb: "UPS small-parcel", Icon: Package },
+  local: { id: "local", label: "Local Delivery", blurb: "Local courier, same metro", Icon: Bike },
+  delivery: { id: "delivery", label: "Delivery", blurb: "Ship to your job or account address", Icon: Truck },
+};
 
 /** Per-method rate (used in the panel line AND lifted into the order summary so
  *  the total reflects the chosen method). */
@@ -71,117 +78,31 @@ export const METHOD_RATE: Record<FulfillmentMethod, number> = {
   freight: 89.5,
   ups: 41.8,
   local: 25,
+  delivery: 0,
 };
 
 const METHOD_RATE_LABEL: Record<FulfillmentMethod, string> = {
   pickup: "Branch pickup — no charge",
-  truck: "ECMD Truck — $0.00",
+  truck: "Company truck — $0.00",
   freight: "Freight / LTL — $89.50",
   ups: "UPS Ground — $41.80",
   local: "Local Delivery — $25.00",
+  delivery: "Ship date confirmed by your CSR",
 };
 
 export function methodLabel(m: FulfillmentMethod): string {
-  return METHODS.find((x) => x.id === m)?.label ?? "Delivery";
+  return METHOD_META[m]?.label ?? "Delivery";
 }
 
 /* ── Grouped address book (superset: Job account · Account · Billing) ── */
 
-type AddressGroup = "job" | "account" | "billing";
-
-type Address = {
-  id: string;
-  group: AddressGroup;
-  name: string;
-  line1: string;
-  city: string;
-  state: string;
-  zip: string;
-  contact?: string;
-  /** Deterministic default — the first job/primary address, never random. */
-  isDefault?: boolean;
-  /** 150-mile rule: address sits outside the branch delivery radius. */
-  outOfRadius?: boolean;
-};
-
-const GROUP_LABEL: Record<AddressGroup, string> = {
+const GROUP_LABEL: Record<BrandAddressGroup, string> = {
   job: "Job account",
   account: "Account",
   billing: "Billing",
 };
 
-const ADDRESSES: Address[] = [
-  {
-    id: "job-spring",
-    group: "job",
-    name: "Spring maintenance",
-    contact: "Site super — Dave R.",
-    line1: "88 Elm Street",
-    city: "Manchester",
-    state: "NH",
-    zip: "03101",
-    isDefault: true,
-  },
-  {
-    id: "job-riverside",
-    group: "job",
-    name: "Riverside retrofit",
-    contact: "GC — Meadow Mechanical",
-    line1: "1200 Shore Road",
-    city: "Bar Harbor",
-    state: "ME",
-    zip: "04609",
-    outOfRadius: true,
-  },
-  {
-    id: "acct-main",
-    group: "account",
-    name: "Homans Associates — Main",
-    line1: "613 Main Street",
-    city: "Manchester",
-    state: "NH",
-    zip: "03101",
-  },
-  {
-    id: "acct-north",
-    group: "account",
-    name: "North warehouse",
-    line1: "42 Industrial Way",
-    city: "Concord",
-    state: "NH",
-    zip: "03301",
-  },
-  {
-    id: "billing-ap",
-    group: "billing",
-    name: "Accounts payable",
-    line1: "PO Box 2200",
-    city: "Manchester",
-    state: "NH",
-    zip: "03105",
-  },
-];
-
-const DEFAULT_ADDRESS_ID = ADDRESSES.find((a) => a.isDefault)?.id ?? ADDRESSES[0].id;
-const GROUP_ORDER: AddressGroup[] = ["job", "account", "billing"];
-
-/* ── Branches for the pickup store-finder ── */
-
-type Branch = {
-  id: string;
-  name: string;
-  address: string;
-  miles: number;
-  hours: string;
-  current?: boolean;
-};
-
-const BRANCHES: Branch[] = [
-  { id: "manchester", name: "Manchester, NH #509973", address: "613 Main Street, Manchester, NH", miles: 0, hours: "Open · closes 5pm", current: true },
-  { id: "nashua", name: "Nashua, NH #5102", address: "27 Simon Street, Nashua, NH", miles: 17.2, hours: "Open · closes 5pm" },
-  { id: "concord", name: "Concord, NH #5140", address: "42 Industrial Way, Concord, NH", miles: 19.6, hours: "Open · closes 5pm" },
-  { id: "portsmouth", name: "Portsmouth, NH #5177", address: "155 Heritage Ave, Portsmouth, NH", miles: 44.8, hours: "Open · closes 4:30pm" },
-];
+const GROUP_ORDER: BrandAddressGroup[] = ["job", "account", "billing"];
 
 /* ───────────────────────── Calendar (date validation) ─────────────────────────
  * Fixed "today" keeps the prototype deterministic (no SSR/CSR hydration drift and
@@ -402,18 +323,26 @@ function TextField({
 
 function PickupPanel({
   branch,
+  branches,
   onChangeBranch,
   pickupDate,
   setPickupDate,
   earliest,
   dateReason,
+  addon,
+  addonOn,
+  setAddonOn,
 }: {
-  branch: Branch;
-  onChangeBranch: (b: Branch) => void;
+  branch: BrandBranch;
+  branches: BrandBranch[];
+  onChangeBranch: (b: BrandBranch) => void;
   pickupDate: Date | null;
   setPickupDate: (d: Date) => void;
   earliest: Date;
   dateReason?: string;
+  addon?: BrandCheckoutConfig["pickupAddon"];
+  addonOn: boolean;
+  setAddonOn: (v: boolean) => void;
 }) {
   const [open, setOpen] = React.useState(false);
   return (
@@ -444,7 +373,18 @@ function PickupPanel({
         />
       </div>
 
-      <StoreFinderDialog open={open} onOpenChange={setOpen} current={branch} onSelect={onChangeBranch} />
+      {/* Pickup add-on service (Baker Express) — a toggle, not a method. */}
+      {addon ? (
+        <Label className="flex items-start gap-3 rounded-md border p-4 text-sm font-normal">
+          <Checkbox checked={addonOn} onCheckedChange={(v) => setAddonOn(v === true)} className="mt-0.5" />
+          <span>
+            <span className="block font-medium text-foreground">{addon.label}</span>
+            <span className="block text-xs text-muted-foreground">{addon.hint}</span>
+          </span>
+        </Label>
+      ) : null}
+
+      <StoreFinderDialog open={open} onOpenChange={setOpen} branches={branches} current={branch} onSelect={onChangeBranch} />
     </div>
   );
 }
@@ -452,13 +392,15 @@ function PickupPanel({
 function StoreFinderDialog({
   open,
   onOpenChange,
+  branches,
   current,
   onSelect,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  current: Branch;
-  onSelect: (b: Branch) => void;
+  branches: BrandBranch[];
+  current: BrandBranch;
+  onSelect: (b: BrandBranch) => void;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -468,7 +410,7 @@ function StoreFinderDialog({
           <DialogDescription>Sorted by distance from your account.</DialogDescription>
         </DialogHeader>
         <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
-          {BRANCHES.map((b) => {
+          {branches.map((b) => {
             const isCurrent = b.id === current.id;
             return (
               <li key={b.id}>
@@ -515,7 +457,7 @@ function StoreFinderDialog({
 
 /* ───────────────────────── Delivery panel ───────────────────────── */
 
-function AddressRow({ address, selected }: { address: Address; selected: boolean }) {
+function AddressRow({ address, selected }: { address: BrandAddress; selected: boolean }) {
   return (
     <Label
       className={cn(
@@ -551,12 +493,16 @@ function AddressRow({ address, selected }: { address: Address; selected: boolean
 
 function DeliveryPanel({
   method,
+  addresses,
   addressId,
   onSelectAddress,
   deliveryDate,
   setDeliveryDate,
   earliest,
   dateReason,
+  dateMode,
+  showModifiers,
+  truckLabel,
   split,
   setSplit,
   liftgate,
@@ -564,12 +510,16 @@ function DeliveryPanel({
   outOfRadius,
 }: {
   method: FulfillmentMethod;
+  addresses: BrandAddress[];
   addressId: string;
   onSelectAddress: (id: string) => void;
   deliveryDate: Date | null;
   setDeliveryDate: (d: Date) => void;
   earliest: Date;
   dateReason?: string;
+  dateMode: "picker" | "csr";
+  showModifiers: boolean;
+  truckLabel?: string;
   split: "complete" | "partial";
   setSplit: (v: "complete" | "partial") => void;
   liftgate: "none" | "required";
@@ -577,6 +527,7 @@ function DeliveryPanel({
   outOfRadius: boolean;
 }) {
   const [addOpen, setAddOpen] = React.useState(false);
+  const rateLabel = method === "truck" && truckLabel ? truckLabel : METHOD_RATE_LABEL[method];
 
   return (
     <div className="space-y-6">
@@ -585,7 +536,7 @@ function DeliveryPanel({
           <TriangleAlert />
           <AlertTitle>This address is outside the 150-mile delivery radius</AlertTitle>
           <AlertDescription>
-            Truck and local delivery aren&apos;t available here. We&apos;ve set the method to Freight / LTL — a
+            Truck delivery isn&apos;t available here. We&apos;ve set the method to Freight / LTL — a
             carrier will quote the final rate.
           </AlertDescription>
         </Alert>
@@ -602,7 +553,7 @@ function DeliveryPanel({
         </div>
         <RadioGroup value={addressId} onValueChange={onSelectAddress} className="gap-4">
           {GROUP_ORDER.map((group) => {
-            const rows = ADDRESSES.filter((a) => a.group === group);
+            const rows = addresses.filter((a) => a.group === group);
             if (!rows.length) return null;
             return (
               <div key={group} className="space-y-2">
@@ -620,24 +571,40 @@ function DeliveryPanel({
         </RadioGroup>
       </div>
 
-      {/* Requested date + rate */}
+      {/* Requested date + rate. Peirce's ship date is CSR-confirmed, not picked. */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <DateField
-          id="delivery-date"
-          label="Requested delivery date"
-          required
-          value={deliveryDate}
-          onSelect={setDeliveryDate}
-          earliest={earliest}
-          reason={dateReason}
-        />
+        {dateMode === "picker" ? (
+          <DateField
+            id="delivery-date"
+            label="Requested delivery date"
+            required
+            value={deliveryDate}
+            onSelect={setDeliveryDate}
+            earliest={earliest}
+            reason={dateReason}
+          />
+        ) : (
+          <div className="space-y-2">
+            <Label htmlFor="delivery-date-csr">Ship date</Label>
+            <div
+              id="delivery-date-csr"
+              className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
+            >
+              Set by your CSR
+            </div>
+            <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+              <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+              <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
+            </p>
+          </div>
+        )}
         <div className="space-y-2">
           <Label htmlFor="rate-line">Estimated rate</Label>
           <div
             id="rate-line"
             className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm font-medium"
           >
-            {METHOD_RATE_LABEL[method]}
+            {rateLabel}
           </div>
         </div>
       </div>
@@ -650,27 +617,29 @@ function DeliveryPanel({
         </AlertDescription>
       </Alert>
 
-      {/* Modifiers */}
-      <div className="grid gap-5 border-t pt-5 sm:grid-cols-2">
-        <ModifierGroup
-          legend="Split shipment"
-          value={split}
-          onValueChange={(v) => setSplit(v as "complete" | "partial")}
-          options={[
-            { value: "complete", label: "Ship complete", hint: "Hold until all items are ready" },
-            { value: "partial", label: "Ship partial", hint: "Send available items now" },
-          ]}
-        />
-        <ModifierGroup
-          legend="Liftgate"
-          value={liftgate}
-          onValueChange={(v) => setLiftgate(v as "none" | "required")}
-          options={[
-            { value: "none", label: "Not needed", hint: "Dock or forklift on site" },
-            { value: "required", label: "Required", hint: "No dock — lower to ground" },
-          ]}
-        />
-      </div>
+      {/* Modifiers (Homans local delivery) */}
+      {showModifiers ? (
+        <div className="grid gap-5 border-t pt-5 sm:grid-cols-2">
+          <ModifierGroup
+            legend="Split shipment"
+            value={split}
+            onValueChange={(v) => setSplit(v as "complete" | "partial")}
+            options={[
+              { value: "complete", label: "Ship complete", hint: "Hold until all items are ready" },
+              { value: "partial", label: "Ship partial", hint: "Send available items now" },
+            ]}
+          />
+          <ModifierGroup
+            legend="Liftgate"
+            value={liftgate}
+            onValueChange={(v) => setLiftgate(v as "none" | "required")}
+            options={[
+              { value: "none", label: "Not needed", hint: "Dock or forklift on site" },
+              { value: "required", label: "Required", hint: "No dock — lower to ground" },
+            ]}
+          />
+        </div>
+      ) : null}
 
       <AddAddressDialog open={addOpen} onOpenChange={setAddOpen} />
     </div>
@@ -789,24 +758,30 @@ function MethodRow({ meta, selected }: { meta: MethodMeta; selected: boolean }) 
 /* ───────────────────────── Public: the unified fulfillment section ───────────────────────── */
 
 export function FulfillmentSection({
+  config,
   method,
   setMethod,
   availabilityConstraint,
 }: {
+  config: BrandCheckoutConfig;
   method: FulfillmentMethod;
   setMethod: (m: FulfillmentMethod) => void;
   /** Scenario flag: an order placed after the branch cutoff — same/next-day off. */
   availabilityConstraint: boolean;
 }) {
-  const [branch, setBranch] = React.useState<Branch>(BRANCHES.find((b) => b.current) ?? BRANCHES[0]);
-  const [addressId, setAddressId] = React.useState<string>(DEFAULT_ADDRESS_ID);
+  const defaultBranch = config.branches.find((b) => b.current) ?? config.branches[0];
+  const defaultAddressId = (config.addresses.find((a) => a.isDefault) ?? config.addresses[0]).id;
+
+  const [branch, setBranch] = React.useState<BrandBranch>(defaultBranch);
+  const [addressId, setAddressId] = React.useState<string>(defaultAddressId);
   const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
   const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
   const [split, setSplit] = React.useState<"complete" | "partial">("complete");
   const [liftgate, setLiftgate] = React.useState<"none" | "required">("none");
+  const [expressOn, setExpressOn] = React.useState(false);
 
-  const selectedAddress = ADDRESSES.find((a) => a.id === addressId);
-  const outOfRadius = !!selectedAddress?.outOfRadius;
+  const selectedAddress = config.addresses.find((a) => a.id === addressId);
+  const outOfRadius = config.radiusRule && !!selectedAddress?.outOfRadius;
 
   // Earliest selectable date: cutoff pushes it out by an extra day.
   const earliest = availabilityConstraint ? addDays(TODAY, 2) : addDays(TODAY, 1);
@@ -821,7 +796,8 @@ export function FulfillmentSection({
   // 150-mile rule: selecting an out-of-radius address forces Freight / LTL.
   const selectAddress = (id: string) => {
     setAddressId(id);
-    const addr = ADDRESSES.find((a) => a.id === id);
+    if (!config.radiusRule) return;
+    const addr = config.addresses.find((a) => a.id === id);
     if (addr?.outOfRadius) setMethod("freight");
   };
 
@@ -835,8 +811,8 @@ export function FulfillmentSection({
           className="mt-3 gap-2"
           aria-label="Fulfillment method"
         >
-          {METHODS.map((m) => (
-            <MethodRow key={m.id} meta={m} selected={m.id === method} />
+          {config.methods.map((id) => (
+            <MethodRow key={id} meta={METHOD_META[id]} selected={id === method} />
           ))}
         </RadioGroup>
       </div>
@@ -846,21 +822,29 @@ export function FulfillmentSection({
         {method === "pickup" ? (
           <PickupPanel
             branch={branch}
+            branches={config.branches}
             onChangeBranch={setBranch}
             pickupDate={pickupDate}
             setPickupDate={setPickupDate}
             earliest={earliest}
             dateReason={pickupReason}
+            addon={config.pickupAddon}
+            addonOn={expressOn}
+            setAddonOn={setExpressOn}
           />
         ) : (
           <DeliveryPanel
             method={method}
+            addresses={config.addresses}
             addressId={addressId}
             onSelectAddress={selectAddress}
             deliveryDate={deliveryDate}
             setDeliveryDate={setDeliveryDate}
             earliest={earliest}
             dateReason={dateReason}
+            dateMode={config.deliveryDateMode}
+            showModifiers={config.deliveryModifiers}
+            truckLabel={config.truckLabel}
             split={split}
             setSplit={setSplit}
             liftgate={liftgate}

@@ -31,7 +31,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
 
   return <>
     <SiteHeader brand={brand} signedIn />
-    <CheckoutClient scenario={scenario} demo={params.demo === "1"} />
+    <CheckoutClient scenario={scenario} demo={params.demo === "1"} brandKey={brand.key} />
     <SiteFooter brand={brand} />
   </>;
 }

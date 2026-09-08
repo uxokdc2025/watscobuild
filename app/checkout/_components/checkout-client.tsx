@@ -48,6 +48,7 @@ import {
   type FulfillmentMethod,
 } from "./fulfillment";
 import { StockUnavailablePanel } from "./stock-unavailable";
+import { getBrandCheckout, type BrandCheckoutConfig } from "../_lib/brand-checkout";
 
 /* ───────────────────────── Demo data ───────────────────────── */
 
@@ -63,25 +64,9 @@ const SAVED_CARDS = [
   { id: "mc-8801", tail: "8801", expires: "2/2027" },
 ];
 
-/* Accounts reachable from the in-checkout switch-account control (Homans
- * pattern). Superset of contexts: account / ship-to / company / location. */
-type SwitchAccount = {
-  id: string;
-  name: string;
-  kind: "Account" | "Ship-to" | "Company" | "Location";
-  detail: string;
-};
-
-const SWITCH_ACCOUNTS: SwitchAccount[] = [
-  { id: "hom509973", name: "Homans Associates", kind: "Account", detail: "#HOM509973 · Manchester, NH" },
-  { id: "hom-613main", name: "613 Main Street", kind: "Ship-to", detail: "Manchester, NH 03101" },
-  { id: "hom-north", name: "North warehouse", kind: "Location", detail: "42 Industrial Way, Concord, NH" },
-  { id: "hom-parent", name: "Homans — New England", kind: "Company", detail: "Parent company · 12 branches" },
-  { id: "hom-portsmouth", name: "Portsmouth branch", kind: "Location", detail: "155 Heritage Ave, Portsmouth, NH" },
-];
-
-const ORDER_NUMBER = "HOM-2026-04871";
-const TAX_RATE = 0.0625;
+/* The in-checkout switch-account control, pickup branches, and grouped "Deliver
+ * to" addresses are all per-brand — they come from the brand checkout config, so
+ * each brand shows only its own account / store / address data. */
 
 /* ───────────────────────── Scenario model ─────────────────────────
  * The 6 use cases are STATES of one flow, not separate flows. Each case is a
@@ -193,15 +178,30 @@ function DismissButton({ label, onClick }: { label: string; onClick: () => void 
 
 /* ───────────────────────── Main ───────────────────────── */
 
-export default function CheckoutClient({ scenario, demo = false }: { scenario?: CheckoutCase; demo?: boolean }) {
+export default function CheckoutClient({
+  scenario,
+  demo = false,
+  brandKey = "homans",
+}: {
+  scenario?: CheckoutCase;
+  demo?: boolean;
+  brandKey?: string;
+}) {
   const cfg = resolveScenario(scenario);
+  const brand = getBrandCheckout(brandKey);
   const { items: cartItems } = useCart();
   const items = cartItems.length ? cartItems : (demo || scenario ? DEMO_ITEMS : []);
+
+  // A scenario may request a method this brand doesn't expose — clamp it to the
+  // brand's first delivery method, else Pickup, so the selection stays valid.
+  const initialMethod = brand.methods.includes(cfg.method)
+    ? cfg.method
+    : (brand.methods.find(isDeliveryMethod) ?? "pickup");
 
   const [step, setStep] = React.useState<Step>(cfg.initialStep);
   const [submitted, setSubmitted] = React.useState(cfg.submitted);
   const [saved, setSaved] = React.useState(false);
-  const [method, setMethod] = React.useState<FulfillmentMethod>(cfg.method);
+  const [method, setMethod] = React.useState<FulfillmentMethod>(initialMethod);
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);
   const [notices, setNotices] = React.useState(cfg.notices);
   const [po, setPo] = React.useState("PO-2048");
@@ -218,7 +218,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   // Applied coupon takes 10% off the subtotal.
   const discount = appliedCoupon ? subtotal * 0.1 : 0;
-  const tax = (subtotal - discount) * TAX_RATE;
+  const tax = (subtotal - discount) * brand.taxRate;
   // Shipping reflects the chosen fulfillment method's rate.
   const shipping = METHOD_RATE[method];
   const total = subtotal - discount + tax + shipping;
@@ -233,7 +233,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
             </div>
             <h1 className="mt-4 text-2xl font-bold">Order submitted</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Order <span className="font-semibold text-foreground">{ORDER_NUMBER}</span> is being reviewed.
+              Order <span className="font-semibold text-foreground">{brand.orderNumber}</span> is being reviewed.
               We&apos;ll send confirmation and fulfillment details to your account.
             </p>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
@@ -319,7 +319,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
         </div>
 
         {/* Account context — with an in-checkout Switch account control. */}
-        <AccountContextRow />
+        <AccountContextRow brand={brand} />
 
         <ol aria-label="Checkout progress" className="mt-6 grid max-w-3xl grid-cols-3 gap-2 text-sm">
           {steps.map((entry, index) => (
@@ -385,6 +385,7 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
           <section className="min-w-0 rounded-md border bg-background shadow-sm">
             {step === "shipping" ? (
               <FulfillmentStep
+                config={brand}
                 method={method}
                 setMethod={setMethod}
                 po={po}
@@ -396,10 +397,11 @@ export default function CheckoutClient({ scenario, demo = false }: { scenario?: 
               />
             ) : null}
             {step === "payment" ? (
-              <PaymentStep payment={payment} setPayment={setPayment} onBack={() => setStep("shipping")} />
+              <PaymentStep brand={brand} payment={payment} setPayment={setPayment} onBack={() => setStep("shipping")} />
             ) : null}
             {step === "review" ? (
               <ReviewStep
+                brand={brand}
                 items={items}
                 method={method}
                 payment={payment}
@@ -459,6 +461,7 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
  *  method/address/date/modifier logic; this wrapper only supplies the header
  *  and the PO gate. */
 function FulfillmentStep({
+  config,
   method,
   setMethod,
   po,
@@ -468,6 +471,7 @@ function FulfillmentStep({
   poError,
   availabilityConstraint,
 }: {
+  config: BrandCheckoutConfig;
   method: FulfillmentMethod;
   setMethod: (m: FulfillmentMethod) => void;
   po: string;
@@ -487,7 +491,7 @@ function FulfillmentStep({
         </div>
         <OrderDetailsExtras />
       </div>
-      <FulfillmentSection method={method} setMethod={setMethod} availabilityConstraint={availabilityConstraint} />
+      <FulfillmentSection config={config} method={method} setMethod={setMethod} availabilityConstraint={availabilityConstraint} />
     </>
   );
 }
@@ -582,11 +586,12 @@ function OrderDetailsExtras() {
 
 /* ───────────────────────── Account context + switch account ───────────────────────── */
 
-function AccountContextRow() {
+function AccountContextRow({ brand }: { brand: BrandCheckoutConfig }) {
+  const accounts = brand.switchAccounts;
   const [open, setOpen] = React.useState(false);
-  const [currentId, setCurrentId] = React.useState(SWITCH_ACCOUNTS[0].id);
-  const [defaultId, setDefaultId] = React.useState(SWITCH_ACCOUNTS[0].id);
-  const current = SWITCH_ACCOUNTS.find((a) => a.id === currentId) ?? SWITCH_ACCOUNTS[0];
+  const [currentId, setCurrentId] = React.useState(accounts[0].id);
+  const [defaultId, setDefaultId] = React.useState(accounts[0].id);
+  const current = accounts.find((a) => a.id === currentId) ?? accounts[0];
 
   return (
     <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
@@ -601,6 +606,7 @@ function AccountContextRow() {
       <SwitchAccountDialog
         open={open}
         onOpenChange={setOpen}
+        accounts={accounts}
         currentId={currentId}
         defaultId={defaultId}
         onSelect={setCurrentId}
@@ -613,6 +619,7 @@ function AccountContextRow() {
 function SwitchAccountDialog({
   open,
   onOpenChange,
+  accounts,
   currentId,
   defaultId,
   onSelect,
@@ -620,6 +627,7 @@ function SwitchAccountDialog({
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  accounts: BrandCheckoutConfig["switchAccounts"];
   currentId: string;
   defaultId: string;
   onSelect: (id: string) => void;
@@ -633,7 +641,7 @@ function SwitchAccountDialog({
           <DialogDescription>Choose the account, ship-to, company, or location for this order.</DialogDescription>
         </DialogHeader>
         <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
-          {SWITCH_ACCOUNTS.map((a) => {
+          {accounts.map((a) => {
             const isCurrent = a.id === currentId;
             const isDefault = a.id === defaultId;
             return (
@@ -693,7 +701,17 @@ function SwitchAccountDialog({
   );
 }
 
-function PaymentStep({ payment, setPayment, onBack }: { payment: Payment; setPayment: (v: Payment) => void; onBack: () => void }) {
+function PaymentStep({
+  brand,
+  payment,
+  setPayment,
+  onBack,
+}: {
+  brand: BrandCheckoutConfig;
+  payment: Payment;
+  setPayment: (v: Payment) => void;
+  onBack: () => void;
+}) {
   const [card, setCard] = React.useState<string>(SAVED_CARDS[0].id);
   return (
     <>
@@ -702,7 +720,7 @@ function PaymentStep({ payment, setPayment, onBack }: { payment: Payment; setPay
         <RadioGroup value={payment} onValueChange={(v) => setPayment(v as Payment)} className="grid gap-3">
           <RadioCard value="terms" selected={payment === "terms"}>
             <span className="block font-semibold">Account terms, COD</span>
-            <span className="mt-1 block text-sm text-muted-foreground">Charge this order to your Homans account.</span>
+            <span className="mt-1 block text-sm text-muted-foreground">Charge this order to your {brand.brandName} account.</span>
           </RadioCard>
           <RadioCard value="cash" selected={payment === "cash"}>
             <span className="flex items-center gap-2 font-semibold">
@@ -765,6 +783,7 @@ function paymentLabel(payment: Payment): string {
 const MAX_HANDLING_COMMENTS = 300;
 
 function ReviewStep({
+  brand,
   items,
   method,
   payment,
@@ -779,6 +798,7 @@ function ReviewStep({
   onEditFulfillment,
   onEditPayment,
 }: {
+  brand: BrandCheckoutConfig;
   items: CartItem[];
   method: FulfillmentMethod;
   payment: Payment;
@@ -808,7 +828,7 @@ function ReviewStep({
           <div className="rounded-md border p-4">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Fulfillment</p>
             <p className="mt-2 font-medium">
-              {isDeliveryMethod(method) ? `Delivery — ${methodLabel(method)}` : "Pickup — Manchester branch"}
+              {isDeliveryMethod(method) ? `Delivery — ${methodLabel(method)}` : `Pickup — ${brand.pickupBranchShort}`}
             </p>
             <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditFulfillment}>Edit</Button>
           </div>
