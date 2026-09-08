@@ -305,7 +305,6 @@ export default function CheckoutClient({
         <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Review your order and choose how you&apos;d like to receive it.</p>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <LockKeyhole className="size-4" aria-hidden="true" />
