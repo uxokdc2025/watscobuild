@@ -25,17 +25,6 @@ import {
    brand color lives on the header bar, never inside the panel body.
    ──────────────────────────────────────────────────────────────────────── */
 
-/** Column reveal — a gentle fade + short slide so each new column emerges in
- *  place beside the previous one (never a full-width slide over the top of it).
- *  Deliberately slow/soft. */
-const COLUMN_MOTION = {
-  type: "tween" as const,
-  duration: 0.7,
-  ease: [0.32, 0.72, 0, 1] as const,
-};
-/** Slightly larger travel so the slower reveal reads as a deliberate slide. */
-const COLUMN_X = 20;
-
 const itemBase =
   "flex min-h-11 w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
@@ -253,8 +242,9 @@ export function MegaMenu({
                   height: `calc(100dvh - ${topOffset}px)`,
                 }}
               >
-                {/* Tier 1 — white column. */}
-                <div className="w-full shrink-0 overflow-y-auto bg-popover p-2 md:w-64">
+                {/* Tier 1 — white column. Sits ABOVE later columns (z) so each
+                    new column slides out from underneath it, not over the top. */}
+                <div className="relative z-30 w-full shrink-0 overflow-y-auto bg-popover p-2 md:w-64">
                   <p className="px-3 pt-2 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                     Shop products
                   </p>
@@ -274,11 +264,11 @@ export function MegaMenu({
                   {category ? (
                     <motion.div
                       key={category.slug}
-                      initial={{ opacity: 0, x: -COLUMN_X }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -COLUMN_X }}
-                      transition={COLUMN_MOTION}
-                      className="w-full shrink-0 overflow-y-auto bg-muted/40 p-2 md:w-72"
+                      initial={{ x: "-100%" }}
+                      animate={{ x: 0 }}
+                      exit={{ x: "-100%" }}
+                      transition={DRAWER_SPRING}
+                      className="relative z-20 w-full shrink-0 overflow-y-auto bg-muted/40 p-2 md:w-72"
                     >
                       <ColumnHeader node={category} onNavigate={close} />
                       {subcategories.map((node) => (
@@ -301,11 +291,11 @@ export function MegaMenu({
                   {subcategory && details.length ? (
                     <motion.div
                       key={subcategory.slug}
-                      initial={{ opacity: 0, x: -COLUMN_X }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -COLUMN_X }}
-                      transition={COLUMN_MOTION}
-                      className="w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-72"
+                      initial={{ x: "-100%" }}
+                      animate={{ x: 0 }}
+                      exit={{ x: "-100%" }}
+                      transition={DRAWER_SPRING}
+                      className="relative z-10 w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-72"
                     >
                       <ColumnHeader node={subcategory} onNavigate={close} />
                       <div>
