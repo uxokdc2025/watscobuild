@@ -30,9 +30,11 @@ import {
  *  Deliberately slow/soft. */
 const COLUMN_MOTION = {
   type: "tween" as const,
-  duration: 0.45,
+  duration: 0.7,
   ease: [0.32, 0.72, 0, 1] as const,
 };
+/** Slightly larger travel so the slower reveal reads as a deliberate slide. */
+const COLUMN_X = 20;
 
 const itemBase =
   "flex min-h-11 w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -272,9 +274,9 @@ export function MegaMenu({
                   {category ? (
                     <motion.div
                       key={category.slug}
-                      initial={{ opacity: 0, x: -12 }}
+                      initial={{ opacity: 0, x: -COLUMN_X }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -12 }}
+                      exit={{ opacity: 0, x: -COLUMN_X }}
                       transition={COLUMN_MOTION}
                       className="w-full shrink-0 overflow-y-auto bg-muted/40 p-2 md:w-72"
                     >
@@ -299,9 +301,9 @@ export function MegaMenu({
                   {subcategory && details.length ? (
                     <motion.div
                       key={subcategory.slug}
-                      initial={{ opacity: 0, x: -12 }}
+                      initial={{ opacity: 0, x: -COLUMN_X }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -12 }}
+                      exit={{ opacity: 0, x: -COLUMN_X }}
                       transition={COLUMN_MOTION}
                       className="w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-72"
                     >
