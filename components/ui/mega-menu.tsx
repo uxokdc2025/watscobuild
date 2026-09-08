@@ -243,7 +243,7 @@ export function MegaMenu({
                 role="menu"
                 aria-label="Product categories"
                 onKeyDown={onPanelKeyDown}
-                className="fixed left-0 z-[71] flex w-[min(940px,100vw)] flex-col overflow-hidden bg-popover text-popover-foreground shadow-2xl md:flex-row"
+                className="fixed left-0 z-[71] flex w-full max-w-[100vw] flex-col overflow-hidden bg-popover text-popover-foreground shadow-2xl md:w-auto md:flex-row"
                 style={{
                   top: topOffset,
                   height: `calc(100dvh - ${topOffset}px)`,
@@ -301,7 +301,7 @@ export function MegaMenu({
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -12 }}
                       transition={COLUMN_MOTION}
-                      className="w-full flex-1 overflow-y-auto bg-muted/60 p-2"
+                      className="w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-96"
                     >
                       <ColumnHeader node={subcategory} onNavigate={close} />
                       <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -346,7 +346,7 @@ export function MegaMenu({
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100",
+            "pointer-events-none absolute inset-x-3 -bottom-1 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100",
             open && "opacity-100",
           )}
         />

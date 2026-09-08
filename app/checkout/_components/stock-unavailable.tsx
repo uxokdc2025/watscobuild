@@ -15,6 +15,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { getBrandCheckout } from "../_lib/brand-checkout";
+import { StockStoreLocatorDrawer } from "./checkout-drawers";
 
 /* ───────────────────────── Stock-availability model ─────────────────────────
  * The itemized "not available at your current store" panel. Each row pairs the
@@ -37,27 +39,36 @@ function defaultRows(items: CartItem[]): StockRow[] {
   return items.map((item) => ({ item, requested: item.quantity, available: 0 }));
 }
 
-const STORE_HREF = "/store-locator";
-/* No dedicated /cart route exists — the cart is a drawer; the app routes
- * "back to your cart" to the shopping surface, so we match that here. */
-const CART_HREF = "/search?q=blower%20motor&signedin=1";
-
 export function StockUnavailablePanel({
   items,
   rows,
-  storeHref = STORE_HREF,
-  cartHref = CART_HREF,
+  brandKey = "homans",
   className,
 }: {
   items: CartItem[];
   /** Override the derived rows (e.g. to supply Peirce `elsewhere` lines). */
   rows?: StockRow[];
-  storeHref?: string;
-  cartHref?: string;
+  /** Resolves the brand's branches (drawer seed) and cart route. */
+  brandKey?: string;
   className?: string;
 }) {
   const resolved = rows ?? defaultRows(items);
+  const brand = getBrandCheckout(brandKey);
+  // A single drawer instance serves every trigger; the product context (if any)
+  // is set by whichever link opened it.
+  const [drawer, setDrawer] = React.useState<{
+    product?: { brand: string; title: string; item: string; mfg: string };
+    showProductHeader: boolean;
+  } | null>(null);
+
   if (!resolved.length) return null;
+
+  const openForItem = (item: CartItem) =>
+    setDrawer({
+      product: { brand: item.brand ?? "Watsco", title: item.title, item: "—", mfg: "—" },
+      showProductHeader: true,
+    });
+  const openForStore = () => setDrawer({ showProductHeader: false });
 
   return (
     // Caution/amber BACKGROUND fill on the outer container with white inner
@@ -120,12 +131,13 @@ export function StockUnavailablePanel({
                     {available}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Link
-                      href={storeHref}
+                    <button
+                      type="button"
+                      onClick={() => openForItem(item)}
                       className="text-sm font-medium text-primary underline underline-offset-2 hover:text-primary/80"
                     >
                       Check nearby stores
-                    </Link>
+                    </button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -137,16 +149,17 @@ export function StockUnavailablePanel({
           <p className="text-sm font-medium text-foreground">You have several options to proceed:</p>
           <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
             <li>
-              <Link
-                href={storeHref}
+              <button
+                type="button"
+                onClick={openForStore}
                 className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
               >
                 Change your selected store
-              </Link>
+              </button>
             </li>
             <li>
               <Link
-                href={cartHref}
+                href={`/cart?brand=${brandKey}`}
                 className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
               >
                 Change quantities by returning to your cart
@@ -156,6 +169,15 @@ export function StockUnavailablePanel({
           </ul>
         </div>
       </AlertDescription>
+
+      <StockStoreLocatorDrawer
+        open={drawer !== null}
+        onClose={() => setDrawer(null)}
+        branches={brand.branches}
+        product={drawer?.product}
+        showProductHeader={drawer?.showProductHeader ?? false}
+        heading={drawer?.showProductHeader ? "Product availability" : "Find a branch"}
+      />
     </Alert>
   );
 }

@@ -226,6 +226,82 @@ export function StoreFinderDrawer({
   );
 }
 
+/* ───────────────────────── Stock store-locator (real drawer, availability) ─────────────────────────
+ * The stock-panel "Check nearby stores" / "Change your selected store" links
+ * open the REAL store-locator drawer (InventoryStoreLocatorDrawer) as a right
+ * drawer — seeded with the brand's OWN branches and showing per-branch
+ * availability (showStock). Mirrors the pickup "Change" wiring above; the only
+ * difference is stock counts are shown and no branch is committed back. */
+
+export function StockStoreLocatorDrawer({
+  open,
+  onClose,
+  branches,
+  product,
+  showProductHeader = false,
+  heading = "Product availability",
+}: {
+  open: boolean;
+  onClose: () => void;
+  branches: BrandBranch[];
+  product?: { brand: string; title: string; item: string; mfg: string };
+  showProductHeader?: boolean;
+  heading?: string;
+}) {
+  const [closing, setClosing] = React.useState(false);
+
+  const requestClose = React.useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    window.setTimeout(() => {
+      setClosing(false);
+      onClose();
+    }, DRAWER_MOTION_MS);
+  }, [closing, onClose]);
+
+  if (!open) return null;
+
+  const current = branches.find((b) => b.current) ?? branches[0];
+  // Deterministic per-branch availability (no SSR/CSR drift): 0 at the current
+  // branch, a stable spread elsewhere — the "available at other stores" context.
+  const locatorBranches: LocatorBranch[] = branches.map((b, i) => ({
+    name: b.name,
+    miles: b.miles,
+    hours: b.hours,
+    tag: b.current ? "current" : undefined,
+    address: b.address,
+    qty: b.current ? 0 : ((i * 7 + 5) % 18) + 1,
+  }));
+
+  return (
+    <div
+      className={drawerOverlayClassName(closing)}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) requestClose();
+      }}
+    >
+      <DrawerPanel
+        open={!closing}
+        side="right"
+        role="dialog"
+        aria-modal="true"
+        aria-label={heading}
+        className="absolute inset-y-0 right-0 flex"
+      >
+        <InventoryStoreLocatorDrawer
+          heading={heading}
+          showProductHeader={showProductHeader}
+          showStock
+          product={product}
+          branches={locatorBranches}
+          selectedStore={current?.name}
+          onClose={requestClose}
+        />
+      </DrawerPanel>
+    </div>
+  );
+}
+
 /* ───────────────────────── Add delivery address (was a centered Dialog) ───────────────────────── */
 
 export function AddAddressDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {

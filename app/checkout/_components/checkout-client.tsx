@@ -362,7 +362,7 @@ export default function CheckoutClient({
             ) : null}
             {/* Itemized detail: which items are short at the current store, and the
              * options to proceed. Stacks beneath the summary alerts; not dismissable. */}
-            <StockUnavailablePanel items={items} />
+            <StockUnavailablePanel items={items} brandKey={brandKey} />
           </div>
         ) : (
           // No stock warnings → positive inventory confirmation (Peirce pattern).
