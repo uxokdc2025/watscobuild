@@ -437,6 +437,44 @@ export default function PdpMasterPage() {
           </AccordionItem>
 
           <AccordionItem
+            value="account-menus"
+            id="account-menus"
+            className="scroll-mt-6 rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
+                  Shared Component
+                </Badge>
+                <span className="text-lg font-bold tracking-tight">
+                  Account Menus — v1 vs v2
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                A choice for the account menus: the current flat lists (v1), or a
+                nested version (v2) that groups Shopping Lists + Saved Carts under a
+                single <span className="font-medium text-foreground">Buying Tools</span>{" "}
+                parent — like the live Homans site. The account fly-out and the dashboard
+                sidebar are each shown current next to nested.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Button asChild>
+                  <Link
+                    href="/components/account-menus"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View Account Menus comparison
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem
             value="plp"
             id="plp"
             className="scroll-mt-6 rounded-xl border bg-card px-5"
