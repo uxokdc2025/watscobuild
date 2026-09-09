@@ -515,7 +515,6 @@ export function SwitchAccountDrawer({
                     <span aria-hidden="true" />
                   )}
                   <Button
-                    size="sm"
                     variant={isCurrent ? "outline" : "default"}
                     aria-pressed={isCurrent}
                     disabled={isCurrent}
