@@ -16,8 +16,6 @@ import {
   Truck,
 } from "lucide-react";
 
-import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -618,17 +616,20 @@ export function FulfillmentSection({
   method,
   setMethod,
   availabilityConstraint,
+  branch,
+  onChangeBranch,
 }: {
   config: BrandCheckoutConfig;
   method: FulfillmentMethod;
   setMethod: (m: FulfillmentMethod) => void;
   /** Scenario flag: an order placed after the branch cutoff — same/next-day off. */
   availabilityConstraint: boolean;
+  /** Branch is lifted to the client so Order Details and pickup share one choice. */
+  branch: BrandBranch;
+  onChangeBranch: (b: BrandBranch) => void;
 }) {
-  const defaultBranch = config.branches.find((b) => b.current) ?? config.branches[0];
   const defaultAddressId = (config.addresses.find((a) => a.isDefault) ?? config.addresses[0]).id;
 
-  const [branch, setBranch] = React.useState<BrandBranch>(defaultBranch);
   const [addressId, setAddressId] = React.useState<string>(defaultAddressId);
   const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
   const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
@@ -657,12 +658,6 @@ export function FulfillmentSection({
     if (addr?.outOfRadius) setMethod("freight");
   };
 
-  // Changing the pickup branch is a lightweight commit — a toast, no refresh.
-  const changeBranch = (b: BrandBranch) => {
-    setBranch(b);
-    toast.success(`Now shopping ${b.name}`);
-  };
-
   // The panel for whichever method is selected. Rendered directly UNDER that
   // method's row (expand-in-place), the same way each delivery method reveals
   // its address/date panel — never a detached block at the bottom.
@@ -671,7 +666,7 @@ export function FulfillmentSection({
       <PickupPanel
         branch={branch}
         branches={config.branches}
-        onChangeBranch={changeBranch}
+        onChangeBranch={onChangeBranch}
         pickupDate={pickupDate}
         setPickupDate={setPickupDate}
         earliest={earliest}

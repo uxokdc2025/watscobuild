@@ -176,12 +176,14 @@ function AccountContextRow({ brandKey }: { brandKey: string }) {
 
 /* ───────────────────────── Order summary rail ───────────────────────── */
 function OrderSummary({
+  lines,
   count,
   subtotal,
   tax,
   total,
   checkoutHref,
 }: {
+  lines: CartLine[];
   count: number;
   subtotal: number;
   tax: number;
@@ -195,7 +197,25 @@ function OrderSummary({
         <p className="mt-1 text-sm text-muted-foreground">{count} items</p>
       </div>
       <div className="space-y-4 p-5">
-        <div className="space-y-2 text-sm">
+        {/* Itemized list — thumbnail, one-line name, qty, unit price only. No
+            description or secondary marketing text. */}
+        {lines.map((line) => (
+          <div key={line.id} className="flex items-center gap-3">
+            <div className="grid size-12 shrink-0 place-items-center rounded-md bg-muted">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={line.image} alt="" className="max-h-full max-w-full object-contain" />
+            </div>
+            <p className="min-w-0 flex-1 text-sm font-medium line-clamp-1">{line.title}</p>
+            <div className="shrink-0 text-right">
+              <p className="text-xs text-muted-foreground">Qty {line.quantity}</p>
+              <p className="text-sm font-semibold">
+                {formatUSD(line.price)}
+                <span className="font-normal text-muted-foreground"> /ea</span>
+              </p>
+            </div>
+          </div>
+        ))}
+        <div className="space-y-2 border-t pt-4 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatUSD(subtotal)}</span>
@@ -252,7 +272,6 @@ function EmptyCart() {
 export default function CartClient({ brandKey = "homans" }: { brandKey?: string }) {
   const brand = getBrandCheckout(brandKey);
   const [lines, setLines] = React.useState<CartLine[]>(DEMO_CART);
-  const [dismissed, setDismissed] = React.useState<string[]>([]);
   const [drawerFor, setDrawerFor] = React.useState<CartLine | null>(null);
   // Stock/availability notices — moved here from checkout. Backorder + nearby
   // are dismissible summaries; the itemized panel below them is not.
@@ -264,14 +283,11 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
   const count = lines.reduce((sum, l) => sum + l.quantity, 0);
   const checkoutHref = `/checkout?brand=${brandKey}&demo=1`;
 
-  const bannerLines = lines.filter((l) => l.replacement && !dismissed.includes(l.id));
-
   const setQty = (id: string, next: number) =>
     setLines((prev) => prev.map((l) => (l.id === id ? { ...l, quantity: Math.max(1, next) } : l)));
 
   const removeLine = (id: string) => {
     setLines((prev) => prev.filter((l) => l.id !== id));
-    setDismissed((prev) => prev.filter((b) => b !== id));
   };
 
   // Replace / Substitute: swap the chosen alternative into the line in place,
@@ -286,7 +302,6 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
             : l,
         ),
       );
-      setDismissed((prev) => [...prev, original.id]);
       const name = (s: string) => s.split("—")[0].trim();
       toast.success(`${name(original.title)} ${kind === "replacement" ? "replaced with" : "substituted with"} ${name(alt.title)}`);
     }
@@ -338,57 +353,6 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
               <StockUnavailablePanel items={lines} brandKey={brandKey} />
             </div>
 
-            {/* Yellow "Replacements available" panel — same fill treatment as
-                the shopping-list detail (no left bar). */}
-            {bannerLines.length > 0 ? (
-              <Alert variant="warning" className="mt-6">
-                <Replace />
-                <AlertTitle>Replacements available</AlertTitle>
-                <AlertDescription>
-                  <p>The following items have a replacement or substitute.</p>
-                  <div className="mt-3 w-full space-y-3">
-                    {bannerLines.map((l) => (
-                      <div
-                        key={l.id}
-                        className="flex flex-col gap-3 rounded-md border border-border bg-background p-3 sm:flex-row sm:items-center"
-                      >
-                        <div className="grid size-12 shrink-0 place-items-center rounded-md bg-muted/40 p-1">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={l.image}
-                            alt={l.title}
-                            loading="lazy"
-                            className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs font-medium text-primary">{l.brand}</p>
-                          <p className="truncate text-sm font-semibold text-foreground">{l.title}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Item: {l.item} · MFG: {l.mfg} · Replacement available
-                          </p>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="min-h-11 text-muted-foreground"
-                            onClick={() => setDismissed((prev) => [...prev, l.id])}
-                          >
-                            Dismiss
-                          </Button>
-                          <Button variant="secondary" size="sm" className="min-h-11" onClick={() => setDrawerFor(l)}>
-                            <Replace className="size-3.5" />
-                            View substitutes
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </AlertDescription>
-              </Alert>
-            ) : null}
-
             <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
               <section className="min-w-0 rounded-md border bg-background shadow-sm">
                 <div className="border-b px-5 py-4 font-semibold">Items ({lines.length})</div>
@@ -406,7 +370,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
                 </div>
               </section>
 
-              <OrderSummary count={count} subtotal={subtotal} tax={tax} total={total} checkoutHref={checkoutHref} />
+              <OrderSummary lines={lines} count={count} subtotal={subtotal} tax={tax} total={total} checkoutHref={checkoutHref} />
             </div>
           </>
         )}

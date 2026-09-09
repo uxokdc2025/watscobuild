@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Banknote,
-  Building2,
   Check,
   ChevronLeft,
   CreditCard,
@@ -13,8 +12,8 @@ import {
   Plus,
   Printer,
   ShieldCheck,
-  Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { useCart, type CartItem } from "@/components/cart/cart-context";
 import { Button } from "@/components/ui/button";
@@ -33,8 +32,14 @@ import {
   isDeliveryMethod,
   type FulfillmentMethod,
 } from "./fulfillment";
+import { OrderDetailsStep } from "./order-details-step";
 import { SwitchAccountDrawer, CreditCardDrawer } from "./checkout-drawers";
-import { getBrandCheckout, type BrandCheckoutConfig } from "../_lib/brand-checkout";
+import {
+  getBrandCheckout,
+  type BrandBranch,
+  type BrandCheckoutConfig,
+  type SwitchAccount,
+} from "../_lib/brand-checkout";
 
 /* ───────────────────────── Demo data ───────────────────────── */
 
@@ -58,7 +63,7 @@ const SAVED_CARDS = [
  * The 6 use cases are STATES of one flow, not separate flows. Each case is a
  * single config entry — no scattered `scenario === "…"` branching in the JSX. */
 
-type Step = "shipping" | "payment" | "review";
+type Step = "details" | "fulfillment" | "payment" | "review";
 type Payment = "terms" | "cash" | "card";
 
 type ScenarioConfig = {
@@ -73,7 +78,7 @@ type ScenarioConfig = {
 };
 
 const BASE: ScenarioConfig = {
-  initialStep: "shipping",
+  initialStep: "details",
   submitted: false,
   method: "pickup",
   payment: "terms",
@@ -86,9 +91,9 @@ const BASE: ScenarioConfig = {
 const CHECKOUT_SCENARIOS: Record<CheckoutCase, Partial<ScenarioConfig>> = {
   "account-job-context": { seededJob: "Spring maintenance" },
   // Opens on Fulfillment with a delivery method already selected (routing to a grouped address).
-  "delivery-pickup-routing": { method: "ups" },
+  "delivery-pickup-routing": { initialStep: "fulfillment", method: "ups" },
   // Opens on Fulfillment with the date-cutoff messaging visible on a delivery method.
-  "availability-date-constraints": { method: "truck", availabilityConstraint: true },
+  "availability-date-constraints": { initialStep: "fulfillment", method: "truck", availabilityConstraint: true },
   "terms-or-credit-card": { initialStep: "payment", payment: "card" },
   "review-coupon-special-handling": { initialStep: "review", showCoupon: true, showSpecialHandling: true },
   "order-confirmation": { initialStep: "review", submitted: true },
@@ -168,14 +173,34 @@ export default function CheckoutClient({
     ? cfg.method
     : (brand.methods.find(isDeliveryMethod) ?? "pickup");
 
+  // Account is bound to the brand-checkout config for now (switchAccounts[0]).
+  // SEAM: the cart page's selected account should feed this state once the
+  // cart→checkout account hand-off is wired — that is the follow-up.
+  const accounts = brand.switchAccounts;
+  const [accountId, setAccountId] = React.useState(accounts[0].id);
+  const [defaultAccountId, setDefaultAccountId] = React.useState(accounts[0].id);
+  const [accountDrawerOpen, setAccountDrawerOpen] = React.useState(false);
+  const account: SwitchAccount = accounts.find((a) => a.id === accountId) ?? accounts[0];
+
+  // Branch is lifted here so Order Details and the Fulfillment pickup panel
+  // share one branch choice.
+  const defaultBranch = brand.branches.find((b) => b.current) ?? brand.branches[0];
+  const [branch, setBranch] = React.useState<BrandBranch>(defaultBranch);
+  const changeBranch = (b: BrandBranch) => {
+    setBranch(b);
+    toast.success(`Now shopping ${b.name}`);
+  };
+
   const [step, setStep] = React.useState<Step>(cfg.initialStep);
   const [submitted, setSubmitted] = React.useState(cfg.submitted);
-  const [saved, setSaved] = React.useState(false);
   const [method, setMethod] = React.useState<FulfillmentMethod>(initialMethod);
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);
   const [po, setPo] = React.useState("PO-2048");
   const [job, setJob] = React.useState(cfg.seededJob);
-  const [reference, setReference] = React.useState("");
+  const [jobAccount, setJobAccount] = React.useState(
+    (brand.addresses.find((a) => a.group === "job" && a.isDefault) ?? brand.addresses.find((a) => a.group === "job"))?.id ?? ""
+  );
+  const [notes, setNotes] = React.useState("");
   const [poError, setPoError] = React.useState<string | undefined>();
   const [confirmed, setConfirmed] = React.useState(false);
   const [coupon, setCoupon] = React.useState("");
@@ -244,19 +269,21 @@ export default function CheckoutClient({
   }
 
   const steps: { id: Step; label: string }[] = [
-    { id: "shipping", label: "Fulfillment" },
+    { id: "details", label: "Order details" },
+    { id: "fulfillment", label: "Fulfillment" },
     { id: "payment", label: "Payment" },
     { id: "review", label: "Review" },
   ];
   const currentIndex = steps.findIndex((s) => s.id === step);
 
-  const goToPayment = () => {
+  // PO is required to leave Order Details.
+  const goToFulfillment = () => {
     if (!po.trim()) {
       setPoError("PO number is required.");
       return;
     }
     setPoError(undefined);
-    setStep("payment");
+    setStep("fulfillment");
   };
 
   // Special handling requires branch comments before the order can be placed.
@@ -265,11 +292,13 @@ export default function CheckoutClient({
   // The sticky order-summary CTA is context-aware: it carries the forward action
   // for the current step, so on a long review the Place-order button stays pinned.
   const primary =
-    step === "shipping"
-      ? { label: "Continue to payment", onClick: goToPayment, disabled: false }
-      : step === "payment"
-        ? { label: "Continue to review", onClick: () => setStep("review"), disabled: false }
-        : { label: "Place order", onClick: () => setSubmitted(true), disabled: !confirmed || handlingBlocks };
+    step === "details"
+      ? { label: "Continue to fulfillment", onClick: goToFulfillment, disabled: false }
+      : step === "fulfillment"
+        ? { label: "Continue to payment", onClick: () => setStep("payment"), disabled: false }
+        : step === "payment"
+          ? { label: "Continue to review", onClick: () => setStep("review"), disabled: false }
+          : { label: "Place order", onClick: () => setSubmitted(true), disabled: !confirmed || handlingBlocks };
 
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
@@ -289,66 +318,96 @@ export default function CheckoutClient({
           </div>
         </div>
 
-        {/* Account context — with an in-checkout Switch account control. */}
-        <AccountContextRow brand={brand} />
-
-        <ol aria-label="Checkout progress" className="mt-6 grid max-w-3xl grid-cols-3 gap-2 text-sm">
-          {steps.map((entry, index) => (
-            <li
-              key={entry.id}
-              className={cn(
-                "flex items-center gap-2 border-b-2 pb-3",
-                step === entry.id
-                  ? "border-primary font-semibold text-foreground"
-                  : index < currentIndex
-                    ? "border-in-stock text-in-stock"
-                    : "border-border text-muted-foreground"
-              )}
-            >
-              <span className="grid size-6 place-items-center rounded-full border text-xs">
-                {index < currentIndex ? <Check className="size-3.5" /> : index + 1}
-              </span>
-              {entry.label}
-            </li>
-          ))}
+        <ol aria-label="Checkout progress" className="mt-6 grid max-w-3xl grid-cols-4 gap-2 text-sm">
+          {steps.map((entry, index) => {
+            const isActive = step === entry.id;
+            const isComplete = index < currentIndex;
+            const content = (
+              <>
+                <span className="grid size-6 place-items-center rounded-full border text-xs">
+                  {isComplete ? <Check className="size-3.5" /> : index + 1}
+                </span>
+                {entry.label}
+              </>
+            );
+            const className = cn(
+              "flex w-full items-center gap-2 border-b-2 pb-3 text-left",
+              isActive
+                ? "border-primary font-semibold text-foreground"
+                : isComplete
+                  ? "border-in-stock text-in-stock"
+                  : "border-border text-muted-foreground"
+            );
+            return (
+              <li key={entry.id} aria-current={isActive ? "step" : undefined}>
+                {/* Completed steps are navigable backward; forward moves gate via Continue. */}
+                {isComplete ? (
+                  <button type="button" className={cn(className, "hover:text-foreground")} onClick={() => setStep(entry.id)}>
+                    {content}
+                  </button>
+                ) : (
+                  <span className={className}>{content}</span>
+                )}
+              </li>
+            );
+          })}
         </ol>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="min-w-0 rounded-md border bg-background shadow-sm">
-            {step === "shipping" ? (
-              <FulfillmentStep
-                config={brand}
-                method={method}
-                setMethod={setMethod}
+            {step === "details" ? (
+              <OrderDetailsStep
+                brand={brand}
+                account={account}
+                onSwitchAccount={() => setAccountDrawerOpen(true)}
+                branch={branch}
+                branches={brand.branches}
+                onChangeBranch={changeBranch}
                 po={po}
                 setPo={setPo}
-                job={job}
-                setJob={setJob}
-                reference={reference}
-                setReference={setReference}
                 poError={poError}
-                availabilityConstraint={cfg.availabilityConstraint}
+                jobAccount={jobAccount}
+                setJobAccount={setJobAccount}
+                jobName={job}
+                setJobName={setJob}
+                notes={notes}
+                setNotes={setNotes}
               />
             ) : null}
+            {step === "fulfillment" ? (
+              <>
+                <SectionHeading number="2" title="Fulfillment" />
+                <FulfillmentSection
+                  config={brand}
+                  method={method}
+                  setMethod={setMethod}
+                  availabilityConstraint={cfg.availabilityConstraint}
+                  branch={branch}
+                  onChangeBranch={changeBranch}
+                />
+              </>
+            ) : null}
             {step === "payment" ? (
-              <PaymentStep brand={brand} payment={payment} setPayment={setPayment} onBack={() => setStep("shipping")} />
+              <PaymentStep brand={brand} payment={payment} setPayment={setPayment} onBack={() => setStep("fulfillment")} />
             ) : null}
             {step === "review" ? (
               <ReviewStep
                 brand={brand}
                 items={items}
+                account={account}
                 method={method}
                 payment={payment}
                 po={po}
                 job={job}
-                reference={reference}
+                notes={notes}
                 showSpecialHandling={cfg.showSpecialHandling}
                 specialHandling={specialHandling}
                 setSpecialHandling={setSpecialHandling}
                 handlingComments={handlingComments}
                 setHandlingComments={setHandlingComments}
                 onBack={() => setStep("payment")}
-                onEditFulfillment={() => setStep("shipping")}
+                onEditDetails={() => setStep("details")}
+                onEditFulfillment={() => setStep("fulfillment")}
                 onEditPayment={() => setStep("payment")}
               />
             ) : null}
@@ -361,8 +420,6 @@ export default function CheckoutClient({
             tax={tax}
             shipping={shipping}
             total={total}
-            saved={saved}
-            onSave={() => setSaved(true)}
             primary={primary}
             coupon={coupon}
             setCoupon={setCoupon}
@@ -374,6 +431,18 @@ export default function CheckoutClient({
           />
         </div>
       </div>
+
+      {/* Switch-account drawer is owned by the client so the choice persists
+          across steps and feeds the Review summary. */}
+      <SwitchAccountDrawer
+        open={accountDrawerOpen}
+        onClose={() => setAccountDrawerOpen(false)}
+        accounts={accounts}
+        currentId={accountId}
+        defaultId={defaultAccountId}
+        onSelect={setAccountId}
+        onSetDefault={setDefaultAccountId}
+      />
     </main>
   );
 }
@@ -387,180 +456,6 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
         <span className="grid size-7 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{number}</span>
         <h2 className="text-lg font-semibold">{title}</h2>
       </div>
-    </div>
-  );
-}
-
-/** The Fulfillment step: order-level details (PO / job) above the one unified
- *  fulfillment section (method selector + method panel). The section owns all
- *  method/address/date/modifier logic; this wrapper only supplies the header
- *  and the PO gate. */
-const MAX_REFERENCE = 24;
-
-function FulfillmentStep({
-  config,
-  method,
-  setMethod,
-  po,
-  setPo,
-  job,
-  setJob,
-  reference,
-  setReference,
-  poError,
-  availabilityConstraint,
-}: {
-  config: BrandCheckoutConfig;
-  method: FulfillmentMethod;
-  setMethod: (m: FulfillmentMethod) => void;
-  po: string;
-  setPo: (v: string) => void;
-  job: string;
-  setJob: (v: string) => void;
-  reference: string;
-  setReference: (v: string) => void;
-  poError?: string;
-  availabilityConstraint: boolean;
-}) {
-  return (
-    <>
-      <SectionHeading number="1" title="Fulfillment" />
-      <div className="space-y-5 border-b p-5">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
-          <Field id="job" label="Job name" placeholder="Optional job name" value={job} onChange={(e) => setJob(e.target.value)} />
-          <Field
-            id="reference"
-            label="Reference"
-            placeholder="Optional reference"
-            maxLength={MAX_REFERENCE}
-            value={reference}
-            onChange={(e) => setReference(e.target.value)}
-          />
-        </div>
-        <OrderDetailsExtras />
-      </div>
-      <FulfillmentSection config={config} method={method} setMethod={setMethod} availabilityConstraint={availabilityConstraint} />
-    </>
-  );
-}
-
-const MAX_NOTES = 2000;
-
-/** Order Details extras — the superset of order-level options across brands:
- *  order notes (Peirce), plus confirmation email + additional recipients +
- *  notify-salesperson (ECM). Self-contained: none of these gate submit. */
-function OrderDetailsExtras() {
-  const [notes, setNotes] = React.useState("");
-  const [sendEmail, setSendEmail] = React.useState(true);
-  const [notifyRep, setNotifyRep] = React.useState(false);
-  const [recipients, setRecipients] = React.useState<string[]>([]);
-
-  const addRecipient = () => setRecipients((r) => [...r, ""]);
-  const removeRecipient = (index: number) => setRecipients((r) => r.filter((_, i) => i !== index));
-  const setRecipient = (index: number, value: string) =>
-    setRecipients((r) => r.map((v, i) => (i === index ? value : v)));
-
-  return (
-    <div className="space-y-5">
-      {/* Order notes (Peirce) */}
-      <div className="space-y-2">
-        <div className="flex items-baseline justify-between gap-2">
-          <Label htmlFor="order-notes">Order notes</Label>
-          <span className="text-xs text-muted-foreground" aria-live="polite">
-            {notes.length}/{MAX_NOTES}
-          </span>
-        </div>
-        <Textarea
-          id="order-notes"
-          value={notes}
-          maxLength={MAX_NOTES}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Add a note for this order (visible to your branch)"
-          className="min-h-20"
-        />
-      </div>
-
-      {/* Confirmation email + recipients + notify salesperson (ECM) */}
-      <div className="space-y-3 rounded-md border bg-muted/30 p-4">
-        <Label className="flex items-start gap-3 text-sm font-normal">
-          <Checkbox checked={sendEmail} onCheckedChange={(v) => setSendEmail(v === true)} className="mt-0.5" />
-          <span>
-            <span className="block font-medium text-foreground">Send order confirmation email</span>
-            <span className="block text-xs text-muted-foreground">A copy of this order goes to your account email.</span>
-          </span>
-        </Label>
-
-        {sendEmail ? (
-          <div className="space-y-2 pl-7">
-            {recipients.map((email, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setRecipient(index, e.target.value)}
-                  placeholder="name@company.com"
-                  aria-label={`Additional recipient ${index + 1}`}
-                  className="h-9"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  onClick={() => removeRecipient(index)}
-                  aria-label={`Remove recipient ${index + 1}`}
-                >
-                  <Trash2 className="size-4" />
-                </Button>
-              </div>
-            ))}
-            <Button type="button" variant="outline" size="sm" onClick={addRecipient}>
-              <Plus className="size-4" />
-              Add recipient
-            </Button>
-          </div>
-        ) : null}
-
-        <Label className="flex items-start gap-3 border-t pt-3 text-sm font-normal">
-          <Checkbox checked={notifyRep} onCheckedChange={(v) => setNotifyRep(v === true)} className="mt-0.5" />
-          <span>
-            <span className="block font-medium text-foreground">Notify your salesperson (Dana Whitfield)</span>
-            <span className="block text-xs text-muted-foreground">Send a heads-up to your assigned rep when this order is placed.</span>
-          </span>
-        </Label>
-      </div>
-    </div>
-  );
-}
-
-/* ───────────────────────── Account context + switch account ───────────────────────── */
-
-function AccountContextRow({ brand }: { brand: BrandCheckoutConfig }) {
-  const accounts = brand.switchAccounts;
-  const [open, setOpen] = React.useState(false);
-  const [currentId, setCurrentId] = React.useState(accounts[0].id);
-  const [defaultId, setDefaultId] = React.useState(accounts[0].id);
-  const current = accounts.find((a) => a.id === currentId) ?? accounts[0];
-
-  return (
-    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
-      <div className="min-w-0">
-        <span className="font-semibold">{current.name}</span>
-        <span className="text-muted-foreground"> · {current.detail}</span>
-      </div>
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        <Building2 className="size-4" aria-hidden="true" />
-        Switch account
-      </Button>
-      <SwitchAccountDrawer
-        open={open}
-        onClose={() => setOpen(false)}
-        accounts={accounts}
-        currentId={currentId}
-        defaultId={defaultId}
-        onSelect={setCurrentId}
-        onSetDefault={setDefaultId}
-      />
     </div>
   );
 }
@@ -594,7 +489,7 @@ function PaymentStep({
 
   return (
     <>
-      <SectionHeading number="2" title="Payment" />
+      <SectionHeading number="3" title="Payment" />
       <div className="space-y-5 p-5">
         <RadioGroup value={payment} onValueChange={(v) => setPayment(v as Payment)} className="grid gap-3">
           <RadioCard value="terms" selected={payment === "terms"}>
@@ -715,60 +610,66 @@ const MAX_HANDLING_COMMENTS = 300;
 function ReviewStep({
   brand,
   items,
+  account,
   method,
   payment,
   po,
   job,
-  reference,
+  notes,
   showSpecialHandling,
   specialHandling,
   setSpecialHandling,
   handlingComments,
   setHandlingComments,
   onBack,
+  onEditDetails,
   onEditFulfillment,
   onEditPayment,
 }: {
   brand: BrandCheckoutConfig;
   items: CartItem[];
+  account: SwitchAccount;
   method: FulfillmentMethod;
   payment: Payment;
   po: string;
   job: string;
-  reference: string;
+  notes: string;
   showSpecialHandling: boolean;
   specialHandling: boolean;
   setSpecialHandling: (v: boolean) => void;
   handlingComments: string;
   setHandlingComments: (v: string) => void;
   onBack: () => void;
+  onEditDetails: () => void;
   onEditFulfillment: () => void;
   onEditPayment: () => void;
 }) {
   const commentsMissing = specialHandling && !handlingComments.trim();
   return (
     <>
-      <SectionHeading number="3" title="Review & submit" />
+      <SectionHeading number="4" title="Review & submit" />
       <div className="space-y-5 p-5">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-md border p-4">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Order details</p>
-            <p className="mt-2 font-medium">PO {po || "—"}</p>
+            <p className="mt-2 font-medium">{account.name}</p>
+            <p className="text-sm text-muted-foreground">{account.detail}</p>
+            <p className="mt-1 text-sm text-muted-foreground">PO {po || "—"}</p>
             <p className="text-sm text-muted-foreground">{job ? `Job: ${job}` : "No job name"}</p>
-            {reference ? <p className="text-sm text-muted-foreground">Ref: {reference}</p> : null}
-            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditFulfillment}>Edit</Button>
+            {notes.trim() ? <p className="text-sm text-muted-foreground line-clamp-2">Notes: {notes}</p> : null}
+            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditDetails}>Change</Button>
           </div>
           <div className="rounded-md border p-4">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Fulfillment</p>
             <p className="mt-2 font-medium">
               {isDeliveryMethod(method) ? `Delivery — ${methodLabel(method)}` : `Pickup — ${brand.pickupBranchShort}`}
             </p>
-            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditFulfillment}>Edit</Button>
+            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditFulfillment}>Change</Button>
           </div>
           <div className="rounded-md border p-4">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Payment</p>
             <p className="mt-2 font-medium">{paymentLabel(payment)}</p>
-            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditPayment}>Edit</Button>
+            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditPayment}>Change</Button>
           </div>
         </div>
 
@@ -841,8 +742,6 @@ function OrderSummary({
   tax,
   shipping,
   total,
-  saved,
-  onSave,
   primary,
   coupon,
   setCoupon,
@@ -858,8 +757,6 @@ function OrderSummary({
   tax: number;
   shipping: number;
   total: number;
-  saved: boolean;
-  onSave: () => void;
   primary: { label: string; onClick: () => void; disabled: boolean };
   coupon: string;
   setCoupon: (v: string) => void;
@@ -876,17 +773,22 @@ function OrderSummary({
         <p className="mt-1 text-sm text-muted-foreground">{items.length} items</p>
       </div>
       <div className="space-y-4 p-5">
+        {/* Itemized list — thumbnail, one-line name, qty, unit price only. No
+            description or secondary marketing text. */}
         {items.map((item) => (
-          <div key={item.id} className="flex gap-3">
-            <div className="grid size-14 shrink-0 place-items-center rounded-md bg-muted">
+          <div key={item.id} className="flex items-center gap-3">
+            <div className="grid size-12 shrink-0 place-items-center rounded-md bg-muted">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={item.image} alt="" className="max-h-full max-w-full object-contain" />
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="line-clamp-2 text-sm font-medium">{item.title}</p>
-              <p className="mt-1 text-xs text-muted-foreground">Qty {item.quantity}</p>
+            <p className="min-w-0 flex-1 text-sm font-medium line-clamp-1">{item.title}</p>
+            <div className="shrink-0 text-right">
+              <p className="text-xs text-muted-foreground">Qty {item.quantity}</p>
+              <p className="text-sm font-semibold">
+                {formatUSD(item.price)}
+                <span className="font-normal text-muted-foreground"> /ea</span>
+              </p>
             </div>
-            <p className="text-sm font-semibold">{formatUSD(item.price * item.quantity)}</p>
           </div>
         ))}
         <div className="space-y-2 border-t pt-4 text-sm">
@@ -948,22 +850,11 @@ function OrderSummary({
           </Label>
         ) : null}
 
-        {/* Sticky primary CTA — the strongest action, always reachable. */}
+        {/* Sticky primary CTA — the strongest action, always reachable.
+            "Save cart for later" lives on the cart page only, not in checkout. */}
         <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
           {primary.label}
         </Button>
-
-        {/* Save for later — a de-emphasized link, not a competing button. */}
-        <div className="text-center">
-          <button
-            type="button"
-            onClick={onSave}
-            disabled={saved}
-            className="text-sm font-medium text-primary transition-colors hover:text-primary/80 disabled:text-muted-foreground"
-          >
-            {saved ? "Cart saved" : "Save cart for later"}
-          </button>
-        </div>
       </div>
     </aside>
   );

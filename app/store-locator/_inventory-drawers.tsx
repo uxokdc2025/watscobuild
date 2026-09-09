@@ -144,22 +144,39 @@ function formatMinutes(total: number): string {
 /** Derive the open/closed line shown on the disclosure trigger from the shared
  *  weekly schedule. `now === null` (pre-mount) keeps SSR and the first client
  *  render identical — no hydration mismatch — and the live status lands after
- *  mount. */
-function openStatus(now: Date | null): { open: boolean; label: string } {
-  if (!now) return { open: false, label: "Store Hours" };
+ *  mount. The discrete `state` drives the trigger colour (green Open / amber
+ *  Opens-at / red Closed) from data instead of re-matching the label string. */
+type StoreStatus = {
+  state: "open" | "opens" | "closed" | "idle";
+  label: string;
+};
+
+function openStatus(now: Date | null): StoreStatus {
+  if (!now) return { state: "idle", label: "Store Hours" };
   const today = WEEKLY_HOURS[(now.getDay() + 6) % 7]; // JS Sun=0 → Monday-first index
   const minutes = now.getHours() * 60 + now.getMinutes();
   if (today.open != null && today.close != null) {
-    if (minutes >= today.open && minutes < today.close) return { open: true, label: "Open Now" };
-    if (minutes < today.open) return { open: false, label: `Opens at ${formatMinutes(today.open)}` };
+    if (minutes >= today.open && minutes < today.close) return { state: "open", label: "Open Now" };
+    if (minutes < today.open) return { state: "opens", label: `Opens at ${formatMinutes(today.open)}` };
   }
-  return { open: false, label: "Closed" };
+  return { state: "closed", label: "Closed" };
 }
 
+/** Trigger label colour per status: Open → green, Opens-at → amber, Closed →
+ *  red, pre-mount idle → muted. */
+const STATUS_COLOR: Record<StoreStatus["state"], string> = {
+  open: "text-emerald-700",
+  opens: "text-amber-600",
+  closed: "text-red-600",
+  idle: "text-muted-foreground",
+};
+
 /** Store Hours disclosure shared by every branch/availability card. The trigger
- *  shows the live open status (green "Open Now" when open, muted "Opens at …" /
- *  "Closed" otherwise) beside a chevron; the expanded panel lists each weekday
- *  on its own two-column line (day left, hours right, tabular-aligned). */
+ *  shows the live open status colour-coded by state (green "Open Now", amber
+ *  "Opens at …", red "Closed") beside a chevron; the expanded panel is a tight
+ *  two-column grid — day name, then hours ~10px to its right — sized to its
+ *  content (roughly half the card) and left-aligned, never justified edge-to-
+ *  edge. All seven days are listed. */
 function StoreHours() {
   const [open, setOpen] = React.useState(false);
   const [now, setNow] = React.useState<Date | null>(null);
@@ -176,21 +193,22 @@ function StoreHours() {
         aria-controls={panelId}
         className="flex w-fit items-center gap-1 py-2 font-medium outline-none focus-visible:underline"
       >
-        <span className={status.open ? "text-emerald-700" : "text-muted-foreground"}>
-          {status.label}
-        </span>
+        <span className={STATUS_COLOR[status.state]}>{status.label}</span>
         <ChevronDown
           aria-hidden="true"
           className={`size-3.5 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
       {open ? (
-        <dl id={panelId} className="mt-1 space-y-1">
+        <dl
+          id={panelId}
+          className="mt-1 grid w-fit grid-cols-[auto_auto] gap-x-2.5 gap-y-1"
+        >
           {WEEKLY_HOURS.map((entry) => (
-            <div key={entry.day} className="flex items-baseline justify-between gap-6">
+            <React.Fragment key={entry.day}>
               <dt className="text-muted-foreground">{entry.day}</dt>
               <dd className="tabular-nums text-foreground">{entry.label}</dd>
-            </div>
+            </React.Fragment>
           ))}
         </dl>
       ) : null}
@@ -465,21 +483,26 @@ export type LocatorBranch = {
   phone?: string;
 };
 
-/** One branch rendered as a selectable CARD — the same treatment the PDP
- *  account-selector uses for "Select account" (bordered rounded card, building/
- *  location icon + bold name + muted subtitle; the current one gets the blue
- *  tint + primary border). Selection commits through the "Select Store" button;
- *  the current store shows a disabled "Current Store".
+/** One branch rendered as a selectable CARD — the same bordered-rounded-card
+ *  treatment the PDP account-selector uses, with the current one carrying the
+ *  blue tint + primary border. David's layout:
  *
- *  No check mark: David's rule is that a card carrying an action button never
- *  shows a check. The current branch is indicated by the highlighted card
- *  (border-primary + bg-primary/5) and the disabled "Current Store" button.
+ *   • TOP ROW — branch name on the left, the availability count ("13
+ *     available", colour-coded green/amber/red) anchored top-right.
+ *   • BODY — Store Hours disclosure FIRST, then a "8.1 mi away · Get
+ *     Directions" line (distance and directions belong together), then phone +
+ *     Chat inline just beneath.
+ *   • ACTION — a SMALL ("sm") button anchored BOTTOM-RIGHT, never full-width.
+ *     The current store shows a disabled "Current Store" in the same spot.
+ *
+ *  No check mark: a card carrying an action button never shows a check. The
+ *  current branch is indicated by the highlight + the disabled "Current Store".
  *
  *  a11y: the current card carries `aria-current` (the valid equivalent of a
  *  checked radio here — a `role="radio"` container would flag axe's
  *  nested-interactive rule because the card keeps its Directions/Chat/phone
- *  links). The primary action is a real 44px-tall button, keyboard-operable and
- *  labelled with the branch name. */
+ *  links). The action stays a real ≥44px touch target (`min-h-11`),
+ *  keyboard-operable and labelled with the branch name. */
 function BranchCard({
   branch,
   selected,
@@ -491,6 +514,8 @@ function BranchCard({
   showStock: boolean;
   onSelect: () => void;
 }) {
+  const phone = branch.phone ?? "(919) 555-0100";
+
   return (
     <li
       aria-current={selected ? "true" : undefined}
@@ -498,41 +523,37 @@ function BranchCard({
         selected ? "border-primary bg-primary/5" : "border-border hover:bg-muted"
       }`}
     >
-      {/* Header row — icon + name + subtitle. No check mark: the card carries an
-          action button, so the current branch is shown by the highlight + the
-          disabled "Current Store" button instead. */}
-      <div className="flex min-w-0 items-start gap-3">
-        <MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-        <div className="min-w-0">
-          <span className="block text-sm font-semibold">{branch.name}</span>
-          <span className="mt-1 block text-xs text-muted-foreground">
-            <span className="tabular-nums">{branch.miles} mi</span> away
-            {showStock && branch.qty != null ? (
-              <>
-                {" · "}
-                <span className={`font-semibold tabular-nums ${stockColor(branch.qty)}`}>
-                  {branch.qty} available
-                </span>
-              </>
-            ) : null}
-          </span>
+      {/* Top row — name left, availability count top-right. No check mark. */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-2">
+          <MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+          <span className="text-sm font-semibold">{branch.name}</span>
         </div>
+        {showStock && branch.qty != null ? (
+          <span className={`shrink-0 text-sm font-semibold tabular-nums ${stockColor(branch.qty)}`}>
+            {branch.qty} available
+          </span>
+        ) : null}
       </div>
-      {/* Preserved branch detail — Store Hours disclosure, Get Directions, phone,
-          Chat — aligned under the name (icon width + gap = pl-7). */}
-      <div className="mt-3 space-y-2 pl-7">
+      {/* Body, aligned under the name (icon width + gap = pl-6). Store Hours
+          first, then distance + Get Directions on one line, then phone + Chat. */}
+      <div className="mt-2 space-y-2 pl-6">
         <StoreHours />
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs">
+          <span className="tabular-nums text-muted-foreground">{branch.miles} mi away</span>
+          <span aria-hidden="true" className="text-muted-foreground">·</span>
           <a href="#" className="inline-flex items-center gap-1 py-1 font-medium text-primary">
             <Navigation className="size-3.5" />
             Get Directions
           </a>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
           <a
-            href={`tel:${branch.phone ?? "(919) 555-0100"}`}
+            href={`tel:${phone}`}
             className="inline-flex items-center gap-1 py-1 font-medium text-primary"
           >
             <Phone className="size-3.5" />
-            {branch.phone ?? "(919) 555-0100"}
+            {phone}
           </a>
           <a href="#" className="inline-flex items-center gap-1 py-1 font-medium text-primary">
             <MessageSquare className="size-3.5" />
@@ -540,25 +561,24 @@ function BranchCard({
           </a>
         </div>
       </div>
-      {/* Selection action — the current store maps to the account card's checked
-          state (disabled "Current Store"); every other card commits via
-          "Select Store". 44px-tall, full-width, labelled with the branch name. */}
-      <div className="mt-3 pl-7">
+      {/* Action — small button anchored bottom-right. Current store → disabled
+          "Current Store" in the same spot. ≥44px touch target via min-h-11. */}
+      <div className="mt-3 flex justify-end">
         {selected ? (
           <Button
-            size="lg"
+            size="sm"
             disabled
             aria-label={`${branch.name}, current store`}
-            className="h-11 w-full"
+            className="min-h-11"
           >
             Current Store
           </Button>
         ) : (
           <Button
-            size="lg"
+            size="sm"
             onClick={onSelect}
             aria-label={`Select ${branch.name} as your store`}
-            className="h-11 w-full"
+            className="min-h-11"
           >
             Select Store
           </Button>

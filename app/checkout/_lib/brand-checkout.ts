@@ -17,6 +17,7 @@ export type SwitchAccount = {
   name: string;
   kind: "Account" | "Ship-to" | "Company" | "Location";
   detail: string;
+  phone: string;
 };
 
 export type BrandAddressGroup = "job" | "account" | "billing";
@@ -87,11 +88,11 @@ const BAKER: BrandCheckoutConfig = {
   truckLabel: "Baker Truck — $0.00",
   account: { name: "Internal Test Account", detail: "#602061 · Jacksonville, FL" },
   switchAccounts: [
-    { id: "bkr602061", name: "Internal Test Account", kind: "Account", detail: "#602061 · Jacksonville, FL" },
-    { id: "bkr-southside", name: "Southside job site", kind: "Ship-to", detail: "Jacksonville, FL 32216" },
-    { id: "bkr-dc", name: "Baker DC — Jacksonville", kind: "Location", detail: "10771 Philips Hwy, Jacksonville, FL" },
-    { id: "bkr-parent", name: "Baker — North Florida", kind: "Company", detail: "Parent company · 9 branches" },
-    { id: "bkr-orangepark", name: "Orange Park branch", kind: "Location", detail: "550 Wells Rd, Orange Park, FL" },
+    { id: "bkr602061", name: "Internal Test Account", kind: "Account", detail: "#602061 · Jacksonville, FL", phone: "(904) 861-2061" },
+    { id: "bkr-southside", name: "Southside job site", kind: "Ship-to", detail: "Jacksonville, FL 32216", phone: "(904) 861-3216" },
+    { id: "bkr-dc", name: "Baker DC — Jacksonville", kind: "Location", detail: "10771 Philips Hwy, Jacksonville, FL", phone: "(904) 861-7710" },
+    { id: "bkr-parent", name: "Baker — North Florida", kind: "Company", detail: "Parent company · 9 branches", phone: "(904) 861-9000" },
+    { id: "bkr-orangepark", name: "Orange Park branch", kind: "Location", detail: "550 Wells Rd, Orange Park, FL", phone: "(904) 272-5500" },
   ],
   branches: [
     { id: "jax301", name: "Baker Jacksonville #301", address: "10771 Philips Hwy, Jacksonville, FL 32258", miles: 0, hours: "Open · closes 5pm", current: true },
@@ -121,11 +122,11 @@ const PEIRCE: BrandCheckoutConfig = {
   radiusRule: false,
   account: { name: "JK Mechanical Inc", detail: "#144010 · Camp Hill, PA" },
   switchAccounts: [
-    { id: "pp144010", name: "JK Mechanical Inc", kind: "Account", detail: "#144010 · Camp Hill, PA" },
-    { id: "pp-harrisburg", name: "Harrisburg job site", kind: "Ship-to", detail: "Harrisburg, PA 17101" },
-    { id: "pp-shop", name: "JK Mechanical — Shop", kind: "Location", detail: "210 Cumberland Pkwy, Mechanicsburg, PA" },
-    { id: "pp-parent", name: "JK Mechanical — Central PA", kind: "Company", detail: "Parent company · 4 branches" },
-    { id: "pp-york", name: "York branch", kind: "Location", detail: "1350 Roosevelt Ave, York, PA" },
+    { id: "pp144010", name: "JK Mechanical Inc", kind: "Account", detail: "#144010 · Camp Hill, PA", phone: "(717) 761-4010" },
+    { id: "pp-harrisburg", name: "Harrisburg job site", kind: "Ship-to", detail: "Harrisburg, PA 17101", phone: "(717) 236-1701" },
+    { id: "pp-shop", name: "JK Mechanical — Shop", kind: "Location", detail: "210 Cumberland Pkwy, Mechanicsburg, PA", phone: "(717) 691-2100" },
+    { id: "pp-parent", name: "JK Mechanical — Central PA", kind: "Company", detail: "Parent company · 4 branches", phone: "(717) 761-4000" },
+    { id: "pp-york", name: "York branch", kind: "Location", detail: "1350 Roosevelt Ave, York, PA", phone: "(717) 843-1350" },
   ],
   branches: [
     { id: "camphill", name: "Camp Hill, PA #144", address: "3960 Hartzdale Dr, Camp Hill, PA 17011", miles: 0, hours: "Open · closes 5pm", current: true },
@@ -155,11 +156,11 @@ const HOMANS: BrandCheckoutConfig = {
   radiusRule: false,
   account: { name: "Homans Associates", detail: "#509973 · Wilmington, MA" },
   switchAccounts: [
-    { id: "hom509973", name: "Homans Associates", kind: "Account", detail: "#509973 · Wilmington, MA" },
-    { id: "hom-woburn", name: "20 Cummings Park", kind: "Ship-to", detail: "Woburn, MA 01801" },
-    { id: "hom-north", name: "North warehouse", kind: "Location", detail: "42 Industrial Way, Andover, MA" },
-    { id: "hom-parent", name: "Homans — New England", kind: "Company", detail: "Parent company · 12 branches" },
-    { id: "hom-portsmouth", name: "Portsmouth branch", kind: "Location", detail: "155 Heritage Ave, Portsmouth, NH" },
+    { id: "hom509973", name: "Homans Associates", kind: "Account", detail: "#509973 · Wilmington, MA", phone: "(978) 658-5099" },
+    { id: "hom-woburn", name: "20 Cummings Park", kind: "Ship-to", detail: "Woburn, MA 01801", phone: "(781) 935-2018" },
+    { id: "hom-north", name: "North warehouse", kind: "Location", detail: "42 Industrial Way, Andover, MA", phone: "(978) 470-4200" },
+    { id: "hom-parent", name: "Homans — New England", kind: "Company", detail: "Parent company · 12 branches", phone: "(781) 935-9000" },
+    { id: "hom-portsmouth", name: "Portsmouth branch", kind: "Location", detail: "155 Heritage Ave, Portsmouth, NH", phone: "(603) 436-1550" },
   ],
   branches: [
     { id: "wilmington", name: "Wilmington, MA #1248", address: "230 Andover St, Wilmington, MA 01887", miles: 0, hours: "Open · closes 5pm", current: true },
@@ -190,11 +191,11 @@ const ECMDI: BrandCheckoutConfig = {
   truckLabel: "ECMD Truck — $0.00",
   account: { name: "KDTM LLC dba Happy Home Svcs", detail: "#30095 · Durham, NC" },
   switchAccounts: [
-    { id: "ecm30095", name: "KDTM LLC dba Happy Home Svcs", kind: "Account", detail: "#30095 · Durham, NC" },
-    { id: "ecm-raleigh", name: "Raleigh job site", kind: "Ship-to", detail: "Raleigh, NC 27601" },
-    { id: "ecm-shop", name: "Happy Home Svcs — Shop", kind: "Location", detail: "5102 NC-55, Durham, NC" },
-    { id: "ecm-parent", name: "ECM — Triangle", kind: "Company", detail: "Parent company · 6 branches" },
-    { id: "ecm-cary", name: "Morrisville branch", kind: "Location", detail: "1000 Aviation Pkwy, Morrisville, NC" },
+    { id: "ecm30095", name: "KDTM LLC dba Happy Home Svcs", kind: "Account", detail: "#30095 · Durham, NC", phone: "(919) 596-3009" },
+    { id: "ecm-raleigh", name: "Raleigh job site", kind: "Ship-to", detail: "Raleigh, NC 27601", phone: "(919) 872-2760" },
+    { id: "ecm-shop", name: "Happy Home Svcs — Shop", kind: "Location", detail: "5102 NC-55, Durham, NC", phone: "(919) 544-5102" },
+    { id: "ecm-parent", name: "ECM — Triangle", kind: "Company", detail: "Parent company · 6 branches", phone: "(919) 544-6000" },
+    { id: "ecm-cary", name: "Morrisville branch", kind: "Location", detail: "1000 Aviation Pkwy, Morrisville, NC", phone: "(919) 467-1000" },
   ],
   branches: [
     { id: "durham1", name: "Durham, NC #1", address: "2925 E Pettigrew St, Durham, NC 27703", miles: 0, hours: "Open · closes 5pm", current: true },

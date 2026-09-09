@@ -124,7 +124,7 @@ export function SubstitutesDrawer({
                 item={line.item}
                 mfg={line.mfg}
                 meta={<p className="text-xs text-muted-foreground">{line.replacement.note}</p>}
-                actions={<span className="text-sm font-semibold">{formatUSD(line.price)}</span>}
+                actions={<span className="text-sm font-medium text-muted-foreground">Not available</span>}
               />
             </div>
           </section>

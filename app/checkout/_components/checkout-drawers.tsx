@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Building2, Search } from "lucide-react";
+import { Building2, Check, Phone, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -454,49 +454,85 @@ export function SwitchAccountDrawer({
       title="Switch account"
       description="Choose the account, ship-to, company, or location for this order."
     >
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {accounts.map((a) => {
           const isCurrent = a.id === currentId;
           const isDefault = a.id === defaultId;
           return (
             <li key={a.id}>
+              {/* Uniform card: fixed min-height + a bottom-anchored action row so
+                  the Select button always sits bottom-right, aligned across the
+                  stack no matter how many badge/label lines a card carries. */}
               <div
+                aria-current={isCurrent ? "true" : undefined}
                 className={cn(
-                  "flex flex-wrap items-center justify-between gap-3 rounded-md border p-3",
+                  "flex min-h-[168px] flex-col rounded-md border p-4",
                   isCurrent && "border-primary bg-primary/5"
                 )}
               >
-                <div className="min-w-0">
-                  <p className="flex flex-wrap items-center gap-2 font-medium">
-                    <Building2 className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                    {a.name}
-                    <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                      {a.kind}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-2.5">
+                    <Building2 className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <p className="flex flex-wrap items-center gap-2 font-medium">
+                        <span className="min-w-0 break-words">{a.name}</span>
+                        <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                          {a.kind}
+                        </span>
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">{a.detail}</p>
+                      <p className="mt-0.5 font-mono text-xs text-muted-foreground">#{a.id}</p>
+                      <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Phone className="size-3.5 shrink-0" aria-hidden="true" />
+                        <a
+                          href={`tel:${a.phone.replace(/[^\d+]/g, "")}`}
+                          className="rounded-sm hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        >
+                          {a.phone}
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                  {isDefault ? (
+                    <span className="shrink-0 rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
+                      Default
                     </span>
-                    {isDefault ? (
-                      <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
-                        Default
-                      </span>
-                    ) : null}
-                  </p>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{a.detail}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {!isDefault ? (
-                    <Button size="sm" variant="tertiary" onClick={() => onSetDefault(a.id)}>
-                      Set default
-                    </Button>
                   ) : null}
+                </div>
+                {/* Bottom-anchored action row: secondary "Set as default" on the
+                    left, the primary Select/Selected control pinned bottom-right. */}
+                <div className="mt-auto flex items-center justify-between gap-2 pt-3">
+                  {!isDefault ? (
+                    <Button
+                      size="sm"
+                      variant="link"
+                      className="min-h-11 px-0 text-xs font-medium"
+                      onClick={() => onSetDefault(a.id)}
+                    >
+                      Set as default
+                    </Button>
+                  ) : (
+                    <span aria-hidden="true" />
+                  )}
                   <Button
                     size="sm"
                     variant={isCurrent ? "outline" : "default"}
+                    aria-pressed={isCurrent}
                     disabled={isCurrent}
+                    className="min-h-11 gap-1.5"
                     onClick={() => {
                       onSelect(a.id);
                       onClose();
                     }}
                   >
-                    {isCurrent ? "Selected" : "Select"}
+                    {isCurrent ? (
+                      <>
+                        <Check className="size-4" aria-hidden="true" />
+                        Selected
+                      </>
+                    ) : (
+                      "Select"
+                    )}
                   </Button>
                 </div>
               </div>
