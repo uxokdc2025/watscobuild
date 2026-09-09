@@ -116,48 +116,139 @@ function stockColor(qty: number) {
   return "text-emerald-700";
 }
 
-/* ────────────────── Inventory Direction 1 — East Coast literal ─────────── */
+/* ────────────────── Shared store-hours schedule + disclosure ───────────── */
 
+/** One weekly-hours dataset shared by every branch/availability card, so the
+ *  branch finder and the Product Availability drawer read identically. Each day
+ *  carries its display label plus open/close as minutes-from-midnight, so the
+ *  "open now / opens at" status is derived from data instead of re-parsing the
+ *  string. Sunday has no open/close — it is closed. */
+type DayHours = { day: string; label: string; open?: number; close?: number };
+const WEEKLY_HOURS: DayHours[] = [
+  { day: "Monday", label: "7:00 AM – 5:00 PM", open: 7 * 60, close: 17 * 60 },
+  { day: "Tuesday", label: "7:00 AM – 5:00 PM", open: 7 * 60, close: 17 * 60 },
+  { day: "Wednesday", label: "7:00 AM – 5:00 PM", open: 7 * 60, close: 17 * 60 },
+  { day: "Thursday", label: "7:00 AM – 5:00 PM", open: 7 * 60, close: 17 * 60 },
+  { day: "Friday", label: "7:00 AM – 5:00 PM", open: 7 * 60, close: 17 * 60 },
+  { day: "Saturday", label: "7:30 AM – 11:30 AM", open: 7 * 60 + 30, close: 11 * 60 + 30 },
+  { day: "Sunday", label: "Closed" },
+];
+
+function formatMinutes(total: number): string {
+  const period = total >= 720 ? "PM" : "AM";
+  const hour = Math.floor(total / 60);
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  return `${hour12}:${String(total % 60).padStart(2, "0")} ${period}`;
+}
+
+/** Derive the open/closed line shown on the disclosure trigger from the shared
+ *  weekly schedule. `now === null` (pre-mount) keeps SSR and the first client
+ *  render identical — no hydration mismatch — and the live status lands after
+ *  mount. */
+function openStatus(now: Date | null): { open: boolean; label: string } {
+  if (!now) return { open: false, label: "Store Hours" };
+  const today = WEEKLY_HOURS[(now.getDay() + 6) % 7]; // JS Sun=0 → Monday-first index
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  if (today.open != null && today.close != null) {
+    if (minutes >= today.open && minutes < today.close) return { open: true, label: "Open Now" };
+    if (minutes < today.open) return { open: false, label: `Opens at ${formatMinutes(today.open)}` };
+  }
+  return { open: false, label: "Closed" };
+}
+
+/** Store Hours disclosure shared by every branch/availability card. The trigger
+ *  shows the live open status (green "Open Now" when open, muted "Opens at …" /
+ *  "Closed" otherwise) beside a chevron; the expanded panel lists each weekday
+ *  on its own two-column line (day left, hours right, tabular-aligned). */
+function StoreHours() {
+  const [open, setOpen] = React.useState(false);
+  const [now, setNow] = React.useState<Date | null>(null);
+  const panelId = React.useId();
+  React.useEffect(() => setNow(new Date()), []);
+  const status = openStatus(now);
+
+  return (
+    <div className="text-xs">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-controls={panelId}
+        className="flex w-fit items-center gap-1 py-2 font-medium outline-none focus-visible:underline"
+      >
+        <span className={status.open ? "text-emerald-700" : "text-muted-foreground"}>
+          {status.label}
+        </span>
+        <ChevronDown
+          aria-hidden="true"
+          className={`size-3.5 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open ? (
+        <dl id={panelId} className="mt-1 space-y-1">
+          {WEEKLY_HOURS.map((entry) => (
+            <div key={entry.day} className="flex items-baseline justify-between gap-6">
+              <dt className="text-muted-foreground">{entry.day}</dt>
+              <dd className="tabular-nums text-foreground">{entry.label}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+    </div>
+  );
+}
+
+/* ────────────────── Product Availability drawer — card pattern ─────────── */
+
+/** Product-scoped availability drawer. Same account-style cards as the branch
+ *  finder (`BranchCard`): the ROW list was replaced with bordered cards, each
+ *  keeping its "X available" count, the shared Store Hours disclosure, Get
+ *  Directions / Chat, and a primary "Select Store" button. No check mark — a
+ *  card with an action button never carries one; the current store is shown by
+ *  the highlighted card + disabled "Current Store". Product header, search,
+ *  In-Stock filter, Sort, and the Find Other Branches footer are retained. */
 export function InventoryDirection1() {
-  const current = BRANCHES.find((b) => b.tag === "current")!;
-  const rest = BRANCHES.filter((b) => b.tag !== "current");
-
   const [inStockOnly, setInStockOnly] = React.useState(true);
   const [sortBy, setSortBy] = React.useState<"miles" | "availability">("miles");
   const [sortOpen, setSortOpen] = React.useState(false);
+  const [selectedStore, setSelectedStore] = React.useState(
+    BRANCHES.find((b) => b.tag === "current")?.name ?? BRANCHES[0]?.name ?? "",
+  );
 
   const displayed = React.useMemo(() => {
-    const filtered = inStockOnly ? rest.filter((b) => b.qty > 0) : rest;
+    const filtered = inStockOnly ? BRANCHES.filter((b) => b.qty > 0) : BRANCHES;
     return [...filtered].sort((a, b) =>
-      sortBy === "miles" ? a.miles - b.miles : b.qty - a.qty,
+      sortBy === "availability" ? b.qty - a.qty : a.miles - b.miles,
     );
-  }, [rest, inStockOnly, sortBy]);
+  }, [inStockOnly, sortBy]);
 
   return (
     <div className={SHELL}>
-      <header className="flex shrink-0 items-center justify-between border-b px-5 py-3">
+      <header className="flex shrink-0 items-center justify-between border-b px-5 py-3.5">
         <p className="text-base font-bold">Product Availability</p>
+        <DrawerCloseButton label="Close" onClick={closeDrawer} />
       </header>
       <ProductHeader />
-      {/* Current branch — inline row, no wrapper box (no nested chrome). */}
-      <div className="flex shrink-0 items-center gap-3 border-b px-5 py-2.5">
-        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-          Current
-        </p>
-        <span
-          className={`text-sm font-bold tabular-nums ${stockColor(current.qty)}`}
+      <div className="shrink-0 border-b px-4 pt-3.5 pb-2.5">
+        <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
+          <Search className="size-4 text-muted-foreground" />
+          <span className="flex-1 text-foreground">33605</span>
+        </div>
+        <a
+          href="#"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
         >
-          {current.qty}
-        </span>
-        <span className="text-sm font-medium">{current.name}</span>
+          <Navigation className="size-4" />
+          Use my current location
+        </a>
       </div>
       {/* Filter + sort — filter chip is a real toggle; sort dropdown swaps
-          between Miles and Availability. State drives the list below. */}
+          between Miles and Availability. State drives the card list below. */}
       <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
         <button
           type="button"
           aria-pressed={inStockOnly}
-          onClick={() => setInStockOnly((v) => !v)}
+          onClick={() => setInStockOnly((value) => !value)}
           className={
             inStockOnly
               ? "inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
@@ -165,12 +256,12 @@ export function InventoryDirection1() {
           }
         >
           {inStockOnly ? <Check className="size-3" /> : null}
-          In stock
+          In Stock
         </button>
         <div className="relative">
           <button
             type="button"
-            onClick={() => setSortOpen((v) => !v)}
+            onClick={() => setSortOpen((value) => !value)}
             aria-expanded={sortOpen}
             className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
@@ -182,89 +273,41 @@ export function InventoryDirection1() {
           </button>
           {sortOpen ? (
             <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
-              <button
-                type="button"
-                onClick={() => {
-                  setSortBy("miles");
-                  setSortOpen(false);
-                }}
-                className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${
-                  sortBy === "miles" ? "font-medium text-primary" : "text-foreground"
-                }`}
-              >
-                Miles
-                {sortBy === "miles" ? <Check className="size-3.5" /> : null}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSortBy("availability");
-                  setSortOpen(false);
-                }}
-                className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${
-                  sortBy === "availability" ? "font-medium text-primary" : "text-foreground"
-                }`}
-              >
-                Availability
-                {sortBy === "availability" ? <Check className="size-3.5" /> : null}
-              </button>
+              {(["miles", "availability"] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => {
+                    setSortBy(option);
+                    setSortOpen(false);
+                  }}
+                  className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${sortBy === option ? "font-medium text-primary" : "text-foreground"}`}
+                >
+                  {option === "miles" ? "Miles" : "Availability"}
+                  {sortBy === option ? <Check className="size-3.5" /> : null}
+                </button>
+              ))}
             </div>
           ) : null}
         </div>
       </div>
-      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
-        {displayed.map((b) => (
-          <li
-            key={b.name}
-            className="group flex items-start gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
-          >
-            <span
-              className={`w-6 shrink-0 pt-0.5 text-sm font-semibold tabular-nums ${stockColor(b.qty)}`}
-            >
-              {b.qty}
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm">{b.name}</p>
-              {/* Sub-row: miles + map / directions / phone icons — opens up
-                  the cell vertically so metadata reads cleanly under the
-                  name instead of crowding the right edge. */}
-              <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                <span className="tabular-nums">{b.miles} mi</span>
-                <a
-                  href="#"
-                  aria-label={`Map for ${b.name}`}
-                  className="grid size-5 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
-                >
-                  <MapPin className="size-3.5" />
-                </a>
-                <a
-                  href="#"
-                  aria-label={`Directions to ${b.name}`}
-                  className="grid size-5 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
-                >
-                  <Navigation className="size-3.5" />
-                </a>
-                <a
-                  href="#"
-                  aria-label={`Call ${b.name}`}
-                  className="grid size-5 place-items-center rounded-md text-primary transition-colors hover:bg-primary/10"
-                >
-                  <Phone className="size-3.5" />
-                </a>
-              </div>
-            </div>
-            {/* Select store — hidden by default so Direction 1 stays super
-                light; row hover reveals it (per-row commit without extra
-                chrome on rest state). */}
-            <Button
-              size="sm"
-              className="mt-0.5 hidden h-7 shrink-0 px-3 text-xs group-hover:inline-flex"
-            >
-              Select store
-            </Button>
-          </li>
+      <ul aria-label="Branches" className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+        {displayed.map((branch) => (
+          <BranchCard
+            key={branch.name}
+            branch={branch}
+            selected={selectedStore === branch.name}
+            showStock
+            onSelect={() => setSelectedStore(branch.name)}
+          />
         ))}
       </ul>
+      <div className="shrink-0 border-t p-3">
+        <Button variant="secondary" className="h-10 w-full">
+          Find Other Branches
+          <ChevronRight className="size-4" />
+        </Button>
+      </div>
     </div>
   );
 }
@@ -422,6 +465,109 @@ export type LocatorBranch = {
   phone?: string;
 };
 
+/** One branch rendered as a selectable CARD — the same treatment the PDP
+ *  account-selector uses for "Select account" (bordered rounded card, building/
+ *  location icon + bold name + muted subtitle; the current one gets the blue
+ *  tint + primary border). Selection commits through the "Select Store" button;
+ *  the current store shows a disabled "Current Store".
+ *
+ *  No check mark: David's rule is that a card carrying an action button never
+ *  shows a check. The current branch is indicated by the highlighted card
+ *  (border-primary + bg-primary/5) and the disabled "Current Store" button.
+ *
+ *  a11y: the current card carries `aria-current` (the valid equivalent of a
+ *  checked radio here — a `role="radio"` container would flag axe's
+ *  nested-interactive rule because the card keeps its Directions/Chat/phone
+ *  links). The primary action is a real 44px-tall button, keyboard-operable and
+ *  labelled with the branch name. */
+function BranchCard({
+  branch,
+  selected,
+  showStock,
+  onSelect,
+}: {
+  branch: LocatorBranch;
+  selected: boolean;
+  showStock: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <li
+      aria-current={selected ? "true" : undefined}
+      className={`rounded-md border p-4 transition-colors ${
+        selected ? "border-primary bg-primary/5" : "border-border hover:bg-muted"
+      }`}
+    >
+      {/* Header row — icon + name + subtitle. No check mark: the card carries an
+          action button, so the current branch is shown by the highlight + the
+          disabled "Current Store" button instead. */}
+      <div className="flex min-w-0 items-start gap-3">
+        <MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+        <div className="min-w-0">
+          <span className="block text-sm font-semibold">{branch.name}</span>
+          <span className="mt-1 block text-xs text-muted-foreground">
+            <span className="tabular-nums">{branch.miles} mi</span> away
+            {showStock && branch.qty != null ? (
+              <>
+                {" · "}
+                <span className={`font-semibold tabular-nums ${stockColor(branch.qty)}`}>
+                  {branch.qty} available
+                </span>
+              </>
+            ) : null}
+          </span>
+        </div>
+      </div>
+      {/* Preserved branch detail — Store Hours disclosure, Get Directions, phone,
+          Chat — aligned under the name (icon width + gap = pl-7). */}
+      <div className="mt-3 space-y-2 pl-7">
+        <StoreHours />
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+          <a href="#" className="inline-flex items-center gap-1 py-1 font-medium text-primary">
+            <Navigation className="size-3.5" />
+            Get Directions
+          </a>
+          <a
+            href={`tel:${branch.phone ?? "(919) 555-0100"}`}
+            className="inline-flex items-center gap-1 py-1 font-medium text-primary"
+          >
+            <Phone className="size-3.5" />
+            {branch.phone ?? "(919) 555-0100"}
+          </a>
+          <a href="#" className="inline-flex items-center gap-1 py-1 font-medium text-primary">
+            <MessageSquare className="size-3.5" />
+            Chat
+          </a>
+        </div>
+      </div>
+      {/* Selection action — the current store maps to the account card's checked
+          state (disabled "Current Store"); every other card commits via
+          "Select Store". 44px-tall, full-width, labelled with the branch name. */}
+      <div className="mt-3 pl-7">
+        {selected ? (
+          <Button
+            size="lg"
+            disabled
+            aria-label={`${branch.name}, current store`}
+            className="h-11 w-full"
+          >
+            Current Store
+          </Button>
+        ) : (
+          <Button
+            size="lg"
+            onClick={onSelect}
+            aria-label={`Select ${branch.name} as your store`}
+            className="h-11 w-full"
+          >
+            Select Store
+          </Button>
+        )}
+      </div>
+    </li>
+  );
+}
+
 /** Store-locator-first inventory drawer: product context sits above the
  * branch-finder pattern, with inventory filter and sort controls preserved.
  *
@@ -542,64 +688,15 @@ export function InventoryStoreLocatorDrawer({
           Sorted by distance
         </p>
       )}
-      <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
+      <ul aria-label="Branches" className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
         {displayed.map((branch) => (
-          <li key={branch.name} className="flex flex-col gap-2 px-5 py-3 transition-colors hover:bg-muted/40">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold">{branch.name}</p>
-              {showStock && branch.qty != null ? (
-                <span className={`text-xs font-semibold tabular-nums ${stockColor(branch.qty)}`}>
-                  {branch.qty} available
-                </span>
-              ) : null}
-            </div>
-            <details className="group text-xs">
-              <summary className="flex w-fit cursor-pointer list-none items-center gap-1 font-medium text-black/70 outline-none focus-visible:underline [&::-webkit-details-marker]:hidden">
-                Store Hours
-                <ChevronDown className="size-3.5 text-black/70 transition-transform group-open:rotate-180" />
-              </summary>
-              <p className="mt-1 text-muted-foreground">
-                {branch.hours ?? "Mon–Fri 7am–6pm · Sat 8am–12pm · Sun Closed"}
-              </p>
-            </details>
-            <div className="flex items-center text-xs">
-              <span className="text-muted-foreground tabular-nums">{branch.miles} mi</span>
-              <span className="mx-1.5 text-muted-foreground/40">·</span>
-              <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
-                <Navigation className="size-3.5" />
-                Get Directions
-              </a>
-            </div>
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="flex items-center gap-2 text-xs">
-                <a href={`tel:${branch.name}`} className="inline-flex items-center gap-1 font-medium text-primary">
-                  <Phone className="size-3.5" />
-                  {branch.phone ?? "(919) 555-0100"}
-                </a>
-                <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
-                  <MessageSquare className="size-3.5" />
-                  Chat
-                </a>
-              </span>
-              {selectedStore === branch.name ? (
-                <Button
-                  size="sm"
-                  disabled
-                  className="h-7 -translate-y-px px-3 text-xs"
-                >
-                  Current Store
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  onClick={() => selectStore(branch.name)}
-                  className="h-7 -translate-y-px px-3 text-xs"
-                >
-                  Select Store
-                </Button>
-              )}
-            </div>
-          </li>
+          <BranchCard
+            key={branch.name}
+            branch={branch}
+            selected={selectedStore === branch.name}
+            showStock={showStock}
+            onSelect={() => selectStore(branch.name)}
+          />
         ))}
       </ul>
       <div className="shrink-0 border-t p-3">

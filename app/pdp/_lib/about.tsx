@@ -40,7 +40,9 @@ import {
   type PdpDocument,
   type PdpProduct,
   type SpecGroup,
+  type SpecRow,
 } from "./types";
+import { PartsGrid } from "./parts";
 
 /* ─────────────── Shared accordion header pattern ─────────────── *
  * Every accordion trigger on the PDP (top-level About sections, Documents
@@ -130,7 +132,47 @@ function Description({ product }: { product: PdpProduct }) {
   );
 }
 
+/** Flat spec list (products that ship a `specsFlat` array instead of groups). */
+function FlatSpecTable({ specs }: { specs: SpecRow[] }) {
+  return (
+    <div className="overflow-hidden rounded-lg border">
+      <div className="grid grid-cols-1 sm:grid-cols-2">
+        {specs.map((r) => (
+          <div
+            key={r.label}
+            className="flex items-baseline justify-between gap-4 border-b px-4 py-3 text-sm"
+          >
+            <span className="font-semibold capitalize">{r.label}</span>
+            <span className="text-right text-muted-foreground">{r.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** True when the product carries any spec data in any of the three shapes. */
+function hasSpecData(product: PdpProduct): boolean {
+  return Boolean(
+    product.productSpecs?.length ||
+      product.specsFlat?.length ||
+      product.specGroupsLeft?.length ||
+      product.specGroupsRight?.length,
+  );
+}
+
+/**
+ * Specifications panel — one renderer for every product. Prefers the rich
+ * `productSpecs` groups (Carrier "Product Info"), falls back to a flat
+ * `specsFlat` list, then to the left/right `specGroups`. The filter field is
+ * kept for parity with the source PDPs.
+ */
 function Specifications({ product }: { product: PdpProduct }) {
+  const groups: SpecGroup[] = product.productSpecs?.length
+    ? product.productSpecs
+    : product.specsFlat?.length
+      ? []
+      : [...(product.specGroupsLeft ?? []), ...(product.specGroupsRight ?? [])];
   return (
     <div>
       <div className="relative max-w-lg">
@@ -141,10 +183,16 @@ function Specifications({ product }: { product: PdpProduct }) {
           className="h-11 pr-3 pl-9"
         />
       </div>
-      <div className="mt-4 overflow-hidden rounded-lg border">
-        {(product.productSpecs ?? []).map((g) => (
-          <SpecGroupTable key={g.title} group={g} />
-        ))}
+      <div className="mt-4">
+        {groups.length ? (
+          <div className="overflow-hidden rounded-lg border">
+            {groups.map((g) => (
+              <SpecGroupTable key={g.title} group={g} />
+            ))}
+          </div>
+        ) : product.specsFlat?.length ? (
+          <FlatSpecTable specs={product.specsFlat} />
+        ) : null}
       </div>
     </div>
   );
@@ -508,20 +556,20 @@ const PART_GROUP_ICONS: Record<string, LucideIcon> = {
   instructions: ClipboardList,
 };
 
-function EmptyState({ label }: { label: string }) {
-  return (
-    <div className="rounded-md border px-6 py-5 text-sm text-muted-foreground">
-      {label}
-    </div>
-  );
-}
-
+/**
+ * About This Product — the single accordion every PDP renders (replacing the
+ * old Description / Specifications tabs). Panels are data-driven: Description
+ * always shows and opens first; Specifications, Documents, Bundle Components,
+ * and Part List each render only when the product carries that data. A bundle
+ * swaps the Part List panel for a Bundle Components panel.
+ */
 export function AboutThisProduct({ product }: { product: PdpProduct }) {
   const hasDocs = Boolean(product.documents?.length);
-  const hasSpecs = Boolean(product.productSpecs?.length);
-  const hasParts = Boolean(product.partsCatalog?.groups?.length);
-  // A bundle swaps the Part List / Where Used tabs for a Bundle Components tab.
+  const hasSpecs = hasSpecData(product);
   const isBundle = Boolean(product.bundleItems?.length);
+  const hasCatalog = Boolean(product.partsCatalog?.groups?.length);
+  const hasParts = Boolean(product.parts?.length);
+  const showPartList = !isBundle && (hasCatalog || hasParts);
   return (
     <section aria-label="About this product" className="flex flex-col gap-4">
       <h2 className="text-xl font-bold tracking-tight">About This Product</h2>
@@ -590,31 +638,22 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
               </div>
             </AccordionContent>
           </AccordionItem>
-        ) : (
-          <>
-            <AccordionItem value="parts">
-              <AccordionTrigger className={ACCORDION_TRIGGER}>
-                <AccordionHeader icon={Wrench} title="Part List" />
-              </AccordionTrigger>
-              <AccordionContent className="pt-4 pl-10">
-                {hasParts ? (
-                  <PartList catalog={product.partsCatalog!} />
-                ) : (
-                  <EmptyState label="No models found." />
-                )}
-              </AccordionContent>
-            </AccordionItem>
+        ) : null}
 
-            <AccordionItem value="where">
-              <AccordionTrigger className={ACCORDION_TRIGGER}>
-                <AccordionHeader icon={Boxes} title="Where Used" />
-              </AccordionTrigger>
-              <AccordionContent className="pt-4 pl-10">
-                <EmptyState label="No results found." />
-              </AccordionContent>
-            </AccordionItem>
-          </>
-        )}
+        {showPartList ? (
+          <AccordionItem value="parts">
+            <AccordionTrigger className={ACCORDION_TRIGGER}>
+              <AccordionHeader icon={Wrench} title="Part List" />
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 pl-10">
+              {hasCatalog ? (
+                <PartList catalog={product.partsCatalog!} />
+              ) : (
+                <PartsGrid parts={product.parts!} />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        ) : null}
       </Accordion>
     </section>
   );

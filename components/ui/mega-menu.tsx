@@ -154,10 +154,14 @@ export function MegaMenu({
   // Dock the scrim + panel directly beneath the header (the trigger sits in the
   // last header row), so the whole header stays visible above the dim.
   const measure = React.useCallback(() => {
-    const rect = triggerRef.current?.getBoundingClientRect();
-    // Dock the panel a few px BELOW the hover indicator line so the line stays
-    // visible on open and the panel's top edge reads as a notch under it.
-    if (rect) setTopOffset(rect.bottom + 8);
+    // Dock the scrim + panel to the BOTTOM OF THE NAV BAR (the blue bar) so the
+    // panel meets the bar flush — no white gap between them.
+    const bar = triggerRef.current?.closest("nav")?.getBoundingClientRect();
+    if (bar) setTopOffset(bar.bottom);
+    else {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (rect) setTopOffset(rect.bottom);
+    }
   }, []);
 
   React.useEffect(() => {
@@ -251,9 +255,8 @@ export function MegaMenu({
                   height: `calc(100dvh - ${topOffset}px)`,
                 }}
               >
-                {/* Tier 1 — white column. Sits ABOVE later columns (z) so each
-                    new column slides out from underneath it, not over the top. */}
-                <div className="relative z-30 w-full shrink-0 overflow-y-auto bg-popover p-2 md:w-64">
+                {/* Tier 1 — white column. */}
+                <div className="w-full shrink-0 overflow-y-auto bg-popover p-2 md:w-64">
                   <p className="px-3 pt-2 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                     Shop products
                   </p>
@@ -273,11 +276,11 @@ export function MegaMenu({
                   {category ? (
                     <motion.div
                       key={category.slug}
-                      initial={{ x: "-100%" }}
-                      animate={{ x: 0 }}
-                      exit={{ x: "-100%" }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       transition={MENU_SLIDE}
-                      className="relative z-20 w-full shrink-0 overflow-y-auto bg-muted/40 p-2 md:w-72"
+                      className="w-full shrink-0 overflow-y-auto bg-muted/40 p-2 md:w-72"
                     >
                       <ColumnHeader node={category} onNavigate={close} />
                       {subcategories.map((node) => (
@@ -300,11 +303,11 @@ export function MegaMenu({
                   {subcategory && details.length ? (
                     <motion.div
                       key={subcategory.slug}
-                      initial={{ x: "-100%" }}
-                      animate={{ x: 0 }}
-                      exit={{ x: "-100%" }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       transition={MENU_SLIDE}
-                      className="relative z-10 w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-72"
+                      className="w-full shrink-0 overflow-y-auto bg-muted/60 p-2 md:w-72"
                     >
                       <ColumnHeader node={subcategory} onNavigate={close} />
                       <div>

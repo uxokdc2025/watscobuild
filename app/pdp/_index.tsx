@@ -14,8 +14,6 @@ import { Button } from "@/components/ui/button";
 import { pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { BRANDS } from "./_lib/brands";
-import { CHECKOUT_USE_CASES } from "./_lib/checkout-use-cases";
-import { CheckoutCasesBlock } from "./_lib/checkout-cases-block";
 
 /** Product Listing Page (PLP) entries — /search route rendered inside a brand's chrome. */
 type PlpEntry = {
@@ -505,14 +503,24 @@ export default function PdpMasterPage() {
           >
             <AccordionTrigger className="hover:no-underline">
               <span className="flex items-center gap-3">
-                <span className="text-lg font-bold tracking-tight">Checkout Flow</span>
-                <span className="text-sm font-medium text-muted-foreground">
-                  Canonical pattern &amp; {CHECKOUT_USE_CASES.length} use cases
-                </span>
+                <span className="text-lg font-bold tracking-tight">Cart and Checkout Flow</span>
               </span>
             </AccordionTrigger>
             <AccordionContent>
-              <CheckoutCasesBlock cases={CHECKOUT_USE_CASES} />
+              <div className="flex flex-wrap gap-3 pb-2">
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/checkout?demo=1">
+                    Checkout
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/cart?demo=1">
+                    Cart
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+              </div>
             </AccordionContent>
           </AccordionItem>
 

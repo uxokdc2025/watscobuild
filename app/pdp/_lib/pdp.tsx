@@ -2,7 +2,6 @@ import { cn } from "@/lib/utils";
 import { PdpGallery } from "../_components/gallery";
 import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
-import { PdpDetails } from "./details";
 import { CustomersAlsoPurchased, FrequentlyBoughtTogether } from "./fbt";
 import { AboutThisProduct, AhriMatchup, BundleComponents, ProPicks, RecentlyViewed, Replacements, Substitutes } from "./about";
 import { SiteFooter, SiteHeader } from "./chrome";
@@ -113,24 +112,17 @@ export function Pdp({
             </div>
           ) : null}
 
-          {product.detailsStyle === "about" ? (
-            <>
-              {/* Carrier "About This Product" + Recently Viewed */}
-              <div className="mt-14">
-                <AboutThisProduct product={product} />
-              </div>
-              {product.recentlyViewed?.length ? (
-                <div className="mt-14">
-                  <RecentlyViewed product={product} />
-                </div>
-              ) : null}
-            </>
-          ) : (
-            /* Description / Part Lists / Equipment Spec / Documentation tabs */
+          {/* About This Product — one data-driven accordion for EVERY PDP
+              (Description / Specifications / Documents / Part List). Replaces
+              the retired Description/Specifications tabs. */}
+          <div className="mt-14">
+            <AboutThisProduct product={product} />
+          </div>
+          {product.recentlyViewed?.length ? (
             <div className="mt-14">
-              <PdpDetails product={product} />
+              <RecentlyViewed product={product} />
             </div>
-          )}
+          ) : null}
 
           {/* Customers also purchased */}
           {product.customersAlsoPurchased?.length ? (

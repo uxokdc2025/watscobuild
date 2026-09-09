@@ -347,7 +347,7 @@ export function SearchBody({
               </div>
             ) : null}
             {view === "grid" ? (
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 min-[1600px]:grid-cols-5">
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 min-[1730px]:grid-cols-5">
                 {results.map((r, i) => (
                   <li key={r.id}>
                     <ProductCard result={r} signedIn={signedIn} index={i} brandKey={brandKey} />
