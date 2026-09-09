@@ -55,7 +55,6 @@ const BRAND: Token[] = [
   { cls: "bg-brand-homans", varName: "--brand-homans", label: "Homans", usage: "Header / footer only.", on: "text-white" },
   { cls: "bg-brand-peirce", varName: "--brand-peirce", label: "Peirce-Phelps", usage: "Header / footer only.", on: "text-white" },
   { cls: "bg-brand-ecmdi", varName: "--brand-ecmdi", label: "East Coast Metal", usage: "Header / footer only.", on: "text-white" },
-  { cls: "bg-brand-dcne", varName: "--brand-dcne", label: "DCNE", usage: "Header / footer only.", on: "text-white" },
   { cls: "bg-brand-baker", varName: "--brand-baker", label: "Baker", usage: "Header / footer only.", on: "text-white" },
 ];
 

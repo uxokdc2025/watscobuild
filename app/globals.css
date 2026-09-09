@@ -68,8 +68,6 @@
   --color-brand-ecmdi-foreground: var(--brand-ecmdi-foreground);
   --color-brand-ecmdi-footer: var(--brand-ecmdi-footer);
   --color-brand-ecmdi-footer-foreground: var(--brand-ecmdi-footer-foreground);
-  --color-brand-dcne: var(--brand-dcne);
-  --color-brand-dcne-foreground: var(--brand-dcne-foreground);
   --color-brand-homans: var(--brand-homans);
   --color-brand-homans-foreground: var(--brand-homans-foreground);
   --color-brand-homans-nav: var(--brand-homans-nav);
@@ -132,8 +130,6 @@
   --brand-ecmdi-foreground: #ffffff;
   --brand-ecmdi-footer: #636363; /* East Coast dark-charcoal footer (source-sampled) */
   --brand-ecmdi-footer-foreground: #ffffff;
-  --brand-dcne: #001056; /* DCNE dark-navy utility bar */
-  --brand-dcne-foreground: #ffffff;
   --brand-homans: #045ea9; /* Homans primary blue (main bar, footer bottom bar) */
   --brand-homans-foreground: #ffffff;
   --brand-homans-nav: #003874; /* Homans darker category nav bar */

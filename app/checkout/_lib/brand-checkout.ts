@@ -222,7 +222,7 @@ const CONFIGS: Record<BrandCheckoutKey, BrandCheckoutConfig> = {
 };
 
 /** Resolve a checkout config by brand key. Brands without a dedicated checkout
- *  profile (carrier / dcne / gemaire) fall back to the Homans default. */
+ *  profile (carrier / gemaire) fall back to the Homans default. */
 export function getBrandCheckout(key: string): BrandCheckoutConfig {
   return CONFIGS[key as BrandCheckoutKey] ?? HOMANS;
 }

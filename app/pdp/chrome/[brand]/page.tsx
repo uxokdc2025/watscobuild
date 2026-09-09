@@ -40,7 +40,7 @@ export default async function BrandPdpPage({
     );
   }
 
-  // No product wired yet (e.g. DCNE) — show the chrome with a note.
+  // No product wired yet (e.g. Carrier) — show the chrome with a note.
   return (
     <div className="min-h-svh bg-background">
       <SiteHeader brand={b} />

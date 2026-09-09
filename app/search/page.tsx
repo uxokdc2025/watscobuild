@@ -86,8 +86,6 @@ function brandStoreName(brandKey: string): string {
       return "Charlotte, NC - Carrier Enterprise";
     case "ecmdi":
       return "Durham, NC - ECMDI";
-    case "dcne":
-      return "Boston, MA - DCNE";
     default:
       return "Your Branch";
   }

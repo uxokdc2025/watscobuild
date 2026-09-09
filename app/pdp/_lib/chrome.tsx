@@ -145,13 +145,6 @@ const BRAND_THEME: Record<string, BrandTheme> = {
     navClass: "bg-brand-ecmdi text-brand-ecmdi-foreground border-t border-white/15 brightness-95",
     Mark: EcmdiWordmark,
   },
-  dcne: {
-    logo: "https://d36aiwq7h8e0h3.cloudfront.net/userfiles/dcne_logo.svg",
-    wordmark: "DCNE",
-    barClass: "bg-brand-dcne text-brand-dcne-foreground",
-    navClass: "bg-brand-dcne text-brand-dcne-foreground border-t border-white/15",
-    logoChip: true,
-  },
   homans: {
     logo: "https://www.homans.com/homansWhiteLogo-mER.png",
     wordmark: "Homans Associates",
