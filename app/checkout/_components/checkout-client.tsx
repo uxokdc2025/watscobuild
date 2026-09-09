@@ -303,9 +303,9 @@ export default function CheckoutClient({
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
       <div className="mx-auto max-w-[var(--layout-max-width)]">
-        <Link href="/search?q=blower%20motor&signedin=1" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
+        <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ChevronLeft className="size-4" aria-hidden="true" />
-          Back to shopping
+          Back to cart
         </Link>
 
         <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
