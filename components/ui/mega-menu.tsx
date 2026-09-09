@@ -29,7 +29,7 @@ import {
  *  reads as a deliberate, slow slide. */
 const MENU_SLIDE = {
   type: "tween" as const,
-  duration: 0.6,
+  duration: 0.9,
   ease: [0.32, 0.72, 0, 1] as const,
 };
 
@@ -122,10 +122,9 @@ function ColumnHeader({
     <Link
       href={taxonomyHref(node)}
       onClick={onNavigate}
-      className="mb-1 flex min-h-11 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="mb-1 inline-flex min-h-11 items-center rounded-md px-3 py-2 text-sm font-medium text-primary underline-offset-4 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      View all {node.label.toLowerCase()}
-      <ChevronRight aria-hidden="true" className="size-4 text-muted-foreground" />
+      View all
     </Link>
   );
 }
@@ -156,7 +155,9 @@ export function MegaMenu({
   // last header row), so the whole header stays visible above the dim.
   const measure = React.useCallback(() => {
     const rect = triggerRef.current?.getBoundingClientRect();
-    if (rect) setTopOffset(rect.bottom);
+    // Dock the panel a few px BELOW the hover indicator line so the line stays
+    // visible on open and the panel's top edge reads as a notch under it.
+    if (rect) setTopOffset(rect.bottom + 8);
   }, []);
 
   React.useEffect(() => {
@@ -348,17 +349,15 @@ export function MegaMenu({
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute inset-x-3 -bottom-1 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100",
+            "pointer-events-none absolute inset-x-3 -bottom-2 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100",
             open && "opacity-100",
           )}
         />
-        {/* Caret nudges UP on hover and stays up while open — it never rotates.
-            Wrapped in an inline-flex span because CSS transforms don't move the
-            <svg> root itself reliably. */}
+        {/* Caret flips from down to up on hover/open. */}
         <span
           className={cn(
-            "inline-flex transition-transform duration-200 group-hover:[transform:translateY(-2px)]",
-            open && "[transform:translateY(-2px)]",
+            "inline-flex transition-transform duration-200 group-hover:rotate-180",
+            open && "rotate-180",
           )}
         >
           <ChevronDown aria-hidden="true" className="size-3.5" />

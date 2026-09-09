@@ -302,7 +302,7 @@ function UnifiedHeader({
                     Products MegaMenu trigger. */}
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-x-3 -bottom-1 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                  className="pointer-events-none absolute inset-x-3 -bottom-2 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
                 />
                 {NAV_CARET.test(n) ? (
                   // Caret nudges UP on hover — matches the Products trigger; no
