@@ -10,10 +10,8 @@ import {
   TOTAL_RESULT_COUNT,
 } from "@/app/search/_lib/mock-data";
 
-import {
-  DirectionBDrawer,
-  DirectionCDrawer,
-} from "../_drawers";
+import { DirectionBDrawer } from "../_drawers";
+import { InventoryStoreLocatorDrawer } from "../_inventory-drawers";
 import { DrawerOverlay } from "../_drawer-overlay";
 import { DrawerPanel } from "@/components/ui/drawer";
 
@@ -26,7 +24,7 @@ type SearchParams = { v?: string };
 
 function VariantDrawer({ v }: { v: string }) {
   if (v === "b") return <DirectionBDrawer />;
-  return <DirectionCDrawer />;
+  return <InventoryStoreLocatorDrawer heading="Find a branch" showProductHeader={false} showStock={false} />;
 }
 
 export default async function StoreLocatorInPlpPage({

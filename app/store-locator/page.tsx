@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { DirectionCDrawer } from "./_drawers";
 import { InventoryStoreLocatorDrawer } from "./_inventory-drawers";
 
 function DirectionColumn({
@@ -54,7 +53,7 @@ export default function StoreLocatorPage() {
         </div>
         <div className="flex flex-wrap items-start justify-center gap-6">
           <DirectionColumn label="Store Locator — Direction 2">
-            <DirectionCDrawer />
+            <InventoryStoreLocatorDrawer heading="Find a branch" showProductHeader={false} showStock={false} />
           </DirectionColumn>
           <DirectionColumn label="Inventory Drawer — Direction C">
             <InventoryStoreLocatorDrawer />
