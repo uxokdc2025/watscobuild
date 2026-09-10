@@ -1,4 +1,4 @@
-import type { FulfillmentMethod } from "../_components/fulfillment";
+import type { FulfillmentMethod } from "../_components/fulfillment-methods";
 
 /* ───────────────────────── Per-brand checkout config ─────────────────────────
  * ONE config object per distributor drives the whole checkout: which fulfillment

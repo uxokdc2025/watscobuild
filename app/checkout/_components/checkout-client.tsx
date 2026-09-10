@@ -9,6 +9,7 @@ import {
   CreditCard,
   LockKeyhole,
   Package,
+  Pencil,
   Plus,
   Printer,
   ShieldCheck,
@@ -50,7 +51,9 @@ const DEMO_ITEMS: CartItem[] = [
 
 /* Saved cards are modeled as SHARED FROM THE COMPANY — the account, not the
  * individual, owns the card on file (ECM pattern). */
-const SAVED_CARDS = [
+type CardOption = { id: string; tail: string; expires: string; added?: boolean };
+
+const SAVED_CARDS: CardOption[] = [
   { id: "visa-6177", tail: "6177", expires: "4/2028" },
   { id: "mc-8801", tail: "8801", expires: "2/2027" },
 ];
@@ -90,9 +93,12 @@ const BASE: ScenarioConfig = {
 
 const CHECKOUT_SCENARIOS: Record<CheckoutCase, Partial<ScenarioConfig>> = {
   "account-job-context": { seededJob: "Spring maintenance" },
-  // Opens on Fulfillment with a delivery method already selected (routing to a grouped address).
+  // Fulfillment opens on the DELIVERY tab (method is a delivery method → tab is
+  // derived from it), routing to a grouped address. Brands without UPS clamp to
+  // their first delivery method — still Delivery.
   "delivery-pickup-routing": { initialStep: "fulfillment", method: "ups" },
-  // Opens on Fulfillment with the date-cutoff messaging visible on a delivery method.
+  // Fulfillment opens on the DELIVERY tab with the date-cutoff messaging on the
+  // delivery date (the Pickup tab carries the same cutoff note on its date).
   "availability-date-constraints": { initialStep: "fulfillment", method: "truck", availabilityConstraint: true },
   "terms-or-credit-card": { initialStep: "payment", payment: "card" },
   "review-coupon-special-handling": { initialStep: "review", showCoupon: true, showSpecialHandling: true },
@@ -206,6 +212,13 @@ export default function CheckoutClient({
   // field that blocks Place order until filled.
   const [specialHandling, setSpecialHandling] = React.useState(false);
   const [handlingComments, setHandlingComments] = React.useState("");
+
+  // Payment card selection is lifted here so the Payment step edits it and the
+  // Review summary can name the exact card (•••• tail) that will be charged.
+  const [addedCards, setAddedCards] = React.useState<CardOption[]>([]);
+  const [paymentCardId, setPaymentCardId] = React.useState(SAVED_CARDS[0].id);
+  const cards: CardOption[] = [...SAVED_CARDS, ...addedCards];
+  const selectedCard = cards.find((c) => c.id === paymentCardId) ?? SAVED_CARDS[0];
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   // Applied coupon takes 10% off the subtotal.
@@ -380,15 +393,28 @@ export default function CheckoutClient({
               </>
             ) : null}
             {step === "payment" ? (
-              <PaymentStep brand={brand} payment={payment} setPayment={setPayment} onBack={() => setStep("fulfillment")} />
+              <PaymentStep
+                brand={brand}
+                account={account}
+                payment={payment}
+                setPayment={setPayment}
+                cards={cards}
+                cardId={paymentCardId}
+                setCardId={setPaymentCardId}
+                addedCards={addedCards}
+                setAddedCards={setAddedCards}
+                onBack={() => setStep("fulfillment")}
+              />
             ) : null}
             {step === "review" ? (
               <ReviewStep
                 brand={brand}
                 items={items}
                 account={account}
+                branch={branch}
                 method={method}
                 payment={payment}
+                cardTail={selectedCard.tail}
                 po={po}
                 job={job}
                 notes={notes}
@@ -452,37 +478,48 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
   );
 }
 
-type CardOption = { id: string; tail: string; expires: string; added?: boolean };
-
 function PaymentStep({
   brand,
+  account,
   payment,
   setPayment,
+  cards,
+  cardId,
+  setCardId,
+  addedCards,
+  setAddedCards,
   onBack,
 }: {
   brand: BrandCheckoutConfig;
+  account: SwitchAccount;
   payment: Payment;
   setPayment: (v: Payment) => void;
+  cards: CardOption[];
+  cardId: string;
+  setCardId: (v: string) => void;
+  addedCards: CardOption[];
+  setAddedCards: React.Dispatch<React.SetStateAction<CardOption[]>>;
   onBack: () => void;
 }) {
-  const [addedCards, setAddedCards] = React.useState<CardOption[]>([]);
-  const [card, setCard] = React.useState<string>(SAVED_CARDS[0].id);
   const [cardDrawerOpen, setCardDrawerOpen] = React.useState(false);
   const [billingSame, setBillingSame] = React.useState(true);
 
-  const cards: CardOption[] = [...SAVED_CARDS, ...addedCards];
   const billingAddress = brand.addresses.find((a) => a.group === "billing");
 
   const addCard = (tail: string) => {
     const id = `card-${tail}-${addedCards.length}`;
     setAddedCards((prev) => [...prev, { id, tail, expires: "—", added: true }]);
-    setCard(id);
+    setCardId(id);
   };
 
   return (
     <>
       <SectionHeading number="3" title="Payment" />
       <div className="space-y-5 p-5">
+        {/* Account + billing header — fronted above the payment methods because
+            switching the account changes who is billed. */}
+        <BillingSummary account={account} billingAddress={billingAddress} />
+
         <RadioGroup value={payment} onValueChange={(v) => setPayment(v as Payment)} className="grid gap-3">
           <RadioCard value="terms" selected={payment === "terms"}>
             <span className="block font-semibold">Account terms, COD</span>
@@ -506,9 +543,9 @@ function PaymentStep({
 
         {payment === "card" ? (
           <div className="space-y-4 rounded-md bg-muted/40 p-4">
-            <RadioGroup value={card} onValueChange={setCard} className="grid gap-2">
+            <RadioGroup value={cardId} onValueChange={setCardId} className="grid gap-2">
               {cards.map((c) => (
-                <RadioCard key={c.id} value={c.id} selected={card === c.id} className="bg-background">
+                <RadioCard key={c.id} value={c.id} selected={cardId === c.id} className="bg-background">
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="font-medium">•••• {c.tail}</span>
                     {c.expires !== "—" ? (
@@ -548,6 +585,42 @@ function PaymentStep({
 
       <CreditCardDrawer open={cardDrawerOpen} onClose={() => setCardDrawerOpen(false)} onSave={addCard} />
     </>
+  );
+}
+
+/** Account + billing header for the Payment step. Fronts the selected account
+ *  (the same one Order Details uses) and the billing address it maps to, so the
+ *  buyer sees who is billed BEFORE choosing a payment method — switching the
+ *  account here changes both. The billing block reuses the brand's billing-group
+ *  address for the street, with the account's own name + phone. */
+function BillingSummary({
+  account,
+  billingAddress,
+}: {
+  account: SwitchAccount;
+  billingAddress?: BrandCheckoutConfig["addresses"][number];
+}) {
+  return (
+    <div className="grid gap-4 rounded-md border bg-muted/30 p-4 sm:grid-cols-2">
+      <div className="min-w-0">
+        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Account</p>
+        <p className="mt-1.5 font-semibold">{account.name}</p>
+        <p className="text-sm text-muted-foreground">{account.detail}</p>
+        <p className="text-sm text-muted-foreground">{account.phone}</p>
+      </div>
+      <div className="min-w-0 sm:border-l sm:pl-4">
+        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Billing address</p>
+        <p className="mt-1.5 font-medium">{account.name}</p>
+        {billingAddress ? (
+          <p className="text-sm text-muted-foreground">
+            {billingAddress.name} · {billingAddress.line1}, {billingAddress.city}, {billingAddress.state} {billingAddress.zip}
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">{account.detail}</p>
+        )}
+        <p className="text-sm text-muted-foreground">{account.phone}</p>
+      </div>
+    </div>
   );
 }
 
@@ -591,6 +664,39 @@ function BillingAddressBlock({ billingAddress }: { billingAddress?: BrandCheckou
   );
 }
 
+/** A uniform Review summary card: title, richer body, and an Edit control pinned
+ *  bottom-right so it lines up across all three cards (equal-height flex column).
+ *  Edit is a button (grey hover, no underline) that navigates back to its step. */
+function ReviewCard({
+  title,
+  editLabel,
+  onEdit,
+  children,
+}: {
+  title: string;
+  editLabel: string;
+  onEdit: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex h-full flex-col rounded-md border p-4">
+      <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{title}</p>
+      <div className="mt-2 space-y-1 text-sm">{children}</div>
+      <Button
+        type="button"
+        variant="tertiary"
+        size="sm"
+        onClick={onEdit}
+        aria-label={editLabel}
+        className="mt-auto self-end min-h-11"
+      >
+        <Pencil className="size-3.5" aria-hidden="true" />
+        Edit
+      </Button>
+    </div>
+  );
+}
+
 function paymentLabel(payment: Payment): string {
   if (payment === "card") return "Credit card";
   if (payment === "cash") return "Cash on pickup";
@@ -603,8 +709,10 @@ function ReviewStep({
   brand,
   items,
   account,
+  branch,
   method,
   payment,
+  cardTail,
   po,
   job,
   notes,
@@ -621,8 +729,10 @@ function ReviewStep({
   brand: BrandCheckoutConfig;
   items: CartItem[];
   account: SwitchAccount;
+  branch: BrandBranch;
   method: FulfillmentMethod;
   payment: Payment;
+  cardTail: string;
   po: string;
   job: string;
   notes: string;
@@ -637,32 +747,55 @@ function ReviewStep({
   onEditPayment: () => void;
 }) {
   const commentsMissing = specialHandling && !handlingComments.trim();
+  // Delivery address mirrors the Fulfillment step's default (first default/entry);
+  // the exact selection lives inside that step, so the summary shows its default.
+  const deliveryAddress = brand.addresses.find((a) => a.isDefault) ?? brand.addresses[0];
+  const billingAddress = brand.addresses.find((a) => a.group === "billing");
   return (
     <>
       <SectionHeading number="4" title="Review & submit" />
       <div className="space-y-5 p-5">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-md border p-4">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Order details</p>
-            <p className="mt-2 font-medium">{account.name}</p>
-            <p className="text-sm text-muted-foreground">{account.detail}</p>
-            <p className="mt-1 text-sm text-muted-foreground">PO {po || "—"}</p>
-            <p className="text-sm text-muted-foreground">{job ? `Job: ${job}` : "No job name"}</p>
-            {notes.trim() ? <p className="text-sm text-muted-foreground line-clamp-2">Notes: {notes}</p> : null}
-            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditDetails}>Change</Button>
-          </div>
-          <div className="rounded-md border p-4">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Fulfillment</p>
-            <p className="mt-2 font-medium">
-              {isDeliveryMethod(method) ? `Delivery — ${methodLabel(method)}` : `Pickup — ${brand.pickupBranchShort}`}
-            </p>
-            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditFulfillment}>Change</Button>
-          </div>
-          <div className="rounded-md border p-4">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Payment</p>
-            <p className="mt-2 font-medium">{paymentLabel(payment)}</p>
-            <Button variant="link" size="sm" className="mt-1 h-auto p-0" onClick={onEditPayment}>Change</Button>
-          </div>
+          <ReviewCard title="Order details" editLabel="Edit order details" onEdit={onEditDetails}>
+            <p className="font-medium text-foreground">{account.name}</p>
+            <p className="text-muted-foreground">{account.detail}</p>
+            <p className="text-muted-foreground">PO {po || "—"}</p>
+            <p className="text-muted-foreground">{job ? `Job: ${job}` : "No job name"}</p>
+            {notes.trim() ? <p className="text-muted-foreground line-clamp-2">Notes: {notes}</p> : null}
+          </ReviewCard>
+
+          <ReviewCard title="Fulfillment" editLabel="Edit fulfillment" onEdit={onEditFulfillment}>
+            {isDeliveryMethod(method) ? (
+              <>
+                <p className="font-medium text-foreground">Delivery — {methodLabel(method)}</p>
+                <p className="text-muted-foreground">{deliveryAddress.name}</p>
+                <p className="text-muted-foreground">
+                  {deliveryAddress.line1}, {deliveryAddress.city}, {deliveryAddress.state} {deliveryAddress.zip}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="font-medium text-foreground">Pickup — {brand.pickupBranchShort}</p>
+                <p className="text-muted-foreground">{branch.name}</p>
+                <p className="text-muted-foreground">{branch.address}</p>
+              </>
+            )}
+          </ReviewCard>
+
+          <ReviewCard title="Payment" editLabel="Edit payment" onEdit={onEditPayment}>
+            {payment === "card" ? (
+              <>
+                <p className="font-medium text-foreground">Credit card •••• {cardTail}</p>
+                {billingAddress ? (
+                  <p className="text-muted-foreground">
+                    Billing: {billingAddress.name} · {billingAddress.city}, {billingAddress.state}
+                  </p>
+                ) : null}
+              </>
+            ) : (
+              <p className="font-medium text-foreground">{paymentLabel(payment)}</p>
+            )}
+          </ReviewCard>
         </div>
 
         {showSpecialHandling ? (
