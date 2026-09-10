@@ -21,7 +21,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ProductListRow } from "@/components/ui/product-list-row";
-import { StockStatus } from "@/components/ui/label-badges";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import { getBrandCheckout } from "../checkout/_lib/brand-checkout";
 import { SwitchAccountDrawer } from "../checkout/_components/checkout-drawers";
@@ -103,8 +102,10 @@ function CartLineRow({
         item={line.item}
         mfg={line.mfg}
         meta={
-          // Remove sits in the item cluster (left column), away from the price.
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          // Remove sits in the item cluster (left column), away from the price;
+          // a vertical rule separates it from the substitute actions so Remove
+          // isn't clicked by accident.
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <Button
               type="button"
               variant="ghost"
@@ -118,12 +119,23 @@ function CartLineRow({
             </Button>
             {line.replacement ? (
               <>
-                <StockStatus tone="amber">Replacement available</StockStatus>
+                <span aria-hidden="true" className="h-5 w-px bg-border" />
+                {/* "Replacement available" is itself a link that opens the drawer. */}
                 <Button
                   type="button"
                   variant="link"
                   size="sm"
-                  className="h-auto px-0"
+                  className="h-auto gap-1.5 px-0 font-medium text-amber-600 hover:text-amber-700"
+                  onClick={onViewSubstitutes}
+                >
+                  <span aria-hidden="true" className="inline-block size-2 rounded-full bg-amber-500" />
+                  Replacement available
+                </Button>
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  className="h-auto gap-1.5 px-0"
                   onClick={onViewSubstitutes}
                 >
                   <Replace className="size-3.5" />
