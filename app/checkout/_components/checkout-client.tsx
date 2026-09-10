@@ -649,12 +649,12 @@ function BillingSummary({
 }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      <SummaryCard label="Account" editLabel="Edit account and billing" onEdit={onEdit}>
+      <SummaryCard label="Account" editLabel="Edit account" onEdit={onEdit}>
         <p className="font-semibold text-foreground">{account.name}</p>
         <p className="text-muted-foreground">{account.detail}</p>
         <p className="text-muted-foreground">{account.phone}</p>
       </SummaryCard>
-      <SummaryCard label="Billing address">
+      <SummaryCard label="Billing address" editLabel="Edit billing address" onEdit={onEdit}>
         <p className="font-medium text-foreground">{account.name}</p>
         {billingAddress ? (
           <p className="text-muted-foreground">
@@ -724,7 +724,7 @@ function SummaryEditButton({ label, onClick }: { label: string; onClick: () => v
       size="sm"
       onClick={onClick}
       aria-label={label}
-      className="-mt-1.5 -mr-1.5 shrink-0 min-h-11"
+      className="absolute top-2.5 right-2.5 shrink-0 min-h-9"
     >
       <Pencil className="size-3.5" aria-hidden="true" />
       Edit
@@ -746,11 +746,9 @@ function SummaryCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-full flex-col rounded-md border bg-card p-4">
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</p>
-        {onEdit ? <SummaryEditButton label={editLabel ?? "Edit"} onClick={onEdit} /> : null}
-      </div>
+    <div className="relative flex h-full flex-col rounded-md border bg-card p-4">
+      <p className="pr-14 text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</p>
+      {onEdit ? <SummaryEditButton label={editLabel ?? "Edit"} onClick={onEdit} /> : null}
       <div className="mt-2 space-y-1 text-sm">{children}</div>
     </div>
   );
