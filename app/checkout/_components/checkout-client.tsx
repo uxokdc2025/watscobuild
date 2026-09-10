@@ -18,6 +18,7 @@ import { toast } from "sonner";
 
 import { useCart, type CartItem } from "@/components/cart/cart-context";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -630,11 +631,12 @@ function PaymentStep({
   );
 }
 
-/** Account + billing header for the Payment step. Fronts the selected account
- *  (the same one Order Details uses) and the billing address it maps to, so the
- *  buyer sees who is billed BEFORE choosing a payment method — switching the
- *  account here changes both. The billing block reuses the brand's billing-group
- *  address for the street, with the account's own name + phone. */
+/** Account + billing header for the Payment step. Two SummaryCard boxes — the
+ *  selected account (the same one Order Details uses) and the billing address it
+ *  maps to — so the buyer sees who is billed BEFORE choosing a payment method.
+ *  The Edit sits on the Account box and opens the switch-account drawer, which
+ *  changes both. The billing box reuses the brand's billing-group address for the
+ *  street, with the account's own name + phone. */
 function BillingSummary({
   account,
   billingAddress,
@@ -645,37 +647,23 @@ function BillingSummary({
   onEdit: () => void;
 }) {
   return (
-    <div className="relative grid gap-4 rounded-md border bg-muted/30 p-4 sm:grid-cols-2">
-      {/* Last-minute edit — opens the switch-account drawer to change the account
-          (and its billing) right here in Payment. */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        onClick={onEdit}
-        aria-label="Edit account and billing"
-        className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
-      >
-        <Pencil className="size-3.5" />
-      </Button>
-      <div className="min-w-0 pr-8">
-        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Account</p>
-        <p className="mt-1.5 font-semibold">{account.name}</p>
-        <p className="text-sm text-muted-foreground">{account.detail}</p>
-        <p className="text-sm text-muted-foreground">{account.phone}</p>
-      </div>
-      <div className="min-w-0 sm:border-l sm:pl-4">
-        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Billing address</p>
-        <p className="mt-1.5 font-medium">{account.name}</p>
+    <div className="grid gap-4 sm:grid-cols-2">
+      <SummaryCard label="Account" editLabel="Edit account and billing" onEdit={onEdit}>
+        <p className="font-semibold text-foreground">{account.name}</p>
+        <p className="text-muted-foreground">{account.detail}</p>
+        <p className="text-muted-foreground">{account.phone}</p>
+      </SummaryCard>
+      <SummaryCard label="Billing address">
+        <p className="font-medium text-foreground">{account.name}</p>
         {billingAddress ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground">
             {billingAddress.name} · {billingAddress.line1}, {billingAddress.city}, {billingAddress.state} {billingAddress.zip}
           </p>
         ) : (
-          <p className="text-sm text-muted-foreground">{account.detail}</p>
+          <p className="text-muted-foreground">{account.detail}</p>
         )}
-        <p className="text-sm text-muted-foreground">{account.phone}</p>
-      </div>
+        <p className="text-muted-foreground">{account.phone}</p>
+      </SummaryCard>
     </div>
   );
 }
@@ -720,35 +708,49 @@ function BillingAddressBlock({ billingAddress }: { billingAddress?: BrandCheckou
   );
 }
 
-/** A uniform Review summary card: title, richer body, and an Edit control pinned
- *  bottom-right so it lines up across all three cards (equal-height flex column).
- *  Edit is a button (grey hover, no underline) that navigates back to its step. */
-function ReviewCard({
-  title,
+/* ───────────────────────── Shared summary primitives ─────────────────────────
+ * ONE boxed-card + edit pattern for every checkout summary (Review step cards and
+ * the Payment billing summary). SummaryCard is a bordered box with an uppercase
+ * muted label top-left, an optional Edit control top-right, and content beneath. */
+
+/** The shared Edit control: a DS tertiary button (foreground text, grey hover —
+ *  never muted) with a pencil + "Edit". 44px min touch target; labelled per use. */
+function SummaryEditButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <Button
+      type="button"
+      variant="tertiary"
+      size="sm"
+      onClick={onClick}
+      aria-label={label}
+      className="-mt-1.5 -mr-1.5 shrink-0 min-h-11"
+    >
+      <Pencil className="size-3.5" aria-hidden="true" />
+      Edit
+    </Button>
+  );
+}
+
+/** A uniform summary box: uppercase muted label top-left, optional Edit top-right,
+ *  richer body below. `h-full` flex column so cards line up in a grid. */
+function SummaryCard({
+  label,
   editLabel,
   onEdit,
   children,
 }: {
-  title: string;
-  editLabel: string;
-  onEdit: () => void;
+  label: string;
+  editLabel?: string;
+  onEdit?: () => void;
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-full flex-col rounded-md border p-4">
-      <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{title}</p>
+    <div className="flex h-full flex-col rounded-md border bg-card p-4">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</p>
+        {onEdit ? <SummaryEditButton label={editLabel ?? "Edit"} onClick={onEdit} /> : null}
+      </div>
       <div className="mt-2 space-y-1 text-sm">{children}</div>
-      <Button
-        type="button"
-        variant="tertiary"
-        size="sm"
-        onClick={onEdit}
-        aria-label={editLabel}
-        className="mt-auto self-end min-h-11"
-      >
-        <Pencil className="size-3.5" aria-hidden="true" />
-        Edit
-      </Button>
     </div>
   );
 }
@@ -829,15 +831,15 @@ function ReviewStep({
       <SectionHeading number="4" title="Review & submit" />
       <div className="space-y-5 p-5">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <ReviewCard title="Order details" editLabel="Edit order details" onEdit={onEditDetails}>
+          <SummaryCard label="Order details" editLabel="Edit order details" onEdit={onEditDetails}>
             <p className="font-medium text-foreground">{account.name}</p>
             <p className="text-muted-foreground">{account.detail}</p>
             <p className="text-muted-foreground">PO {po || "—"}</p>
             <p className="text-muted-foreground">{job ? `Job: ${job}` : "No job name"}</p>
             {notes.trim() ? <p className="text-muted-foreground line-clamp-2">Notes: {notes}</p> : null}
-          </ReviewCard>
+          </SummaryCard>
 
-          <ReviewCard title="Fulfillment" editLabel="Edit fulfillment" onEdit={onEditFulfillment}>
+          <SummaryCard label="Fulfillment" editLabel="Edit fulfillment" onEdit={onEditFulfillment}>
             {isDeliveryMethod(method) ? (
               <>
                 <p className="font-medium text-foreground">Delivery — {methodLabel(method)}</p>
@@ -872,9 +874,9 @@ function ReviewStep({
                 ) : null}
               </>
             )}
-          </ReviewCard>
+          </SummaryCard>
 
-          <ReviewCard title="Payment" editLabel="Edit payment" onEdit={onEditPayment}>
+          <SummaryCard label="Payment" editLabel="Edit payment" onEdit={onEditPayment}>
             {payment === "card" ? (
               <>
                 <p className="font-medium text-foreground">Credit card •••• {cardTail}</p>
@@ -887,7 +889,7 @@ function ReviewStep({
             ) : (
               <p className="font-medium text-foreground">{paymentLabel(payment)}</p>
             )}
-          </ReviewCard>
+          </SummaryCard>
         </div>
 
         {showSpecialHandling ? (
@@ -1053,6 +1055,16 @@ function OrderSummary({
           <ShieldCheck className="mr-1 inline size-4 text-in-stock" aria-hidden="true" />
           Your total is shown before payment details, with no surprise fees.
         </div>
+
+        {/* Review-only special-handling note — floats under the totals, above the
+            confirm gate + Place order. */}
+        {showConfirm ? (
+          <Alert variant="warning">
+            <AlertDescription>
+              Commercial rooftop equipment may require special handling and additional freight costs. Customer support will follow up.
+            </AlertDescription>
+          </Alert>
+        ) : null}
 
         {/* Confirm gate sits right above Place order, so the grey→blue is clear. */}
         {showConfirm ? (

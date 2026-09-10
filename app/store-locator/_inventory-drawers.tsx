@@ -110,9 +110,9 @@ function ProductHeader({ product = PRODUCT }: { product?: typeof PRODUCT }) {
 }
 
 function stockColor(qty: number) {
-  if (qty === 0) return "text-red-600";
-  if (qty < 3) return "text-amber-600";
-  return "text-emerald-700";
+  if (qty === 0) return "text-out-of-stock";
+  if (qty < 3) return "text-low-stock";
+  return "text-in-stock";
 }
 
 /* ────────────────── Shared store-hours schedule + disclosure ───────────── */
@@ -164,9 +164,9 @@ function openStatus(now: Date | null): StoreStatus {
 /** Trigger label colour per status: Open → green, Opens-at → amber, Closed →
  *  red, pre-mount idle → muted. */
 const STATUS_COLOR: Record<StoreStatus["state"], string> = {
-  open: "text-emerald-700",
-  opens: "text-amber-600",
-  closed: "text-red-600",
+  open: "text-in-stock",
+  opens: "text-low-stock",
+  closed: "text-out-of-stock",
   idle: "text-muted-foreground",
 };
 
@@ -434,7 +434,7 @@ export function InventoryDirection3() {
                   isSelected
                     ? "bg-primary/10 ring-1 ring-inset ring-primary"
                     : isCurrent
-                    ? "bg-emerald-50 dark:bg-emerald-950/20"
+                    ? "bg-in-stock/5 dark:bg-in-stock/10"
                     : i % 2 === 0
                     ? "hover:bg-muted/40"
                     : "hover:bg-muted/40"
@@ -448,7 +448,7 @@ export function InventoryDirection3() {
                 <div className="min-w-0">
                   <p className="truncate font-medium">{b.name}</p>
                   {isCurrent ? (
-                    <p className="text-[11px] font-semibold text-emerald-700">
+                    <p className="text-[11px] font-semibold text-in-stock">
                       Currently shopping
                     </p>
                   ) : null}

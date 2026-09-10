@@ -139,7 +139,7 @@ export function AddressRow({ address, selected }: { address: BrandAddress; selec
             </span>
           ) : null}
           {address.outOfRadius ? (
-            <span className="rounded-sm bg-yellow-400/20 px-1.5 py-0.5 text-[11px] font-semibold text-yellow-800 dark:text-yellow-300">
+            <span className="rounded-sm bg-low-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-low-stock">
               Outside radius
             </span>
           ) : null}
