@@ -38,6 +38,18 @@ export function FulfillmentSection({
   availabilityConstraint,
   branch,
   onChangeBranch,
+  addressId,
+  setAddressId,
+  pickupDate,
+  setPickupDate,
+  deliveryDate,
+  setDeliveryDate,
+  split,
+  setSplit,
+  liftgate,
+  setLiftgate,
+  expressOn,
+  setExpressOn,
 }: {
   config: BrandCheckoutConfig;
   method: FulfillmentMethod;
@@ -47,16 +59,28 @@ export function FulfillmentSection({
   /** Branch is lifted to the client so Order Details and pickup share one choice. */
   branch: BrandBranch;
   onChangeBranch: (b: BrandBranch) => void;
+  /* ── Controlled fulfillment state (lifted to CheckoutClient so the Review card
+   *    can show date / address / modifiers). This section owns no fulfillment
+   *    state of its own except the derived `lastDelivery` restore hint below. ── */
+  /** Selected delivery address id. */
+  addressId: string;
+  setAddressId: (id: string) => void;
+  /** Requested pickup date (null until chosen). */
+  pickupDate: Date | null;
+  setPickupDate: (d: Date) => void;
+  /** Requested delivery date (null until chosen; unused in CSR date mode). */
+  deliveryDate: Date | null;
+  setDeliveryDate: (d: Date) => void;
+  /** Split-shipment choice (brands with delivery modifiers). */
+  split: "complete" | "partial";
+  setSplit: (v: "complete" | "partial") => void;
+  /** Liftgate choice (brands with delivery modifiers). */
+  liftgate: "none" | "required";
+  setLiftgate: (v: "none" | "required") => void;
+  /** Pickup service add-on toggle (e.g. Baker Express). */
+  expressOn: boolean;
+  setExpressOn: (v: boolean) => void;
 }) {
-  const defaultAddressId = (config.addresses.find((a) => a.isDefault) ?? config.addresses[0]).id;
-
-  const [addressId, setAddressId] = React.useState<string>(defaultAddressId);
-  const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
-  const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
-  const [split, setSplit] = React.useState<"complete" | "partial">("complete");
-  const [liftgate, setLiftgate] = React.useState<"none" | "required">("none");
-  const [expressOn, setExpressOn] = React.useState(false);
-
   const deliveryMethods = config.methods.filter(isDeliveryMethod);
   const hasPickup = config.methods.includes("pickup");
   const hasDelivery = deliveryMethods.length > 0;

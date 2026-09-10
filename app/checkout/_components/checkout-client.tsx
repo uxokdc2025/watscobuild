@@ -33,6 +33,7 @@ import {
   isDeliveryMethod,
   type FulfillmentMethod,
 } from "./fulfillment";
+import { fmtDate } from "./fulfillment-calendar";
 import { OrderDetailsStep } from "./order-details-step";
 import { SwitchAccountDrawer, CreditCardDrawer } from "./checkout-drawers";
 import {
@@ -163,10 +164,14 @@ export default function CheckoutClient({
   scenario,
   demo = false,
   brandKey = "homans",
+  initialAccountId,
 }: {
   scenario?: CheckoutCase;
   demo?: boolean;
   brandKey?: string;
+  /** Account id handed off from the cart page (?account=…); falls back to the
+   *  brand default when absent or unknown for this brand. */
+  initialAccountId?: string;
 }) {
   const cfg = resolveScenario(scenario);
   const brand = getBrandCheckout(brandKey);
@@ -179,11 +184,15 @@ export default function CheckoutClient({
     ? cfg.method
     : (brand.methods.find(isDeliveryMethod) ?? "pickup");
 
-  // Account is bound to the brand-checkout config for now (switchAccounts[0]).
-  // SEAM: the cart page's selected account should feed this state once the
-  // cart→checkout account hand-off is wired — that is the follow-up.
+  // Account is seeded from the cart page's selection (?account=…), falling back
+  // to the brand default when absent or not valid for this brand. The
+  // SwitchAccountDrawer still lets it change in checkout.
   const accounts = brand.switchAccounts;
-  const [accountId, setAccountId] = React.useState(accounts[0].id);
+  const seededAccountId =
+    initialAccountId && accounts.some((a) => a.id === initialAccountId)
+      ? initialAccountId
+      : accounts[0].id;
+  const [accountId, setAccountId] = React.useState(seededAccountId);
   const [defaultAccountId, setDefaultAccountId] = React.useState(accounts[0].id);
   const [accountDrawerOpen, setAccountDrawerOpen] = React.useState(false);
   const account: SwitchAccount = accounts.find((a) => a.id === accountId) ?? accounts[0];
@@ -200,6 +209,18 @@ export default function CheckoutClient({
   const [step, setStep] = React.useState<Step>(cfg.initialStep);
   const [submitted, setSubmitted] = React.useState(cfg.submitted);
   const [method, setMethod] = React.useState<FulfillmentMethod>(initialMethod);
+
+  // Fulfillment detail state is lifted here (FulfillmentSection is controlled) so
+  // the Review "Fulfillment" card can show the requested date, delivery address,
+  // and per-brand modifiers — not just the method.
+  const defaultAddressId = (brand.addresses.find((a) => a.isDefault) ?? brand.addresses[0]).id;
+  const [addressId, setAddressId] = React.useState(defaultAddressId);
+  const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
+  const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
+  const [split, setSplit] = React.useState<"complete" | "partial">("complete");
+  const [liftgate, setLiftgate] = React.useState<"none" | "required">("none");
+  const [expressOn, setExpressOn] = React.useState(false);
+
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);
   const [po, setPo] = React.useState("PO-2048");
   const [job, setJob] = React.useState(cfg.seededJob);
@@ -389,6 +410,18 @@ export default function CheckoutClient({
                   availabilityConstraint={cfg.availabilityConstraint}
                   branch={branch}
                   onChangeBranch={changeBranch}
+                  addressId={addressId}
+                  setAddressId={setAddressId}
+                  pickupDate={pickupDate}
+                  setPickupDate={setPickupDate}
+                  deliveryDate={deliveryDate}
+                  setDeliveryDate={setDeliveryDate}
+                  split={split}
+                  setSplit={setSplit}
+                  liftgate={liftgate}
+                  setLiftgate={setLiftgate}
+                  expressOn={expressOn}
+                  setExpressOn={setExpressOn}
                 />
               </>
             ) : null}
@@ -413,6 +446,12 @@ export default function CheckoutClient({
                 account={account}
                 branch={branch}
                 method={method}
+                addressId={addressId}
+                pickupDate={pickupDate}
+                deliveryDate={deliveryDate}
+                split={split}
+                liftgate={liftgate}
+                expressOn={expressOn}
                 payment={payment}
                 cardTail={selectedCard.tail}
                 po={po}
@@ -711,6 +750,12 @@ function ReviewStep({
   account,
   branch,
   method,
+  addressId,
+  pickupDate,
+  deliveryDate,
+  split,
+  liftgate,
+  expressOn,
   payment,
   cardTail,
   po,
@@ -731,6 +776,12 @@ function ReviewStep({
   account: SwitchAccount;
   branch: BrandBranch;
   method: FulfillmentMethod;
+  addressId: string;
+  pickupDate: Date | null;
+  deliveryDate: Date | null;
+  split: "complete" | "partial";
+  liftgate: "none" | "required";
+  expressOn: boolean;
   payment: Payment;
   cardTail: string;
   po: string;
@@ -747,10 +798,15 @@ function ReviewStep({
   onEditPayment: () => void;
 }) {
   const commentsMissing = specialHandling && !handlingComments.trim();
-  // Delivery address mirrors the Fulfillment step's default (first default/entry);
-  // the exact selection lives inside that step, so the summary shows its default.
-  const deliveryAddress = brand.addresses.find((a) => a.isDefault) ?? brand.addresses[0];
+  // Delivery address is the exact one chosen in the (now controlled) Fulfillment
+  // step; falls back to the default entry if the id no longer resolves.
+  const deliveryAddress =
+    brand.addresses.find((a) => a.id === addressId) ??
+    brand.addresses.find((a) => a.isDefault) ??
+    brand.addresses[0];
   const billingAddress = brand.addresses.find((a) => a.group === "billing");
+  // Requested date for the active method (pickup vs delivery), shown only if set.
+  const requestedDate = isDeliveryMethod(method) ? deliveryDate : pickupDate;
   return (
     <>
       <SectionHeading number="4" title="Review & submit" />
@@ -770,14 +826,33 @@ function ReviewStep({
                 <p className="font-medium text-foreground">Delivery — {methodLabel(method)}</p>
                 <p className="text-muted-foreground">{deliveryAddress.name}</p>
                 <p className="text-muted-foreground">
-                  {deliveryAddress.line1}, {deliveryAddress.city}, {deliveryAddress.state} {deliveryAddress.zip}
+                  {deliveryAddress.city}, {deliveryAddress.state}
                 </p>
+                {requestedDate ? (
+                  <p className="text-muted-foreground">Requested {fmtDate(requestedDate)}</p>
+                ) : null}
+                {brand.deliveryModifiers ? (
+                  <>
+                    <p className="text-muted-foreground">
+                      Split: {split === "partial" ? "partial" : "complete"}
+                    </p>
+                    <p className="text-muted-foreground">
+                      Liftgate: {liftgate === "required" ? "required" : "not needed"}
+                    </p>
+                  </>
+                ) : null}
               </>
             ) : (
               <>
                 <p className="font-medium text-foreground">Pickup — {brand.pickupBranchShort}</p>
                 <p className="text-muted-foreground">{branch.name}</p>
                 <p className="text-muted-foreground">{branch.address}</p>
+                {requestedDate ? (
+                  <p className="text-muted-foreground">Pickup {fmtDate(requestedDate)}</p>
+                ) : null}
+                {expressOn && brand.pickupAddon ? (
+                  <p className="text-muted-foreground">{brand.pickupAddon.label}</p>
+                ) : null}
               </>
             )}
           </ReviewCard>

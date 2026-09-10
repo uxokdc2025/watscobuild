@@ -148,14 +148,22 @@ function CartLineRow({
 /* ───────────────────────── Account / branch context ─────────────────────────
  * Consistent with the checkout account row — the brand's account + current
  * branch, with the same Switch-account drawer. */
-function AccountContextRow({ brandKey }: { brandKey: string }) {
+function AccountContextRow({
+  brandKey,
+  accountId,
+  onSelectAccount,
+}: {
+  brandKey: string;
+  /** Selected account, lifted to CartClient so it flows into the checkout href. */
+  accountId: string;
+  onSelectAccount: (id: string) => void;
+}) {
   const brand = getBrandCheckout(brandKey);
   const accounts = brand.switchAccounts;
   const branch = brand.branches.find((b) => b.current) ?? brand.branches[0];
   const [open, setOpen] = React.useState(false);
-  const [currentId, setCurrentId] = React.useState(accounts[0].id);
   const [defaultId, setDefaultId] = React.useState(accounts[0].id);
-  const current = accounts.find((a) => a.id === currentId) ?? accounts[0];
+  const current = accounts.find((a) => a.id === accountId) ?? accounts[0];
 
   return (
     <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
@@ -177,9 +185,9 @@ function AccountContextRow({ brandKey }: { brandKey: string }) {
         open={open}
         onClose={() => setOpen(false)}
         accounts={accounts}
-        currentId={currentId}
+        currentId={accountId}
         defaultId={defaultId}
-        onSelect={setCurrentId}
+        onSelect={onSelectAccount}
         onSetDefault={setDefaultId}
       />
     </div>
@@ -298,12 +306,15 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
   // Stock/availability notices — moved here from checkout. Backorder + nearby
   // are dismissible summaries; the itemized panel below them is not.
   const [notices, setNotices] = React.useState({ backorder: true, nearby: true });
+  // Selected account is lifted here so it flows into the checkout href
+  // (?account=…) and seeds Order Details on the next step.
+  const [accountId, setAccountId] = React.useState(brand.switchAccounts[0].id);
 
   const subtotal = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);
   const tax = subtotal * brand.taxRate;
   const total = subtotal + tax;
   const count = lines.reduce((sum, l) => sum + l.quantity, 0);
-  const checkoutHref = `/checkout?brand=${brandKey}&demo=1`;
+  const checkoutHref = `/checkout?brand=${brandKey}&demo=1&account=${accountId}`;
 
   const setQty = (id: string, next: number) =>
     setLines((prev) => prev.map((l) => (l.id === id ? { ...l, quantity: Math.max(1, next) } : l)));
@@ -340,7 +351,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
 
         <h1 className="mt-5 text-2xl font-bold tracking-tight">Cart</h1>
 
-        <AccountContextRow brandKey={brandKey} />
+        <AccountContextRow brandKey={brandKey} accountId={accountId} onSelectAccount={setAccountId} />
 
         {!lines.length ? (
           <div className="mt-6">
