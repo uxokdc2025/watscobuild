@@ -330,7 +330,7 @@ export default function CheckoutClient({
         ? { label: "Continue to payment", onClick: () => setStep("payment"), disabled: false }
         : step === "payment"
           ? { label: "Continue to review", onClick: () => setStep("review"), disabled: false }
-          : { label: "Place order", onClick: () => setSubmitted(true), disabled: !confirmed || handlingBlocks };
+          : { label: "Submit order", onClick: () => setSubmitted(true), disabled: !confirmed || handlingBlocks };
 
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
@@ -487,6 +487,7 @@ export default function CheckoutClient({
             showConfirm={step === "review"}
             confirmed={confirmed}
             setConfirmed={setConfirmed}
+            onSaveQuote={() => toast.success("Quote saved — find it under Quotes in your account.")}
           />
         </div>
       </div>
@@ -969,6 +970,7 @@ function OrderSummary({
   showConfirm,
   confirmed,
   setConfirmed,
+  onSaveQuote,
 }: {
   items: CartItem[];
   subtotal: number;
@@ -984,6 +986,7 @@ function OrderSummary({
   showConfirm: boolean;
   confirmed: boolean;
   setConfirmed: (v: boolean) => void;
+  onSaveQuote: () => void;
 }) {
   return (
     <aside className="h-fit rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
@@ -1076,9 +1079,21 @@ function OrderSummary({
 
         {/* Sticky primary CTA — the strongest action, always reachable.
             "Save cart for later" lives on the cart page only, not in checkout. */}
-        <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
-          {primary.label}
-        </Button>
+        {showConfirm ? (
+          // Review: secondary "Save quote" left of the primary "Submit order".
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" onClick={onSaveQuote}>
+              Save quote
+            </Button>
+            <Button onClick={primary.onClick} disabled={primary.disabled}>
+              {primary.label}
+            </Button>
+          </div>
+        ) : (
+          <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
+            {primary.label}
+          </Button>
+        )}
       </div>
     </aside>
   );
