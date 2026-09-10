@@ -1016,19 +1016,6 @@ function OrderSummary({
           </Alert>
         ) : null}
         <div className="space-y-3 text-sm">
-          {/* Itemized list — plain text rows (name → line total). A divider
-              separates the products from the totals below. No thumbnails. */}
-          <div className="space-y-2 border-b pb-3">
-            {items.map((item) => (
-              <div key={item.id} className="flex justify-between gap-6">
-                <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                  {item.quantity > 1 ? `Qty ${item.quantity} · ` : null}
-                  {item.title}
-                </span>
-                <span className="shrink-0">{formatUSD(item.price * item.quantity)}</span>
-              </div>
-            ))}
-          </div>
           <div className="flex justify-between">
             <span className="font-medium">Subtotal:</span>
             <span>{formatUSD(subtotal)}</span>
