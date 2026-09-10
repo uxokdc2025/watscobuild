@@ -13,6 +13,8 @@ import {
   Plus,
   Printer,
   ShieldCheck,
+  TriangleAlert,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -986,6 +988,7 @@ function OrderSummary({
   setConfirmed: (v: boolean) => void;
   onSaveQuote: () => void;
 }) {
+  const [handlingDismissed, setHandlingDismissed] = React.useState(false);
   return (
     <aside className="h-fit rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
       <div className="border-b px-5 py-4">
@@ -993,6 +996,24 @@ function OrderSummary({
         <p className="mt-1 text-sm text-muted-foreground">{items.length} items</p>
       </div>
       <div className="space-y-4 p-5">
+        {/* Review-only special-handling note — a dismissible alert directly under
+            the summary header, above the itemized list. */}
+        {showConfirm && !handlingDismissed ? (
+          <Alert variant="warning" className="pr-9">
+            <TriangleAlert aria-hidden="true" />
+            <AlertDescription>
+              Commercial rooftop equipment may require special handling and additional freight costs. Customer support will follow up.
+            </AlertDescription>
+            <button
+              type="button"
+              onClick={() => setHandlingDismissed(true)}
+              aria-label="Dismiss special handling notice"
+              className="absolute top-2.5 right-2.5 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            >
+              <X className="size-4" aria-hidden="true" />
+            </button>
+          </Alert>
+        ) : null}
         <div className="space-y-3 text-sm">
           {/* Itemized list — plain text rows (name → line total). A divider
               separates the products from the totals below. No thumbnails. */}
@@ -1056,16 +1077,6 @@ function OrderSummary({
           <ShieldCheck className="mr-1 inline size-4 text-in-stock" aria-hidden="true" />
           Your total is shown before payment details, with no surprise fees.
         </div>
-
-        {/* Review-only special-handling note — floats under the totals, above the
-            confirm gate + Place order. */}
-        {showConfirm ? (
-          <Alert variant="warning">
-            <AlertDescription>
-              Commercial rooftop equipment may require special handling and additional freight costs. Customer support will follow up.
-            </AlertDescription>
-          </Alert>
-        ) : null}
 
         {/* Confirm gate sits right above Place order, so the grey→blue is clear. */}
         {showConfirm ? (
