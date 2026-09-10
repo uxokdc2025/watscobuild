@@ -224,10 +224,11 @@ function OrderSummary({
   // Save-for-later is local demo state — toggles the label to confirm the save.
   const [saved, setSaved] = React.useState(false);
   return (
-    <aside className="h-fit rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
-      <div className="border-b px-5 py-4">
-        <h2 className="text-lg font-semibold">Order summary</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{count} items</p>
+    <aside className="h-fit overflow-hidden rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
+      <div className="border-b bg-muted/60 px-5 py-3">
+        <h2 className="text-base font-semibold">
+          Order Summary ({count} {count === 1 ? "Item" : "Items"})
+        </h2>
       </div>
       <div className="space-y-4 p-5">
         <div className="space-y-3 text-sm">
@@ -245,19 +246,19 @@ function OrderSummary({
             ))}
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Subtotal</span>
+            <span className="font-medium">Subtotal:</span>
             <span>{formatUSD(subtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Estimated shipping</span>
-            <span className="text-muted-foreground">Calculated at checkout</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Estimated tax</span>
+            <span className="font-medium">Estimated Tax:</span>
             <span>{formatUSD(tax)}</span>
           </div>
-          <div className="flex justify-between border-t pt-3 text-base font-bold">
-            <span>Total</span>
+          <div className="flex justify-between">
+            <span className="font-medium">Estimated Shipping:</span>
+            <span className="text-muted-foreground">Calculated at checkout</span>
+          </div>
+          <div className="flex justify-between pt-1 font-bold">
+            <span>Total:</span>
             <span>{formatUSD(total)}</span>
           </div>
           <p className="text-xs text-muted-foreground">Shipping and final tax are confirmed at checkout.</p>
