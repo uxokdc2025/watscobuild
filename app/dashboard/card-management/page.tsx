@@ -170,7 +170,7 @@ export default function CardManagementPage() {
                       current.filter((item) => item.id !== card.id),
                     )
                   }
-                  className="min-h-10 text-[13px] text-muted-foreground hover:text-destructive"
+                  className="min-h-10 text-[13px] text-destructive hover:text-destructive/80"
                 >
                   <Trash2 aria-hidden="true" className="size-4" /> Delete
                 </Button>

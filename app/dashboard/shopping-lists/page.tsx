@@ -300,7 +300,7 @@ export default function ShoppingListsPage() {
                       <Button variant="ghost" size="icon" aria-label={`Edit ${v.name}`}>
                         <Pencil size={18} />
                       </Button>
-                      <Button variant="ghost" size="icon" aria-label={`Delete ${v.name}`} className="ml-1">
+                      <Button variant="ghost" size="icon" aria-label={`Delete ${v.name}`} className="ml-1 text-destructive hover:text-destructive/80">
                         <Trash2 size={17} />
                       </Button>
                     </td>

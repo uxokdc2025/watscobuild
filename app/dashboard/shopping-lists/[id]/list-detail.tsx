@@ -507,6 +507,18 @@ function DetailRow({
               {product.qty > 0 ? "In stock" : "Out of stock"}
             </StockStatus>
             {product.replacement ? <ReplacementBadge /> : null}
+            {/* Remove sits in the item cluster, away from the price. */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="min-h-11 gap-1.5 px-0 text-destructive hover:bg-transparent hover:text-destructive/80"
+              aria-label={`Remove ${product.mfg}`}
+              onClick={onRemove}
+            >
+              <Trash2 className="size-4" />
+              Remove
+            </Button>
           </div>
         }
         actions={
@@ -521,28 +533,18 @@ function DetailRow({
                 Add
               </Button>
             </div>
-            <div className="flex items-center gap-3">
+            {product.replacement ? (
               <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label={`Remove ${product.mfg}`}
-                onClick={onRemove}
+                type="button"
+                variant="link"
+                size="sm"
+                className="h-auto px-0"
+                onClick={onViewSubstitutes}
               >
-                <Trash2 />
+                <Replace className="size-3.5" />
+                View substitutes
               </Button>
-              {product.replacement ? (
-                <Button
-                  type="button"
-                  variant="link"
-                  size="sm"
-                  className="h-auto px-0"
-                  onClick={onViewSubstitutes}
-                >
-                  <Replace className="size-3.5" />
-                  View substitutes
-                </Button>
-              ) : null}
-            </div>
+            ) : null}
           </div>
         }
       />
@@ -822,7 +824,7 @@ export function ListDetail({ id }: { id: string }) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="min-h-11 text-muted-foreground"
+                className="min-h-11 text-destructive hover:text-destructive/80"
                 disabled={selectedIds.length === 0}
                 onClick={() => selectedIds.forEach(removeRow)}
               >

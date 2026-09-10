@@ -28,7 +28,6 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
-  MapPin,
   MessageSquare,
   Navigation,
   Phone,
@@ -523,63 +522,49 @@ function BranchCard({
         selected ? "border-primary bg-primary/5" : "border-border hover:bg-muted"
       }`}
     >
-      {/* Top row — name left, availability count top-right. No check mark. */}
+      {/* Top row — branch name (black) left, availability count top-right. No
+          location icon: this is the shared branch card, kept lean. */}
       <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-start gap-2">
-          <MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-          <span className="text-sm font-semibold">{branch.name}</span>
-        </div>
+        <span className="min-w-0 text-sm font-semibold text-foreground">{branch.name}</span>
         {showStock && branch.qty != null ? (
           <span className={`shrink-0 text-sm font-semibold tabular-nums ${stockColor(branch.qty)}`}>
             {branch.qty} available
           </span>
         ) : null}
       </div>
-      {/* Body, aligned under the name (icon width + gap = pl-6). Store Hours
-          first, then distance + Get Directions on one line, then phone + Chat. */}
-      <div className="mt-2 space-y-2 pl-6">
-        <StoreHours />
-        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs">
-          <span className="tabular-nums text-muted-foreground">{branch.miles} mi away</span>
-          <span aria-hidden="true" className="text-muted-foreground">·</span>
-          <a href="#" className="inline-flex items-center gap-1 py-1 font-medium text-primary">
-            <Navigation className="size-3.5" />
-            Get Directions
-          </a>
+      {/* Body on the left (Store Hours, distance + Get Directions, phone + Chat);
+          the medium Select Store button bottom-aligns with the Chat row. */}
+      <div className="mt-2 flex items-end justify-between gap-3">
+        <div className="min-w-0 flex-1 space-y-2">
+          <StoreHours />
+          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs">
+            <span className="tabular-nums text-muted-foreground">{branch.miles} mi away</span>
+            <span aria-hidden="true" className="text-muted-foreground">·</span>
+            <a href="#" className="inline-flex items-center gap-1 py-1 font-medium text-primary">
+              <Navigation className="size-3.5" />
+              Get Directions
+            </a>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <a
+              href={`tel:${phone}`}
+              className="inline-flex items-center gap-1 py-1 font-medium text-primary"
+            >
+              <Phone className="size-3.5" />
+              {phone}
+            </a>
+            <a href="#" className="inline-flex items-center gap-1 py-1 font-medium text-primary">
+              <MessageSquare className="size-3.5" />
+              Chat
+            </a>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-          <a
-            href={`tel:${phone}`}
-            className="inline-flex items-center gap-1 py-1 font-medium text-primary"
-          >
-            <Phone className="size-3.5" />
-            {phone}
-          </a>
-          <a href="#" className="inline-flex items-center gap-1 py-1 font-medium text-primary">
-            <MessageSquare className="size-3.5" />
-            Chat
-          </a>
-        </div>
-      </div>
-      {/* Action — small button anchored bottom-right. Current store → disabled
-          "Current Store" in the same spot. ≥44px touch target via min-h-11. */}
-      <div className="mt-3 flex justify-end">
         {selected ? (
-          <Button
-            size="sm"
-            disabled
-            aria-label={`${branch.name}, current store`}
-            className="min-h-11"
-          >
+          <Button disabled aria-label={`${branch.name}, current store`} className="shrink-0">
             Current Store
           </Button>
         ) : (
-          <Button
-            size="sm"
-            onClick={onSelect}
-            aria-label={`Select ${branch.name} as your store`}
-            className="min-h-11"
-          >
+          <Button onClick={onSelect} aria-label={`Select ${branch.name} as your store`} className="shrink-0">
             Select Store
           </Button>
         )}

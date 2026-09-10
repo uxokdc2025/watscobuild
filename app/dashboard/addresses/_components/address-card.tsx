@@ -141,7 +141,7 @@ export function AddressCard(props: Props) {
           <Button
             variant="ghost"
             size="sm"
-            className="min-h-11 text-[13px] text-muted-foreground hover:text-destructive"
+            className="min-h-11 text-[13px] text-destructive hover:text-destructive/80"
             onClick={onRemove}
             aria-label={`Remove ${addr.label}`}
           >

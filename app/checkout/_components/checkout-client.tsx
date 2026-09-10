@@ -773,25 +773,18 @@ function OrderSummary({
         <p className="mt-1 text-sm text-muted-foreground">{items.length} items</p>
       </div>
       <div className="space-y-4 p-5">
-        {/* Itemized list — thumbnail, one-line name, qty, unit price only. No
-            description or secondary marketing text. */}
-        {items.map((item) => (
-          <div key={item.id} className="flex items-center gap-3">
-            <div className="grid size-12 shrink-0 place-items-center rounded-md bg-muted">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.image} alt="" className="max-h-full max-w-full object-contain" />
+        <div className="space-y-2 text-sm">
+          {/* Itemized list — plain text rows (name → line total), styled like the
+              summary rows below and flowing straight into Subtotal. No thumbnails. */}
+          {items.map((item) => (
+            <div key={item.id} className="flex justify-between gap-4">
+              <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                {item.quantity > 1 ? `Qty ${item.quantity} · ` : null}
+                {item.title}
+              </span>
+              <span className="shrink-0">{formatUSD(item.price * item.quantity)}</span>
             </div>
-            <p className="min-w-0 flex-1 text-sm font-medium line-clamp-1">{item.title}</p>
-            <div className="shrink-0 text-right">
-              <p className="text-xs text-muted-foreground">Qty {item.quantity}</p>
-              <p className="text-sm font-semibold">
-                {formatUSD(item.price)}
-                <span className="font-normal text-muted-foreground"> /ea</span>
-              </p>
-            </div>
-          </div>
-        ))}
-        <div className="space-y-2 border-t pt-4 text-sm">
+          ))}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatUSD(subtotal)}</span>
