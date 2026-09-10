@@ -1,23 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { Building2, ChevronDown, MapPin, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { BrandBranch, BrandCheckoutConfig, SwitchAccount } from "../_lib/brand-checkout";
-import { StoreFinderDrawer } from "./checkout-drawers";
+import type { BrandBranch, SwitchAccount } from "../_lib/brand-checkout";
 
 /* ───────────────────────── Field (DS Input + Label) ─────────────────────────
  * Local, self-contained copy so this step has no import cycle with the client. */
@@ -54,100 +46,65 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
 
 const MAX_NOTES = 2000;
 
-/** Step 1 — Order Details. Account leads, then branch, then the order-level
- *  fields (PO / job account / job name / special instructions) and the
- *  confirmation-email + notify-salesperson controls. All of this used to live in
- *  the Fulfillment step's header; the Fulfillment step is now the method only.
+/** Step 1 — Order Details. A single 2×2 grid — Account (clickable, opens the
+ *  switch drawer) and Job name on top; PO number and Order notes below — over the
+ *  confirmation-email + notify-salesperson controls. Branch is changed elsewhere
+ *  (via the account switcher), so it's no longer edited here; the notes helper
+ *  still names the receiving branch.
  *
  *  Account is passed in from the client (bound to the brand-checkout config for
  *  now). SEAM: the cart page's selected account should feed this via the same
  *  `account` prop once cart→checkout account hand-off is wired — that is the
  *  follow-up; nothing here reads the cart yet. */
 export function OrderDetailsStep({
-  brand,
   account,
   onSwitchAccount,
   branch,
-  branches,
-  onChangeBranch,
   po,
   setPo,
   poError,
-  jobAccount,
-  setJobAccount,
   jobName,
   setJobName,
   notes,
   setNotes,
 }: {
-  brand: BrandCheckoutConfig;
   account: SwitchAccount;
   onSwitchAccount: () => void;
   branch: BrandBranch;
-  branches: BrandBranch[];
-  onChangeBranch: (b: BrandBranch) => void;
   po: string;
   setPo: (v: string) => void;
   poError?: string;
-  jobAccount: string;
-  setJobAccount: (v: string) => void;
   jobName: string;
   setJobName: (v: string) => void;
   notes: string;
   setNotes: (v: string) => void;
 }) {
-  const [branchOpen, setBranchOpen] = React.useState(false);
-  // Job accounts are seeded from the brand's own "job" address group, so each
-  // brand offers only its real job sites.
-  const jobAccounts = brand.addresses.filter((a) => a.group === "job");
-
   return (
     <>
       <SectionHeading number="1" title="Order details" />
       <div className="space-y-5 p-5">
-        {/* Account — the first, most prominent element, rendered as a CLICKABLE
-            field: click to open the switch-account drawer and change it. Reflects
-            the account chosen on the cart page (bound to brand config for now). */}
-        <div className="space-y-2">
-          <Label htmlFor="account-field">Account</Label>
-          <button
-            id="account-field"
-            type="button"
-            onClick={onSwitchAccount}
-            aria-haspopup="dialog"
-            className="flex w-full items-center justify-between gap-3 rounded-md border bg-background px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-          >
-            <span className="flex min-w-0 items-center gap-2.5">
-              <Building2 className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        {/* Order-level fields — ONE 2×2 grid (single column on mobile), row-major:
+            Account (clickable) · Job name / PO number · Order notes. */}
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Account — a CLICKABLE field: click to open the switch-account drawer
+              and change it. Reflects the account chosen on the cart page (bound to
+              brand config for now). */}
+          <div className="space-y-2">
+            <Label htmlFor="account-field">Account</Label>
+            <button
+              id="account-field"
+              type="button"
+              onClick={onSwitchAccount}
+              aria-haspopup="dialog"
+              className="flex min-h-11 w-full items-center justify-between gap-3 rounded-md border bg-background px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            >
               <span className="min-w-0 truncate">
                 <span className="font-semibold">{account.name}</span>
                 <span className="text-muted-foreground"> · {account.detail}</span>
               </span>
-            </span>
-            <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-          </button>
-        </div>
-
-        {/* Current branch — Change reuses the real store-finder drawer. */}
-        <div className="flex flex-wrap items-start justify-between gap-3 rounded-md border p-4">
-          <div className="flex min-w-0 items-start gap-3">
-            <MapPin className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-            <div className="min-w-0">
-              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Current branch</p>
-              <p className="mt-1 font-semibold">{branch.name}</p>
-              <p className="text-sm text-muted-foreground">{branch.address}</p>
-            </div>
+              <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+            </button>
           </div>
-          <Button variant="outline" size="sm" onClick={() => setBranchOpen(true)}>
-            Change
-          </Button>
-        </div>
-
-        {/* Order-level fields — 2×2 grid (single column on mobile). Left column:
-            PO number over Job account. Right column: Job name over the compact
-            Order notes field. */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
 
           <Field
             id="job-name"
@@ -157,7 +114,9 @@ export function OrderDetailsStep({
             onChange={(e) => setJobName(e.target.value)}
           />
 
-          {/* Order notes — compact (rows=2), under PO in the left column. */}
+          <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
+
+          {/* Order notes — compact (rows=2). */}
           <div className="space-y-2">
             <div className="flex items-baseline justify-between gap-2">
               <Label htmlFor="order-notes">Order notes</Label>
@@ -176,34 +135,9 @@ export function OrderDetailsStep({
             />
             <p className="text-xs text-muted-foreground">Your branch, {branch.name}, will receive these.</p>
           </div>
-
-          {/* Job account — under Job name in the right column. */}
-          <div className="space-y-2">
-            <Label htmlFor="job-account">Job account</Label>
-            <Select value={jobAccount} onValueChange={setJobAccount}>
-              <SelectTrigger id="job-account" className="w-full">
-                <SelectValue placeholder="Select a job account" />
-              </SelectTrigger>
-              <SelectContent>
-                {jobAccounts.map((j) => (
-                  <SelectItem key={j.id} value={j.id}>
-                    {j.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
         </div>
 
         <OrderConfirmationExtras />
-
-        <StoreFinderDrawer
-          open={branchOpen}
-          onClose={() => setBranchOpen(false)}
-          branches={branches}
-          current={branch}
-          onSelect={onChangeBranch}
-        />
       </div>
     </>
   );

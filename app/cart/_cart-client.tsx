@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Building2,
+  Check,
   ChevronLeft,
   MapPin,
   Minus,
@@ -201,6 +202,8 @@ function OrderSummary({
   total: number;
   checkoutHref: string;
 }) {
+  // Save-for-later is local demo state — toggles the label to confirm the save.
+  const [saved, setSaved] = React.useState(false);
   return (
     <aside className="h-fit rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
       <div className="border-b px-5 py-4">
@@ -244,10 +247,25 @@ function OrderSummary({
           Review fulfillment, payment, and delivery on the next step — nothing is charged yet.
         </div>
 
-        {/* Button pair — secondary LEFT, primary RIGHT, equal width. */}
+        {/* Button pair — secondary LEFT (save for later), primary RIGHT, equal
+            width. Continue-shopping is covered by the "Back to shopping" crumb. */}
         <div className="grid grid-cols-2 gap-3">
-          <Button asChild variant="outline" size="sm" className="w-full">
-            <Link href={SHOP_HREF}>Continue shopping</Link>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full"
+            aria-pressed={saved}
+            onClick={() => setSaved(true)}
+          >
+            {saved ? (
+              <>
+                <Check className="size-4" aria-hidden="true" />
+                Cart saved
+              </>
+            ) : (
+              "Save cart"
+            )}
           </Button>
           <Button asChild size="sm" className="w-full">
             <Link href={checkoutHref}>Proceed to checkout</Link>

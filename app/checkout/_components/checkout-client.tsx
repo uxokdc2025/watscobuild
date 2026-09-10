@@ -197,9 +197,6 @@ export default function CheckoutClient({
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);
   const [po, setPo] = React.useState("PO-2048");
   const [job, setJob] = React.useState(cfg.seededJob);
-  const [jobAccount, setJobAccount] = React.useState(
-    (brand.addresses.find((a) => a.group === "job" && a.isDefault) ?? brand.addresses.find((a) => a.group === "job"))?.id ?? ""
-  );
   const [notes, setNotes] = React.useState("");
   const [poError, setPoError] = React.useState<string | undefined>();
   const [confirmed, setConfirmed] = React.useState(false);
@@ -357,17 +354,12 @@ export default function CheckoutClient({
           <section className="min-w-0 rounded-md border bg-background shadow-sm">
             {step === "details" ? (
               <OrderDetailsStep
-                brand={brand}
                 account={account}
                 onSwitchAccount={() => setAccountDrawerOpen(true)}
                 branch={branch}
-                branches={brand.branches}
-                onChangeBranch={changeBranch}
                 po={po}
                 setPo={setPo}
                 poError={poError}
-                jobAccount={jobAccount}
-                setJobAccount={setJobAccount}
                 jobName={job}
                 setJobName={setJob}
                 notes={notes}
