@@ -219,18 +219,20 @@ function OrderSummary({
         <p className="mt-1 text-sm text-muted-foreground">{count} items</p>
       </div>
       <div className="space-y-4 p-5">
-        <div className="space-y-2 text-sm">
-          {/* Itemized list — plain text rows (name → line total), styled like the
-              summary rows below and flowing straight into Subtotal. No thumbnails. */}
-          {lines.map((line) => (
-            <div key={line.id} className="flex justify-between gap-4">
-              <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                {line.quantity > 1 ? `Qty ${line.quantity} · ` : null}
-                {line.title}
-              </span>
-              <span className="shrink-0">{formatUSD(line.price * line.quantity)}</span>
-            </div>
-          ))}
+        <div className="space-y-3 text-sm">
+          {/* Itemized list — plain text rows (name → line total). A divider
+              separates the products from the totals below. No thumbnails. */}
+          <div className="space-y-2 border-b pb-3">
+            {lines.map((line) => (
+              <div key={line.id} className="flex justify-between gap-6">
+                <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                  {line.quantity > 1 ? `Qty ${line.quantity} · ` : null}
+                  {line.title}
+                </span>
+                <span className="shrink-0">{formatUSD(line.price * line.quantity)}</span>
+              </div>
+            ))}
+          </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatUSD(subtotal)}</span>

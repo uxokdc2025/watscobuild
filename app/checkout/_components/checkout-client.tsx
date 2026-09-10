@@ -437,6 +437,7 @@ export default function CheckoutClient({
                 addedCards={addedCards}
                 setAddedCards={setAddedCards}
                 onBack={() => setStep("fulfillment")}
+                onEditAccount={() => setAccountDrawerOpen(true)}
               />
             ) : null}
             {step === "review" ? (
@@ -528,6 +529,7 @@ function PaymentStep({
   addedCards,
   setAddedCards,
   onBack,
+  onEditAccount,
 }: {
   brand: BrandCheckoutConfig;
   account: SwitchAccount;
@@ -539,6 +541,7 @@ function PaymentStep({
   addedCards: CardOption[];
   setAddedCards: React.Dispatch<React.SetStateAction<CardOption[]>>;
   onBack: () => void;
+  onEditAccount: () => void;
 }) {
   const [cardDrawerOpen, setCardDrawerOpen] = React.useState(false);
   const [billingSame, setBillingSame] = React.useState(true);
@@ -557,7 +560,7 @@ function PaymentStep({
       <div className="space-y-5 p-5">
         {/* Account + billing header — fronted above the payment methods because
             switching the account changes who is billed. */}
-        <BillingSummary account={account} billingAddress={billingAddress} />
+        <BillingSummary account={account} billingAddress={billingAddress} onEdit={onEditAccount} />
 
         <RadioGroup value={payment} onValueChange={(v) => setPayment(v as Payment)} className="grid gap-3">
           <RadioCard value="terms" selected={payment === "terms"}>
@@ -635,13 +638,27 @@ function PaymentStep({
 function BillingSummary({
   account,
   billingAddress,
+  onEdit,
 }: {
   account: SwitchAccount;
   billingAddress?: BrandCheckoutConfig["addresses"][number];
+  onEdit: () => void;
 }) {
   return (
-    <div className="grid gap-4 rounded-md border bg-muted/30 p-4 sm:grid-cols-2">
-      <div className="min-w-0">
+    <div className="relative grid gap-4 rounded-md border bg-muted/30 p-4 sm:grid-cols-2">
+      {/* Last-minute edit — opens the switch-account drawer to change the account
+          (and its billing) right here in Payment. */}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        onClick={onEdit}
+        aria-label="Edit account and billing"
+        className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+      >
+        <Pencil className="size-3.5" />
+      </Button>
+      <div className="min-w-0 pr-8">
         <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Account</p>
         <p className="mt-1.5 font-semibold">{account.name}</p>
         <p className="text-sm text-muted-foreground">{account.detail}</p>
@@ -973,18 +990,20 @@ function OrderSummary({
         <p className="mt-1 text-sm text-muted-foreground">{items.length} items</p>
       </div>
       <div className="space-y-4 p-5">
-        <div className="space-y-2 text-sm">
-          {/* Itemized list — plain text rows (name → line total), styled like the
-              summary rows below and flowing straight into Subtotal. No thumbnails. */}
-          {items.map((item) => (
-            <div key={item.id} className="flex justify-between gap-4">
-              <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                {item.quantity > 1 ? `Qty ${item.quantity} · ` : null}
-                {item.title}
-              </span>
-              <span className="shrink-0">{formatUSD(item.price * item.quantity)}</span>
-            </div>
-          ))}
+        <div className="space-y-3 text-sm">
+          {/* Itemized list — plain text rows (name → line total). A divider
+              separates the products from the totals below. No thumbnails. */}
+          <div className="space-y-2 border-b pb-3">
+            {items.map((item) => (
+              <div key={item.id} className="flex justify-between gap-6">
+                <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                  {item.quantity > 1 ? `Qty ${item.quantity} · ` : null}
+                  {item.title}
+                </span>
+                <span className="shrink-0">{formatUSD(item.price * item.quantity)}</span>
+              </div>
+            ))}
+          </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatUSD(subtotal)}</span>
