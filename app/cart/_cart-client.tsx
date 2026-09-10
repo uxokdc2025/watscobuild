@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ProductListRow } from "@/components/ui/product-list-row";
+import { StockStatus } from "@/components/ui/label-badges";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import { getBrandCheckout } from "../checkout/_lib/brand-checkout";
 import { SwitchAccountDrawer } from "../checkout/_components/checkout-drawers";
@@ -120,17 +121,15 @@ function CartLineRow({
             {line.replacement ? (
               <>
                 <span aria-hidden="true" className="h-5 w-px bg-border" />
-                {/* "Replacement available" is itself a link that opens the drawer. */}
-                <Button
+                {/* DS StockStatus (amber dot + tone), made clickable to open the
+                    substitutes drawer — the component/colors stay design-system. */}
+                <button
                   type="button"
-                  variant="link"
-                  size="sm"
-                  className="h-auto gap-1.5 px-0 font-medium text-amber-600 hover:text-amber-700"
                   onClick={onViewSubstitutes}
+                  className="rounded-sm underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
-                  <span aria-hidden="true" className="inline-block size-2 rounded-full bg-amber-500" />
-                  Replacement available
-                </Button>
+                  <StockStatus tone="amber">Replacement available</StockStatus>
+                </button>
                 <Button
                   type="button"
                   variant="link"
