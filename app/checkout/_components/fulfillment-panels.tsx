@@ -21,6 +21,7 @@ import {
   type FulfillmentMethod,
 } from "./fulfillment-methods";
 import { DateField } from "./fulfillment-calendar";
+import { SummaryCard } from "./summary-card";
 import {
   AddAddressDrawer,
   AddressBookDrawer,
@@ -59,22 +60,15 @@ export function PickupPanel({
   const [open, setOpen] = React.useState(false);
   return (
     <div className="max-w-[440px] space-y-5">
-      <div className="space-y-2">
-        <p className="text-sm font-semibold">Pickup branch</p>
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-2.5">
-            <MapPin className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-            <div>
-              <p className="font-medium">{branch.name}</p>
-              <p className="text-sm text-muted-foreground">{branch.address}</p>
-              <p className="mt-1 text-xs font-medium text-in-stock">{branch.hours}</p>
-            </div>
-          </div>
-          <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-            Change
-          </Button>
-        </div>
-      </div>
+      <SummaryCard
+        label="Pickup branch"
+        labelIcon={<MapPin className="size-4 text-muted-foreground" aria-hidden="true" />}
+        cta={{ label: "Change", onClick: () => setOpen(true) }}
+      >
+        <p className="font-medium text-foreground">{branch.name}</p>
+        <p className="text-muted-foreground">{branch.address}</p>
+        <p className="text-xs font-medium text-in-stock">{branch.hours}</p>
+      </SummaryCard>
 
       <DateField
         id="pickup-date"

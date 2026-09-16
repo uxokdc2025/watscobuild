@@ -9,7 +9,6 @@ import {
   CreditCard,
   LockKeyhole,
   Package,
-  Pencil,
   Plus,
   Printer,
   ShieldCheck,
@@ -38,6 +37,7 @@ import {
 } from "./fulfillment";
 import { fmtDate } from "./fulfillment-calendar";
 import { CardMark } from "./card-mark";
+import { SummaryCard } from "./summary-card";
 import { OrderDetailsStep } from "./order-details-step";
 import { SwitchAccountDrawer, CreditCardDrawer } from "./checkout-drawers";
 import {
@@ -675,51 +675,6 @@ function BillingSummary({
         )}
         <p className="text-muted-foreground">{account.phone}</p>
       </SummaryCard>
-    </div>
-  );
-}
-
-/* ───────────────────────── Shared summary primitives ─────────────────────────
- * ONE boxed-card + edit pattern for every checkout summary (Review step cards and
- * the Payment billing summary). SummaryCard is a bordered box with an uppercase
- * muted label top-left, an optional Edit control top-right, and content beneath. */
-
-/** The shared Edit control: a DS tertiary button (foreground text, grey hover —
- *  never muted) with a pencil + "Edit". 44px min touch target; labelled per use. */
-function SummaryEditButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <Button
-      type="button"
-      variant="tertiary"
-      size="sm"
-      onClick={onClick}
-      aria-label={label}
-      className="absolute top-2.5 right-2.5 shrink-0 min-h-9"
-    >
-      <Pencil className="size-3.5" aria-hidden="true" />
-      Edit
-    </Button>
-  );
-}
-
-/** A uniform summary box: uppercase muted label top-left, optional Edit top-right,
- *  richer body below. `h-full` flex column so cards line up in a grid. */
-function SummaryCard({
-  label,
-  editLabel,
-  onEdit,
-  children,
-}: {
-  label: string;
-  editLabel?: string;
-  onEdit?: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="relative flex h-full flex-col rounded-md border bg-card p-4">
-      <p className="pr-14 text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</p>
-      {onEdit ? <SummaryEditButton label={editLabel ?? "Edit"} onClick={onEdit} /> : null}
-      <div className="mt-2 space-y-1 text-sm">{children}</div>
     </div>
   );
 }
