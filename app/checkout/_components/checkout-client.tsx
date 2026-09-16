@@ -591,7 +591,7 @@ function PaymentStep({
           </RadioCard>
           {payment === "card" ? (
             <div className="mt-1 rounded-md border bg-muted/30 p-5">
-              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-2 gap-3">
+              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-3 gap-3">
                 {cards.slice(0, 2).map((c) => (
                   <Label
                     key={c.id}
