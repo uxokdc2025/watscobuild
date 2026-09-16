@@ -1013,18 +1013,20 @@ function OrderSummary({
 
         {/* Sticky primary CTA — the strongest action, always reachable.
             "Save cart for later" lives on the cart page only, not in checkout. */}
-        <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
-          {primary.label}
-        </Button>
-        {showConfirm ? (
-          <button
-            type="button"
-            className="mx-auto mt-1 block text-sm font-medium text-primary hover:underline"
-            onClick={onSaveQuote}
-          >
-            Save quote
-          </button>
-        ) : null}
+        <div>
+          <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
+            {primary.label}
+          </Button>
+          {showConfirm ? (
+            <button
+              type="button"
+              onClick={onSaveQuote}
+              className="mx-auto mt-1.5 block text-sm font-medium text-primary hover:underline"
+            >
+              Save quote
+            </button>
+          ) : null}
+        </div>
       </div>
     </aside>
   );
