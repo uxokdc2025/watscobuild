@@ -112,7 +112,7 @@ function CalendarGrid({
         >
           <ChevronLeft className="size-4" />
         </Button>
-        <span className="text-sm font-semibold" aria-live="polite">
+        <span className="text-xs font-semibold" aria-live="polite">
           {view.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
         </span>
         <Button
@@ -126,14 +126,14 @@ function CalendarGrid({
           <ChevronRight className="size-4" />
         </Button>
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-muted-foreground">
+      <div className="grid grid-cols-7 gap-0.5 text-center text-[10px] font-medium text-muted-foreground">
         {WEEKDAYS.map((w) => (
-          <div key={w} className="py-1">
+          <div key={w} className="py-0.5">
             {w}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-0.5">
         {cells.map((date, i) => {
           if (!date) return <div key={`b-${i}`} />;
           const reason = disabledReason(date, earliest);
@@ -149,7 +149,7 @@ function CalendarGrid({
               aria-pressed={isSelected}
               onClick={() => onSelect(date)}
               className={cn(
-                "grid h-9 place-items-center rounded-md text-sm transition-colors",
+                "grid h-7 place-items-center rounded-md text-xs transition-colors",
                 reason
                   ? "cursor-not-allowed text-muted-foreground/40 line-through"
                   : "hover:bg-muted",
@@ -220,12 +220,12 @@ export function DateField({
         </PopoverTrigger>
         <PopoverContent align="start" className="w-auto p-0">
           <div className="flex">
-            <div className="border-r p-3">
+            <div className="w-56 border-r p-2">
               <CalendarGrid selected={pendingDate} earliest={earliest} onSelect={setPendingDate} />
             </div>
-            <div className="flex w-44 flex-col p-3">
-              <p className="mb-2 text-center text-sm font-semibold">Available times</p>
-              <div className="max-h-[260px] space-y-1.5 overflow-y-auto pr-1">
+            <div className="flex w-28 flex-col p-2">
+              <p className="mb-1.5 text-center text-xs font-semibold">Available times</p>
+              <div className="max-h-[200px] space-y-1 overflow-y-auto pr-1">
                 {TIME_SLOTS.map((slot) => (
                   <button
                     key={slot.label}
@@ -233,7 +233,7 @@ export function DateField({
                     disabled={slot.disabled}
                     onClick={() => setPendingTime(slot)}
                     className={cn(
-                      "w-full rounded-md border px-3 py-2 text-center text-sm font-medium transition-colors",
+                      "w-full rounded-md border px-2 py-1 text-center text-xs font-medium transition-colors",
                       slot.disabled
                         ? "cursor-not-allowed text-muted-foreground/40"
                         : pendingTime?.label === slot.label
@@ -247,24 +247,25 @@ export function DateField({
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between gap-2 border-t p-3">
+          <div className="flex items-center justify-between gap-2 border-t p-2">
             <div className="flex items-center gap-2">
-              <div className="rounded-md border px-3 py-1.5 text-sm">
+              <div className="rounded-md border px-2 py-1 text-xs">
                 {pendingDate
                   ? pendingDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
                   : "No date"}
               </div>
-              <Button type="button" variant="outline" size="sm" onClick={() => setPendingDate(firstSelectable(earliest))}>
+              <Button type="button" variant="outline" size="sm" className="h-7 px-2 text-xs" onClick={() => setPendingDate(firstSelectable(earliest))}>
                 Today
               </Button>
             </div>
             <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
+              <Button type="button" variant="outline" size="sm" className="h-7 px-2 text-xs" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
               <Button
                 type="button"
                 size="sm"
+                className="h-7 px-2 text-xs"
                 disabled={!pendingDate || !pendingTime}
                 onClick={() => {
                   if (pendingDate && pendingTime) {
