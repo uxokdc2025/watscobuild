@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { useCart, type CartItem } from "@/components/cart/cart-context";
 import { Button } from "@/components/ui/button";
@@ -355,11 +356,17 @@ export default function CheckoutClient({
       : `${methodLabel(method)} · ${branch.name}`;
     const paymentSummary = payment === "card" ? `Credit card •••• ${selectedCard.tail}` : paymentLabel(payment);
 
+    const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+    const goToStep = (target: Step) => {
+      setStep(target);
+      scrollToTop();
+    };
+
     const editButton = (target: Step, label: string) => (
       <button
         type="button"
         aria-label={label}
-        onClick={() => setStep(target)}
+        onClick={() => goToStep(target)}
         className="shrink-0 text-sm font-medium text-primary hover:underline"
       >
         Edit
@@ -410,27 +417,43 @@ export default function CheckoutClient({
             <div className="flex min-w-0 flex-col gap-4">
               {/* Order details */}
               <section className="rounded-md border bg-background shadow-sm" aria-label="Order details">
-                {currentAccordionIndex === 0 ? (
-                  <>
-                    <OrderDetailsStep
-                      account={account}
-                      onSwitchAccount={() => setAccountDrawerOpen(true)}
-                      branch={branch}
-                      po={po}
-                      setPo={setPo}
-                      poError={poError}
-                      jobName={job}
-                      setJobName={setJob}
-                      notes={notes}
-                      setNotes={setNotes}
-                    />
-                    <div className="flex justify-end border-t px-5 py-4">
-                      <Button size="sm" onClick={goToFulfillment}>
-                        Continue to fulfillment
-                      </Button>
-                    </div>
-                  </>
-                ) : currentAccordionIndex > 0 ? (
+                <AnimatePresence initial={false}>
+                  {currentAccordionIndex === 0 ? (
+                    <motion.div
+                      key="body"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <OrderDetailsStep
+                        account={account}
+                        onSwitchAccount={() => setAccountDrawerOpen(true)}
+                        branch={branch}
+                        po={po}
+                        setPo={setPo}
+                        poError={poError}
+                        jobName={job}
+                        setJobName={setJob}
+                        notes={notes}
+                        setNotes={setNotes}
+                      />
+                      <div className="flex justify-end border-t px-5 py-4">
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            goToFulfillment();
+                            if (po.trim()) scrollToTop();
+                          }}
+                        >
+                          Continue to fulfillment
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+                {currentAccordionIndex === 0 ? null : currentAccordionIndex > 0 ? (
                   completedHeader("1", "Order details", detailsSummary, "details")
                 ) : (
                   futureHeader("1", "Order details")
@@ -439,8 +462,16 @@ export default function CheckoutClient({
 
               {/* Fulfillment */}
               <section className="rounded-md border bg-background shadow-sm" aria-label="Fulfillment">
-                {currentAccordionIndex === 1 ? (
-                  <>
+                <AnimatePresence initial={false}>
+                  {currentAccordionIndex === 1 ? (
+                    <motion.div
+                      key="body"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
                     <SectionHeading number="2" title="Fulfillment" />
                     <FulfillmentSection
                       config={brand}
@@ -465,12 +496,14 @@ export default function CheckoutClient({
                       setDeliveryMethodChosen={setDeliveryMethodChosen}
                     />
                     <div className="flex justify-end border-t px-5 py-4">
-                      <Button size="sm" onClick={() => setStep("payment")}>
+                      <Button size="sm" onClick={() => goToStep("payment")}>
                         Continue to payment
                       </Button>
                     </div>
-                  </>
-                ) : currentAccordionIndex > 1 ? (
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+                {currentAccordionIndex === 1 ? null : currentAccordionIndex > 1 ? (
                   completedHeader("2", "Fulfillment", fulfillmentSummary, "fulfillment")
                 ) : (
                   futureHeader("2", "Fulfillment")
@@ -479,8 +512,16 @@ export default function CheckoutClient({
 
               {/* Payment */}
               <section className="rounded-md border bg-background shadow-sm" aria-label="Payment">
-                {currentAccordionIndex === 2 ? (
-                  <>
+                <AnimatePresence initial={false}>
+                  {currentAccordionIndex === 2 ? (
+                    <motion.div
+                      key="body"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
                     <PaymentStep
                       brand={brand}
                       account={account}
@@ -496,16 +537,59 @@ export default function CheckoutClient({
                       onEditAccount={() => setAccountDrawerOpen(true)}
                     />
                     <div className="flex justify-end border-t px-5 py-4">
-                      <Button size="sm" onClick={() => setStep("review")}>
+                      <Button size="sm" onClick={() => goToStep("review")}>
                         Continue to review
                       </Button>
                     </div>
-                  </>
-                ) : currentAccordionIndex > 2 ? (
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+                {currentAccordionIndex === 2 ? null : currentAccordionIndex > 2 ? (
                   completedHeader("3", "Payment", paymentSummary, "payment")
                 ) : (
                   futureHeader("3", "Payment")
                 )}
+              </section>
+
+              {/* Review */}
+              <section className="rounded-md border bg-background shadow-sm" aria-label="Review">
+                <AnimatePresence initial={false}>
+                  {currentAccordionIndex === 3 ? (
+                    <motion.div
+                      key="body"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <SectionHeading number="4" title="Review" />
+                      <div className="p-5">
+                        <div className="rounded-md border">
+                          <div className="border-b px-5 py-4 font-semibold">Items ({items.length})</div>
+                          {items.map((item) => (
+                            <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+                              <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+                                {item.image ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                                ) : null}
+                              </div>
+                              <div className="min-w-0">
+                                {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+                                <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                                {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+                              </div>
+                              <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+                              <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+                {currentAccordionIndex === 3 ? null : futureHeader("4", "Review")}
               </section>
             </div>
 
