@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CalendarDays, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -172,7 +172,6 @@ export function DateField({
   value,
   onSelect,
   earliest,
-  reason,
   required = false,
 }: {
   id: string;
@@ -210,7 +209,7 @@ export function DateField({
             id={id}
             type="button"
             aria-haspopup="dialog"
-            className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className="flex h-9 w-full max-w-[336px] items-center justify-between rounded-md border border-input bg-transparent px-3 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <span className={cn(value ? "text-foreground" : "text-muted-foreground")}>
               {value ? `${fmtDate(value)} · ${fmtTime(value)}` : "Select a date"}
@@ -282,12 +281,6 @@ export function DateField({
           </div>
         </PopoverContent>
       </Popover>
-      {reason ? (
-        <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-          <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-          <span>{reason}</span>
-        </p>
-      ) : null}
     </div>
   );
 }
