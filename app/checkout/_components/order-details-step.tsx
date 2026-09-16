@@ -46,8 +46,8 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
 
 const MAX_NOTES = 2000;
 
-/** Step 1 — Order Details. A single 2×2 grid — Account (clickable, opens the
- *  switch drawer) and Job name on top; PO number and Order notes below — over the
+/** Step 1 — Order Details. A single column — Account (clickable, opens the
+ *  switch drawer), PO number, Job name, Order notes — over the
  *  confirmation-email + notify-salesperson controls. Branch is changed elsewhere
  *  (via the account switcher), so it's no longer edited here; the notes helper
  *  still names the receiving branch.
@@ -83,9 +83,8 @@ export function OrderDetailsStep({
     <>
       <SectionHeading number="1" title="Order details" />
       <div className="space-y-5 p-5">
-        {/* Order-level fields — ONE 2×2 grid (single column on mobile), row-major:
-            Account (clickable) · Job name / PO number · Order notes. */}
-        <div className="grid gap-4 sm:grid-cols-2">
+        {/* Order-level fields — single column, full-width: Account · PO number · Job name · Order notes. */}
+        <div className="space-y-4">
           {/* Account — a CLICKABLE field: click to open the switch-account drawer
               and change it. Reflects the account chosen on the cart page (bound to
               brand config for now). */}
@@ -106,6 +105,8 @@ export function OrderDetailsStep({
             </button>
           </div>
 
+          <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
+
           <Field
             id="job-name"
             label="Job name"
@@ -114,9 +115,7 @@ export function OrderDetailsStep({
             onChange={(e) => setJobName(e.target.value)}
           />
 
-          <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
-
-          {/* Order notes — compact (rows=2). */}
+          {/* Order notes. */}
           <div className="space-y-2">
             <div className="flex items-baseline justify-between gap-2">
               <Label htmlFor="order-notes">Order notes</Label>
@@ -126,12 +125,11 @@ export function OrderDetailsStep({
             </div>
             <Textarea
               id="order-notes"
-              rows={2}
+              rows={4}
               value={notes}
               maxLength={MAX_NOTES}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Special instructions (e.g. call on arrival, gate code)"
-              className="min-h-0 resize-none"
             />
             <p className="text-xs text-muted-foreground">Your branch, {branch.name}, will receive these.</p>
           </div>
@@ -147,8 +145,9 @@ export function OrderDetailsStep({
  *  of these gate submit, so their state stays local to this step. */
 function OrderConfirmationExtras() {
   const [sendEmail, setSendEmail] = React.useState(true);
-  const [notifyRep, setNotifyRep] = React.useState(false);
+  const [notifyRep, setNotifyRep] = React.useState(true);
   const [recipients, setRecipients] = React.useState<string[]>([]);
+  const [repMessage, setRepMessage] = React.useState("");
 
   const addRecipient = () => setRecipients((r) => [...r, ""]);
   const removeRecipient = (index: number) => setRecipients((r) => r.filter((_, i) => i !== index));
@@ -156,52 +155,66 @@ function OrderConfirmationExtras() {
     setRecipients((r) => r.map((v, i) => (i === index ? value : v)));
 
   return (
-    <div className="space-y-3 rounded-md border bg-muted/30 p-4">
-      <Label className="flex items-start gap-3 text-sm font-normal">
-        <Checkbox checked={sendEmail} onCheckedChange={(v) => setSendEmail(v === true)} className="mt-0.5" />
-        <span>
-          <span className="block font-medium text-foreground">Send order confirmation email</span>
-          <span className="block text-xs text-muted-foreground">A copy of this order goes to your account email.</span>
-        </span>
-      </Label>
+    <div className="space-y-4 border-t pt-5">
+      <div className="space-y-2">
+        <Label className="flex items-start gap-3 text-sm font-normal">
+          <Checkbox checked={sendEmail} onCheckedChange={(v) => setSendEmail(v === true)} className="mt-0.5" />
+          <span>
+            <span className="block font-semibold text-foreground">Send order confirmation email</span>
+            <span className="block text-xs text-muted-foreground">A copy of this order goes to your account email.</span>
+          </span>
+        </Label>
 
-      {sendEmail ? (
-        <div className="space-y-2 pl-7">
-          {recipients.map((email, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setRecipient(index, e.target.value)}
-                placeholder="name@company.com"
-                aria-label={`Additional recipient ${index + 1}`}
-                className="h-9"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-sm"
-                onClick={() => removeRecipient(index)}
-                aria-label={`Remove recipient ${index + 1}`}
-              >
-                <Trash2 className="size-4" />
-              </Button>
-            </div>
-          ))}
-          <Button type="button" variant="outline" size="sm" onClick={addRecipient}>
-            <Plus className="size-4" />
-            {recipients.length ? "More" : "Add recipient"}
-          </Button>
-        </div>
-      ) : null}
+        {sendEmail ? (
+          <div className="space-y-2 pl-7">
+            {recipients.map((email, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setRecipient(index, e.target.value)}
+                  placeholder="name@company.com"
+                  aria-label={`Additional recipient ${index + 1}`}
+                  className="h-9"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  onClick={() => removeRecipient(index)}
+                  aria-label={`Remove recipient ${index + 1}`}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
+            ))}
+            <Button type="button" variant="outline" size="sm" onClick={addRecipient}>
+              <Plus className="size-4" />
+              {recipients.length ? "More" : "Add recipient"}
+            </Button>
+          </div>
+        ) : null}
+      </div>
 
-      <Label className="flex items-start gap-3 border-t pt-3 text-sm font-normal">
-        <Checkbox checked={notifyRep} onCheckedChange={(v) => setNotifyRep(v === true)} className="mt-0.5" />
-        <span>
-          <span className="block font-medium text-foreground">Notify your salesperson (Dana Whitfield)</span>
-          <span className="block text-xs text-muted-foreground">Send a heads-up to your assigned rep when this order is placed.</span>
-        </span>
-      </Label>
+      <div className="space-y-2 border-t pt-4">
+        <Label className="flex items-start gap-3 text-sm font-normal">
+          <Checkbox checked={notifyRep} onCheckedChange={(v) => setNotifyRep(v === true)} className="mt-0.5" />
+          <span className="block font-semibold text-foreground">Notify your salesperson (Dana Whitfield)</span>
+        </Label>
+
+        {notifyRep ? (
+          <div className="pl-7">
+            <Textarea
+              rows={2}
+              value={repMessage}
+              onChange={(e) => setRepMessage(e.target.value)}
+              placeholder="Send a heads-up to your assigned rep when this order is placed."
+              aria-label="Message to your salesperson"
+              className="min-h-0 resize-none"
+            />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
