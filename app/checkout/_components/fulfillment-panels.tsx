@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import type {
   BrandAddress,
@@ -26,14 +25,11 @@ import {
   AddAddressDrawer,
   AddressBookDrawer,
   AddressRow,
-  GROUP_LABEL,
-  GROUP_ORDER,
   StoreFinderDrawer,
 } from "./checkout-drawers";
 
-/* Fulfillment panels — the body of each segmented tab. Sections are separated by
- * hairline `border-t` rules (never nested bordered boxes) and packed into 2-col
- * grids to cut vertical height. */
+/* Fulfillment panels — the body of each segmented tab. Compact reference
+ * composition: narrow left column, vertically stacked, whitespace on the right. */
 
 /* ───────────────────────── Pickup panel ───────────────────────── */
 
@@ -62,39 +58,33 @@ export function PickupPanel({
 }) {
   const [open, setOpen] = React.useState(false);
   return (
-    <div className="space-y-5">
-      {/* Branch on its own line, Change button right-aligned with the branch
-          info; pickup date below in a narrower field. */}
-      <div className="space-y-5">
-        <div className="space-y-2">
-          <p className="text-sm font-semibold">Pickup branch</p>
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-2.5">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-              <div>
-                <p className="font-medium">{branch.name}</p>
-                <p className="text-sm text-muted-foreground">{branch.address}</p>
-                <p className="mt-1 text-xs font-medium text-in-stock">{branch.hours}</p>
-              </div>
+    <div className="max-w-[440px] space-y-5">
+      <div className="space-y-2">
+        <p className="text-sm font-semibold">Pickup branch</p>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-2.5">
+            <MapPin className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <div>
+              <p className="font-medium">{branch.name}</p>
+              <p className="text-sm text-muted-foreground">{branch.address}</p>
+              <p className="mt-1 text-xs font-medium text-in-stock">{branch.hours}</p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-              Change
-            </Button>
           </div>
-        </div>
-
-        <div className="max-w-[320px]">
-          <DateField
-            id="pickup-date"
-            label="Pickup date"
-            required
-            value={pickupDate}
-            onSelect={setPickupDate}
-            earliest={earliest}
-            reason={dateReason}
-          />
+          <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+            Change
+          </Button>
         </div>
       </div>
+
+      <DateField
+        id="pickup-date"
+        label="Pickup date"
+        required
+        value={pickupDate}
+        onSelect={setPickupDate}
+        earliest={earliest}
+        reason={dateReason}
+      />
 
       {/* Pickup add-on service (Baker Express) — a toggle, not a method. Separated
           by a hairline rule instead of its own bordered card. */}
@@ -115,10 +105,10 @@ export function PickupPanel({
   );
 }
 
-/* ───────────────────────── Delivery panel ───────────────────────── */
-
-/** Addresses shown inline per group before the "See all" drawer takes over. */
-const INLINE_PER_GROUP = 3;
+/* ───────────────────────── Delivery panel ─────────────────────────
+ * Compact reference composition: narrow left column, vertically stacked —
+ * Deliver to header + flat 3-up address row, New address below, requested
+ * date, plain method radios, alerts, modifiers. Wide whitespace on the right. */
 
 export function DeliveryPanel({
   deliveryMethods,
@@ -168,154 +158,121 @@ export function DeliveryPanel({
 
   return (
     <div className="space-y-5">
-      {outOfRadius ? (
-        <Alert variant="warning">
-          <TriangleAlert />
-          <AlertTitle>This address is outside the 150-mile delivery radius</AlertTitle>
-          <AlertDescription>
-            Truck delivery isn&apos;t available here. We&apos;ve set the method to Freight / LTL — a
-            carrier will quote the final rate.
-          </AlertDescription>
-        </Alert>
-      ) : null}
-
-      {/* Secondary delivery-method chooser — compact 2-col radios, not big cards. */}
-      {multiMethod ? (
-        <fieldset className="space-y-2.5">
-          <legend className="text-sm font-semibold">Delivery method</legend>
-          <RadioGroup
-            value={method}
-            onValueChange={(v) => onSelectMethod(v as FulfillmentMethod)}
-            className="grid gap-2 sm:grid-cols-2"
-            aria-label="Delivery method"
-          >
-            {deliveryMethods.map((id) => {
-              const meta = METHOD_META[id];
-              const { Icon } = meta;
-              const selected = id === method;
-              const rate = METHOD_RATE[id];
-              return (
-                <Label
-                  key={id}
-                  className={cn(
-                    "flex cursor-pointer items-center gap-2.5 rounded-md border p-3 transition-colors",
-                    selected ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
-                  )}
-                >
-                  <RadioGroupItem value={id} />
-                  <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                  <span className="min-w-0 flex-1 text-sm font-medium">{meta.label}</span>
-                  <span className="shrink-0 text-xs font-medium text-muted-foreground">
-                    {rate === 0 ? "Free" : formatUSD(rate)}
-                  </span>
-                </Label>
-              );
-            })}
-          </RadioGroup>
-        </fieldset>
-      ) : null}
-
-      {/* Address picker — grouped card grid (2-col), reusing the account card row. */}
-      <div className={cn("space-y-3", multiMethod && "border-t pt-5")}>
-        <div className="flex items-center justify-between">
+      {/* Deliver to header + flat 3-up address row (no group headings). */}
+      <div className="space-y-3">
+        <div className="flex max-w-[680px] items-center justify-between">
           <p className="text-sm font-semibold">Deliver to</p>
-          <div className="flex items-center gap-4">
-            <button type="button" onClick={() => setBookOpen(true)} className="text-sm font-medium text-primary hover:underline">
-              See all ({addresses.length})
-            </button>
-            <Button variant="outline" size="sm" onClick={() => setAddOpen(true)}>
-              <Plus className="size-4" />
-              New address
-            </Button>
-          </div>
+          <button type="button" onClick={() => setBookOpen(true)} className="text-sm font-medium text-primary hover:underline">
+            See all ({addresses.length})
+          </button>
         </div>
-        <RadioGroup value={addressId} onValueChange={onSelectAddress} className="gap-4">
-          {GROUP_ORDER.map((group) => {
-            const rows = addresses.filter((a) => a.group === group);
-            if (!rows.length) return null;
-            // The selected address always shows inline even if it sorts past the
-            // inline cap, so the current choice is never hidden behind "See all".
-            const inline = rows.slice(0, INLINE_PER_GROUP);
-            if (!inline.some((a) => a.id === addressId)) {
-              const chosen = rows.find((a) => a.id === addressId);
-              if (chosen) inline[inline.length - 1] = chosen;
-            }
-            const hidden = rows.length - inline.length;
-            return (
-              <div key={group} className="space-y-2">
-                <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                  {GROUP_LABEL[group]}
-                </p>
-                <div className="grid gap-2 sm:grid-cols-3">
-                  {inline.map((a) => (
-                    <AddressRow key={a.id} address={a} selected={a.id === addressId} />
-                  ))}
-                </div>
-                {hidden > 0 ? (
-                  <p className="text-xs text-muted-foreground">+{hidden} more in this group</p>
-                ) : null}
+        <RadioGroup value={addressId} onValueChange={onSelectAddress}>
+          <div className="grid grid-cols-3 gap-2 max-w-[680px]">
+            {addresses.slice(0, 3).map((a) => (
+              <AddressRow key={a.id} address={a} selected={a.id === addressId} />
+            ))}
+          </div>
+        </RadioGroup>
+        <Button variant="outline" size="sm" onClick={() => setAddOpen(true)}>
+          <Plus className="size-4" />
+          New address
+        </Button>
+      </div>
+
+      {/* Requested date appears only AFTER an address is chosen, stacked
+          left-aligned. Peirce's ship date is CSR-confirmed, not picked. */}
+      {selectedAddress ? (
+        <div className="max-w-[440px]">
+          {dateMode === "picker" ? (
+            <DateField
+              id="delivery-date"
+              label="Requested delivery date"
+              required
+              value={deliveryDate}
+              onSelect={setDeliveryDate}
+              earliest={earliest}
+              reason={dateReason}
+            />
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="delivery-date-csr">Ship date</Label>
+              <div
+                id="delivery-date-csr"
+                className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
+              >
+                Set by your CSR
               </div>
+              <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+                <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
+              </p>
+            </div>
+          )}
+        </div>
+      ) : null}
+
+      {/* Delivery methods UNDER the date as plain radio rows (multi-method
+          brands only); single-method brands show the estimated rate line. */}
+      {selectedAddress && multiMethod ? (
+        <RadioGroup
+          value={method}
+          onValueChange={(v) => onSelectMethod(v as FulfillmentMethod)}
+          className="max-w-[440px] gap-1.5"
+          aria-label="Delivery method"
+        >
+          {deliveryMethods.map((id) => {
+            const meta = METHOD_META[id];
+            const rate = METHOD_RATE[id];
+            return (
+              <Label key={id} className="flex items-center gap-2.5 py-1 text-sm">
+                <RadioGroupItem value={id} />
+                <span className="flex-1">{meta.label}</span>
+                <span className="text-xs text-muted-foreground">{rate === 0 ? "Free" : formatUSD(rate)}</span>
+              </Label>
             );
           })}
         </RadioGroup>
-      </div>
-
-      {/* Requested date + rate appear only AFTER an address is chosen, stacked
-          left-aligned. Peirce's ship date is CSR-confirmed, not picked. */}
-      {selectedAddress ? (
-        <div className="space-y-4 border-t pt-5">
-          <div className="max-w-[440px]">
-            {dateMode === "picker" ? (
-              <DateField
-                id="delivery-date"
-                label="Requested delivery date"
-                required
-                value={deliveryDate}
-                onSelect={setDeliveryDate}
-                earliest={earliest}
-                reason={dateReason}
-              />
-            ) : (
-              <div className="space-y-2">
-                <Label htmlFor="delivery-date-csr">Ship date</Label>
-                <div
-                  id="delivery-date-csr"
-                  className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
-                >
-                  Set by your CSR
-                </div>
-                <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-                  <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-                  <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
-                </p>
-              </div>
-            )}
-          </div>
-          <div className="max-w-[440px]">
-            <div className="space-y-2">
-              <Label htmlFor="rate-line">Estimated rate</Label>
-              <div
-                id="rate-line"
-                className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm font-medium"
-              >
-                {rateLabel}
-              </div>
+      ) : null}
+      {selectedAddress && !multiMethod ? (
+        <div className="max-w-[440px]">
+          <div className="space-y-2">
+            <Label htmlFor="rate-line">Estimated rate</Label>
+            <div
+              id="rate-line"
+              className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm font-medium"
+            >
+              {rateLabel}
             </div>
           </div>
         </div>
       ) : null}
 
-      <Alert variant="info">
-        <Info />
-        <AlertDescription>
-          We&apos;ll do our best to ship via your requested method and date. Availability depends on carrier
-          capacity and branch cutoff — we&apos;ll confirm before the order ships.
-        </AlertDescription>
-      </Alert>
+      {/* Warning + info messages beneath the delivery methods. */}
+      {outOfRadius ? (
+        <div className="max-w-[440px]">
+          <Alert variant="warning">
+            <TriangleAlert />
+            <AlertTitle>This address is outside the 150-mile delivery radius</AlertTitle>
+            <AlertDescription>
+              Truck delivery isn&apos;t available here. We&apos;ve set the method to Freight / LTL — a
+              carrier will quote the final rate.
+            </AlertDescription>
+          </Alert>
+        </div>
+      ) : null}
+      <div className="max-w-[440px]">
+        <Alert variant="info">
+          <Info />
+          <AlertDescription>
+            We&apos;ll do our best to ship via your requested method and date. Availability depends on carrier
+            capacity and branch cutoff — we&apos;ll confirm before the order ships.
+          </AlertDescription>
+        </Alert>
+      </div>
 
-      {/* Modifiers (Homans local delivery) — two full-width checkbox rows. */}
+      {/* Modifiers (Homans local delivery) — two checkbox rows, narrow column. */}
       {showModifiers ? (
-        <div className="space-y-3 border-t pt-5">
+        <div className="max-w-[440px] space-y-3 border-t pt-5">
           <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
             <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
             <span>

@@ -13,9 +13,9 @@ import { TODAY, addDays, firstSelectable, fmtDate } from "./fulfillment-calendar
 import { DeliveryPanel, PickupPanel } from "./fulfillment-panels";
 
 /* ───────────────────────── Fulfillment section ─────────────────────────
- * ONE card. The primary fork — Pickup vs Delivery — is a full-width segmented
- * tab (the DS Tabs primitive: role=tablist/tab/tabpanel, aria-selected, keyboard
- * arrows). WHICH concrete methods fill the Delivery side, and all demo data
+ * ONE card. The primary fork — Pickup vs Delivery — is a compact inline
+ * segmented tab (the DS Tabs primitive: role=tablist/tab/tabpanel, aria-selected,
+ * keyboard arrows). WHICH concrete methods fill the Delivery side, and all demo data
  * (branches, addresses), come from the per-brand config — so each brand shows
  * only its own methods with NO scattered `brand === "…"` branching.
  *
@@ -164,7 +164,7 @@ export function FulfillmentSection({
   return (
     <div className="p-5">
       <Tabs value={activeTab} onValueChange={onTabChange}>
-        <TabsList variant="segmented" className="min-h-11 w-full" aria-label="Fulfillment method">
+        <TabsList variant="segmented" className="min-h-10 w-fit" aria-label="Fulfillment method">
           <TabsTrigger value="pickup">
             <Store className="size-4" aria-hidden="true" />
             Pickup
