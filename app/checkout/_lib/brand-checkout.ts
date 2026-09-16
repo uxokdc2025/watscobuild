@@ -153,10 +153,10 @@ const PEIRCE: BrandCheckoutConfig = {
 const HOMANS: BrandCheckoutConfig = {
   key: "homans",
   brandName: "Homans Associates",
-  methods: ["pickup", "local"],
+  methods: ["pickup", "local", "freight"],
   deliveryDateMode: "picker",
   deliveryModifiers: true,
-  radiusRule: false,
+  radiusRule: true,
   account: { name: "Homans Associates", detail: "#509973 · Wilmington, MA" },
   switchAccounts: [
     { id: "hom509973", name: "Homans Associates", kind: "Account", detail: "#509973 · Wilmington, MA", phone: "(978) 658-5099", creditBalance: 138548.19, availableCredit: 761451.81 },
@@ -174,6 +174,7 @@ const HOMANS: BrandCheckoutConfig = {
   addresses: [
     { id: "hom-job-spring", group: "job", name: "Spring maintenance", contact: "Site super — Dave R.", line1: "88 Elm Street", city: "Woburn", state: "MA", zip: "01801", isDefault: true, phone: "(781) 555-0142" },
     { id: "hom-job-riverside", group: "job", name: "Riverside retrofit", contact: "GC — Meadow Mechanical", line1: "1200 Shore Road", city: "Portsmouth", state: "NH", zip: "03801", phone: "(603) 555-0188" },
+    { id: "hom-job-buffalo", group: "job", name: "Buffalo expansion", contact: "PM — North Region", line1: "500 Delaware Ave", city: "Buffalo", state: "NY", zip: "14202", phone: "(716) 555-0170", outOfRadius: true },
     { id: "hom-acct-main", group: "account", name: "Homans Associates — Main", line1: "230 Andover St", city: "Wilmington", state: "MA", zip: "01887", phone: "(978) 658-5099" },
     { id: "hom-acct-north", group: "account", name: "North warehouse", line1: "42 Industrial Way", city: "Andover", state: "MA", zip: "01810", phone: "(978) 470-4200" },
     { id: "hom-bill", group: "billing", name: "Accounts payable", line1: "PO Box 2200", city: "Woburn", state: "MA", zip: "01801", phone: "(781) 935-9000" },

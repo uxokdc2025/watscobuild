@@ -219,9 +219,17 @@ export function DeliveryPanel({
           {deliveryMethods.map((id) => {
             const meta = METHOD_META[id];
             const rate = METHOD_RATE[id];
+            const disabled = outOfRadius && id !== "freight";
             return (
-              <Label key={id} className="flex items-center gap-2.5 py-1 text-sm">
-                <RadioGroupItem value={id} />
+              <Label
+                key={id}
+                className={
+                  disabled
+                    ? "flex cursor-not-allowed items-center gap-2.5 py-1 text-sm text-muted-foreground/50"
+                    : "flex items-center gap-2.5 py-1 text-sm"
+                }
+              >
+                <RadioGroupItem value={id} disabled={disabled} />
                 <span className="flex-1">{meta.label}</span>
                 <span className="text-xs text-muted-foreground">{rate === 0 ? "Free" : formatUSD(rate)}</span>
               </Label>
@@ -245,20 +253,22 @@ export function DeliveryPanel({
       {outOfRadius ? (
         <Alert variant="warning">
           <TriangleAlert />
-          <AlertTitle>This address is outside the 150-mile delivery radius</AlertTitle>
+          <AlertTitle>Outside the 150-mile delivery radius</AlertTitle>
           <AlertDescription>
-            Truck delivery isn&apos;t available here. We&apos;ve set the method to Freight / LTL — a
-            carrier will quote the final rate.
+            The delivery address must be within 150 miles of the selected branch to qualify for Local
+            Delivery. We&apos;ve set the method to Freight / LTL — a carrier will quote the final rate.
           </AlertDescription>
         </Alert>
       ) : null}
-      <Alert variant="info">
-        <Info />
-        <AlertDescription>
-          We&apos;ll do our best to ship via your requested method and date. Availability depends on carrier
-          capacity and branch cutoff — we&apos;ll confirm before the order ships.
-        </AlertDescription>
-      </Alert>
+      {selectedAddress ? (
+        <Alert variant="info">
+          <Info />
+          <AlertDescription>
+            We&apos;ll do our best to ship via your requested method and date. Availability depends on carrier
+            capacity and branch cutoff — we&apos;ll confirm before the order ships.
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       {/* Modifiers (Homans local delivery) — two checkbox rows in the flow. */}
       {showModifiers ? (
