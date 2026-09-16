@@ -100,9 +100,9 @@ export function PickupPanel({
 }
 
 /* ───────────────────────── Delivery panel ─────────────────────────
- * Compact reference composition: narrow left column, vertically stacked —
- * Deliver to header + flat 3-up address row, New address below, requested
- * date, plain method radios, alerts, modifiers. Wide whitespace on the right. */
+ * One compact 600px column: Deliver to header (See all + New address),
+ * flat 3-up address row, requested date, method radios/rate, alerts,
+ * modifiers. Whitespace on the right. */
 
 export function DeliveryPanel({
   deliveryMethods,
@@ -151,58 +151,55 @@ export function DeliveryPanel({
   const multiMethod = deliveryMethods.length > 1;
 
   return (
-    <div className="space-y-5">
-      {/* Deliver to header + flat 3-up address row (no group headings). */}
-      <div className="space-y-3">
-        <div className="flex max-w-[680px] items-center justify-between">
-          <p className="text-sm font-semibold">Deliver to</p>
+    <div className="max-w-[600px] space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold">Deliver to</p>
+        <div className="flex items-center gap-2">
           <button type="button" onClick={() => setBookOpen(true)} className="text-sm font-medium text-primary hover:underline">
             See all ({addresses.length})
           </button>
+          <Button variant="outline" size="sm" onClick={() => setAddOpen(true)}>
+            <Plus className="size-4" />
+            New address
+          </Button>
         </div>
-        <RadioGroup value={addressId} onValueChange={onSelectAddress}>
-          <div className="grid grid-cols-3 gap-2 max-w-[680px]">
-            {addresses.slice(0, 3).map((a) => (
-              <AddressRow key={a.id} address={a} selected={a.id === addressId} />
-            ))}
-          </div>
-        </RadioGroup>
-        <Button variant="outline" size="sm" onClick={() => setAddOpen(true)}>
-          <Plus className="size-4" />
-          New address
-        </Button>
       </div>
+      <RadioGroup value={addressId} onValueChange={onSelectAddress}>
+        <div className="grid grid-cols-3 gap-2">
+          {addresses.slice(0, 3).map((a) => (
+            <AddressRow key={a.id} address={a} selected={a.id === addressId} />
+          ))}
+        </div>
+      </RadioGroup>
 
       {/* Requested date appears only AFTER an address is chosen, stacked
           left-aligned. Peirce's ship date is CSR-confirmed, not picked. */}
       {selectedAddress ? (
-        <div className="max-w-[440px]">
-          {dateMode === "picker" ? (
-            <DateField
-              id="delivery-date"
-              label="Requested delivery date"
-              required
-              value={deliveryDate}
-              onSelect={setDeliveryDate}
-              earliest={earliest}
-              reason={dateReason}
-            />
-          ) : (
-            <div className="space-y-2">
-              <Label htmlFor="delivery-date-csr">Ship date</Label>
-              <div
-                id="delivery-date-csr"
-                className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
-              >
-                Set by your CSR
-              </div>
-              <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-                <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-                <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
-              </p>
+        dateMode === "picker" ? (
+          <DateField
+            id="delivery-date"
+            label="Requested delivery date"
+            required
+            value={deliveryDate}
+            onSelect={setDeliveryDate}
+            earliest={earliest}
+            reason={dateReason}
+          />
+        ) : (
+          <div className="space-y-2">
+            <Label htmlFor="delivery-date-csr">Ship date</Label>
+            <div
+              id="delivery-date-csr"
+              className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
+            >
+              Set by your CSR
             </div>
-          )}
-        </div>
+            <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+              <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+              <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
+            </p>
+          </div>
+        )
       ) : null}
 
       {/* Delivery methods UNDER the date as plain radio rows (multi-method
@@ -211,7 +208,7 @@ export function DeliveryPanel({
         <RadioGroup
           value={method}
           onValueChange={(v) => onSelectMethod(v as FulfillmentMethod)}
-          className="max-w-[440px] gap-1.5"
+          className="gap-1.5"
           aria-label="Delivery method"
         >
           {deliveryMethods.map((id) => {
@@ -228,45 +225,39 @@ export function DeliveryPanel({
         </RadioGroup>
       ) : null}
       {selectedAddress && !multiMethod ? (
-        <div className="max-w-[440px]">
-          <div className="space-y-2">
-            <Label htmlFor="rate-line">Estimated rate</Label>
-            <div
-              id="rate-line"
-              className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm font-medium"
-            >
-              {rateLabel}
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="rate-line">Estimated rate</Label>
+          <div
+            id="rate-line"
+            className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm font-medium"
+          >
+            {rateLabel}
           </div>
         </div>
       ) : null}
 
       {/* Warning + info messages beneath the delivery methods. */}
       {outOfRadius ? (
-        <div className="max-w-[440px]">
-          <Alert variant="warning">
-            <TriangleAlert />
-            <AlertTitle>This address is outside the 150-mile delivery radius</AlertTitle>
-            <AlertDescription>
-              Truck delivery isn&apos;t available here. We&apos;ve set the method to Freight / LTL — a
-              carrier will quote the final rate.
-            </AlertDescription>
-          </Alert>
-        </div>
-      ) : null}
-      <div className="max-w-[440px]">
-        <Alert variant="info">
-          <Info />
+        <Alert variant="warning">
+          <TriangleAlert />
+          <AlertTitle>This address is outside the 150-mile delivery radius</AlertTitle>
           <AlertDescription>
-            We&apos;ll do our best to ship via your requested method and date. Availability depends on carrier
-            capacity and branch cutoff — we&apos;ll confirm before the order ships.
+            Truck delivery isn&apos;t available here. We&apos;ve set the method to Freight / LTL — a
+            carrier will quote the final rate.
           </AlertDescription>
         </Alert>
-      </div>
+      ) : null}
+      <Alert variant="info">
+        <Info />
+        <AlertDescription>
+          We&apos;ll do our best to ship via your requested method and date. Availability depends on carrier
+          capacity and branch cutoff — we&apos;ll confirm before the order ships.
+        </AlertDescription>
+      </Alert>
 
-      {/* Modifiers (Homans local delivery) — two checkbox rows, narrow column. */}
+      {/* Modifiers (Homans local delivery) — two checkbox rows in the flow. */}
       {showModifiers ? (
-        <div className="max-w-[440px] space-y-3 border-t pt-5">
+        <div className="space-y-2">
           <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
             <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
             <span>
