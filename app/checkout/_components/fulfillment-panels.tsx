@@ -25,7 +25,6 @@ import {
   AddAddressDrawer,
   AddressBookDrawer,
   AddressRow,
-  GROUP_LABEL,
   StoreFinderDrawer,
 } from "./checkout-drawers";
 
@@ -163,7 +162,7 @@ export function DeliveryPanel({
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b pb-3">
         <p className="text-sm font-semibold">Deliver to</p>
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => setBookOpen(true)} className="text-sm font-medium text-primary hover:underline">
@@ -175,7 +174,6 @@ export function DeliveryPanel({
           </Button>
         </div>
       </div>
-      <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{GROUP_LABEL[defaultGroup]}</p>
       <RadioGroup value={addressId} onValueChange={onSelectAddress}>
         <div className="grid grid-cols-4 gap-3">
           {groupAddresses.map((a) => (

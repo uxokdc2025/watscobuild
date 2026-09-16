@@ -125,7 +125,7 @@ export function AddressRow({ address, selected }: { address: BrandAddress; selec
   return (
     <Label
       className={cn(
-        "flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors",
+        "flex cursor-pointer items-start gap-3 rounded-md border px-3 py-5 transition-colors",
         selected ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
       )}
     >
