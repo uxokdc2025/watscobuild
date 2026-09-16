@@ -197,8 +197,12 @@ export default function CheckoutClient({
   // Fulfillment detail state is lifted here (FulfillmentSection is controlled) so
   // the Review "Fulfillment" card can show the requested date, delivery address,
   // and per-brand modifiers — not just the method.
-  const defaultAddressId = (brand.addresses.find((a) => a.isDefault) ?? brand.addresses[0]).id;
-  const [addressId, setAddressId] = React.useState(defaultAddressId);
+  // Progressive start: no delivery address is pre-selected — the Delivery
+  // panel gates date + method behind an address choice, so nothing below the
+  // address cards shows until the user picks one. The isDefault address keeps
+  // its "Default" badge (rendered from address.isDefault) without being
+  // selected. ReviewStep falls back for display only; state stays ''.
+  const [addressId, setAddressId] = React.useState("");
   const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
   const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
   const [split, setSplit] = React.useState<"complete" | "partial">("complete");
