@@ -31,6 +31,28 @@ export function fmtDate(d: Date): string {
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
 
+export function fmtTime(d: Date): string {
+  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
+export const TIME_SLOTS: { label: string; h: number; m: number; disabled?: boolean }[] = [
+  { label: "9:00 AM", h: 9, m: 0 },
+  { label: "9:30 AM", h: 9, m: 30 },
+  { label: "10:00 AM", h: 10, m: 0 },
+  { label: "10:30 AM", h: 10, m: 30 },
+  { label: "11:00 AM", h: 11, m: 0 },
+  { label: "11:30 AM", h: 11, m: 30 },
+  { label: "12:00 PM", h: 12, m: 0 },
+  { label: "12:30 PM", h: 12, m: 30 },
+  { label: "1:00 PM", h: 13, m: 0 },
+  { label: "1:30 PM", h: 13, m: 30, disabled: true },
+  { label: "2:00 PM", h: 14, m: 0 },
+  { label: "2:30 PM", h: 14, m: 30 },
+  { label: "3:00 PM", h: 15, m: 0 },
+  { label: "3:30 PM", h: 15, m: 30 },
+  { label: "4:00 PM", h: 16, m: 0 },
+];
+
 /** First actually-selectable date at/after `earliest` (skips closed days). */
 export function firstSelectable(earliest: Date): Date {
   let d = startOfDay(earliest);
@@ -163,13 +185,26 @@ export function DateField({
   required?: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
+  const [pendingDate, setPendingDate] = React.useState<Date | null>(null);
+  const [pendingTime, setPendingTime] = React.useState<(typeof TIME_SLOTS)[number] | null>(null);
+
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
+      setPendingDate(value);
+      setPendingTime(
+        value ? (TIME_SLOTS.find((s) => s.h === value.getHours() && s.m === value.getMinutes()) ?? null) : null
+      );
+    }
+    setOpen(next);
+  };
+
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>
         {label}
         {required ? <span className="ml-0.5 text-destructive">*</span> : null}
       </Label>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <button
             id={id}
@@ -178,20 +213,72 @@ export function DateField({
             className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <span className={cn(value ? "text-foreground" : "text-muted-foreground")}>
-              {value ? fmtDate(value) : "Select a date"}
+              {value ? `${fmtDate(value)} · ${fmtTime(value)}` : "Select a date"}
             </span>
             <CalendarDays className="size-4 text-muted-foreground" aria-hidden="true" />
           </button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-auto min-w-[18rem] p-3">
-          <CalendarGrid
-            selected={value}
-            earliest={earliest}
-            onSelect={(d) => {
-              onSelect(d);
-              setOpen(false);
-            }}
-          />
+        <PopoverContent align="start" className="w-auto p-0">
+          <div className="flex">
+            <div className="border-r p-3">
+              <CalendarGrid selected={pendingDate} earliest={earliest} onSelect={setPendingDate} />
+            </div>
+            <div className="flex w-44 flex-col p-3">
+              <p className="mb-2 text-center text-sm font-semibold">Available times</p>
+              <div className="max-h-[260px] space-y-1.5 overflow-y-auto pr-1">
+                {TIME_SLOTS.map((slot) => (
+                  <button
+                    key={slot.label}
+                    type="button"
+                    disabled={slot.disabled}
+                    onClick={() => setPendingTime(slot)}
+                    className={cn(
+                      "w-full rounded-md border px-3 py-2 text-center text-sm font-medium transition-colors",
+                      slot.disabled
+                        ? "cursor-not-allowed text-muted-foreground/40"
+                        : pendingTime?.label === slot.label
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "hover:bg-muted"
+                    )}
+                  >
+                    {slot.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between gap-2 border-t p-3">
+            <div className="flex items-center gap-2">
+              <div className="rounded-md border px-3 py-1.5 text-sm">
+                {pendingDate
+                  ? pendingDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                  : "No date"}
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={() => setPendingDate(firstSelectable(earliest))}>
+                Today
+              </Button>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                disabled={!pendingDate || !pendingTime}
+                onClick={() => {
+                  if (pendingDate && pendingTime) {
+                    const d = new Date(pendingDate);
+                    d.setHours(pendingTime.h, pendingTime.m, 0, 0);
+                    onSelect(d);
+                    setOpen(false);
+                  }
+                }}
+              >
+                Apply
+              </Button>
+            </div>
+          </div>
         </PopoverContent>
       </Popover>
       {reason ? (
