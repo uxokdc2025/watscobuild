@@ -174,11 +174,11 @@ export function FulfillmentSection({
     <div className="p-5">
       <Tabs value={activeTab} onValueChange={onTabChange}>
         <TabsList variant="segmented" className="min-h-11 w-fit" aria-label="Fulfillment method">
-          <TabsTrigger value="pickup">
+          <TabsTrigger value="pickup" className="px-6">
             <Store className="size-4" aria-hidden="true" />
             Pickup
           </TabsTrigger>
-          <TabsTrigger value="delivery">
+          <TabsTrigger value="delivery" className="px-6">
             <Truck className="size-4" aria-hidden="true" />
             Delivery
           </TabsTrigger>
