@@ -86,10 +86,10 @@ function CartLineRow({
   onRemove: () => void;
 }) {
   return (
-    // Evenly-weighted columns: image · product (2fr) · Qty (1fr) · price (1fr).
-    // The product column is capped so the title wraps to ~2 lines instead of
-    // stretching the row, and Qty/price spread evenly across the rest.
-    <div className="grid grid-cols-[64px_minmax(0,2.2fr)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+    // Fixed columns: image (64px) · product capped at 480px · Qty (1fr) · price (1fr).
+    // The product column cap stops the description stretching the row so the
+    // title wraps to ~2 lines, leaving whitespace before the fixed Qty column.
+    <div className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
       <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
         {line.image ? (
           // eslint-disable-next-line @next/next/no-img-element
