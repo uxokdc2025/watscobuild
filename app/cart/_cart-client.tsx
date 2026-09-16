@@ -89,7 +89,7 @@ function CartLineRow({
     // Evenly-weighted columns: image · product (2fr) · Qty (1fr) · price (1fr).
     // The product column is capped so the title wraps to ~2 lines instead of
     // stretching the row, and Qty/price spread evenly across the rest.
-    <div className="grid grid-cols-[64px_minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+    <div className="grid grid-cols-[64px_minmax(0,2.2fr)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
       <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
         {line.image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -103,7 +103,7 @@ function CartLineRow({
         <p className="line-clamp-2 text-sm font-semibold leading-snug">{line.title}</p>
         <p className="mt-1 truncate text-xs text-muted-foreground">Item: {line.item} · MFG: {line.mfg}</p>
       </div>
-      <div className="flex flex-col items-start gap-1.5">
+      <div className="flex flex-col items-center gap-1.5">
         <span className="text-xs text-muted-foreground">Qty</span>
         <QtyStepper value={line.quantity} onChange={onQty} label={line.mfg} />
       </div>
