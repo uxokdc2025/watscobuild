@@ -3,9 +3,10 @@
 import * as React from "react";
 import Link from "next/link";
 import {
-  Building2,
   Check,
   ChevronLeft,
+  House,
+  ImageOff,
   MapPin,
   Minus,
   Package,
@@ -17,7 +18,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ProductListRow } from "@/components/ui/product-list-row";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import { getBrandCheckout } from "../checkout/_lib/brand-checkout";
 import { SwitchAccountDrawer } from "../checkout/_components/checkout-drawers";
@@ -86,39 +86,41 @@ function CartLineRow({
   onRemove: () => void;
 }) {
   return (
-    <div className="border-b last:border-0">
-      <ProductListRow
-        image={line.image}
-        imageAlt={line.title}
-        brand={line.brand ?? "Watsco"}
-        title={<p className="text-sm font-semibold leading-snug">{line.title}</p>}
-        item={line.item}
-        mfg={line.mfg}
-        actions={
-          // Two right-hand columns beside the product: Qty stepper, then price.
-          // Remove is a plain blue link beneath the price (no meta action line).
-          <div className="flex items-start gap-8 sm:gap-10">
-            <div className="flex flex-col items-start gap-1.5">
-              <span className="text-xs text-muted-foreground">Qty</span>
-              <QtyStepper value={line.quantity} onChange={onQty} label={line.mfg} />
-            </div>
-            <div className="flex flex-col items-start gap-0.5 sm:items-end">
-              <span className="text-base font-semibold">{formatUSD(line.price * line.quantity)}</span>
-              <span className="text-xs text-muted-foreground">{formatUSD(line.price)} / each</span>
-              <Button
-                type="button"
-                variant="link"
-                size="sm"
-                className="mt-1 h-auto px-0"
-                aria-label={`Remove ${line.mfg}`}
-                onClick={onRemove}
-              >
-                Remove
-              </Button>
-            </div>
-          </div>
-        }
-      />
+    // Evenly-spaced columns: image · product · Qty · price. The product column
+    // truncates (title + item/mfg on one line each) so rows stay compact and
+    // the Qty/price columns line up across every row.
+    <div className="grid grid-cols-[64px_minmax(0,1fr)_auto_auto] items-center gap-x-6 border-b p-4 last:border-0 sm:gap-x-10">
+      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+        {line.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={line.image} alt={line.title} loading="lazy" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+        ) : (
+          <ImageOff className="size-6 opacity-40" aria-hidden="true" />
+        )}
+      </div>
+      <div className="min-w-0">
+        <p className="truncate text-xs font-medium text-primary">{line.brand ?? "Watsco"}</p>
+        <p className="truncate text-sm font-semibold leading-snug">{line.title}</p>
+        <p className="mt-1 truncate text-xs text-muted-foreground">Item: {line.item} · MFG: {line.mfg}</p>
+      </div>
+      <div className="flex flex-col items-start gap-1.5">
+        <span className="text-xs text-muted-foreground">Qty</span>
+        <QtyStepper value={line.quantity} onChange={onQty} label={line.mfg} />
+      </div>
+      <div className="flex flex-col items-end gap-0.5 text-right">
+        <span className="text-base font-semibold">{formatUSD(line.price * line.quantity)}</span>
+        <span className="text-xs text-muted-foreground">{formatUSD(line.price)} / each</span>
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          className="mt-1 h-auto px-0"
+          aria-label={`Remove ${line.mfg}`}
+          onClick={onRemove}
+        >
+          Remove
+        </Button>
+      </div>
     </div>
   );
 }
@@ -144,18 +146,19 @@ function AccountContextRow({
   const current = accounts.find((a) => a.id === accountId) ?? accounts[0];
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
+    <div className="flex items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
       <div className="flex min-w-0 items-center gap-3">
-        <Building2 className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <House className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
         <div className="min-w-0">
-          <p className="font-semibold">{current.name}</p>
-          <p className="text-muted-foreground">
-            {current.detail} · {branch.name}
+          <p className="text-xs text-muted-foreground">Your order will be placed at:</p>
+          <p className="truncate">
+            <span className="font-semibold">{current.name}</span>
+            <span className="text-muted-foreground"> · {branch.name} · {branch.address}</span>
           </p>
         </div>
       </div>
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        Switch account
+      <Button variant="link" size="sm" className="h-auto shrink-0 px-0" onClick={() => setOpen(true)}>
+        Change
       </Button>
       <SwitchAccountDrawer
         open={open}
@@ -327,25 +330,26 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
               ) : null}
             </div>
 
-            <div className="mt-3">
-              <AccountContextRow brandKey={brandKey} accountId={accountId} onSelectAccount={setAccountId} />
-            </div>
-
-            <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-              <section className="min-w-0 rounded-md border bg-background shadow-sm">
-                <div className="border-b px-5 py-4 font-semibold">Items ({lines.length})</div>
-                {/* Long carts scroll their own container so the summary stays put. */}
-                <div className="max-h-[70svh] overflow-y-auto">
-                  {lines.map((l) => (
-                    <CartLineRow
-                      key={l.id}
-                      line={l}
-                      onQty={(next) => setQty(l.id, next)}
-                      onRemove={() => removeLine(l.id)}
-                    />
-                  ))}
-                </div>
-              </section>
+            {/* Left column carries the account context + Items; the Order Summary
+                sits in the right column and rises to align with the account row. */}
+            <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+              <div className="min-w-0 space-y-4">
+                <AccountContextRow brandKey={brandKey} accountId={accountId} onSelectAccount={setAccountId} />
+                <section className="rounded-md border bg-background shadow-sm">
+                  <div className="border-b px-5 py-4 font-semibold">Items ({lines.length})</div>
+                  {/* Long carts scroll their own container so the summary stays put. */}
+                  <div className="max-h-[70svh] overflow-y-auto">
+                    {lines.map((l) => (
+                      <CartLineRow
+                        key={l.id}
+                        line={l}
+                        onQty={(next) => setQty(l.id, next)}
+                        onRemove={() => removeLine(l.id)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              </div>
 
               <OrderSummary count={count} subtotal={subtotal} tax={tax} total={total} checkoutHref={checkoutHref} />
             </div>

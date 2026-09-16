@@ -253,7 +253,7 @@ function BranchFilterSort({
               onClick={() => setInStockOnly(value)}
               className={
                 active
-                  ? "rounded-[5px] bg-background px-3 py-1 text-foreground shadow-sm transition-colors"
+                  ? "rounded-[5px] bg-primary px-3 py-1 text-primary-foreground shadow-sm transition-colors"
                   : "rounded-[5px] px-3 py-1 text-muted-foreground transition-colors hover:text-foreground"
               }
             >
