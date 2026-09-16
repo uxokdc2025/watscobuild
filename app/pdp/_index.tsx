@@ -515,6 +515,12 @@ export default function PdpMasterPage() {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="sm">
+                  <Link href="/checkout/v2?demo=1">
+                    Checkout — Progressive (v2)
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
                   <Link href="/cart?demo=1">
                     Cart
                     <ArrowUpRight className="size-3.5" />

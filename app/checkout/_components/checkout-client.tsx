@@ -149,6 +149,7 @@ export default function CheckoutClient({
   demo = false,
   brandKey = "homans",
   initialAccountId,
+  variant = "tabs",
 }: {
   scenario?: CheckoutCase;
   demo?: boolean;
@@ -156,6 +157,9 @@ export default function CheckoutClient({
   /** Account id handed off from the cart page (?account=…); falls back to the
    *  brand default when absent or unknown for this brand. */
   initialAccountId?: string;
+  /** Layout variant: 'tabs' is the existing tabbed checkout (v1, unchanged);
+   *  'accordion' is the vertical progressive checkout (v2). */
+  variant?: "tabs" | "accordion";
 }) {
   const cfg = resolveScenario(scenario);
   const brand = getBrandCheckout(brandKey);
@@ -335,6 +339,207 @@ export default function CheckoutClient({
         : step === "payment"
           ? { label: "Continue to review", onClick: () => setStep("review"), disabled: payment === "terms" && account.availableCredit != null && total > account.availableCredit }
           : { label: "Place order", onClick: () => setSubmitted(true), disabled: handlingBlocks };
+
+  /* ── Accordion (v2) progressive layout — reuses the SAME state, handlers,
+   *    and step components as v1. v1's return below is unchanged. ── */
+  if (variant === "accordion") {
+    const accordionIndex: Record<Step, number> = { details: 0, fulfillment: 1, payment: 2, review: 3 };
+    const currentAccordionIndex = accordionIndex[step];
+    const deliveryAddress =
+      brand.addresses.find((a) => a.id === addressId) ??
+      brand.addresses.find((a) => a.isDefault) ??
+      brand.addresses[0];
+    const detailsSummary = `${account.name} · PO ${po || "—"}`;
+    const fulfillmentSummary = isDeliveryMethod(method)
+      ? `${methodLabel(method)} · ${deliveryAddress?.name ?? ""}`
+      : `${methodLabel(method)} · ${branch.name}`;
+    const paymentSummary = payment === "card" ? `Credit card •••• ${selectedCard.tail}` : paymentLabel(payment);
+
+    const editButton = (target: Step, label: string) => (
+      <button
+        type="button"
+        aria-label={label}
+        onClick={() => setStep(target)}
+        className="shrink-0 text-sm font-medium text-primary hover:underline"
+      >
+        Edit
+      </button>
+    );
+
+    const futureHeader = (number: string, title: string) => (
+      <div className="flex items-center justify-between gap-3 px-5 py-4">
+        <div className="flex items-center gap-3">
+          <span className="grid size-7 place-items-center rounded-full bg-muted text-xs font-bold text-muted-foreground">{number}</span>
+          <h2 className="text-lg font-semibold text-muted-foreground">{title}</h2>
+        </div>
+      </div>
+    );
+
+    const completedHeader = (number: string, title: string, summary: string, target: Step) => (
+      <div className="flex items-center justify-between gap-3 px-5 py-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{number}</span>
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold">{title}</h2>
+            <p className="truncate text-sm text-muted-foreground">{summary}</p>
+          </div>
+        </div>
+        {editButton(target, `Edit ${title}`)}
+      </div>
+    );
+
+    return (
+      <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
+        <div className="mx-auto max-w-[var(--layout-max-width)]">
+          <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
+            <ChevronLeft className="size-4" aria-hidden="true" />
+            Back to cart
+          </Link>
+
+          <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <LockKeyhole className="size-4" aria-hidden="true" />
+              Secure checkout
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="flex min-w-0 flex-col gap-4">
+              {/* Order details */}
+              <section className="rounded-md border bg-background shadow-sm" aria-label="Order details">
+                {currentAccordionIndex === 0 ? (
+                  <>
+                    <OrderDetailsStep
+                      account={account}
+                      onSwitchAccount={() => setAccountDrawerOpen(true)}
+                      branch={branch}
+                      po={po}
+                      setPo={setPo}
+                      poError={poError}
+                      jobName={job}
+                      setJobName={setJob}
+                      notes={notes}
+                      setNotes={setNotes}
+                    />
+                    <div className="flex justify-end border-t px-5 py-4">
+                      <Button size="sm" onClick={goToFulfillment}>
+                        Continue to fulfillment
+                      </Button>
+                    </div>
+                  </>
+                ) : currentAccordionIndex > 0 ? (
+                  completedHeader("1", "Order details", detailsSummary, "details")
+                ) : (
+                  futureHeader("1", "Order details")
+                )}
+              </section>
+
+              {/* Fulfillment */}
+              <section className="rounded-md border bg-background shadow-sm" aria-label="Fulfillment">
+                {currentAccordionIndex === 1 ? (
+                  <>
+                    <SectionHeading number="2" title="Fulfillment" />
+                    <FulfillmentSection
+                      config={brand}
+                      method={method}
+                      setMethod={setMethod}
+                      availabilityConstraint={cfg.availabilityConstraint}
+                      branch={branch}
+                      onChangeBranch={changeBranch}
+                      addressId={addressId}
+                      setAddressId={setAddressId}
+                      pickupDate={pickupDate}
+                      setPickupDate={setPickupDate}
+                      deliveryDate={deliveryDate}
+                      setDeliveryDate={setDeliveryDate}
+                      split={split}
+                      setSplit={setSplit}
+                      liftgate={liftgate}
+                      setLiftgate={setLiftgate}
+                      expressOn={expressOn}
+                      setExpressOn={setExpressOn}
+                      deliveryMethodChosen={deliveryMethodChosen}
+                      setDeliveryMethodChosen={setDeliveryMethodChosen}
+                    />
+                    <div className="flex justify-end border-t px-5 py-4">
+                      <Button size="sm" onClick={() => setStep("payment")}>
+                        Continue to payment
+                      </Button>
+                    </div>
+                  </>
+                ) : currentAccordionIndex > 1 ? (
+                  completedHeader("2", "Fulfillment", fulfillmentSummary, "fulfillment")
+                ) : (
+                  futureHeader("2", "Fulfillment")
+                )}
+              </section>
+
+              {/* Payment */}
+              <section className="rounded-md border bg-background shadow-sm" aria-label="Payment">
+                {currentAccordionIndex === 2 ? (
+                  <>
+                    <PaymentStep
+                      brand={brand}
+                      account={account}
+                      payment={payment}
+                      total={total}
+                      setPayment={setPayment}
+                      cards={cards}
+                      cardId={paymentCardId}
+                      setCardId={setPaymentCardId}
+                      addedCards={addedCards}
+                      setAddedCards={setAddedCards}
+                      onBack={() => setStep("fulfillment")}
+                      onEditAccount={() => setAccountDrawerOpen(true)}
+                    />
+                    <div className="flex justify-end border-t px-5 py-4">
+                      <Button size="sm" onClick={() => setStep("review")}>
+                        Continue to review
+                      </Button>
+                    </div>
+                  </>
+                ) : currentAccordionIndex > 2 ? (
+                  completedHeader("3", "Payment", paymentSummary, "payment")
+                ) : (
+                  futureHeader("3", "Payment")
+                )}
+              </section>
+            </div>
+
+            <OrderSummary
+              items={items}
+              subtotal={subtotal}
+              discount={discount}
+              tax={tax}
+              shipping={shipping}
+              total={total}
+              primary={{ label: "Place order", onClick: () => setSubmitted(true), disabled: step !== "review" }}
+              coupon={coupon}
+              setCoupon={setCoupon}
+              appliedCoupon={appliedCoupon}
+              onApplyCoupon={() => coupon.trim() && setAppliedCoupon(coupon.trim().toUpperCase())}
+              showConfirm
+              saveQuoteDisabled={step !== "review"}
+              onSaveQuote={() => toast.success("Quote saved — find it under Quotes in your account.")}
+            />
+          </div>
+        </div>
+
+        <SwitchAccountDrawer
+          open={accountDrawerOpen}
+          onClose={() => setAccountDrawerOpen(false)}
+          accounts={accounts}
+          currentId={accountId}
+          defaultId={defaultAccountId}
+          onSelect={setAccountId}
+          onSetDefault={setDefaultAccountId}
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
@@ -917,6 +1122,7 @@ function OrderSummary({
   appliedCoupon,
   onApplyCoupon,
   showConfirm,
+  saveQuoteDisabled = false,
   onSaveQuote,
 }: {
   items: CartItem[];
@@ -931,6 +1137,7 @@ function OrderSummary({
   appliedCoupon: string | null;
   onApplyCoupon: () => void;
   showConfirm: boolean;
+  saveQuoteDisabled?: boolean;
   onSaveQuote: () => void;
 }) {
   const [handlingDismissed, setHandlingDismissed] = React.useState(false);
@@ -1021,7 +1228,11 @@ function OrderSummary({
             <button
               type="button"
               onClick={onSaveQuote}
-              className="mx-auto mt-1.5 block text-sm font-medium text-primary hover:underline"
+              disabled={saveQuoteDisabled}
+              className={cn(
+                "mx-auto mt-1.5 block text-sm font-medium",
+                saveQuoteDisabled ? "text-muted-foreground" : "text-primary hover:underline"
+              )}
             >
               Save quote
             </button>
