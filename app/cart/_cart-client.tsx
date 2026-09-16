@@ -10,23 +10,18 @@ import {
   Minus,
   Package,
   Plus,
-  Replace,
   ShieldCheck,
-  Trash2,
   TriangleAlert,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ProductListRow } from "@/components/ui/product-list-row";
-import { StockStatus } from "@/components/ui/label-badges";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import { getBrandCheckout } from "../checkout/_lib/brand-checkout";
 import { SwitchAccountDrawer } from "../checkout/_components/checkout-drawers";
-import { SubstitutesDrawer } from "./_substitutes-drawer";
-import { DEMO_CART, type AltProduct, type CartLine } from "./_cart-data";
+import { DEMO_CART, type CartLine } from "./_cart-data";
 
 const SHOP_HREF = "/search?q=blower%20motor&signedin=1";
 
@@ -85,12 +80,10 @@ function CartLineRow({
   line,
   onQty,
   onRemove,
-  onViewSubstitutes,
 }: {
   line: CartLine;
   onQty: (next: number) => void;
   onRemove: () => void;
-  onViewSubstitutes: () => void;
 }) {
   return (
     <div className="border-b last:border-0">
@@ -101,53 +94,28 @@ function CartLineRow({
         title={<p className="text-sm font-semibold leading-snug">{line.title}</p>}
         item={line.item}
         mfg={line.mfg}
-        meta={
-          // Remove sits in the item cluster (left column), away from the price;
-          // a vertical rule separates it from the substitute actions so Remove
-          // isn't clicked by accident.
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="min-h-11 gap-1.5 px-0 text-destructive hover:bg-transparent hover:text-destructive/80"
-              aria-label={`Remove ${line.mfg}`}
-              onClick={onRemove}
-            >
-              <Trash2 className="size-4" />
-              Remove
-            </Button>
-            {line.replacement ? (
-              <>
-                <span aria-hidden="true" className="h-5 w-px bg-border" />
-                {/* DS StockStatus (amber dot + tone), made clickable to open the
-                    substitutes drawer — the component/colors stay design-system. */}
-                <button
-                  type="button"
-                  onClick={onViewSubstitutes}
-                  className="rounded-sm underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-                >
-                  <StockStatus tone="amber">Replacement available</StockStatus>
-                </button>
-                <Button
-                  type="button"
-                  variant="link"
-                  size="sm"
-                  className="h-auto gap-1.5 px-0"
-                  onClick={onViewSubstitutes}
-                >
-                  <Replace className="size-3.5" />
-                  View substitutes
-                </Button>
-              </>
-            ) : null}
-          </div>
-        }
         actions={
-          <div className="flex w-full flex-col items-start gap-2.5 sm:w-auto sm:items-end">
-            <span className="text-xs text-muted-foreground">{formatUSD(line.price)} / each</span>
-            <QtyStepper value={line.quantity} onChange={onQty} label={line.mfg} />
-            <span className="text-base font-semibold">{formatUSD(line.price * line.quantity)}</span>
+          // Two right-hand columns beside the product: Qty stepper, then price.
+          // Remove is a plain blue link beneath the price (no meta action line).
+          <div className="flex items-start gap-8 sm:gap-10">
+            <div className="flex flex-col items-start gap-1.5">
+              <span className="text-xs text-muted-foreground">Qty</span>
+              <QtyStepper value={line.quantity} onChange={onQty} label={line.mfg} />
+            </div>
+            <div className="flex flex-col items-start gap-0.5 sm:items-end">
+              <span className="text-base font-semibold">{formatUSD(line.price * line.quantity)}</span>
+              <span className="text-xs text-muted-foreground">{formatUSD(line.price)} / each</span>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                className="mt-1 h-auto px-0"
+                aria-label={`Remove ${line.mfg}`}
+                onClick={onRemove}
+              >
+                Remove
+              </Button>
+            </div>
           </div>
         }
       />
@@ -298,9 +266,8 @@ function EmptyCart() {
 export default function CartClient({ brandKey = "homans" }: { brandKey?: string }) {
   const brand = getBrandCheckout(brandKey);
   const [lines, setLines] = React.useState<CartLine[]>(DEMO_CART);
-  const [drawerFor, setDrawerFor] = React.useState<CartLine | null>(null);
   // Stock/availability notices — moved here from checkout. Backorder + nearby
-  // are dismissible summaries; the itemized panel below them is not.
+  // are dismissible summaries.
   const [notices, setNotices] = React.useState({ backorder: true, nearby: true });
   // Selected account is lifted here so it flows into the checkout href
   // (?account=…) and seeds Order Details on the next step.
@@ -317,24 +284,6 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
 
   const removeLine = (id: string) => {
     setLines((prev) => prev.filter((l) => l.id !== id));
-  };
-
-  // Replace / Substitute: swap the chosen alternative into the line in place,
-  // drop the replacement flag, close the drawer, and confirm with a toast.
-  const chooseAlt = (alt: AltProduct, kind: "replacement" | "substitute") => {
-    const original = drawerFor;
-    if (original) {
-      setLines((prev) =>
-        prev.map((l) =>
-          l.id === original.id
-            ? { ...l, title: alt.title, brand: alt.brand, image: alt.image, item: alt.item, mfg: alt.mfg, price: alt.price, replacement: undefined }
-            : l,
-        ),
-      );
-      const name = (s: string) => s.split("—")[0].trim();
-      toast.success(`${name(original.title)} ${kind === "replacement" ? "replaced with" : "substituted with"} ${name(alt.title)}`);
-    }
-    setDrawerFor(null);
   };
 
   return (
@@ -393,7 +342,6 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
                       line={l}
                       onQty={(next) => setQty(l.id, next)}
                       onRemove={() => removeLine(l.id)}
-                      onViewSubstitutes={() => setDrawerFor(l)}
                     />
                   ))}
                 </div>
@@ -404,8 +352,6 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
           </>
         )}
       </div>
-
-      <SubstitutesDrawer line={drawerFor} onClose={() => setDrawerFor(null)} onChoose={chooseAlt} />
     </main>
   );
 }
