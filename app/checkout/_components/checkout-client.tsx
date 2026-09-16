@@ -221,7 +221,7 @@ export default function CheckoutClient({
   const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
   const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
   const [split, setSplit] = React.useState<"complete" | "partial">("complete");
-  const [liftgate, setLiftgate] = React.useState<"none" | "required">("none");
+  const [liftgate, setLiftgate] = React.useState<"none" | "required">("required");
   const [expressOn, setExpressOn] = React.useState(false);
 
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);

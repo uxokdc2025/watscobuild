@@ -63,35 +63,37 @@ export function PickupPanel({
   const [open, setOpen] = React.useState(false);
   return (
     <div className="space-y-5">
-      {/* Branch + pickup date side by side — no boxed inset, just a rule of thumb
-          layout: the current branch on the left, the date picker on the right. */}
-      <div className="grid gap-5 sm:grid-cols-2">
+      {/* Branch on its own line, Change button right-aligned with the branch
+          info; pickup date below in a narrower field. */}
+      <div className="space-y-5">
         <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold">Pickup branch</p>
+          <p className="text-sm font-semibold">Pickup branch</p>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-2.5">
+              <MapPin className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <div>
+                <p className="font-medium">{branch.name}</p>
+                <p className="text-sm text-muted-foreground">{branch.address}</p>
+                <p className="mt-1 text-xs font-medium text-in-stock">{branch.hours}</p>
+              </div>
+            </div>
             <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
               Change
             </Button>
           </div>
-          <div className="flex items-start gap-2.5">
-            <MapPin className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-            <div>
-              <p className="font-medium">{branch.name}</p>
-              <p className="text-sm text-muted-foreground">{branch.address}</p>
-              <p className="mt-1 text-xs font-medium text-in-stock">{branch.hours}</p>
-            </div>
-          </div>
         </div>
 
-        <DateField
-          id="pickup-date"
-          label="Pickup date"
-          required
-          value={pickupDate}
-          onSelect={setPickupDate}
-          earliest={earliest}
-          reason={dateReason}
-        />
+        <div className="max-w-[320px]">
+          <DateField
+            id="pickup-date"
+            label="Pickup date"
+            required
+            value={pickupDate}
+            onSelect={setPickupDate}
+            earliest={earliest}
+            reason={dateReason}
+          />
+        </div>
       </div>
 
       {/* Pickup add-on service (Baker Express) — a toggle, not a method. Separated
@@ -217,10 +219,15 @@ export function DeliveryPanel({
       <div className={cn("space-y-3", multiMethod && "border-t pt-5")}>
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold">Deliver to</p>
-          <Button variant="outline" size="sm" onClick={() => setAddOpen(true)}>
-            <Plus className="size-4" />
-            New address
-          </Button>
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={() => setBookOpen(true)} className="text-sm font-medium text-primary hover:underline">
+              See all ({addresses.length})
+            </button>
+            <Button variant="outline" size="sm" onClick={() => setAddOpen(true)}>
+              <Plus className="size-4" />
+              New address
+            </Button>
+          </div>
         </div>
         <RadioGroup value={addressId} onValueChange={onSelectAddress} className="gap-4">
           {GROUP_ORDER.map((group) => {
@@ -239,7 +246,7 @@ export function DeliveryPanel({
                 <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   {GROUP_LABEL[group]}
                 </p>
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="grid gap-2 sm:grid-cols-3">
                   {inline.map((a) => (
                     <AddressRow key={a.id} address={a} selected={a.id === addressId} />
                   ))}
@@ -251,47 +258,48 @@ export function DeliveryPanel({
             );
           })}
         </RadioGroup>
-        <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => setBookOpen(true)}>
-          See all ({addresses.length}) addresses
-        </Button>
       </div>
 
-      {/* Requested date + rate appear only AFTER an address is chosen. 2-col.
-          Peirce's ship date is CSR-confirmed, not picked. */}
+      {/* Requested date + rate appear only AFTER an address is chosen, stacked
+          left-aligned. Peirce's ship date is CSR-confirmed, not picked. */}
       {selectedAddress ? (
-        <div className="grid gap-4 border-t pt-5 sm:grid-cols-2">
-          {dateMode === "picker" ? (
-            <DateField
-              id="delivery-date"
-              label="Requested delivery date"
-              required
-              value={deliveryDate}
-              onSelect={setDeliveryDate}
-              earliest={earliest}
-              reason={dateReason}
-            />
-          ) : (
-            <div className="space-y-2">
-              <Label htmlFor="delivery-date-csr">Ship date</Label>
-              <div
-                id="delivery-date-csr"
-                className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
-              >
-                Set by your CSR
+        <div className="space-y-4 border-t pt-5">
+          <div className="max-w-[440px]">
+            {dateMode === "picker" ? (
+              <DateField
+                id="delivery-date"
+                label="Requested delivery date"
+                required
+                value={deliveryDate}
+                onSelect={setDeliveryDate}
+                earliest={earliest}
+                reason={dateReason}
+              />
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="delivery-date-csr">Ship date</Label>
+                <div
+                  id="delivery-date-csr"
+                  className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
+                >
+                  Set by your CSR
+                </div>
+                <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                  <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+                  <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
+                </p>
               </div>
-              <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-                <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-                <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
-              </p>
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="rate-line">Estimated rate</Label>
-            <div
-              id="rate-line"
-              className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm font-medium"
-            >
-              {rateLabel}
+            )}
+          </div>
+          <div className="max-w-[440px]">
+            <div className="space-y-2">
+              <Label htmlFor="rate-line">Estimated rate</Label>
+              <div
+                id="rate-line"
+                className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm font-medium"
+              >
+                {rateLabel}
+              </div>
             </div>
           </div>
         </div>
@@ -305,27 +313,23 @@ export function DeliveryPanel({
         </AlertDescription>
       </Alert>
 
-      {/* Modifiers (Homans local delivery) — two compact radio groups, side by side. */}
+      {/* Modifiers (Homans local delivery) — two full-width checkbox rows. */}
       {showModifiers ? (
-        <div className="grid gap-5 border-t pt-5 sm:grid-cols-2">
-          <ModifierGroup
-            legend="Split shipment"
-            value={split}
-            onValueChange={(v) => setSplit(v as "complete" | "partial")}
-            options={[
-              { value: "complete", label: "Ship complete", hint: "Hold until all items are ready" },
-              { value: "partial", label: "Ship partial", hint: "Send available items now" },
-            ]}
-          />
-          <ModifierGroup
-            legend="Liftgate"
-            value={liftgate}
-            onValueChange={(v) => setLiftgate(v as "none" | "required")}
-            options={[
-              { value: "none", label: "Not needed", hint: "Dock or forklift on site" },
-              { value: "required", label: "Required", hint: "No dock — lower to ground" },
-            ]}
-          />
+        <div className="space-y-3 border-t pt-5">
+          <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
+            <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
+            <span>
+              <span className="block font-medium text-foreground">Ship complete</span>
+              <span className="block text-xs text-muted-foreground">Hold until all items are ready</span>
+            </span>
+          </Label>
+          <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
+            <Checkbox checked={liftgate === "required"} onCheckedChange={(v) => setLiftgate(v === true ? "required" : "none")} className="mt-0.5" />
+            <span>
+              <span className="block font-medium text-foreground">Liftgate Required</span>
+              <span className="block text-xs text-muted-foreground">No dock — lower to ground</span>
+            </span>
+          </Label>
         </div>
       ) : null}
 
@@ -338,43 +342,5 @@ export function DeliveryPanel({
         onSelect={onSelectAddress}
       />
     </div>
-  );
-}
-
-function ModifierGroup({
-  legend,
-  value,
-  onValueChange,
-  options,
-}: {
-  legend: string;
-  value: string;
-  onValueChange: (v: string) => void;
-  options: { value: string; label: string; hint: string }[];
-}) {
-  return (
-    <fieldset>
-      <legend className="mb-2 text-sm font-semibold">{legend}</legend>
-      <RadioGroup value={value} onValueChange={onValueChange} className="gap-2">
-        {options.map((o) => {
-          const selected = o.value === value;
-          return (
-            <Label
-              key={o.value}
-              className={cn(
-                "flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors",
-                selected ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
-              )}
-            >
-              <RadioGroupItem value={o.value} className="mt-0.5" />
-              <span className="flex-1">
-                <span className="block text-sm font-medium">{o.label}</span>
-                <span className="block text-xs text-muted-foreground">{o.hint}</span>
-              </span>
-            </Label>
-          );
-        })}
-      </RadioGroup>
-    </fieldset>
   );
 }
