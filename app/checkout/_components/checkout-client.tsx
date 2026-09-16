@@ -208,7 +208,6 @@ export default function CheckoutClient({
   const [job, setJob] = React.useState(cfg.seededJob);
   const [notes, setNotes] = React.useState("");
   const [poError, setPoError] = React.useState<string | undefined>();
-  const [confirmed, setConfirmed] = React.useState(false);
   const [coupon, setCoupon] = React.useState("");
   const [appliedCoupon, setAppliedCoupon] = React.useState<string | null>(null);
   // Special handling (Homans): checking it reveals a REQUIRED branch-comments
@@ -311,7 +310,7 @@ export default function CheckoutClient({
         ? { label: "Continue to payment", onClick: () => setStep("payment"), disabled: false }
         : step === "payment"
           ? { label: "Continue to review", onClick: () => setStep("review"), disabled: payment === "terms" && account.availableCredit != null && total > account.availableCredit }
-          : { label: "Submit order", onClick: () => setSubmitted(true), disabled: !confirmed || handlingBlocks };
+          : { label: "Submit order", onClick: () => setSubmitted(true), disabled: handlingBlocks };
 
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
@@ -467,8 +466,6 @@ export default function CheckoutClient({
             appliedCoupon={appliedCoupon}
             onApplyCoupon={() => coupon.trim() && setAppliedCoupon(coupon.trim().toUpperCase())}
             showConfirm={step === "review"}
-            confirmed={confirmed}
-            setConfirmed={setConfirmed}
             onSaveQuote={() => toast.success("Quote saved — find it under Quotes in your account.")}
           />
         </div>
@@ -590,26 +587,17 @@ function PaymentStep({
               ) : null}
             </span>
           </RadioCard>
-          <RadioCard value="cash" selected={payment === "cash"}>
-            <span className="flex items-center gap-2 font-semibold">
-              <Banknote className="size-4" aria-hidden="true" />
-              Cash on pickup
-            </span>
-            <span className="mt-1 block text-sm text-muted-foreground">Pay at the branch counter when you collect the order.</span>
-          </RadioCard>
-        </RadioGroup>
-
-        {payment === "card" ? (
-          <div className="space-y-4 rounded-md bg-muted/40 p-4">
-            <RadioGroup value={cardId} onValueChange={setCardId} className="grid gap-3 sm:grid-cols-2">
-              {cards.slice(0, 2).map((c) => (
-                <Label
-                  key={c.id}
-                  className={cn(
-                    "flex cursor-pointer items-start gap-3 rounded-lg border bg-background p-3 transition-colors",
-                    cardId === c.id ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
-                  )}
-                >
+          {payment === "card" ? (
+            <div className="mt-1 rounded-md border bg-muted/30 p-5">
+              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-2 gap-3">
+                {cards.slice(0, 2).map((c) => (
+                  <Label
+                    key={c.id}
+                    className={cn(
+                      "flex cursor-pointer items-start gap-4 rounded-lg border bg-background p-4 transition-colors",
+                      cardId === c.id ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
+                    )}
+                  >
                   <RadioGroupItem value={c.id} className="mt-0.5" />
                   <CardMark brand={c.brand} />
                   <span className="min-w-0">
@@ -628,9 +616,17 @@ function PaymentStep({
                   </span>
                 </Label>
               ))}
-            </RadioGroup>
-          </div>
-        ) : null}
+              </RadioGroup>
+            </div>
+          ) : null}
+          <RadioCard value="cash" selected={payment === "cash"}>
+            <span className="flex items-center gap-2 font-semibold">
+              <Banknote className="size-4" aria-hidden="true" />
+              Cash on pickup
+            </span>
+            <span className="mt-1 block text-sm text-muted-foreground">Pay at the branch counter when you collect the order.</span>
+          </RadioCard>
+        </RadioGroup>
 
         <div className="flex justify-start border-t pt-5">
           <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
@@ -854,18 +850,24 @@ function ReviewStep({
         ) : null}
 
         <div className="rounded-md border">
-          <div className="border-b px-4 py-3 font-semibold">Items ({items.length})</div>
+          <div className="border-b px-5 py-4 font-semibold">Items ({items.length})</div>
           {items.map((item) => (
-            <div key={item.id} className="flex items-center gap-3 border-b px-4 py-3 last:border-0">
-              <div className="grid size-12 shrink-0 place-items-center rounded-md bg-muted">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.image} alt="" className="max-h-full max-w-full object-contain" />
+            <div key={item.id} className="grid grid-cols-[64px_minmax(0,1fr)_auto] items-center gap-x-6 border-b p-4 last:border-0">
+              <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+                {item.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                ) : null}
               </div>
-              <p className="min-w-0 flex-1 text-sm font-medium">
-                {item.title}
-                <span className="block text-xs text-muted-foreground">Qty {item.quantity}</span>
-              </p>
-              <span className="text-sm font-semibold">{formatUSD(item.price * item.quantity)}</span>
+              <div className="min-w-0">
+                {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+                <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Qty {item.quantity}</p>
+              </div>
+              <div className="flex flex-col items-end text-right">
+                <span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span>
+                <span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span>
+              </div>
             </div>
           ))}
         </div>
@@ -891,8 +893,6 @@ function OrderSummary({
   appliedCoupon,
   onApplyCoupon,
   showConfirm,
-  confirmed,
-  setConfirmed,
   onSaveQuote,
 }: {
   items: CartItem[];
@@ -907,8 +907,6 @@ function OrderSummary({
   appliedCoupon: string | null;
   onApplyCoupon: () => void;
   showConfirm: boolean;
-  confirmed: boolean;
-  setConfirmed: (v: boolean) => void;
   onSaveQuote: () => void;
 }) {
   const [handlingDismissed, setHandlingDismissed] = React.useState(false);
@@ -989,31 +987,20 @@ function OrderSummary({
           Your total is shown before payment details, with no surprise fees.
         </div>
 
-        {/* Confirm gate sits right above Place order, so the grey→blue is clear. */}
-        {showConfirm ? (
-          <Label className="flex gap-2.5 text-sm font-normal">
-            <Checkbox checked={confirmed} onCheckedChange={(v) => setConfirmed(v === true)} className="mt-0.5" />
-            <span>I confirm the order details are correct and agree to the account terms.</span>
-          </Label>
-        ) : null}
-
         {/* Sticky primary CTA — the strongest action, always reachable.
             "Save cart for later" lives on the cart page only, not in checkout. */}
+        <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
+          {primary.label}
+        </Button>
         {showConfirm ? (
-          // Review: secondary "Save quote" left of the primary "Submit order".
-          <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" onClick={onSaveQuote}>
-              Save quote
-            </Button>
-            <Button onClick={primary.onClick} disabled={primary.disabled}>
-              {primary.label}
-            </Button>
-          </div>
-        ) : (
-          <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
-            {primary.label}
-          </Button>
-        )}
+          <button
+            type="button"
+            className="mx-auto mt-2 block text-sm font-medium text-primary hover:underline"
+            onClick={onSaveQuote}
+          >
+            Save quote
+          </button>
+        ) : null}
       </div>
     </aside>
   );
