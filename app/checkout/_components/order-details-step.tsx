@@ -116,7 +116,7 @@ export function OrderDetailsStep({
           />
 
           {/* Order notes. */}
-          <div className="space-y-2">
+          <div className="max-w-[600px] space-y-2">
             <div className="flex items-baseline justify-between gap-2">
               <Label htmlFor="order-notes">Order notes</Label>
               <span className="text-xs text-muted-foreground" aria-live="polite">
@@ -130,6 +130,7 @@ export function OrderDetailsStep({
               maxLength={MAX_NOTES}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Special instructions (e.g. call on arrival, gate code)"
+              className="min-h-[88px] resize-none"
             />
             <p className="text-xs text-muted-foreground">Your branch, {branch.name}, will receive these.</p>
           </div>
@@ -203,14 +204,14 @@ function OrderConfirmationExtras() {
         </Label>
 
         {notifyRep ? (
-          <div className="pl-7">
+          <div className="max-w-[600px] pl-7">
             <Textarea
               rows={2}
               value={repMessage}
               onChange={(e) => setRepMessage(e.target.value)}
               placeholder="Send a heads-up to your assigned rep when this order is placed."
               aria-label="Message to your salesperson"
-              className="min-h-0 resize-none"
+              className="min-h-[88px] resize-none"
             />
           </div>
         ) : null}
