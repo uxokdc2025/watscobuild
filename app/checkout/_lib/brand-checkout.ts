@@ -18,6 +18,8 @@ export type SwitchAccount = {
   kind: "Account" | "Ship-to" | "Company" | "Location";
   detail: string;
   phone: string;
+  creditBalance?: number;
+  availableCredit?: number;
 };
 
 export type BrandAddressGroup = "job" | "account" | "billing";
@@ -156,10 +158,10 @@ const HOMANS: BrandCheckoutConfig = {
   radiusRule: false,
   account: { name: "Homans Associates", detail: "#509973 · Wilmington, MA" },
   switchAccounts: [
-    { id: "hom509973", name: "Homans Associates", kind: "Account", detail: "#509973 · Wilmington, MA", phone: "(978) 658-5099" },
+    { id: "hom509973", name: "Homans Associates", kind: "Account", detail: "#509973 · Wilmington, MA", phone: "(978) 658-5099", creditBalance: 138548.19, availableCredit: 761451.81 },
     { id: "hom-woburn", name: "20 Cummings Park", kind: "Ship-to", detail: "Woburn, MA 01801", phone: "(781) 935-2018" },
     { id: "hom-north", name: "North warehouse", kind: "Location", detail: "42 Industrial Way, Andover, MA", phone: "(978) 470-4200" },
-    { id: "hom-parent", name: "Homans — New England", kind: "Company", detail: "Parent company · 12 branches", phone: "(781) 935-9000" },
+    { id: "hom-parent", name: "Homans — New England", kind: "Company", detail: "Parent company · 12 branches", phone: "(781) 935-9000", creditBalance: 24200.0, availableCredit: 500.0 },
     { id: "hom-portsmouth", name: "Portsmouth branch", kind: "Location", detail: "155 Heritage Ave, Portsmouth, NH", phone: "(603) 436-1550" },
   ],
   branches: [

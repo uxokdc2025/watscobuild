@@ -20,7 +20,7 @@ import { toast } from "sonner";
 
 import { useCart, type CartItem } from "@/components/cart/cart-context";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -331,7 +331,7 @@ export default function CheckoutClient({
       : step === "fulfillment"
         ? { label: "Continue to payment", onClick: () => setStep("payment"), disabled: false }
         : step === "payment"
-          ? { label: "Continue to review", onClick: () => setStep("review"), disabled: false }
+          ? { label: "Continue to review", onClick: () => setStep("review"), disabled: payment === "terms" && account.availableCredit != null && total > account.availableCredit }
           : { label: "Submit order", onClick: () => setSubmitted(true), disabled: !confirmed || handlingBlocks };
 
   return (
@@ -433,6 +433,7 @@ export default function CheckoutClient({
                 brand={brand}
                 account={account}
                 payment={payment}
+                total={total}
                 setPayment={setPayment}
                 cards={cards}
                 cardId={paymentCardId}
@@ -526,6 +527,7 @@ function PaymentStep({
   brand,
   account,
   payment,
+  total,
   setPayment,
   cards,
   cardId,
@@ -538,6 +540,7 @@ function PaymentStep({
   brand: BrandCheckoutConfig;
   account: SwitchAccount;
   payment: Payment;
+  total: number;
   setPayment: (v: Payment) => void;
   cards: CardOption[];
   cardId: string;
@@ -570,6 +573,27 @@ function PaymentStep({
           <RadioCard value="terms" selected={payment === "terms"}>
             <span className="block font-semibold">Account terms, COD</span>
             <span className="mt-1 block text-sm text-muted-foreground">Charge this order to your {brand.brandName} account.</span>
+            {payment === "terms" && account.availableCredit != null ? (
+              <div className="mt-3 border-t pt-3">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Account balance</p>
+                    <p className="text-base font-semibold tabular-nums">{formatUSD(account.creditBalance ?? 0)}</p>
+                  </div>
+                  <div className="border-l pl-4">
+                    <p className="text-xs text-muted-foreground">Available credit</p>
+                    <p className="text-base font-semibold tabular-nums">{formatUSD(account.availableCredit)}</p>
+                  </div>
+                </div>
+                {total > account.availableCredit ? (
+                  <Alert variant="destructive" className="mt-3">
+                    <TriangleAlert />
+                    <AlertTitle>Order exceeds available credit</AlertTitle>
+                    <AlertDescription>This order ({formatUSD(total)}) is more than your available credit. Choose another payment method to continue.</AlertDescription>
+                  </Alert>
+                ) : null}
+              </div>
+            ) : null}
           </RadioCard>
           <RadioCard value="cash" selected={payment === "cash"}>
             <span className="flex items-center gap-2 font-semibold">
