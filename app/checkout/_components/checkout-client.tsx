@@ -37,6 +37,7 @@ import {
   type FulfillmentMethod,
 } from "./fulfillment";
 import { fmtDate } from "./fulfillment-calendar";
+import { CardMark } from "./card-mark";
 import { OrderDetailsStep } from "./order-details-step";
 import { SwitchAccountDrawer, CreditCardDrawer } from "./checkout-drawers";
 import {
@@ -55,11 +56,11 @@ const DEMO_ITEMS: CartItem[] = [
 
 /* Saved cards are modeled as SHARED FROM THE COMPANY — the account, not the
  * individual, owns the card on file (ECM pattern). */
-type CardOption = { id: string; tail: string; expires: string; added?: boolean };
+type CardOption = { id: string; brand: string; name: string; tail: string; expires: string; shared?: boolean; added?: boolean };
 
 const SAVED_CARDS: CardOption[] = [
-  { id: "visa-6177", tail: "6177", expires: "4/2028" },
-  { id: "mc-8801", tail: "8801", expires: "2/2027" },
+  { id: "visa-6177", brand: "VISA", name: "Company Card", tail: "6177", expires: "4/2028", shared: true },
+  { id: "mc-8801", brand: "MASTERCARD", name: "Field Ops", tail: "8801", expires: "2/2027", shared: true },
 ];
 
 /* The in-checkout switch-account control, pickup branches, and grouped "Deliver
@@ -111,28 +112,6 @@ const CHECKOUT_SCENARIOS: Record<CheckoutCase, Partial<ScenarioConfig>> = {
 
 function resolveScenario(scenario?: CheckoutCase): ScenarioConfig {
   return scenario ? { ...BASE, ...CHECKOUT_SCENARIOS[scenario] } : BASE;
-}
-
-/* ───────────────────────── Field (DS Input + Label) ───────────────────────── */
-
-function Field({
-  id,
-  label,
-  required = false,
-  error,
-  className,
-  ...props
-}: React.ComponentProps<typeof Input> & { id: string; label: string; required?: boolean; error?: string; className?: string }) {
-  return (
-    <div className={cn("space-y-2", className)}>
-      <Label htmlFor={id}>
-        {label}
-        {required ? <span className="ml-0.5 text-destructive">*</span> : null}
-      </Label>
-      <Input id={id} required={required} aria-invalid={error ? true : undefined} {...props} />
-      {error ? <p className="text-xs font-medium text-destructive">{error}</p> : null}
-    </div>
-  );
 }
 
 /* A selectable radio card — one pattern for both fulfillment and payment. */
@@ -551,13 +530,12 @@ function PaymentStep({
   onEditAccount: () => void;
 }) {
   const [cardDrawerOpen, setCardDrawerOpen] = React.useState(false);
-  const [billingSame, setBillingSame] = React.useState(true);
 
   const billingAddress = brand.addresses.find((a) => a.group === "billing");
 
   const addCard = (tail: string) => {
     const id = `card-${tail}-${addedCards.length}`;
-    setAddedCards((prev) => [...prev, { id, tail, expires: "—", added: true }]);
+    setAddedCards((prev) => [...prev, { id, brand: "VISA", name: "New card", tail, expires: "—", shared: false, added: true }]);
     setCardId(id);
   };
 
@@ -595,6 +573,23 @@ function PaymentStep({
               </div>
             ) : null}
           </RadioCard>
+          <RadioCard value="card" selected={payment === "card"}>
+            <span className="flex items-start justify-between gap-3">
+              <span>
+                <span className="flex items-center gap-2 font-semibold">
+                  <CreditCard className="size-4" aria-hidden="true" />
+                  Credit card
+                </span>
+                <span className="mt-1 block text-sm text-muted-foreground">Use a saved card or add one securely.</span>
+              </span>
+              {payment === "card" ? (
+                <Button variant="outline" size="sm" onClick={() => setCardDrawerOpen(true)}>
+                  <Plus className="size-4" aria-hidden="true" />
+                  Add new card
+                </Button>
+              ) : null}
+            </span>
+          </RadioCard>
           <RadioCard value="cash" selected={payment === "cash"}>
             <span className="flex items-center gap-2 font-semibold">
               <Banknote className="size-4" aria-hidden="true" />
@@ -602,49 +597,38 @@ function PaymentStep({
             </span>
             <span className="mt-1 block text-sm text-muted-foreground">Pay at the branch counter when you collect the order.</span>
           </RadioCard>
-          <RadioCard value="card" selected={payment === "card"}>
-            <span className="flex items-center gap-2 font-semibold">
-              <CreditCard className="size-4" aria-hidden="true" />
-              Credit card
-            </span>
-            <span className="mt-1 block text-sm text-muted-foreground">Use a saved card or add one securely.</span>
-          </RadioCard>
         </RadioGroup>
 
         {payment === "card" ? (
           <div className="space-y-4 rounded-md bg-muted/40 p-4">
-            <RadioGroup value={cardId} onValueChange={setCardId} className="grid gap-2">
-              {cards.map((c) => (
-                <RadioCard key={c.id} value={c.id} selected={cardId === c.id} className="bg-background">
-                  <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span className="font-medium">•••• {c.tail}</span>
-                    {c.expires !== "—" ? (
-                      <span className="text-xs text-muted-foreground">· expires {c.expires} ·</span>
+            <RadioGroup value={cardId} onValueChange={setCardId} className="grid gap-3 sm:grid-cols-2">
+              {cards.slice(0, 2).map((c) => (
+                <Label
+                  key={c.id}
+                  className={cn(
+                    "flex cursor-pointer items-start gap-3 rounded-lg border bg-background p-3 transition-colors",
+                    cardId === c.id ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
+                  )}
+                >
+                  <RadioGroupItem value={c.id} className="mt-0.5" />
+                  <CardMark brand={c.brand} />
+                  <span className="min-w-0">
+                    <p className="text-sm font-semibold">{c.name}</p>
+                    <p className="text-xs text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
+                    <p className="text-xs text-muted-foreground">Expires: {c.expires}</p>
+                    {c.shared ? (
+                      <span className="mt-1 inline-block rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                        Shared from the company
+                      </span>
+                    ) : c.added ? (
+                      <span className="mt-1 inline-block rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                        Added this order
+                      </span>
                     ) : null}
-                    <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                      {c.added ? "Added this order" : "Shared from the company"}
-                    </span>
                   </span>
-                </RadioCard>
+                </Label>
               ))}
             </RadioGroup>
-            <Button variant="outline" size="sm" onClick={() => setCardDrawerOpen(true)}>
-              <Plus className="size-4" aria-hidden="true" />
-              Add a new card
-            </Button>
-
-            {/* Billing address — same as shipping by default; unchecking reveals
-                an editable billing block. */}
-            <div className="space-y-3 rounded-md border bg-background p-4">
-              <Label className="flex items-start gap-3 text-sm font-normal">
-                <Checkbox checked={billingSame} onCheckedChange={(v) => setBillingSame(v === true)} className="mt-0.5" />
-                <span>
-                  <span className="block font-medium text-foreground">My billing and shipping address are the same</span>
-                  <span className="block text-xs text-muted-foreground">We&apos;ll bill the delivery/pickup address on this order.</span>
-                </span>
-              </Label>
-              {!billingSame ? <BillingAddressBlock billingAddress={billingAddress} /> : null}
-            </div>
           </div>
         ) : null}
 
@@ -691,46 +675,6 @@ function BillingSummary({
         )}
         <p className="text-muted-foreground">{account.phone}</p>
       </SummaryCard>
-    </div>
-  );
-}
-
-/** Editable billing address — a summary the buyer can expand into fields. */
-function BillingAddressBlock({ billingAddress }: { billingAddress?: BrandCheckoutConfig["addresses"][number] }) {
-  const [editing, setEditing] = React.useState(false);
-
-  if (editing) {
-    return (
-      <div className="grid gap-4 border-t pt-3 sm:grid-cols-2">
-        <Field id="bill-name" label="Name / company" required defaultValue={billingAddress?.name} className="sm:col-span-2" />
-        <Field id="bill-street" label="Street address" required defaultValue={billingAddress?.line1} className="sm:col-span-2" />
-        <Field id="bill-city" label="City" required defaultValue={billingAddress?.city} />
-        <Field id="bill-state" label="State" required defaultValue={billingAddress?.state} />
-        <Field id="bill-zip" label="ZIP code" required defaultValue={billingAddress?.zip} />
-        <div className="sm:col-span-2">
-          <Button type="button" size="sm" onClick={() => setEditing(false)}>Done</Button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex items-start justify-between gap-3 border-t pt-3">
-      <div className="min-w-0 text-sm">
-        {billingAddress ? (
-          <>
-            <p className="font-medium">{billingAddress.name}</p>
-            <p className="text-muted-foreground">
-              {billingAddress.line1}, {billingAddress.city}, {billingAddress.state} {billingAddress.zip}
-            </p>
-          </>
-        ) : (
-          <p className="text-muted-foreground">No billing address on file.</p>
-        )}
-      </div>
-      <Button type="button" variant="outline" size="sm" onClick={() => setEditing(true)}>
-        Edit
-      </Button>
     </div>
   );
 }
