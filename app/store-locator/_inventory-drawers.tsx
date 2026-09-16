@@ -215,6 +215,87 @@ function StoreHours() {
   );
 }
 
+type SortKey = "miles" | "availability";
+const SORT_LABEL: Record<SortKey, string> = { miles: "Distance", availability: "Availability" };
+
+/** Shared filter + sort bar for every branch/availability drawer. The In-Stock
+ *  filter is a segmented view toggle (All | In Stock) — not a pill — and the
+ *  Sort dropdown swaps between Distance and Availability. One definition so the
+ *  branch finder, the availability drawer, and the checkout picker read
+ *  identically. `sortOpen` is local: the bar owns its own disclosure. */
+function BranchFilterSort({
+  inStockOnly,
+  setInStockOnly,
+  sortBy,
+  setSortBy,
+}: {
+  inStockOnly: boolean;
+  setInStockOnly: (v: boolean) => void;
+  sortBy: SortKey;
+  setSortBy: (v: SortKey) => void;
+}) {
+  const [sortOpen, setSortOpen] = React.useState(false);
+  return (
+    <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
+      {/* Segmented view toggle — All vs In Stock. */}
+      <div
+        role="group"
+        aria-label="Filter branches"
+        className="inline-flex rounded-md border bg-muted/40 p-0.5 text-xs font-medium"
+      >
+        {([[false, "All"], [true, "In Stock"]] as const).map(([value, label]) => {
+          const active = inStockOnly === value;
+          return (
+            <button
+              key={label}
+              type="button"
+              aria-pressed={active}
+              onClick={() => setInStockOnly(value)}
+              className={
+                active
+                  ? "rounded-[5px] bg-background px-3 py-1 text-foreground shadow-sm transition-colors"
+                  : "rounded-[5px] px-3 py-1 text-muted-foreground transition-colors hover:text-foreground"
+              }
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setSortOpen((value) => !value)}
+          aria-expanded={sortOpen}
+          className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowDownUp className="size-3.5" />
+          Sort: {SORT_LABEL[sortBy]}
+          <ChevronDown className={`size-3 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
+        </button>
+        {sortOpen ? (
+          <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
+            {(["miles", "availability"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => {
+                  setSortBy(option);
+                  setSortOpen(false);
+                }}
+                className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${sortBy === option ? "font-medium text-primary" : "text-foreground"}`}
+              >
+                {SORT_LABEL[option]}
+                {sortBy === option ? <Check className="size-3.5" /> : null}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 /* ────────────────── Product Availability drawer — card pattern ─────────── */
 
 /** Product-scoped availability drawer. Same account-style cards as the branch
@@ -226,8 +307,7 @@ function StoreHours() {
  *  In-Stock filter, Sort, and the Find Other Branches footer are retained. */
 export function InventoryDirection1() {
   const [inStockOnly, setInStockOnly] = React.useState(true);
-  const [sortBy, setSortBy] = React.useState<"miles" | "availability">("miles");
-  const [sortOpen, setSortOpen] = React.useState(false);
+  const [sortBy, setSortBy] = React.useState<SortKey>("miles");
   const [selectedStore, setSelectedStore] = React.useState(
     BRANCHES.find((b) => b.tag === "current")?.name ?? BRANCHES[0]?.name ?? "",
   );
@@ -259,55 +339,12 @@ export function InventoryDirection1() {
           Use my current location
         </a>
       </div>
-      {/* Filter + sort — filter chip is a real toggle; sort dropdown swaps
-          between Miles and Availability. State drives the card list below. */}
-      <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
-        <button
-          type="button"
-          aria-pressed={inStockOnly}
-          onClick={() => setInStockOnly((value) => !value)}
-          className={
-            inStockOnly
-              ? "inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
-              : "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-          }
-        >
-          {inStockOnly ? <Check className="size-3" /> : null}
-          In Stock
-        </button>
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setSortOpen((value) => !value)}
-            aria-expanded={sortOpen}
-            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowDownUp className="size-3.5" />
-            Sort: {sortBy === "miles" ? "Miles" : "Availability"}
-            <ChevronDown
-              className={`size-3 transition-transform ${sortOpen ? "rotate-180" : ""}`}
-            />
-          </button>
-          {sortOpen ? (
-            <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
-              {(["miles", "availability"] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => {
-                    setSortBy(option);
-                    setSortOpen(false);
-                  }}
-                  className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${sortBy === option ? "font-medium text-primary" : "text-foreground"}`}
-                >
-                  {option === "miles" ? "Miles" : "Availability"}
-                  {sortBy === option ? <Check className="size-3.5" /> : null}
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </div>
+      <BranchFilterSort
+        inStockOnly={inStockOnly}
+        setInStockOnly={setInStockOnly}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+      />
       <ul aria-label="Branches" className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
         {displayed.map((branch) => (
           <BranchCard
@@ -604,8 +641,7 @@ export function InventoryStoreLocatorDrawer({
   onClose?: () => void;
 } = {}) {
   const [inStockOnly, setInStockOnly] = React.useState(true);
-  const [sortBy, setSortBy] = React.useState<"miles" | "availability">("miles");
-  const [sortOpen, setSortOpen] = React.useState(false);
+  const [sortBy, setSortBy] = React.useState<SortKey>("miles");
   const [selectedLocal, setSelectedLocal] = React.useState(branches[0]?.name ?? "");
   const selectedStore = selectedStoreProp ?? selectedLocal;
 
@@ -643,51 +679,12 @@ export function InventoryStoreLocatorDrawer({
         </a>
       </div>
       {showStock ? (
-        <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
-          <button
-            type="button"
-            aria-pressed={inStockOnly}
-            onClick={() => setInStockOnly((value) => !value)}
-            className={
-              inStockOnly
-                ? "inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
-                : "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-            }
-          >
-            {inStockOnly ? <Check className="size-3" /> : null}
-            In Stock
-          </button>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setSortOpen((value) => !value)}
-              aria-expanded={sortOpen}
-              className="inline-flex translate-y-px items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowDownUp className="size-3.5" />
-              Sort: {sortBy === "miles" ? "Miles" : "Availability"}
-              <ChevronDown className={`size-3 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
-            </button>
-            {sortOpen ? (
-              <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-md border bg-background text-sm shadow-lg">
-                {(["miles", "availability"] as const).map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => {
-                      setSortBy(option);
-                      setSortOpen(false);
-                    }}
-                    className={`flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-muted ${sortBy === option ? "font-medium text-primary" : "text-foreground"}`}
-                  >
-                    {option === "miles" ? "Miles" : "Availability"}
-                    {sortBy === option ? <Check className="size-3.5" /> : null}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </div>
+        <BranchFilterSort
+          inStockOnly={inStockOnly}
+          setInStockOnly={setInStockOnly}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+        />
       ) : (
         <p className="shrink-0 border-b px-5 py-2 text-xs font-medium text-muted-foreground">
           Sorted by distance

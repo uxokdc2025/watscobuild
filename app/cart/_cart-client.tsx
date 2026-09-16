@@ -25,7 +25,6 @@ import { StockStatus } from "@/components/ui/label-badges";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import { getBrandCheckout } from "../checkout/_lib/brand-checkout";
 import { SwitchAccountDrawer } from "../checkout/_components/checkout-drawers";
-import { StockUnavailablePanel } from "../checkout/_components/stock-unavailable";
 import { SubstitutesDrawer } from "./_substitutes-drawer";
 import { DEMO_CART, type AltProduct, type CartLine } from "./_cart-data";
 
@@ -177,19 +176,17 @@ function AccountContextRow({
   const current = accounts.find((a) => a.id === accountId) ?? accounts[0];
 
   return (
-    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
-      <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="min-w-0">
-          <span className="font-semibold">{current.name}</span>
-          <span className="text-muted-foreground"> · {current.detail}</span>
-        </span>
-        <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-          <MapPin className="size-4 shrink-0" aria-hidden="true" />
-          {branch.name}
-        </span>
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-4 py-3 text-sm">
+      <div className="flex min-w-0 items-center gap-3">
+        <Building2 className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <div className="min-w-0">
+          <p className="font-semibold">{current.name}</p>
+          <p className="text-muted-foreground">
+            {current.detail} · {branch.name}
+          </p>
+        </div>
       </div>
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        <Building2 className="size-4" aria-hidden="true" />
         Switch account
       </Button>
       <SwitchAccountDrawer
@@ -350,17 +347,14 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
 
         <h1 className="mt-5 text-2xl font-bold tracking-tight">Cart</h1>
 
-        <AccountContextRow brandKey={brandKey} accountId={accountId} onSelectAccount={setAccountId} />
-
         {!lines.length ? (
           <div className="mt-6">
             <EmptyCart />
           </div>
         ) : (
           <>
-            {/* Stock / availability — the backorder + nearby summaries (dismissible)
-                and the itemized "not available at your current store" panel, which
-                carries its own store-locator drawer wiring. */}
+            {/* Stock / availability — the backorder + nearby summaries
+                (dismissible). Account context sits BELOW these messages. */}
             <div className="mt-6 space-y-3">
               {notices.backorder ? (
                 <Alert variant="destructive" className="pr-10">
@@ -382,7 +376,10 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
                   <DismissButton label="Dismiss nearby branches notice" onClick={() => setNotices((n) => ({ ...n, nearby: false }))} />
                 </Alert>
               ) : null}
-              <StockUnavailablePanel items={lines} brandKey={brandKey} />
+            </div>
+
+            <div className="mt-3">
+              <AccountContextRow brandKey={brandKey} accountId={accountId} onSelectAccount={setAccountId} />
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
