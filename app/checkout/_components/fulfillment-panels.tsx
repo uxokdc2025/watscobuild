@@ -26,6 +26,7 @@ import {
   AddAddressDrawer,
   AddressBookDrawer,
   AddressRow,
+  GROUP_LABEL,
   StoreFinderDrawer,
 } from "./checkout-drawers";
 
@@ -146,6 +147,8 @@ export function DeliveryPanel({
   const [addOpen, setAddOpen] = React.useState(false);
   const [bookOpen, setBookOpen] = React.useState(false);
   const selectedAddress = addresses.find((a) => a.id === addressId);
+  const defaultGroup = (addresses.find((a) => a.isDefault) ?? addresses[0])?.group ?? "job";
+  const groupAddresses = addresses.filter((a) => a.group === defaultGroup).slice(0, 4);
   const rateLabel = method === "truck" && truckLabel ? truckLabel : METHOD_RATE_LABEL[method];
   // A single delivery method needs no chooser — the Delivery tab already says it.
   const multiMethod = deliveryMethods.length > 1;
@@ -164,9 +167,10 @@ export function DeliveryPanel({
           </Button>
         </div>
       </div>
+      <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{GROUP_LABEL[defaultGroup]}</p>
       <RadioGroup value={addressId} onValueChange={onSelectAddress}>
         <div className="grid grid-cols-4 gap-3">
-          {addresses.slice(0, 4).map((a) => (
+          {groupAddresses.map((a) => (
             <AddressRow key={a.id} address={a} selected={a.id === addressId} />
           ))}
         </div>

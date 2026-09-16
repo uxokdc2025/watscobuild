@@ -11,13 +11,13 @@ import { Button } from "@/components/ui/button";
  * is a bordered box with an uppercase muted label top-left, an optional Edit
  * control top-right, and content beneath. */
 
-/** The shared Edit control: a DS tertiary button (foreground text, grey hover —
- *  never muted) with a pencil + "Edit". 44px min touch target; labelled per use. */
+/** The shared Edit control: a DS link button (blue text-primary) with a pencil +
+ *  "Edit". 44px min touch target; labelled per use. */
 function SummaryEditButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <Button
       type="button"
-      variant="tertiary"
+      variant="link"
       size="sm"
       onClick={onClick}
       aria-label={label}
@@ -57,7 +57,7 @@ export function SummaryCard({
       {cta ? (
         <Button
           type="button"
-          variant="tertiary"
+          variant="link"
           size="sm"
           onClick={cta.onClick}
           aria-label={cta.label}

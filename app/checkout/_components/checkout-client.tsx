@@ -50,8 +50,10 @@ import {
 /* ───────────────────────── Demo data ───────────────────────── */
 
 const DEMO_ITEMS: CartItem[] = [
-  { id: "checkout-air-handler", title: "Aspen® 3-Ton Multi-Position Electric Air Handler", brand: "Aspen", price: 676.5, quantity: 1, image: "/peirce-search/blower-motor-07.avif" },
-  { id: "checkout-wire-rope", title: "Duro Dyne® Cable Lock Wire Rope - 500' Roll", brand: "Duro Dyne", price: 277, quantity: 1, image: "/peirce-search/blower-motor-17.avif" },
+  { id: "cart-air-handler", title: "Aspen® 3-Ton Multi-Position Electric Air Handler", brand: "Aspen", item: "AH3-676A", mfg: "ASP-3T-MP", price: 676.5, quantity: 1, image: "/peirce-search/blower-motor-07.avif" },
+  { id: "cart-contactor", title: "TP-CON-2P30A — Definite Purpose Contactor, 2 Pole, 30 Amp, 24V Coil", brand: "TRADEPRO®", item: "34530C", mfg: "TP-CON-2P30A", price: 22.75, quantity: 2, image: "/peirce-search/blower-motor-09.avif" },
+  { id: "cart-blower-motor", title: "TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230V, 1/2 HP", brand: "TRADEPRO®", item: "54510A", mfg: "TP-EC13-50", price: 168.42, quantity: 1, image: "/peirce-search/blower-motor-01.avif" },
+  { id: "cart-wire-rope", title: "Duro Dyne® Cable Lock Wire Rope - 500' Roll", brand: "Duro Dyne", item: "DD-500WR", mfg: "CL-WR-500", price: 277, quantity: 1, image: "/peirce-search/blower-motor-17.avif" },
 ];
 
 /* Saved cards are modeled as SHARED FROM THE COMPANY — the account, not the
@@ -310,7 +312,7 @@ export default function CheckoutClient({
         ? { label: "Continue to payment", onClick: () => setStep("payment"), disabled: false }
         : step === "payment"
           ? { label: "Continue to review", onClick: () => setStep("review"), disabled: payment === "terms" && account.availableCredit != null && total > account.availableCredit }
-          : { label: "Submit order", onClick: () => setSubmitted(true), disabled: handlingBlocks };
+          : { label: "Place order", onClick: () => setSubmitted(true), disabled: handlingBlocks };
 
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
@@ -852,7 +854,7 @@ function ReviewStep({
         <div className="rounded-md border">
           <div className="border-b px-5 py-4 font-semibold">Items ({items.length})</div>
           {items.map((item) => (
-            <div key={item.id} className="grid grid-cols-[64px_minmax(0,1fr)_auto] items-center gap-x-6 border-b p-4 last:border-0">
+            <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
               <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
                 {item.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -862,12 +864,10 @@ function ReviewStep({
               <div className="min-w-0">
                 {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
                 <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Qty {item.quantity}</p>
+                {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
               </div>
-              <div className="flex flex-col items-end text-right">
-                <span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span>
-                <span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span>
-              </div>
+              <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+              <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
             </div>
           ))}
         </div>
@@ -995,7 +995,7 @@ function OrderSummary({
         {showConfirm ? (
           <button
             type="button"
-            className="mx-auto mt-2 block text-sm font-medium text-primary hover:underline"
+            className="mx-auto mt-1 block text-sm font-medium text-primary hover:underline"
             onClick={onSaveQuote}
           >
             Save quote
