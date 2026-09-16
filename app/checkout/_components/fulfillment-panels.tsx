@@ -41,7 +41,6 @@ export function PickupPanel({
   pickupDate,
   setPickupDate,
   earliest,
-  dateReason,
   addon,
   addonOn,
   setAddonOn,
@@ -52,6 +51,7 @@ export function PickupPanel({
   pickupDate: Date | null;
   setPickupDate: (d: Date) => void;
   earliest: Date;
+  /** Accepted for caller compatibility; pickup shows no helper line. */
   dateReason?: string;
   addon?: BrandCheckoutConfig["pickupAddon"];
   addonOn: boolean;
@@ -77,7 +77,6 @@ export function PickupPanel({
         value={pickupDate}
         onSelect={setPickupDate}
         earliest={earliest}
-        reason={dateReason}
       />
 
       {/* Pickup add-on service (Baker Express) — a toggle, not a method. Separated
