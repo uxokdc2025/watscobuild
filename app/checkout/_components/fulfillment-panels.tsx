@@ -151,7 +151,7 @@ export function DeliveryPanel({
   const multiMethod = deliveryMethods.length > 1;
 
   return (
-    <div className="max-w-[600px] space-y-4">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold">Deliver to</p>
         <div className="flex items-center gap-2">
@@ -165,12 +165,13 @@ export function DeliveryPanel({
         </div>
       </div>
       <RadioGroup value={addressId} onValueChange={onSelectAddress}>
-        <div className="grid grid-cols-3 gap-2">
-          {addresses.slice(0, 3).map((a) => (
+        <div className="grid grid-cols-4 gap-3">
+          {addresses.slice(0, 4).map((a) => (
             <AddressRow key={a.id} address={a} selected={a.id === addressId} />
           ))}
         </div>
       </RadioGroup>
+      <div className="max-w-[560px] space-y-4">
 
       {/* Requested date appears only AFTER an address is chosen, stacked
           left-aligned. Peirce's ship date is CSR-confirmed, not picked. */}
@@ -274,6 +275,7 @@ export function DeliveryPanel({
           </Label>
         </div>
       ) : null}
+      </div>
 
       <AddAddressDrawer open={addOpen} onClose={() => setAddOpen(false)} />
       <AddressBookDrawer

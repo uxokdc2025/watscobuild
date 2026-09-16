@@ -144,11 +144,17 @@ export function AddressRow({ address, selected }: { address: BrandAddress; selec
             </span>
           ) : null}
         </span>
-        <span className="mt-0.5 block text-sm text-muted-foreground">
-          {address.line1}, {address.city}, {address.state} {address.zip}
-        </span>
         {address.contact ? (
           <span className="block text-xs text-muted-foreground">{address.contact}</span>
+        ) : null}
+        <span className="block text-sm text-muted-foreground">{address.line1}</span>
+        <span className="block text-sm text-muted-foreground">
+          {address.city}, {address.state} {address.zip}
+        </span>
+        {address.phone ? (
+          <a href={`tel:${address.phone}`} className="mt-0.5 block text-sm font-medium text-primary">
+            {address.phone}
+          </a>
         ) : null}
       </span>
     </Label>

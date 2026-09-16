@@ -33,6 +33,7 @@ export type BrandAddress = {
   state: string;
   zip: string;
   contact?: string;
+  phone?: string;
   /** Deterministic default — the first job/primary address, never random. */
   isDefault?: boolean;
   /** 150-mile rule: address sits outside the branch delivery radius (Baker/ECM). */
@@ -171,11 +172,11 @@ const HOMANS: BrandCheckoutConfig = {
     { id: "portsmouth", name: "Portsmouth, NH #1277", address: "155 Heritage Ave, Portsmouth, NH", miles: 47.2, hours: "Open · closes 4:30pm" },
   ],
   addresses: [
-    { id: "hom-job-spring", group: "job", name: "Spring maintenance", contact: "Site super — Dave R.", line1: "88 Elm Street", city: "Woburn", state: "MA", zip: "01801", isDefault: true },
-    { id: "hom-job-riverside", group: "job", name: "Riverside retrofit", contact: "GC — Meadow Mechanical", line1: "1200 Shore Road", city: "Portsmouth", state: "NH", zip: "03801" },
-    { id: "hom-acct-main", group: "account", name: "Homans Associates — Main", line1: "230 Andover St", city: "Wilmington", state: "MA", zip: "01887" },
-    { id: "hom-acct-north", group: "account", name: "North warehouse", line1: "42 Industrial Way", city: "Andover", state: "MA", zip: "01810" },
-    { id: "hom-bill", group: "billing", name: "Accounts payable", line1: "PO Box 2200", city: "Woburn", state: "MA", zip: "01801" },
+    { id: "hom-job-spring", group: "job", name: "Spring maintenance", contact: "Site super — Dave R.", line1: "88 Elm Street", city: "Woburn", state: "MA", zip: "01801", isDefault: true, phone: "(781) 555-0142" },
+    { id: "hom-job-riverside", group: "job", name: "Riverside retrofit", contact: "GC — Meadow Mechanical", line1: "1200 Shore Road", city: "Portsmouth", state: "NH", zip: "03801", phone: "(603) 555-0188" },
+    { id: "hom-acct-main", group: "account", name: "Homans Associates — Main", line1: "230 Andover St", city: "Wilmington", state: "MA", zip: "01887", phone: "(978) 658-5099" },
+    { id: "hom-acct-north", group: "account", name: "North warehouse", line1: "42 Industrial Way", city: "Andover", state: "MA", zip: "01810", phone: "(978) 470-4200" },
+    { id: "hom-bill", group: "billing", name: "Accounts payable", line1: "PO Box 2200", city: "Woburn", state: "MA", zip: "01801", phone: "(781) 935-9000" },
   ],
   orderNumber: "HOM-2026-04871",
   taxRate: 0.0625,
