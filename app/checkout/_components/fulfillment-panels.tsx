@@ -17,7 +17,6 @@ import type {
 import {
   METHOD_META,
   METHOD_RATE,
-  METHOD_RATE_LABEL,
   type FulfillmentMethod,
 } from "./fulfillment-methods";
 import { DateField } from "./fulfillment-calendar";
@@ -118,12 +117,13 @@ export function DeliveryPanel({
   dateReason,
   dateMode,
   showModifiers,
-  truckLabel,
   split,
   setSplit,
   liftgate,
   setLiftgate,
   outOfRadius,
+  deliveryMethodChosen,
+  setDeliveryMethodChosen,
 }: {
   deliveryMethods: FulfillmentMethod[];
   method: FulfillmentMethod;
@@ -137,21 +137,30 @@ export function DeliveryPanel({
   dateReason?: string;
   dateMode: "picker" | "csr";
   showModifiers: boolean;
-  truckLabel?: string;
   split: "complete" | "partial";
   setSplit: (v: "complete" | "partial") => void;
   liftgate: "none" | "required";
   setLiftgate: (v: "none" | "required") => void;
   outOfRadius: boolean;
+  /** True once the user has explicitly picked a method radio (owned by the
+   *  checkout client so Continue can gate on it). */
+  deliveryMethodChosen: boolean;
+  setDeliveryMethodChosen: (v: boolean) => void;
 }) {
   const [addOpen, setAddOpen] = React.useState(false);
   const [bookOpen, setBookOpen] = React.useState(false);
   const selectedAddress = addresses.find((a) => a.id === addressId);
   const defaultGroup = (addresses.find((a) => a.isDefault) ?? addresses[0])?.group ?? "job";
   const groupAddresses = addresses.filter((a) => a.group === defaultGroup).slice(0, 4);
-  const rateLabel = method === "truck" && truckLabel ? truckLabel : METHOD_RATE_LABEL[method];
-  // A single delivery method needs no chooser — the Delivery tab already says it.
-  const multiMethod = deliveryMethods.length > 1;
+  /* Progressive reveal: date appears after an address, methods after a date,
+   * disclaimer + modifiers after a method pick. CSR brands have no picker —
+   * the CSR note IS the date step, so methods show right away. */
+  const dateSatisfied = dateMode === "csr" ? true : deliveryDate != null;
+  const showMethods = !!selectedAddress && dateSatisfied;
+  // Unavailable methods are hidden entirely — never rendered greyed/disabled.
+  const visibleMethods = outOfRadius
+    ? deliveryMethods.filter((m) => m === "freight")
+    : deliveryMethods;
 
   return (
     <div className="space-y-5">
@@ -207,29 +216,25 @@ export function DeliveryPanel({
         )
       ) : null}
 
-      {/* Delivery methods UNDER the date as plain radio rows (multi-method
-          brands only); single-method brands show the estimated rate line. */}
-      {selectedAddress && multiMethod ? (
+      {/* Delivery methods appear only AFTER a date is chosen, as plain radio
+          rows with prices. Radios start unselected until the user picks one —
+          the choice is what reveals the disclaimer + modifiers below. */}
+      {showMethods ? (
         <RadioGroup
-          value={method}
-          onValueChange={(v) => onSelectMethod(v as FulfillmentMethod)}
+          value={deliveryMethodChosen ? method : ""}
+          onValueChange={(v) => {
+            onSelectMethod(v as FulfillmentMethod);
+            setDeliveryMethodChosen(true);
+          }}
           className="gap-1.5"
           aria-label="Delivery method"
         >
-          {deliveryMethods.map((id) => {
+          {visibleMethods.map((id) => {
             const meta = METHOD_META[id];
             const rate = METHOD_RATE[id];
-            const disabled = outOfRadius && id !== "freight";
             return (
-              <Label
-                key={id}
-                className={
-                  disabled
-                    ? "flex cursor-not-allowed items-center gap-2.5 py-1 text-sm text-muted-foreground/50"
-                    : "flex items-center gap-2.5 py-1 text-sm"
-                }
-              >
-                <RadioGroupItem value={id} disabled={disabled} />
+              <Label key={id} className="flex items-center gap-2.5 py-1 text-sm">
+                <RadioGroupItem value={id} />
                 <span className="flex-1">{meta.label}</span>
                 <span className="text-xs text-muted-foreground">{rate === 0 ? "Free" : formatUSD(rate)}</span>
               </Label>
@@ -237,41 +242,31 @@ export function DeliveryPanel({
           })}
         </RadioGroup>
       ) : null}
-      {selectedAddress && !multiMethod ? (
-        <div className="space-y-2">
-          <Label htmlFor="rate-line">Estimated rate</Label>
-          <div
-            id="rate-line"
-            className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm font-medium"
-          >
-            {rateLabel}
-          </div>
-        </div>
-      ) : null}
 
-      {/* Warning + info messages beneath the delivery methods. */}
-      {outOfRadius ? (
+      {/* 150-mile warning beneath the method radio (out-of-radius only). */}
+      {showMethods && outOfRadius ? (
         <Alert variant="warning">
           <TriangleAlert />
           <AlertTitle>Outside the 150-mile delivery radius</AlertTitle>
           <AlertDescription>
             The delivery address must be within 150 miles of the selected branch to qualify for Local
-            Delivery. We&apos;ve set the method to Freight / LTL — a carrier will quote the final rate.
+            Delivery. We have set the method to Freight / LTL — a carrier will quote the final rate.
           </AlertDescription>
         </Alert>
       ) : null}
-      {selectedAddress ? (
-        <Alert variant="info">
-          <Info />
+      {/* Fulfillment disclaimer — yellow warning, shown once a method is picked. */}
+      {deliveryMethodChosen ? (
+        <Alert variant="warning">
+          <TriangleAlert />
           <AlertDescription>
-            We&apos;ll do our best to ship via your requested method and date. Availability depends on carrier
-            capacity and branch cutoff — we&apos;ll confirm before the order ships.
+            We will do our best to ship via your requested method and date. If we need to make
+            alternative arrangements, we will contact you with the details.
           </AlertDescription>
         </Alert>
       ) : null}
 
       {/* Modifiers (Homans local delivery) — two checkbox rows in the flow. */}
-      {showModifiers ? (
+      {deliveryMethodChosen && showModifiers ? (
         <div className="space-y-2">
           <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
             <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />

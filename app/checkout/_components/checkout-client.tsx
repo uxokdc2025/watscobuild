@@ -204,6 +204,13 @@ export default function CheckoutClient({
   const [split, setSplit] = React.useState<"complete" | "partial">("complete");
   const [liftgate, setLiftgate] = React.useState<"none" | "required">("required");
   const [expressOn, setExpressOn] = React.useState(false);
+  // Progressive delivery reveal: the method radios start unselected and the
+  // disclaimer/modifiers stay hidden until the user picks a method. Changing
+  // the address or date re-hides the method choice.
+  const [deliveryMethodChosen, setDeliveryMethodChosen] = React.useState(false);
+  React.useEffect(() => {
+    setDeliveryMethodChosen(false);
+  }, [addressId, deliveryDate]);
 
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);
   const [po, setPo] = React.useState("PO-2048");
@@ -309,7 +316,18 @@ export default function CheckoutClient({
     step === "details"
       ? { label: "Continue to fulfillment", onClick: goToFulfillment, disabled: false }
       : step === "fulfillment"
-        ? { label: "Continue to payment", onClick: () => setStep("payment"), disabled: false }
+        ? {
+            label: "Continue to payment",
+            onClick: () => setStep("payment"),
+            // Delivery gates Continue until a date is selected AND a method is
+            // picked; Pickup stays enabled. CSR-date brands have no picker, so
+            // the method choice alone gates them.
+            disabled: isDeliveryMethod(method)
+              ? brand.deliveryDateMode === "csr"
+                ? !deliveryMethodChosen
+                : !(deliveryDate && deliveryMethodChosen)
+              : false,
+          }
         : step === "payment"
           ? { label: "Continue to review", onClick: () => setStep("review"), disabled: payment === "terms" && account.availableCredit != null && total > account.availableCredit }
           : { label: "Place order", onClick: () => setSubmitted(true), disabled: handlingBlocks };
@@ -405,6 +423,8 @@ export default function CheckoutClient({
                   setLiftgate={setLiftgate}
                   expressOn={expressOn}
                   setExpressOn={setExpressOn}
+                  deliveryMethodChosen={deliveryMethodChosen}
+                  setDeliveryMethodChosen={setDeliveryMethodChosen}
                 />
               </>
             ) : null}

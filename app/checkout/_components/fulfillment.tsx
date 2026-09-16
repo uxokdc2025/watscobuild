@@ -50,6 +50,8 @@ export function FulfillmentSection({
   setLiftgate,
   expressOn,
   setExpressOn,
+  deliveryMethodChosen,
+  setDeliveryMethodChosen,
 }: {
   config: BrandCheckoutConfig;
   method: FulfillmentMethod;
@@ -80,6 +82,12 @@ export function FulfillmentSection({
   /** Pickup service add-on toggle (e.g. Baker Express). */
   expressOn: boolean;
   setExpressOn: (v: boolean) => void;
+  /* ── Progressive delivery reveal (owned by CheckoutClient so Continue can
+   *    gate on it). False until the user picks a method radio; reset whenever
+   *    the address or date changes. ── */
+  /** True once the user has explicitly picked a delivery method radio. */
+  deliveryMethodChosen: boolean;
+  setDeliveryMethodChosen: (v: boolean) => void;
 }) {
   const deliveryMethods = config.methods.filter(isDeliveryMethod);
   const hasPickup = config.methods.includes("pickup");
@@ -147,12 +155,13 @@ export function FulfillmentSection({
       dateReason={dateReason}
       dateMode={config.deliveryDateMode}
       showModifiers={config.deliveryModifiers}
-      truckLabel={config.truckLabel}
       split={split}
       setSplit={setSplit}
       liftgate={liftgate}
       setLiftgate={setLiftgate}
       outOfRadius={outOfRadius}
+      deliveryMethodChosen={deliveryMethodChosen}
+      setDeliveryMethodChosen={setDeliveryMethodChosen}
     />
   );
 
