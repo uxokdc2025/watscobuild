@@ -107,7 +107,7 @@ export function AboutAccordionVariants({ product }: { product: PdpProduct }) {
         <StyleHeading
           n={3}
           title="Style 3 — Boxed, accent bar + circular toggle"
-          note="One rounded bordered box with divider-split rows; the open row shows a left blue accent bar with a subtle tint, and a filled circular chevron toggle."
+          note="One rounded bordered box with divider-split rows; the open row shows a left blue accent bar and a filled circular chevron toggle."
         />
         <Accordion
           type="single"
@@ -119,7 +119,7 @@ export function AboutAccordionVariants({ product }: { product: PdpProduct }) {
             <AccordionItem
               key={s.id}
               value={s.id}
-              className="group relative overflow-hidden border-b-0 border-t px-4 first:rounded-t-lg first:border-t-0 last:rounded-b-lg data-[state=open]:bg-primary/5"
+              className="group relative overflow-hidden border-b-0 border-t bg-card px-4 first:rounded-t-lg first:border-t-0 last:rounded-b-lg"
             >
               {/* Open-state "you are here" marker — visible only on the expanded row. */}
               <span
