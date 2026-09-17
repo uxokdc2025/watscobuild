@@ -135,19 +135,21 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
           note="The active tab connects to the content panel with a blue top accent."
         />
         <Tabs defaultValue={defaultValue} className="gap-0">
-          <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-0 bg-transparent p-0">
-            {sections.map((s) => (
-              <TabsTrigger
-                key={s.id}
-                value={s.id}
-                className="flex-none rounded-t-md border-b-0 px-5 py-2.5 text-muted-foreground hover:text-primary data-[state=active]:border data-[state=active]:border-primary/60 data-[state=active]:border-b-0 data-[state=active]:bg-primary/5 data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:hover:text-primary"
-              >
-                {s.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <div className="w-full border-b border-gray-200">
+            <TabsList className="flex h-auto w-full items-end justify-start gap-2 rounded-none border-0 bg-transparent p-0">
+              {sections.map((s) => (
+                <TabsTrigger
+                  key={s.id}
+                  value={s.id}
+                  className="relative flex-none rounded-t-md border border-b-0 border-transparent px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 data-[state=active]:-mb-px data-[state=active]:border-primary/40 data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:hover:text-primary"
+                >
+                  {s.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
           {sections.map((s) => (
-            <TabsContent key={s.id} value={s.id} className="border-t pt-6">
+            <TabsContent key={s.id} value={s.id} className="pt-6">
               <s.Body />
             </TabsContent>
           ))}
