@@ -157,7 +157,7 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
           note="Larger icon + label triggers on a padded grey track; the active pill is primary blue with white text."
         />
         <Tabs defaultValue={defaultValue}>
-          <TabsList variant="segmented" className="h-auto w-full gap-2 rounded-xl p-3">
+          <TabsList variant="segmented" className="h-auto w-full items-center gap-2 rounded-xl px-4 py-4">
             {sections.map((s) => (
               <TabsTrigger
                 key={s.id}
