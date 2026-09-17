@@ -96,8 +96,8 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
           title="Style 1 — Icon tabs, blue underline"
           note="Icon inline left of the label on a single line; the active tab is primary blue with an underline bar."
         />
-        <Tabs defaultValue={defaultValue} className="rounded-xl border bg-card shadow-sm">
-          <TabsList variant="line" className="gap-8 rounded-t-xl px-6">
+        <Tabs defaultValue={defaultValue}>
+          <TabsList variant="line" className="gap-8">
             {sections.map((s) => (
               <TabsTrigger
                 key={s.id}
@@ -110,7 +110,7 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
             ))}
           </TabsList>
           {sections.map((s) => (
-            <TabsContent key={s.id} value={s.id} className="p-6 pt-4">
+            <TabsContent key={s.id} value={s.id} className="pt-6">
               <s.Body />
             </TabsContent>
           ))}
