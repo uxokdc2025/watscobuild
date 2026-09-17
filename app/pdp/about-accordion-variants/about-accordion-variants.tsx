@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Minus, Plus } from "lucide-react";
+import { ChevronDown, Minus, Plus } from "lucide-react";
 
 import {
   Accordion,
@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { AboutThisProduct, aboutSections } from "../_lib/about";
 import type { PdpProduct } from "../_lib/types";
 
@@ -101,39 +102,50 @@ export function AboutAccordionVariants({ product }: { product: PdpProduct }) {
         </Accordion>
       </section>
 
-      {/* ── Style 3 — Flush minimal ── */}
-      <section aria-label="Style 3 — Flush minimal">
+      {/* ── Style 3 — Boxed, accent bar + circular toggle ── */}
+      <section aria-label="Style 3 — Boxed, accent bar + circular toggle">
         <StyleHeading
           n={3}
-          title="Style 3 — Flush minimal"
-          note="Borderless sections split by a thin divider; the open label is blue and semibold."
+          title="Style 3 — Boxed, accent bar + circular toggle"
+          note="One rounded bordered box with divider-split rows; the open row shows a left blue accent bar with a subtle tint, and a filled circular chevron toggle."
         />
         <Accordion
           type="single"
           collapsible
           defaultValue={defaultValue}
-          className="w-full"
+          className="w-full overflow-visible rounded-lg border bg-card"
         >
           {sections.map((s) => (
             <AccordionItem
               key={s.id}
               value={s.id}
-              className="rounded-none border-0 border-b px-0 last:border-b"
+              className="group relative overflow-hidden border-b-0 border-t px-4 first:rounded-t-lg first:border-t-0 last:rounded-b-lg data-[state=open]:bg-primary/5"
             >
-              <AccordionTrigger className="group py-5 text-base hover:no-underline data-[state=open]:font-semibold data-[state=open]:text-primary [&>svg]:text-primary">
+              {/* Open-state "you are here" marker — visible only on the expanded row. */}
+              <span
+                aria-hidden
+                className="absolute inset-y-0 left-0 hidden w-1 bg-primary group-data-[state=open]:block"
+              />
+              <AccordionTrigger className="group/trigger min-h-11 py-3 pl-2 text-base hover:no-underline data-[state=open]:text-primary [&>svg:last-child]:hidden">
                 <span className="flex items-center gap-3">
                   <s.Icon className="size-4 shrink-0 text-muted-foreground group-data-[state=open]:text-primary" />
-                  <span className="font-medium group-data-[state=open]:font-semibold">
+                  <span className="font-semibold">
                     {s.label}
                     {s.count !== undefined ? (
-                      <span className="ml-1 text-sm font-normal text-muted-foreground">
-                        ({s.count})
-                      </span>
+                      <Badge variant="secondary" className="ml-2">
+                        {s.count}
+                      </Badge>
                     ) : null}
                   </span>
                 </span>
+                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+                  <ChevronDown
+                    aria-hidden
+                    className="size-4 transition-transform duration-200 group-data-[state=open]/trigger:rotate-180"
+                  />
+                </span>
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="pl-9">
                 <s.Body />
               </AccordionContent>
             </AccordionItem>
