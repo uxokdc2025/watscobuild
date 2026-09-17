@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { aboutSections } from "../_lib/about";
+import { aboutSections, type AboutSection } from "../_lib/about";
 import type { PdpProduct } from "../_lib/types";
 
 function StyleHeading({
@@ -29,9 +29,59 @@ function StyleHeading({
 }
 
 /**
+ * Style 4 — Folder tab, blue active.
+ *
+ * Self-contained tab group using plain <button> elements + local state
+ * (NOT the shared Tabs/TabsTrigger primitive), so the exact folder-tab
+ * markup renders verbatim: the primitive rounds all four corners and
+ * collapses the tab height, while this keeps top-only radius
+ * (rounded-t-md, square bottom corners) and a 44–48px tab height
+ * (px-6 py-3 text-sm). Uses the primary blue token to match the repo.
+ */
+function Style4FolderTabs({
+  sections,
+  defaultValue,
+}: {
+  sections: AboutSection[];
+  defaultValue: string;
+}) {
+  const [active, setActive] = React.useState(defaultValue);
+  const current = sections.find((s) => s.id === active) ?? sections[0];
+
+  return (
+    <div>
+      <div className="w-full border-b border-gray-200">
+        <div className="flex items-end gap-2" role="tablist" aria-label="About sections">
+          {sections.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              role="tab"
+              aria-selected={active === s.id}
+              onClick={() => setActive(s.id)}
+              className={
+                active === s.id
+                  ? "relative -mb-px rounded-t-md border border-b-0 border-primary/40 bg-white px-6 py-3 text-sm font-semibold text-primary"
+                  : "px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700"
+              }
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="pt-6" role="tabpanel">
+        {current ? <current.Body /> : null}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Four blue-active tab styles over the real About content of `product`
  * (Description / Specifications / Documents / Part List). Client review
- * showcase — each style is a full Tabs instance, only the classNames differ.
+ * showcase — styles 1–3 are full Tabs instances differing only in
+ * classNames; style 4 is a self-contained button group (see above).
  */
 export function AboutVariants({ product }: { product: PdpProduct }) {
   const sections = React.useMemo(() => aboutSections(product), [product]);
@@ -134,26 +184,10 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
           title="Style 4 — Folder tab, blue active"
           note="The active tab connects to the content panel with a blue top accent."
         />
-        <Tabs defaultValue={defaultValue} className="gap-0">
-          <div className="w-full border-b border-gray-200">
-            <TabsList className="flex h-auto w-full items-end justify-start gap-2 rounded-none border-0 bg-transparent p-0">
-              {sections.map((s) => (
-                <TabsTrigger
-                  key={s.id}
-                  value={s.id}
-                  className="relative flex-none rounded-t-md border border-b-0 border-transparent px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 data-[state=active]:-mb-px data-[state=active]:border-primary/40 data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:hover:text-primary"
-                >
-                  {s.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-          {sections.map((s) => (
-            <TabsContent key={s.id} value={s.id} className="pt-6">
-              <s.Body />
-            </TabsContent>
-          ))}
-        </Tabs>
+        <Style4FolderTabs
+          sections={sections}
+          defaultValue={defaultValue}
+        />
       </section>
     </div>
   );
