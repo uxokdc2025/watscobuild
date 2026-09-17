@@ -74,7 +74,7 @@ export function AboutAccordionVariants({ product }: { product: PdpProduct }) {
             <AccordionItem
               key={s.id}
               value={s.id}
-              className="rounded-lg border border-b bg-card px-4"
+              className="rounded-lg border bg-card px-4 last:border-b"
             >
               <AccordionTrigger className="group py-4 text-base hover:no-underline data-[state=open]:text-primary [&>svg:last-child]:hidden">
                 <span className="flex items-center gap-3">
