@@ -16,7 +16,7 @@ function StyleHeading({
   note: string;
 }) {
   return (
-    <div className="mb-4 border-b pb-2">
+    <div className="mb-6">
       <h3 className="text-lg font-bold tracking-tight">
         <span className="mr-2 inline-grid size-6 place-items-center rounded-full bg-primary align-middle text-xs font-bold text-primary-foreground">
           {n}
@@ -44,7 +44,7 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
         <StyleHeading
           n={1}
           title="Style 1 — Icon tabs, blue underline"
-          note="Icon stacked over the label; the active tab is primary blue with an underline bar."
+          note="Icon inline left of the label on a single line; the active tab is primary blue with an underline bar."
         />
         <Tabs defaultValue={defaultValue} className="rounded-xl border bg-card shadow-sm">
           <TabsList variant="line" className="gap-8 rounded-t-xl px-6">
@@ -52,7 +52,7 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
               <TabsTrigger
                 key={s.id}
                 value={s.id}
-                className="flex-col gap-1 px-2 py-3 text-muted-foreground data-[state=active]:font-semibold data-[state=active]:text-primary"
+                className="flex-row items-center gap-2 whitespace-nowrap px-2 py-3 text-muted-foreground data-[state=active]:font-semibold data-[state=active]:text-primary"
               >
                 <s.Icon className="size-5" />
                 {s.label}
@@ -104,15 +104,15 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
         <StyleHeading
           n={3}
           title="Style 3 — Segmented icon + bold pill"
-          note="Larger icon + label triggers; the active pill is white with bold text."
+          note="Larger icon + label triggers on a padded grey track; the active pill is primary blue with white text."
         />
         <Tabs defaultValue={defaultValue}>
-          <TabsList className="h-auto w-full rounded-xl p-1.5">
+          <TabsList variant="segmented" className="h-auto w-full gap-1 rounded-xl p-2">
             {sections.map((s) => (
               <TabsTrigger
                 key={s.id}
                 value={s.id}
-                className="h-auto rounded-lg px-4 py-2.5 text-muted-foreground data-[state=active]:font-bold data-[state=active]:text-foreground data-[state=inactive]:hover:text-primary"
+                className="h-auto rounded-lg px-4 py-2.5 text-muted-foreground data-[state=active]:bg-primary data-[state=active]:font-bold data-[state=active]:text-primary-foreground data-[state=active]:hover:text-primary-foreground data-[state=active]:[&_svg]:text-primary-foreground data-[state=inactive]:hover:text-primary"
               >
                 <s.Icon className="size-4" />
                 {s.label}
