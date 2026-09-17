@@ -556,6 +556,74 @@ const PART_GROUP_ICONS: Record<string, LucideIcon> = {
   instructions: ClipboardList,
 };
 
+/** One About section rebound as a tab: label, icon, optional count, and a product-bound body. */
+export type AboutSection = {
+  id: string;
+  label: string;
+  Icon: LucideIcon;
+  count?: number;
+  Body: React.FC;
+};
+
+/**
+ * The four About sections as tab data, reusing the internal renderers above.
+ * Same gating AboutThisProduct uses: Description always; Specifications,
+ * Documents, and Part List only when the product carries that data. Counts:
+ * Documents = product.documents.length, Part List = total part count.
+ */
+export function aboutSections(product: PdpProduct): AboutSection[] {
+  const hasDocs = Boolean(product.documents?.length);
+  const hasSpecs = hasSpecData(product);
+  const isBundle = Boolean(product.bundleItems?.length);
+  const hasCatalog = Boolean(product.partsCatalog?.groups?.length);
+  const hasParts = Boolean(product.parts?.length);
+  const showPartList = !isBundle && (hasCatalog || hasParts);
+  const partCount = hasCatalog
+    ? product.partsCatalog!.groups.reduce((n, g) => n + g.parts.length, 0)
+    : (product.parts?.length ?? 0);
+
+  const sections: AboutSection[] = [
+    {
+      id: "description",
+      label: "Description",
+      Icon: FileText,
+      Body: () => <Description product={product} />,
+    },
+  ];
+  if (hasSpecs) {
+    sections.push({
+      id: "specifications",
+      label: "Specifications",
+      Icon: ClipboardList,
+      Body: () => <Specifications product={product} />,
+    });
+  }
+  if (hasDocs) {
+    sections.push({
+      id: "documents",
+      label: "Documents",
+      Icon: BookOpen,
+      count: product.documents!.length,
+      Body: () => <Documents documents={product.documents!} />,
+    });
+  }
+  if (showPartList) {
+    sections.push({
+      id: "parts",
+      label: "Part List",
+      Icon: Wrench,
+      count: partCount,
+      Body: () =>
+        hasCatalog ? (
+          <PartList catalog={product.partsCatalog!} />
+        ) : (
+          <PartsGrid parts={product.parts!} />
+        ),
+    });
+  }
+  return sections;
+}
+
 /**
  * About This Product — the single accordion every PDP renders (replacing the
  * old Description / Specifications tabs). Panels are data-driven: Description

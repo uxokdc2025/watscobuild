@@ -393,6 +393,18 @@ export default function PdpMasterPage() {
                     <TemplateCard key={p.slug} p={p} signedInOnly />
                   ))}
                 </ul>
+                <div className="mt-4 flex flex-wrap items-center gap-2 pb-2">
+                  <Button asChild>
+                    <Link
+                      href="/pdp/about-variants"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      About This Product — Tab styles (client review)
+                      <ArrowUpRight className="size-3.5" />
+                    </Link>
+                  </Button>
+                </div>
               </AccordionContent>
             </AccordionItem>
           ) : null}
