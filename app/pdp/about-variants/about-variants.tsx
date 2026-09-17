@@ -29,7 +29,7 @@ function StyleHeading({
 }
 
 /**
- * Three blue-active tab styles over the real About content of `product`
+ * Four blue-active tab styles over the real About content of `product`
  * (Description / Specifications / Documents / Part List). Client review
  * showcase — each style is a full Tabs instance, only the classNames differ.
  */
@@ -67,11 +67,43 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
         </Tabs>
       </section>
 
-      {/* ── Style 2 — Segmented icon + bold pill ── */}
-      <section aria-label="Style 2 — Segmented icon and bold pill">
+      {/* ── Style 2 — Segmented pill with counts ── */}
+      <section aria-label="Style 2 — Segmented pill with counts">
         <StyleHeading
           n={2}
-          title="Style 2 — Segmented icon + bold pill"
+          title="Style 2 — Segmented pill with counts"
+          note="Grey track, white active pill; section counts stay muted, hover stays blue."
+        />
+        <Tabs defaultValue={defaultValue}>
+          <TabsList className="h-10 w-full rounded-md">
+            {sections.map((s) => (
+              <TabsTrigger
+                key={s.id}
+                value={s.id}
+                className="text-muted-foreground data-[state=active]:font-semibold hover:text-primary data-[state=active]:hover:text-foreground"
+              >
+                {s.label}
+                {s.count !== undefined ? (
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {s.count}
+                  </span>
+                ) : null}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {sections.map((s) => (
+            <TabsContent key={s.id} value={s.id} className="pt-6">
+              <s.Body />
+            </TabsContent>
+          ))}
+        </Tabs>
+      </section>
+
+      {/* ── Style 3 — Segmented icon + bold pill ── */}
+      <section aria-label="Style 3 — Segmented icon and bold pill">
+        <StyleHeading
+          n={3}
+          title="Style 3 — Segmented icon + bold pill"
           note="Larger icon + label triggers; the active pill is white with bold text."
         />
         <Tabs defaultValue={defaultValue}>
@@ -95,11 +127,11 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
         </Tabs>
       </section>
 
-      {/* ── Style 3 — Folder tab, blue active ── */}
-      <section aria-label="Style 3 — Folder tab, blue active">
+      {/* ── Style 4 — Folder tab, blue active ── */}
+      <section aria-label="Style 4 — Folder tab, blue active">
         <StyleHeading
-          n={3}
-          title="Style 3 — Folder tab, blue active"
+          n={4}
+          title="Style 4 — Folder tab, blue active"
           note="The active tab connects to the content panel with a blue top accent."
         />
         <Tabs defaultValue={defaultValue} className="gap-0">
