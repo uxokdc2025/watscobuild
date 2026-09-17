@@ -404,6 +404,16 @@ export default function PdpMasterPage() {
                       <ArrowUpRight className="size-3.5" />
                     </Link>
                   </Button>
+                  <Button asChild>
+                    <Link
+                      href="/pdp/about-accordion-variants"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      About This Product — Accordion styles (client review)
+                      <ArrowUpRight className="size-3.5" />
+                    </Link>
+                  </Button>
                 </div>
               </AccordionContent>
             </AccordionItem>
