@@ -78,9 +78,9 @@ function Style3FolderTabs({
 }
 
 /**
- * Four blue-active tab styles over the real About content of `product`
+ * Three blue-active tab styles over the real About content of `product`
  * (Description / Specifications / Documents / Part List). Client review
- * showcase — styles 1–2 and 4 are full Tabs instances differing only in
+ * showcase — styles 1–2 are full Tabs instances differing only in
  * classNames; style 3 is a self-contained button group (see above).
  */
 export function AboutVariants({ product }: { product: PdpProduct }) {
@@ -89,11 +89,42 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
 
   return (
     <div className="flex flex-col gap-14">
-      {/* ── Style 1 — Segmented pill with counts ── */}
-      <section aria-label="Style 1 — Segmented pill with counts">
+      {/* ── Style 1 — Connected segment bar, solid blue active ── */}
+      <section aria-label="Style 1 — Connected segment bar, solid blue active">
         <StyleHeading
           n={1}
-          title="Style 1 — Segmented pill with counts"
+          title="Style 1 — Connected segment bar, solid blue active"
+          note="One bordered bar split into equal segments; the active segment is a solid blue block — no caret, icons kept."
+        />
+        <Tabs defaultValue={defaultValue}>
+          <TabsList
+            variant="segmented"
+            className="h-11 w-full items-center gap-0 divide-x divide-border overflow-hidden rounded-md border border-border bg-white p-0"
+          >
+            {sections.map((s) => (
+              <TabsTrigger
+                key={s.id}
+                value={s.id}
+                className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-primary data-[state=active]:font-semibold data-[state=active]:text-primary-foreground data-[state=active]:[&_svg]:text-primary-foreground data-[state=active]:hover:bg-primary data-[state=active]:hover:text-primary-foreground data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+              >
+                <s.Icon className="size-4" />
+                {s.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {sections.map((s) => (
+            <TabsContent key={s.id} value={s.id} className="pt-6">
+              <s.Body />
+            </TabsContent>
+          ))}
+        </Tabs>
+      </section>
+
+      {/* ── Style 2 — Segmented pill with counts ── */}
+      <section aria-label="Style 2 — Segmented pill with counts">
+        <StyleHeading
+          n={2}
+          title="Style 2 — Segmented pill with counts"
           note="Grey track, white active pill; section counts stay muted, hover stays blue."
         />
         <Tabs defaultValue={defaultValue}>
@@ -121,34 +152,6 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
         </Tabs>
       </section>
 
-      {/* ── Style 2 — Segmented icon + bold pill ── */}
-      <section aria-label="Style 2 — Segmented icon and bold pill">
-        <StyleHeading
-          n={2}
-          title="Style 2 — Segmented icon + bold pill"
-          note="Larger icon + label triggers on a padded grey track; the active pill is primary blue with white text."
-        />
-        <Tabs defaultValue={defaultValue}>
-          <TabsList variant="segmented" className="!h-auto w-full items-center gap-2 rounded-xl p-3">
-            {sections.map((s) => (
-              <TabsTrigger
-                key={s.id}
-                value={s.id}
-                className="!h-auto self-center rounded-lg px-4 py-2.5 text-muted-foreground data-[state=active]:bg-primary data-[state=active]:font-bold data-[state=active]:text-primary-foreground data-[state=active]:hover:text-primary-foreground data-[state=active]:[&_svg]:text-primary-foreground data-[state=inactive]:hover:text-primary"
-              >
-                <s.Icon className="size-4" />
-                {s.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {sections.map((s) => (
-            <TabsContent key={s.id} value={s.id} className="pt-6">
-              <s.Body />
-            </TabsContent>
-          ))}
-        </Tabs>
-      </section>
-
       {/* ── Style 3 — Folder tab, blue active ── */}
       <section aria-label="Style 3 — Folder tab, blue active">
         <StyleHeading
@@ -160,37 +163,6 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
           sections={sections}
           defaultValue={defaultValue}
         />
-      </section>
-
-      {/* ── Style 4 — Connected segment bar, solid blue active ── */}
-      <section aria-label="Style 4 — Connected segment bar, solid blue active">
-        <StyleHeading
-          n={4}
-          title="Style 4 — Connected segment bar, solid blue active"
-          note="One bordered bar split into equal segments; the active segment is a solid blue block — no caret, icons kept."
-        />
-        <Tabs defaultValue={defaultValue}>
-          <TabsList
-            variant="segmented"
-            className="h-11 w-full items-center gap-0 divide-x divide-border overflow-hidden rounded-md border border-border bg-white p-0"
-          >
-            {sections.map((s) => (
-              <TabsTrigger
-                key={s.id}
-                value={s.id}
-                className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-primary data-[state=active]:font-semibold data-[state=active]:text-primary-foreground data-[state=active]:[&_svg]:text-primary-foreground data-[state=active]:hover:bg-primary data-[state=active]:hover:text-primary-foreground data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
-              >
-                <s.Icon className="size-4" />
-                {s.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {sections.map((s) => (
-            <TabsContent key={s.id} value={s.id} className="pt-6">
-              <s.Body />
-            </TabsContent>
-          ))}
-        </Tabs>
       </section>
     </div>
   );
