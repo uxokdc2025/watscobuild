@@ -26,6 +26,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import type { CheckoutCase } from "../page";
@@ -66,6 +67,7 @@ type CardOption = { id: string; brand: string; name: string; tail: string; expir
 const SAVED_CARDS: CardOption[] = [
   { id: "visa-6177", brand: "VISA", name: "Company Card", tail: "6177", expires: "4/2028", shared: true },
   { id: "mc-8801", brand: "MASTERCARD", name: "Field Ops", tail: "8801", expires: "2/2027", shared: true },
+  { id: "personal-4412", brand: "VISA", name: "Personal", tail: "4412", expires: "9/2029", shared: false },
 ];
 
 /* The in-checkout switch-account control, pickup branches, and grouped "Deliver
@@ -553,7 +555,6 @@ export default function CheckoutClient({
                       addedCards={addedCards}
                       setAddedCards={setAddedCards}
                       onBack={() => setStep("fulfillment")}
-                      onEditAccount={() => setAccountDrawerOpen(true)}
                     />
                     <div className="flex justify-end border-t px-5 py-4">
                       <Button size="sm" onClick={() => goToStep("review")}>
@@ -784,7 +785,6 @@ export default function CheckoutClient({
                 addedCards={addedCards}
                 setAddedCards={setAddedCards}
                 onBack={() => setStep("fulfillment")}
-                onEditAccount={() => setAccountDrawerOpen(true)}
               />
             ) : null}
             {step === "review" ? (
@@ -876,7 +876,6 @@ function PaymentStep({
   addedCards,
   setAddedCards,
   onBack,
-  onEditAccount,
 }: {
   brand: BrandCheckoutConfig;
   account: SwitchAccount;
@@ -889,11 +888,8 @@ function PaymentStep({
   addedCards: CardOption[];
   setAddedCards: React.Dispatch<React.SetStateAction<CardOption[]>>;
   onBack: () => void;
-  onEditAccount: () => void;
 }) {
   const [cardDrawerOpen, setCardDrawerOpen] = React.useState(false);
-
-  const billingAddress = brand.addresses.find((a) => a.group === "billing");
 
   const addCard = (tail: string) => {
     const id = `card-${tail}-${addedCards.length}`;
@@ -905,22 +901,18 @@ function PaymentStep({
     <>
       <SectionHeading number="3" title="Payment" />
       <div className="space-y-5 p-5">
-        {/* Account + billing header — fronted above the payment methods because
-            switching the account changes who is billed. */}
-        <BillingSummary account={account} billingAddress={billingAddress} onEdit={onEditAccount} />
-
         <RadioGroup value={payment} onValueChange={(v) => setPayment(v as Payment)} className="grid gap-3">
           <RadioCard value="terms" selected={payment === "terms"}>
             <span className="block font-semibold">Account terms, COD</span>
             <span className="mt-1 block text-sm text-muted-foreground">Charge this order to your {brand.brandName} account.</span>
             {payment === "terms" && account.availableCredit != null ? (
               <div className="mt-3 border-t pt-3">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-wrap gap-x-10 gap-y-2">
                   <div>
                     <p className="text-xs text-muted-foreground">Account balance</p>
                     <p className="text-base font-semibold tabular-nums">{formatUSD(account.creditBalance ?? 0)}</p>
                   </div>
-                  <div className="border-l pl-4">
+                  <div>
                     <p className="text-xs text-muted-foreground">Available credit</p>
                     <p className="text-base font-semibold tabular-nums">{formatUSD(account.availableCredit)}</p>
                   </div>
@@ -953,31 +945,35 @@ function PaymentStep({
             </span>
           </RadioCard>
           {payment === "card" ? (
-            <div className="mt-1 rounded-md border bg-muted/30 p-5">
-              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-3 gap-3">
-                {cards.slice(0, 2).map((c) => (
+            <div className="mt-1 rounded-md border bg-muted/30 p-3">
+              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-3 gap-2">
+                {cards.map((c) => (
                   <Label
                     key={c.id}
                     className={cn(
-                      "flex cursor-pointer items-start gap-4 rounded-lg border bg-background p-4 transition-colors",
+                      "flex cursor-pointer items-start gap-2 rounded-md border bg-background p-2.5 transition-colors",
                       cardId === c.id ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
                     )}
                   >
                   <RadioGroupItem value={c.id} className="mt-0.5" />
-                  <CardMark brand={c.brand} />
+                  <CardMark brand={c.brand} className="h-5 min-w-8 rounded-sm px-1 text-[8px] font-bold" />
                   <span className="min-w-0">
-                    <p className="text-sm font-semibold">{c.name}</p>
-                    <p className="text-xs text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
-                    <p className="text-xs text-muted-foreground">Expires: {c.expires}</p>
+                    <p className="text-xs font-semibold">{c.name}</p>
+                    <p className="text-[11px] text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
+                    <p className="text-[11px] text-muted-foreground">Expires: {c.expires}</p>
                     {c.shared ? (
-                      <span className="mt-1 inline-block rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                      <Badge variant="secondary" className="mt-1 text-[10px]">
                         Shared from the company
-                      </span>
+                      </Badge>
                     ) : c.added ? (
-                      <span className="mt-1 inline-block rounded-sm bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                      <Badge variant="secondary" className="mt-1 text-[10px]">
                         Added this order
-                      </span>
-                    ) : null}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary" className="mt-1 text-[10px]">
+                        Personal
+                      </Badge>
+                    )}
                   </span>
                 </Label>
               ))}
@@ -1000,43 +996,6 @@ function PaymentStep({
 
       <CreditCardDrawer open={cardDrawerOpen} onClose={() => setCardDrawerOpen(false)} onSave={addCard} />
     </>
-  );
-}
-
-/** Account + billing header for the Payment step. Two SummaryCard boxes — the
- *  selected account (the same one Order Details uses) and the billing address it
- *  maps to — so the buyer sees who is billed BEFORE choosing a payment method.
- *  The Edit sits on the Account box and opens the switch-account drawer, which
- *  changes both. The billing box reuses the brand's billing-group address for the
- *  street, with the account's own name + phone. */
-function BillingSummary({
-  account,
-  billingAddress,
-  onEdit,
-}: {
-  account: SwitchAccount;
-  billingAddress?: BrandCheckoutConfig["addresses"][number];
-  onEdit: () => void;
-}) {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <SummaryCard label="Account" editLabel="Edit account" onEdit={onEdit}>
-        <p className="font-semibold text-foreground">{account.name}</p>
-        <p className="text-muted-foreground">{account.detail}</p>
-        <p className="text-muted-foreground">{account.phone}</p>
-      </SummaryCard>
-      <SummaryCard label="Billing address" editLabel="Edit billing address" onEdit={onEdit}>
-        <p className="font-medium text-foreground">{account.name}</p>
-        {billingAddress ? (
-          <p className="text-muted-foreground">
-            {billingAddress.name} · {billingAddress.line1}, {billingAddress.city}, {billingAddress.state} {billingAddress.zip}
-          </p>
-        ) : (
-          <p className="text-muted-foreground">{account.detail}</p>
-        )}
-        <p className="text-muted-foreground">{account.phone}</p>
-      </SummaryCard>
-    </div>
   );
 }
 
