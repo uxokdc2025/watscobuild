@@ -61,7 +61,7 @@ function Style3FolderTabs({
               onClick={() => setActive(s.id)}
               className={
                 active === s.id
-                  ? "relative -mb-px rounded-t-md border border-b-0 border-primary/40 bg-white px-6 py-3 text-sm font-semibold text-primary"
+                  ? "relative -mb-px rounded-t-md border border-b-0 border-primary/40 border-t-[3px] border-t-primary bg-white px-6 py-3 text-sm font-semibold text-primary"
                   : "px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700"
               }
             >
