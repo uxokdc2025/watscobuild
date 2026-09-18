@@ -596,7 +596,7 @@ export default function CheckoutClient({
                               <div className="rounded-md border">
                                 <div className="border-b px-5 py-4 font-semibold">Backordered items ({backordered.length})</div>
                                 {backordered.map((item) => (
-                                  <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+                                  <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
                                     <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
                                       {item.image ? (
                                         // eslint-disable-next-line @next/next/no-img-element
@@ -618,7 +618,7 @@ export default function CheckoutClient({
                           <div className="rounded-md border">
                             <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
                             {regular.map((item) => (
-                              <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+                              <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
                                 <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
                                   {item.image ? (
                                     // eslint-disable-next-line @next/next/no-img-element
@@ -1030,9 +1030,6 @@ function ReviewStep({
   handlingComments,
   setHandlingComments,
   onBack,
-  onEditDetails,
-  onEditFulfillment,
-  onEditPayment,
 }: {
   brand: BrandCheckoutConfig;
   items: CartItem[];
@@ -1077,7 +1074,7 @@ function ReviewStep({
       <SectionHeading number="4" title="Review & submit" />
       <div className="space-y-5 p-5">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <SummaryCard label="Order details" editLabel="Edit order details" onEdit={onEditDetails}>
+          <SummaryCard label="Order details">
             <p className="font-medium text-foreground">{account.name}</p>
             <p className="text-muted-foreground">{account.detail}</p>
             <p className="text-muted-foreground">PO {po || "—"}</p>
@@ -1085,7 +1082,7 @@ function ReviewStep({
             {notes.trim() ? <p className="text-muted-foreground line-clamp-2">Notes: {notes}</p> : null}
           </SummaryCard>
 
-          <SummaryCard label="Fulfillment" editLabel="Edit fulfillment" onEdit={onEditFulfillment}>
+          <SummaryCard label="Fulfillment">
             {isDeliveryMethod(method) ? (
               <>
                 <p className="font-medium text-foreground">Delivery — {methodLabel(method)}</p>
@@ -1122,7 +1119,7 @@ function ReviewStep({
             )}
           </SummaryCard>
 
-          <SummaryCard label="Payment" editLabel="Edit payment" onEdit={onEditPayment}>
+          <SummaryCard label="Payment">
             {payment === "card" ? (
               <>
                 <p className="font-medium text-foreground">Credit card •••• {cardTail}</p>
@@ -1186,7 +1183,7 @@ function ReviewStep({
               <div className="rounded-md border">
                 <div className="border-b px-5 py-4 font-semibold">Backordered items ({backordered.length})</div>
                 {backordered.map((item) => (
-                  <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+                  <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
                     <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
                       {item.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -1208,7 +1205,7 @@ function ReviewStep({
           <div className="rounded-md border">
             <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
             {regular.map((item) => (
-              <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+              <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
                 <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
                   {item.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
