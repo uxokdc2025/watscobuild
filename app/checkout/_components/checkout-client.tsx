@@ -37,7 +37,7 @@ import {
   isDeliveryMethod,
   type FulfillmentMethod,
 } from "./fulfillment";
-import { TODAY, TIME_SLOTS, addDays, firstSelectable, fmtDate } from "./fulfillment-calendar";
+import { fmtDate } from "./fulfillment-calendar";
 import { CardMark } from "./card-mark";
 import { SummaryCard } from "./summary-card";
 import { OrderDetailsStep } from "./order-details-step";
@@ -119,16 +119,6 @@ const CHECKOUT_SCENARIOS: Record<CheckoutCase, Partial<ScenarioConfig>> = {
 
 function resolveScenario(scenario?: CheckoutCase): ScenarioConfig {
   return scenario ? { ...BASE, ...CHECKOUT_SCENARIOS[scenario] } : BASE;
-}
-
-/* Fixed base-view default: the earliest selectable date at the first available
- * time slot, so the delivery picker shows a value on arrival. */
-function defaultDeliveryDate(availabilityConstraint: boolean): Date {
-  const earliest = availabilityConstraint ? addDays(TODAY, 2) : addDays(TODAY, 1);
-  const d = firstSelectable(earliest);
-  const slot = TIME_SLOTS.find((s) => !s.disabled) ?? TIME_SLOTS[0];
-  d.setHours(slot.h, slot.m, 0, 0);
-  return d;
 }
 
 /* A selectable radio card — one pattern for both fulfillment and payment. */
@@ -228,13 +218,11 @@ export default function CheckoutClient({
   // the Review "Fulfillment" card can show the requested date, delivery address,
   // and per-brand modifiers — not just the method.
   // Fixed base view: the default/first address starts selected, the method is
-  // preselected, the date picker opens with the earliest selectable slot, and
-  // both modifiers start unchecked. Nothing hides behind a reveal.
+  // preselected, the date picker opens BLANK (null until the user picks a
+  // date), and both modifiers start unchecked. Nothing hides behind a reveal.
   const [addressId, setAddressId] = React.useState(initialAddressId);
   const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
-  const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(() =>
-    defaultDeliveryDate(cfg.availabilityConstraint)
-  );
+  const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
   const [split, setSplit] = React.useState<"complete" | "partial">("partial");
   const [liftgate, setLiftgate] = React.useState<"none" | "required">("none");
   const [expressOn, setExpressOn] = React.useState(false);
@@ -265,9 +253,13 @@ export default function CheckoutClient({
   // Applied coupon takes 10% off the subtotal.
   const discount = appliedCoupon ? subtotal * 0.1 : 0;
   const tax = (subtotal - discount) * brand.taxRate;
-  // Shipping reflects the chosen fulfillment method's rate.
+  // Shipping reflects the chosen fulfillment method's rate — but for delivery
+  // with a picker date, the rate is unknown until a date is chosen (CSR-date
+  // brands confirm the date themselves, so their rate always applies).
   const shipping = METHOD_RATE[method];
   const total = subtotal - discount + tax + shipping;
+  const shippingUnknown =
+    isDeliveryMethod(method) && brand.deliveryDateMode !== "csr" && deliveryDate == null;
 
   if (submitted) {
     return (
@@ -649,6 +641,7 @@ export default function CheckoutClient({
               discount={discount}
               tax={tax}
               shipping={shipping}
+              shippingUnknown={shippingUnknown}
               total={total}
               primary={{ label: "Place order", onClick: () => setSubmitted(true), disabled: step !== "review" }}
               coupon={coupon}
@@ -823,6 +816,7 @@ export default function CheckoutClient({
             discount={discount}
             tax={tax}
             shipping={shipping}
+            shippingUnknown={shippingUnknown}
             total={total}
             primary={primary}
             coupon={coupon}
@@ -1239,6 +1233,7 @@ function OrderSummary({
   discount,
   tax,
   shipping,
+  shippingUnknown = false,
   total,
   primary,
   coupon,
@@ -1254,6 +1249,9 @@ function OrderSummary({
   discount: number;
   tax: number;
   shipping: number;
+  /** Delivery rate is unknown until a delivery date is chosen — Shipping and
+   *  Total render "N/A" while true. Pickup is unaffected. */
+  shippingUnknown?: boolean;
   total: number;
   primary: { label: string; onClick: () => void; disabled: boolean };
   coupon: string;
@@ -1308,11 +1306,11 @@ function OrderSummary({
           </div>
           <div className="flex justify-between">
             <span className="font-medium">Shipping:</span>
-            <span>{shipping > 0 ? formatUSD(shipping) : "Free"}</span>
+            <span>{shippingUnknown ? "N/A" : shipping > 0 ? formatUSD(shipping) : "Free"}</span>
           </div>
           <div className="flex justify-between pt-1 font-bold">
             <span>Total:</span>
-            <span>{formatUSD(total)}</span>
+            <span>{shippingUnknown ? "N/A" : formatUSD(total)}</span>
           </div>
         </div>
         {/* Coupon — lives in the summary, near the total. */}

@@ -221,11 +221,16 @@ export function DeliveryPanel({
         {visibleMethods.map((id) => {
           const meta = METHOD_META[id];
           const rate = METHOD_RATE[id];
+          // Picker-mode rates are unknown until a date is chosen; CSR brands
+          // confirm the date themselves, so their rates always show.
+          const rateUnknown = dateMode === "picker" && deliveryDate == null;
           return (
             <Label key={id} className="flex items-center gap-2.5 py-1 text-sm">
               <RadioGroupItem value={id} />
               <span className="flex-1">{meta.label}</span>
-              <span className="text-xs text-muted-foreground">{rate === 0 ? "Free" : formatUSD(rate)}</span>
+              <span className="text-xs text-muted-foreground">
+                {rateUnknown ? "N/A" : rate === 0 ? "Free" : formatUSD(rate)}
+              </span>
             </Label>
           );
         })}
