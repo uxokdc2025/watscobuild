@@ -57,6 +57,8 @@ const DEMO_ITEMS: CartItem[] = [
   { id: "cart-wire-rope", title: "Duro Dyne® Cable Lock Wire Rope - 500' Roll", brand: "Duro Dyne", item: "DD-500WR", mfg: "CL-WR-500", price: 277, quantity: 1, image: "/peirce-search/blower-motor-17.avif" },
 ];
 
+const BACKORDER_IDS = new Set(["cart-air-handler", "cart-wire-rope"]);
+
 /* Saved cards are modeled as SHARED FROM THE COMPANY — the account, not the
  * individual, owns the card on file (ECM pattern). */
 type CardOption = { id: string; brand: string; name: string; tail: string; expires: string; shared?: boolean; added?: boolean };
@@ -166,6 +168,8 @@ export default function CheckoutClient({
   const brand = getBrandCheckout(brandKey);
   const { items: cartItems } = useCart();
   const items = cartItems.length ? cartItems : (demo || scenario ? DEMO_ITEMS : []);
+  const backordered = items.filter((i) => BACKORDER_IDS.has(i.id));
+  const regular = items.filter((i) => !BACKORDER_IDS.has(i.id));
 
   // A scenario may request a method this brand doesn't expose — clamp it to the
   // brand's first delivery method, else Pickup, so the selection stays valid.
@@ -565,25 +569,56 @@ export default function CheckoutClient({
                     >
                       <SectionHeading number="4" title="Review" />
                       <div className="p-5">
-                        <div className="rounded-md border">
-                          <div className="border-b px-5 py-4 font-semibold">Items ({items.length})</div>
-                          {items.map((item) => (
-                            <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
-                              <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-                                {item.image ? (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-                                ) : null}
+                        <div className="space-y-4">
+                          {backordered.length > 0 ? (
+                            <>
+                              <Alert variant="destructive">
+                                <TriangleAlert />
+                                <AlertTitle>Backorder</AlertTitle>
+                                <AlertDescription>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</AlertDescription>
+                              </Alert>
+                              <div className="rounded-md border">
+                                <div className="border-b px-5 py-4 font-semibold">Backordered items ({backordered.length})</div>
+                                {backordered.map((item) => (
+                                  <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+                                    <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+                                      {item.image ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                                      ) : null}
+                                    </div>
+                                    <div className="min-w-0">
+                                      {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+                                      <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                                      {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+                                    </div>
+                                    <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+                                    <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
+                                  </div>
+                                ))}
                               </div>
-                              <div className="min-w-0">
-                                {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
-                                <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                                {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+                            </>
+                          ) : null}
+                          <div className="rounded-md border">
+                            <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
+                            {regular.map((item) => (
+                              <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+                                <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+                                  {item.image ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                                  ) : null}
+                                </div>
+                                <div className="min-w-0">
+                                  {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+                                  <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                                  {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+                                </div>
+                                <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+                                <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
                               </div>
-                              <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
-                              <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -1061,6 +1096,8 @@ function ReviewStep({
   const billingAddress = brand.addresses.find((a) => a.group === "billing");
   // Requested date for the active method (pickup vs delivery), shown only if set.
   const requestedDate = isDeliveryMethod(method) ? deliveryDate : pickupDate;
+  const backordered = items.filter((i) => BACKORDER_IDS.has(i.id));
+  const regular = items.filter((i) => !BACKORDER_IDS.has(i.id));
   return (
     <>
       <SectionHeading number="4" title="Review & submit" />
@@ -1164,25 +1201,56 @@ function ReviewStep({
           </div>
         ) : null}
 
-        <div className="rounded-md border">
-          <div className="border-b px-5 py-4 font-semibold">Items ({items.length})</div>
-          {items.map((item) => (
-            <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
-              <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-                {item.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-                ) : null}
+        <div className="space-y-4">
+          {backordered.length > 0 ? (
+            <>
+              <Alert variant="destructive">
+                <TriangleAlert />
+                <AlertTitle>Backorder</AlertTitle>
+                <AlertDescription>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</AlertDescription>
+              </Alert>
+              <div className="rounded-md border">
+                <div className="border-b px-5 py-4 font-semibold">Backordered items ({backordered.length})</div>
+                {backordered.map((item) => (
+                  <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+                    <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+                      {item.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                      ) : null}
+                    </div>
+                    <div className="min-w-0">
+                      {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+                      <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                      {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+                    </div>
+                    <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+                    <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
+                  </div>
+                ))}
               </div>
-              <div className="min-w-0">
-                {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
-                <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+            </>
+          ) : null}
+          <div className="rounded-md border">
+            <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
+            {regular.map((item) => (
+              <div key={item.id} className="grid grid-cols-[64px_minmax(0,480px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
+                <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+                  {item.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                  ) : null}
+                </div>
+                <div className="min-w-0">
+                  {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+                  <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                  {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+                </div>
+                <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+                <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
               </div>
-              <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
-              <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         <div className="flex justify-start border-t pt-5">
