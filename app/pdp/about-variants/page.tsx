@@ -11,7 +11,7 @@ import { AboutVariants } from "./about-variants";
 export const metadata: Metadata = {
   title: "About This Product — Tab styles",
   description:
-    "Three blue-active tab styles for About This Product, rendered with real product content for client review.",
+    "Four blue-active tab styles for About This Product, rendered with real product content for client review.",
 };
 
 export default function AboutVariantsPage() {
@@ -39,7 +39,7 @@ export default function AboutVariantsPage() {
             About This Product — Tab style options (client review)
           </h1>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Three tab styles over the real About content (Description,
+            Four tab styles over the real About content (Description,
             Specifications, Documents, Part List) with blue as the active
             color.
           </p>
