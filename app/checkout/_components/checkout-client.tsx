@@ -587,33 +587,32 @@ export default function CheckoutClient({
                       <div className="p-5">
                         <div className="space-y-4">
                           {backordered.length > 0 ? (
-                            <>
-                              <Alert variant="destructive">
-                                <TriangleAlert />
-                                <AlertTitle>Backorder</AlertTitle>
-                                <AlertDescription>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</AlertDescription>
-                              </Alert>
-                              <div className="rounded-md border">
-                                <div className="border-b px-5 py-4 font-semibold">Backordered items ({backordered.length})</div>
-                                {backordered.map((item) => (
-                                  <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
-                                    <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-                                      {item.image ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-                                      ) : null}
+                            <Alert variant="warning">
+                              <TriangleAlert />
+                              <AlertTitle>Backordered items ({backordered.length})</AlertTitle>
+                              <AlertDescription>
+                                <p>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</p>
+                                <div className="mt-3 grid w-full gap-3">
+                                  {backordered.map((item) => (
+                                    <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 rounded-md border bg-background p-4">
+                                      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+                                        {item.image ? (
+                                          // eslint-disable-next-line @next/next/no-img-element
+                                          <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                                        ) : null}
+                                      </div>
+                                      <div className="min-w-0">
+                                        {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+                                        <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                                        {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+                                      </div>
+                                      <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+                                      <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
                                     </div>
-                                    <div className="min-w-0">
-                                      {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
-                                      <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                                      {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
-                                    </div>
-                                    <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
-                                    <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
-                                  </div>
-                                ))}
-                              </div>
-                            </>
+                                  ))}
+                                </div>
+                              </AlertDescription>
+                            </Alert>
                           ) : null}
                           <div className="rounded-md border">
                             <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
@@ -1177,33 +1176,32 @@ function ReviewStep({
 
         <div className="space-y-4">
           {backordered.length > 0 ? (
-            <>
-              <Alert variant="destructive">
-                <TriangleAlert />
-                <AlertTitle>Backorder</AlertTitle>
-                <AlertDescription>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</AlertDescription>
-              </Alert>
-              <div className="rounded-md border">
-                <div className="border-b px-5 py-4 font-semibold">Backordered items ({backordered.length})</div>
-                {backordered.map((item) => (
-                  <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
-                    <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-                      {item.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-                      ) : null}
+            <Alert variant="warning">
+              <TriangleAlert />
+              <AlertTitle>Backordered items ({backordered.length})</AlertTitle>
+              <AlertDescription>
+                <p>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</p>
+                <div className="mt-3 grid w-full gap-3">
+                  {backordered.map((item) => (
+                    <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 rounded-md border bg-background p-4">
+                      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+                        {item.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                        ) : null}
+                      </div>
+                      <div className="min-w-0">
+                        {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+                        <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                        {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+                      </div>
+                      <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+                      <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
                     </div>
-                    <div className="min-w-0">
-                      {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
-                      <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                      {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
-                    </div>
-                    <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
-                    <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
-                  </div>
-                ))}
-              </div>
-            </>
+                  ))}
+                </div>
+              </AlertDescription>
+            </Alert>
           ) : null}
           <div className="rounded-md border">
             <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
