@@ -128,13 +128,14 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
           note="Grey track, white active pill; section counts stay muted, hover stays blue."
         />
         <Tabs defaultValue={defaultValue}>
-          <TabsList className="h-10 w-full rounded-md">
+          <TabsList className="h-11 w-full rounded-md">
             {sections.map((s) => (
               <TabsTrigger
                 key={s.id}
                 value={s.id}
-                className="text-muted-foreground data-[state=active]:font-semibold hover:text-primary data-[state=active]:hover:text-foreground"
+                className="py-2 text-muted-foreground hover:text-primary data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:[&_svg]:text-primary data-[state=active]:hover:text-primary"
               >
+                <s.Icon className="size-4" />
                 {s.label}
                 {s.count !== undefined ? (
                   <span className="text-xs font-normal text-muted-foreground">
