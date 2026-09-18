@@ -907,11 +907,12 @@ function PaymentStep({
             <span className="mt-1 block text-sm text-muted-foreground">Charge this order to your {brand.brandName} account.</span>
             {payment === "terms" && account.availableCredit != null ? (
               <div className="mt-3 border-t pt-3">
-                <div className="flex flex-wrap gap-x-10 gap-y-2">
+                <div className="flex flex-wrap items-stretch gap-x-10 gap-y-2">
                   <div>
                     <p className="text-xs text-muted-foreground">Account balance</p>
                     <p className="text-base font-semibold tabular-nums">{formatUSD(account.creditBalance ?? 0)}</p>
                   </div>
+                  <div aria-hidden="true" className="w-px self-stretch bg-border" />
                   <div>
                     <p className="text-xs text-muted-foreground">Available credit</p>
                     <p className="text-base font-semibold tabular-nums">{formatUSD(account.availableCredit)}</p>
