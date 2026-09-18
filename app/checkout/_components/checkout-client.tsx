@@ -963,7 +963,7 @@ function PaymentStep({
                     <p className="text-[11px] text-muted-foreground">Expires: {c.expires}</p>
                     {c.shared ? (
                       <Badge variant="secondary" className="mt-1 text-[10px]">
-                        Shared from the company
+                        Company
                       </Badge>
                     ) : c.added ? (
                       <Badge variant="secondary" className="mt-1 text-[10px]">
