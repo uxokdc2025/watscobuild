@@ -133,7 +133,7 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
               <TabsTrigger
                 key={s.id}
                 value={s.id}
-                className="py-2 text-muted-foreground hover:text-primary data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:[&_svg]:text-primary data-[state=active]:hover:text-primary"
+                className="py-2 text-muted-foreground hover:text-primary data-[state=active]:bg-background data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:[&_svg]:text-primary data-[state=active]:hover:text-primary"
               >
                 <s.Icon className="size-4" />
                 {s.label}
