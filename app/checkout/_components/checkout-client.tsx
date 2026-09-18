@@ -36,7 +36,7 @@ import {
   isDeliveryMethod,
   type FulfillmentMethod,
 } from "./fulfillment";
-import { fmtDate } from "./fulfillment-calendar";
+import { TODAY, TIME_SLOTS, addDays, firstSelectable, fmtDate } from "./fulfillment-calendar";
 import { CardMark } from "./card-mark";
 import { SummaryCard } from "./summary-card";
 import { OrderDetailsStep } from "./order-details-step";
@@ -119,6 +119,16 @@ function resolveScenario(scenario?: CheckoutCase): ScenarioConfig {
   return scenario ? { ...BASE, ...CHECKOUT_SCENARIOS[scenario] } : BASE;
 }
 
+/* Fixed base-view default: the earliest selectable date at the first available
+ * time slot, so the delivery picker shows a value on arrival. */
+function defaultDeliveryDate(availabilityConstraint: boolean): Date {
+  const earliest = availabilityConstraint ? addDays(TODAY, 2) : addDays(TODAY, 1);
+  const d = firstSelectable(earliest);
+  const slot = TIME_SLOTS.find((s) => !s.disabled) ?? TIME_SLOTS[0];
+  d.setHours(slot.h, slot.m, 0, 0);
+  return d;
+}
+
 /* A selectable radio card — one pattern for both fulfillment and payment. */
 function RadioCard({
   value,
@@ -171,11 +181,20 @@ export default function CheckoutClient({
   const backordered = items.filter((i) => BACKORDER_IDS.has(i.id));
   const regular = items.filter((i) => !BACKORDER_IDS.has(i.id));
 
+  // Fixed base view: the default/first address starts selected, so Delivery
+  // shows every field at once on arrival.
+  const initialAddressId =
+    brand.addresses.find((a) => a.isDefault)?.id ?? brand.addresses[0]?.id ?? "";
   // A scenario may request a method this brand doesn't expose — clamp it to the
   // brand's first delivery method, else Pickup, so the selection stays valid.
-  const initialMethod = brand.methods.includes(cfg.method)
-    ? cfg.method
-    : (brand.methods.find(isDeliveryMethod) ?? "pickup");
+  // The Delivery side otherwise opens on the brand's first delivery method.
+  const firstDeliveryMethod = brand.methods.find(isDeliveryMethod) ?? "pickup";
+  const clampedMethod = brand.methods.includes(cfg.method) ? cfg.method : firstDeliveryMethod;
+  // 150-mile rule: an out-of-radius default address resolves straight to Freight.
+  const initialOutOfRadius =
+    brand.radiusRule && !!brand.addresses.find((a) => a.id === initialAddressId)?.outOfRadius;
+  const initialMethod =
+    initialOutOfRadius && brand.methods.includes("freight") ? "freight" : clampedMethod;
 
   // Account is seeded from the cart page's selection (?account=…), falling back
   // to the brand default when absent or not valid for this brand. The
@@ -206,24 +225,20 @@ export default function CheckoutClient({
   // Fulfillment detail state is lifted here (FulfillmentSection is controlled) so
   // the Review "Fulfillment" card can show the requested date, delivery address,
   // and per-brand modifiers — not just the method.
-  // Progressive start: no delivery address is pre-selected — the Delivery
-  // panel gates date + method behind an address choice, so nothing below the
-  // address cards shows until the user picks one. The isDefault address keeps
-  // its "Default" badge (rendered from address.isDefault) without being
-  // selected. ReviewStep falls back for display only; state stays ''.
-  const [addressId, setAddressId] = React.useState("");
+  // Fixed base view: the default/first address starts selected, the method is
+  // preselected, the date picker opens with the earliest selectable slot, and
+  // both modifiers start unchecked. Nothing hides behind a reveal.
+  const [addressId, setAddressId] = React.useState(initialAddressId);
   const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
-  const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
-  const [split, setSplit] = React.useState<"complete" | "partial">("complete");
-  const [liftgate, setLiftgate] = React.useState<"none" | "required">("required");
+  const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(() =>
+    defaultDeliveryDate(cfg.availabilityConstraint)
+  );
+  const [split, setSplit] = React.useState<"complete" | "partial">("partial");
+  const [liftgate, setLiftgate] = React.useState<"none" | "required">("none");
   const [expressOn, setExpressOn] = React.useState(false);
-  // Progressive delivery reveal: the method radios start unselected and the
-  // disclaimer/modifiers stay hidden until the user picks a method. Changing
-  // the address or date re-hides the method choice.
-  const [deliveryMethodChosen, setDeliveryMethodChosen] = React.useState(false);
-  React.useEffect(() => {
-    setDeliveryMethodChosen(false);
-  }, [addressId, deliveryDate]);
+  // The delivery method starts preselected, so the choice flag starts true and
+  // stays true — changing the address or date never hides the base view.
+  const [deliveryMethodChosen, setDeliveryMethodChosen] = React.useState(true);
 
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);
   const [po, setPo] = React.useState("PO-2048");

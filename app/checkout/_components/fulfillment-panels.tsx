@@ -98,9 +98,10 @@ export function PickupPanel({
 }
 
 /* ───────────────────────── Delivery panel ─────────────────────────
- * One compact 600px column: Deliver to header (See all + New address),
- * flat 3-up address row, requested date, method radios/rate, alerts,
- * modifiers. Whitespace on the right. */
+ * Fixed base view, one compact 600px column: Deliver to header (See all +
+ * New address), flat 3-up address row, requested date, method radios/rate,
+ * radius alert (only when triggered), modifiers. Everything renders at once —
+ * no progressive reveal. Whitespace on the right. */
 
 export function DeliveryPanel({
   deliveryMethods,
@@ -120,7 +121,6 @@ export function DeliveryPanel({
   liftgate,
   setLiftgate,
   outOfRadius,
-  deliveryMethodChosen,
   setDeliveryMethodChosen,
 }: {
   deliveryMethods: FulfillmentMethod[];
@@ -147,14 +147,10 @@ export function DeliveryPanel({
 }) {
   const [addOpen, setAddOpen] = React.useState(false);
   const [bookOpen, setBookOpen] = React.useState(false);
-  const selectedAddress = addresses.find((a) => a.id === addressId);
   const defaultGroup = (addresses.find((a) => a.isDefault) ?? addresses[0])?.group ?? "job";
   const groupAddresses = addresses.filter((a) => a.group === defaultGroup).slice(0, 4);
-  /* Progressive reveal: date appears after an address, methods after a date,
-   * disclaimer + modifiers after a method pick. CSR brands have no picker —
-   * the CSR note IS the date step, so methods show right away. */
-  const dateSatisfied = dateMode === "csr" ? true : deliveryDate != null;
-  const showMethods = !!selectedAddress && dateSatisfied;
+  /* Fixed base view: the date field, method radios, and modifiers always
+   * render. CSR brands show the CSR note in place of the picker. */
   // Unavailable methods are hidden entirely — never rendered greyed/disabled.
   const visibleMethods = outOfRadius
     ? deliveryMethods.filter((m) => m === "freight")
@@ -183,65 +179,60 @@ export function DeliveryPanel({
       </RadioGroup>
       <div className="max-w-[560px] space-y-4">
 
-      {/* Requested date appears only AFTER an address is chosen, stacked
-          left-aligned. Peirce's ship date is CSR-confirmed, not picked. */}
-      {selectedAddress ? (
-        dateMode === "picker" ? (
-          <DateField
-            id="delivery-date"
-            label="Requested delivery date"
-            required
-            value={deliveryDate}
-            onSelect={setDeliveryDate}
-            earliest={earliest}
-            reason={dateReason}
-          />
-        ) : (
-          <div className="space-y-2">
-            <Label htmlFor="delivery-date-csr">Ship date</Label>
-            <div
-              id="delivery-date-csr"
-              className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
-            >
-              Set by your CSR
-            </div>
-            <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-              <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-              <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
-            </p>
+      {/* Requested date, always visible. Peirce's ship date is CSR-confirmed,
+          not picked. */}
+      {dateMode === "picker" ? (
+        <DateField
+          id="delivery-date"
+          label="Requested delivery date"
+          required
+          value={deliveryDate}
+          onSelect={setDeliveryDate}
+          earliest={earliest}
+          reason={dateReason}
+        />
+      ) : (
+        <div className="space-y-2">
+          <Label htmlFor="delivery-date-csr">Ship date</Label>
+          <div
+            id="delivery-date-csr"
+            className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
+          >
+            Set by your CSR
           </div>
-        )
-      ) : null}
+          <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+            <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+            <span>Your customer service rep confirms the ship date after reviewing stock and routing.</span>
+          </p>
+        </div>
+      )}
 
-      {/* Delivery methods appear only AFTER a date is chosen, as plain radio
-          rows with prices. Radios start unselected until the user picks one —
-          the choice is what reveals the disclaimer + modifiers below. */}
-      {showMethods ? (
-        <RadioGroup
-          value={deliveryMethodChosen ? method : ""}
-          onValueChange={(v) => {
-            onSelectMethod(v as FulfillmentMethod);
-            setDeliveryMethodChosen(true);
-          }}
-          className="gap-1.5"
-          aria-label="Delivery method"
-        >
-          {visibleMethods.map((id) => {
-            const meta = METHOD_META[id];
-            const rate = METHOD_RATE[id];
-            return (
-              <Label key={id} className="flex items-center gap-2.5 py-1 text-sm">
-                <RadioGroupItem value={id} />
-                <span className="flex-1">{meta.label}</span>
-                <span className="text-xs text-muted-foreground">{rate === 0 ? "Free" : formatUSD(rate)}</span>
-              </Label>
-            );
-          })}
-        </RadioGroup>
-      ) : null}
+      {/* Delivery methods, always visible as plain radio rows with prices. The
+          radio reflects the current method, preselected by the parent. */}
+      <RadioGroup
+        value={method}
+        onValueChange={(v) => {
+          onSelectMethod(v as FulfillmentMethod);
+          setDeliveryMethodChosen(true);
+        }}
+        className="gap-1.5"
+        aria-label="Delivery method"
+      >
+        {visibleMethods.map((id) => {
+          const meta = METHOD_META[id];
+          const rate = METHOD_RATE[id];
+          return (
+            <Label key={id} className="flex items-center gap-2.5 py-1 text-sm">
+              <RadioGroupItem value={id} />
+              <span className="flex-1">{meta.label}</span>
+              <span className="text-xs text-muted-foreground">{rate === 0 ? "Free" : formatUSD(rate)}</span>
+            </Label>
+          );
+        })}
+      </RadioGroup>
 
       {/* 150-mile warning beneath the method radio (out-of-radius only). */}
-      {showMethods && outOfRadius ? (
+      {outOfRadius ? (
         <Alert variant="warning">
           <TriangleAlert />
           <AlertTitle>Outside the 150-mile delivery radius</AlertTitle>
@@ -251,19 +242,9 @@ export function DeliveryPanel({
           </AlertDescription>
         </Alert>
       ) : null}
-      {/* Fulfillment disclaimer — yellow warning, shown once a method is picked. */}
-      {deliveryMethodChosen ? (
-        <Alert variant="warning">
-          <TriangleAlert />
-          <AlertDescription>
-            We will do our best to ship via your requested method and date. If we need to make
-            alternative arrangements, we will contact you with the details.
-          </AlertDescription>
-        </Alert>
-      ) : null}
 
       {/* Modifiers (Homans local delivery) — two checkbox rows in the flow. */}
-      {deliveryMethodChosen && showModifiers ? (
+      {showModifiers ? (
         <div className="space-y-2">
           <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
             <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />

@@ -82,10 +82,9 @@ export function FulfillmentSection({
   /** Pickup service add-on toggle (e.g. Baker Express). */
   expressOn: boolean;
   setExpressOn: (v: boolean) => void;
-  /* ── Progressive delivery reveal (owned by CheckoutClient so Continue can
-   *    gate on it). False until the user picks a method radio; reset whenever
-   *    the address or date changes. ── */
-  /** True once the user has explicitly picked a delivery method radio. */
+  /* ── Delivery choice flag (owned by CheckoutClient so Continue can gate on
+   *    it). Starts true with the preselected base-view method; stays true. ── */
+  /** True once the delivery method is chosen (preselected on arrival). */
   deliveryMethodChosen: boolean;
   setDeliveryMethodChosen: (v: boolean) => void;
 }) {
