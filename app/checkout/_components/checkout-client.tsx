@@ -946,32 +946,34 @@ function PaymentStep({
             </span>
           </RadioCard>
           {payment === "card" ? (
-            <div className="mt-1 rounded-md border bg-muted/30 p-3">
-              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-3 gap-2">
+            <div className="mt-2 rounded-md border bg-muted/30 p-4">
+              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-3 gap-3">
                 {cards.map((c) => (
                   <Label
                     key={c.id}
                     className={cn(
-                      "flex cursor-pointer items-start gap-2 rounded-md border bg-background p-2.5 transition-colors",
-                      cardId === c.id ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
+                      "flex cursor-pointer items-start gap-3 rounded-md border bg-background p-4 transition-colors",
+                      cardId === c.id
+                        ? "border-primary bg-primary/10 shadow-sm ring-2 ring-primary"
+                        : "hover:bg-muted/50"
                     )}
                   >
-                  <RadioGroupItem value={c.id} className="mt-0.5" />
-                  <CardMark brand={c.brand} className="h-5 min-w-8 rounded-sm px-1 text-[8px] font-bold" />
+                  <RadioGroupItem value={c.id} className="mt-1" />
+                  <CardMark brand={c.brand} />
                   <span className="min-w-0">
-                    <p className="text-xs font-semibold">{c.name}</p>
-                    <p className="text-[11px] text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
-                    <p className="text-[11px] text-muted-foreground">Expires: {c.expires}</p>
+                    <p className="text-sm font-medium leading-normal">{c.name}</p>
+                    <p className="text-xs leading-normal text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
+                    <p className="text-xs leading-normal text-muted-foreground">Expires: {c.expires}</p>
                     {c.shared ? (
-                      <Badge variant="secondary" className="mt-1 text-[10px]">
+                      <Badge variant="solid" color="slate" className="mt-2">
                         Company
                       </Badge>
                     ) : c.added ? (
-                      <Badge variant="secondary" className="mt-1 text-[10px]">
+                      <Badge variant="solid" color="slate" className="mt-2">
                         Added this order
                       </Badge>
                     ) : (
-                      <Badge variant="secondary" className="mt-1 text-[10px]">
+                      <Badge variant="solid" color="slate" className="mt-2">
                         Personal
                       </Badge>
                     )}
