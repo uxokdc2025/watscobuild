@@ -225,13 +225,35 @@ export function DeliveryPanel({
           // confirm the date themselves, so their rates always show.
           const rateUnknown = dateMode === "picker" && deliveryDate == null;
           return (
-            <Label key={id} className="flex items-center gap-2.5 py-1 text-sm">
-              <RadioGroupItem value={id} />
-              <span className="flex-1">{meta.label}</span>
-              <span className="text-xs text-muted-foreground">
-                {rateUnknown ? "N/A" : rate === 0 ? "Free" : formatUSD(rate)}
-              </span>
-            </Label>
+            <React.Fragment key={id}>
+              <Label className="flex items-center gap-2.5 py-1 text-sm">
+                <RadioGroupItem value={id} />
+                <span className="flex-1">{meta.label}</span>
+                <span className="text-xs text-muted-foreground">
+                  {rateUnknown ? "N/A" : rate === 0 ? "Free" : formatUSD(rate)}
+                </span>
+              </Label>
+              {/* Local-delivery sub-options: indented children of the Local
+                  Delivery row, visible only when Local is selected. */}
+              {id === "local" && showModifiers && method === "local" ? (
+                <div className="ml-7 space-y-2 pl-1">
+                  <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
+                    <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
+                    <span>
+                      <span className="block font-medium text-foreground">Ship complete</span>
+                      <span className="block text-xs text-muted-foreground">Hold until all items are ready</span>
+                    </span>
+                  </Label>
+                  <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
+                    <Checkbox checked={liftgate === "required"} onCheckedChange={(v) => setLiftgate(v === true ? "required" : "none")} className="mt-0.5" />
+                    <span>
+                      <span className="block font-medium text-foreground">Liftgate Required</span>
+                      <span className="block text-xs text-muted-foreground">No dock — lower to ground</span>
+                    </span>
+                  </Label>
+                </div>
+              ) : null}
+            </React.Fragment>
           );
         })}
       </RadioGroup>
@@ -248,24 +270,15 @@ export function DeliveryPanel({
         </Alert>
       ) : null}
 
-      {/* Modifiers (Homans local delivery) — two checkbox rows in the flow. */}
-      {showModifiers ? (
-        <div className="space-y-2">
-          <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
-            <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
-            <span>
-              <span className="block font-medium text-foreground">Ship complete</span>
-              <span className="block text-xs text-muted-foreground">Hold until all items are ready</span>
-            </span>
-          </Label>
-          <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
-            <Checkbox checked={liftgate === "required"} onCheckedChange={(v) => setLiftgate(v === true ? "required" : "none")} className="mt-0.5" />
-            <span>
-              <span className="block font-medium text-foreground">Liftgate Required</span>
-              <span className="block text-xs text-muted-foreground">No dock — lower to ground</span>
-            </span>
-          </Label>
-        </div>
+      {/* Riverside retrofit: requested method/date may need alternatives. */}
+      {!outOfRadius && addressId === "hom-job-riverside" ? (
+        <Alert variant="warning">
+          <TriangleAlert />
+          <AlertDescription>
+            We will do our best to ship via your requested method and date. If we need to make
+            alternative arrangements, we will contact you with the details.
+          </AlertDescription>
+        </Alert>
       ) : null}
       </div>
 

@@ -153,7 +153,7 @@ const PEIRCE: BrandCheckoutConfig = {
 const HOMANS: BrandCheckoutConfig = {
   key: "homans",
   brandName: "Homans Associates",
-  methods: ["pickup", "local", "ups", "freight"],
+  methods: ["pickup", "local", "freight", "ups"],
   pickupAddon: { id: "express-pickup", label: "Express Pickup", hint: "Priority same-day staging for counter pickup" },
   deliveryDateMode: "picker",
   deliveryModifiers: true,
