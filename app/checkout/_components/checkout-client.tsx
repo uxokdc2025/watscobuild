@@ -332,27 +332,20 @@ export default function CheckoutClient({
   // Special handling requires branch comments before the order can be placed.
   const handlingBlocks = cfg.showSpecialHandling && specialHandling && !handlingComments.trim();
 
-  // The sticky order-summary CTA is context-aware: it carries the forward action
-  // for the current step, so on a long review the Place-order button stays pinned.
-  const primary =
-    step === "details"
-      ? { label: "Continue to fulfillment", onClick: goToFulfillment, disabled: false }
-      : step === "fulfillment"
-        ? {
-            label: "Continue to payment",
-            onClick: () => setStep("payment"),
-            // Delivery gates Continue until a date is selected AND a method is
-            // picked; Pickup stays enabled. CSR-date brands have no picker, so
-            // the method choice alone gates them.
-            disabled: isDeliveryMethod(method)
-              ? brand.deliveryDateMode === "csr"
-                ? !deliveryMethodChosen
-                : !(deliveryDate && deliveryMethodChosen)
-              : false,
-          }
-        : step === "payment"
-          ? { label: "Continue to review", onClick: () => setStep("review"), disabled: payment === "terms" && account.availableCredit != null && total > account.availableCredit }
-          : { label: "Place order", onClick: () => setSubmitted(true), disabled: handlingBlocks };
+  // Horizontal (tabbed) forward-navigation gates, shared by the in-step
+  // Continue buttons below. Delivery gates Continue until a date is selected
+  // AND a method is picked; Pickup stays enabled. CSR-date brands have no
+  // picker, so the method choice alone gates them.
+  const fulfillmentContinueDisabled = isDeliveryMethod(method)
+    ? brand.deliveryDateMode === "csr"
+      ? !deliveryMethodChosen
+      : !(deliveryDate && deliveryMethodChosen)
+    : false;
+  const paymentContinueDisabled =
+    payment === "terms" && account.availableCredit != null && total > account.availableCredit;
+  // The horizontal summary's Place-order button is enabled on Review, subject
+  // to the existing place-order gating.
+  const placeOrderDisabled = step !== "review" || handlingBlocks;
 
   /* ── Accordion (v2) progressive layout — reuses the SAME state, handlers,
    *    and step components as v1. v1's return below is unchanged. ── */
@@ -724,18 +717,26 @@ export default function CheckoutClient({
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="min-w-0 rounded-md border bg-background shadow-sm">
             {step === "details" ? (
-              <OrderDetailsStep
-                account={account}
-                onSwitchAccount={() => setAccountDrawerOpen(true)}
-                branch={branch}
-                po={po}
-                setPo={setPo}
-                poError={poError}
-                jobName={job}
-                setJobName={setJob}
-                notes={notes}
-                setNotes={setNotes}
-              />
+              <>
+                <OrderDetailsStep
+                  account={account}
+                  onSwitchAccount={() => setAccountDrawerOpen(true)}
+                  branch={branch}
+                  po={po}
+                  setPo={setPo}
+                  poError={poError}
+                  jobName={job}
+                  setJobName={setJob}
+                  notes={notes}
+                  setNotes={setNotes}
+                />
+                <div className="flex justify-between border-t px-5 py-4">
+                  <span aria-hidden="true" />
+                  <Button size="sm" onClick={goToFulfillment}>
+                    Continue to fulfillment
+                  </Button>
+                </div>
+              </>
             ) : null}
             {step === "fulfillment" ? (
               <>
@@ -762,51 +763,72 @@ export default function CheckoutClient({
                   deliveryMethodChosen={deliveryMethodChosen}
                   setDeliveryMethodChosen={setDeliveryMethodChosen}
                 />
+                <div className="flex justify-between border-t px-5 py-4">
+                  <Button variant="outline" size="sm" onClick={() => setStep("details")}>Back</Button>
+                  <Button size="sm" onClick={() => setStep("payment")} disabled={fulfillmentContinueDisabled}>
+                    Continue to payment
+                  </Button>
+                </div>
               </>
             ) : null}
             {step === "payment" ? (
-              <PaymentStep
-                brand={brand}
-                account={account}
-                payment={payment}
-                total={total}
-                setPayment={setPayment}
-                cards={cards}
-                cardId={paymentCardId}
-                setCardId={setPaymentCardId}
-                addedCards={addedCards}
-                setAddedCards={setAddedCards}
-                onBack={() => setStep("fulfillment")}
-              />
+              <>
+                <PaymentStep
+                  brand={brand}
+                  account={account}
+                  payment={payment}
+                  total={total}
+                  setPayment={setPayment}
+                  cards={cards}
+                  cardId={paymentCardId}
+                  setCardId={setPaymentCardId}
+                  addedCards={addedCards}
+                  setAddedCards={setAddedCards}
+                  onBack={() => setStep("fulfillment")}
+                  hideBack
+                />
+                <div className="flex justify-between border-t px-5 py-4">
+                  <Button variant="outline" size="sm" onClick={() => setStep("fulfillment")}>Back</Button>
+                  <Button size="sm" onClick={() => setStep("review")} disabled={paymentContinueDisabled}>
+                    Continue to review
+                  </Button>
+                </div>
+              </>
             ) : null}
             {step === "review" ? (
-              <ReviewStep
-                brand={brand}
-                items={items}
-                account={account}
-                branch={branch}
-                method={method}
-                addressId={addressId}
-                pickupDate={pickupDate}
-                deliveryDate={deliveryDate}
-                split={split}
-                liftgate={liftgate}
-                expressOn={expressOn}
-                payment={payment}
-                cardTail={selectedCard.tail}
-                po={po}
-                job={job}
-                notes={notes}
-                showSpecialHandling={cfg.showSpecialHandling}
-                specialHandling={specialHandling}
-                setSpecialHandling={setSpecialHandling}
-                handlingComments={handlingComments}
-                setHandlingComments={setHandlingComments}
-                onBack={() => setStep("payment")}
-                onEditDetails={() => setStep("details")}
-                onEditFulfillment={() => setStep("fulfillment")}
-                onEditPayment={() => setStep("payment")}
-              />
+              <>
+                <ReviewStep
+                  brand={brand}
+                  items={items}
+                  account={account}
+                  branch={branch}
+                  method={method}
+                  addressId={addressId}
+                  pickupDate={pickupDate}
+                  deliveryDate={deliveryDate}
+                  split={split}
+                  liftgate={liftgate}
+                  expressOn={expressOn}
+                  payment={payment}
+                  cardTail={selectedCard.tail}
+                  po={po}
+                  job={job}
+                  notes={notes}
+                  showSpecialHandling={cfg.showSpecialHandling}
+                  specialHandling={specialHandling}
+                  setSpecialHandling={setSpecialHandling}
+                  handlingComments={handlingComments}
+                  setHandlingComments={setHandlingComments}
+                  onBack={() => setStep("payment")}
+                  onEditDetails={() => setStep("details")}
+                  onEditFulfillment={() => setStep("fulfillment")}
+                  onEditPayment={() => setStep("payment")}
+                  hideBack
+                />
+                <div className="flex justify-between border-t px-5 py-4">
+                  <Button variant="outline" size="sm" onClick={() => setStep("payment")}>Back</Button>
+                </div>
+              </>
             ) : null}
           </section>
 
@@ -818,12 +840,13 @@ export default function CheckoutClient({
             shipping={shipping}
             shippingUnknown={shippingUnknown}
             total={total}
-            primary={primary}
+            primary={{ label: "Place order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled }}
             coupon={coupon}
             setCoupon={setCoupon}
             appliedCoupon={appliedCoupon}
             onApplyCoupon={() => coupon.trim() && setAppliedCoupon(coupon.trim().toUpperCase())}
-            showConfirm={step === "review"}
+            showConfirm
+            saveQuoteDisabled={step !== "review"}
             onSaveQuote={() => toast.success("Quote saved — find it under Quotes in your account.")}
           />
         </div>
@@ -869,6 +892,7 @@ function PaymentStep({
   addedCards,
   setAddedCards,
   onBack,
+  hideBack = false,
 }: {
   brand: BrandCheckoutConfig;
   account: SwitchAccount;
@@ -881,6 +905,10 @@ function PaymentStep({
   addedCards: CardOption[];
   setAddedCards: React.Dispatch<React.SetStateAction<CardOption[]>>;
   onBack: () => void;
+  /** Horizontal (tabbed) flow renders its own Back+Continue footer outside, so
+   *  the in-component Back row is hidden there. Defaults to false (accordion
+   *  unchanged). */
+  hideBack?: boolean;
 }) {
   const [cardDrawerOpen, setCardDrawerOpen] = React.useState(false);
 
@@ -985,9 +1013,11 @@ function PaymentStep({
           </RadioCard>
         </RadioGroup>
 
-        <div className="flex justify-start border-t pt-5">
-          <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
-        </div>
+        {hideBack ? null : (
+          <div className="flex justify-start border-t pt-5">
+            <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
+          </div>
+        )}
       </div>
 
       <CreditCardDrawer open={cardDrawerOpen} onClose={() => setCardDrawerOpen(false)} onSave={addCard} />
@@ -1026,6 +1056,7 @@ function ReviewStep({
   handlingComments,
   setHandlingComments,
   onBack,
+  hideBack = false,
 }: {
   brand: BrandCheckoutConfig;
   items: CartItem[];
@@ -1052,6 +1083,10 @@ function ReviewStep({
   onEditDetails: () => void;
   onEditFulfillment: () => void;
   onEditPayment: () => void;
+  /** Horizontal (tabbed) flow renders its own Back footer outside, so the
+   *  in-component Back row is hidden there. Defaults to false (accordion
+   *  unchanged). */
+  hideBack?: boolean;
 }) {
   const commentsMissing = specialHandling && !handlingComments.trim();
   // Delivery address is the exact one chosen in the (now controlled) Fulfillment
@@ -1219,9 +1254,11 @@ function ReviewStep({
           </div>
         </div>
 
-        <div className="flex justify-start border-t pt-5">
-          <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
-        </div>
+        {hideBack ? null : (
+          <div className="flex justify-start border-t pt-5">
+            <Button variant="outline" size="sm" onClick={onBack}>Back</Button>
+          </div>
+        )}
       </div>
     </>
   );
