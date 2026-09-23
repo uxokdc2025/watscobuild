@@ -207,6 +207,18 @@ export function DeliveryPanel({
         </div>
       )}
 
+      {/* General shipping disclaimer: applies to all delivery types, so it
+          sits directly under the date input, above the method list. */}
+      {!outOfRadius && addressId === "hom-job-riverside" ? (
+        <Alert variant="warning">
+          <TriangleAlert />
+          <AlertDescription>
+            We will do our best to ship via your requested method and date. If we need to make
+            alternative arrangements, we will contact you with the details.
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       {/* Delivery methods, always visible as plain radio rows with prices. The
           radio reflects the current method, preselected by the parent. */}
       <RadioGroup
@@ -265,17 +277,6 @@ export function DeliveryPanel({
           );
         })}
       </RadioGroup>
-
-      {/* Riverside retrofit: requested method/date may need alternatives. */}
-      {!outOfRadius && addressId === "hom-job-riverside" ? (
-        <Alert variant="warning">
-          <TriangleAlert />
-          <AlertDescription>
-            We will do our best to ship via your requested method and date. If we need to make
-            alternative arrangements, we will contact you with the details.
-          </AlertDescription>
-        </Alert>
-      ) : null}
       </div>
 
       <AddAddressDrawer open={addOpen} onClose={() => setAddOpen(false)} />
