@@ -96,7 +96,7 @@ export function OrderDetailsStep({
                 type="button"
                 onClick={onSwitchAccount}
                 aria-haspopup="dialog"
-                className="flex min-h-11 w-full items-center justify-between gap-3 rounded-md border bg-background px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className="flex h-9 w-full items-center justify-between gap-3 rounded-md border bg-background px-3 py-1 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               >
                 <span className="min-w-0 truncate">
                   <span className="font-semibold">{account.name}</span>
