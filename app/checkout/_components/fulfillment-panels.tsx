@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import type {
   BrandAddress,
@@ -99,9 +99,10 @@ export function PickupPanel({
 
 /* ───────────────────────── Delivery panel ─────────────────────────
  * Fixed base view, one compact 600px column: Deliver to header (See all +
- * New address), flat 3-up address row, requested date, method radios/rate,
- * radius alert (only when triggered), modifiers. Everything renders at once —
- * no progressive reveal. Whitespace on the right. */
+ * New address), flat 3-up address row, requested date, method radios/rate
+ * (with an inline out-of-radius note under Freight / LTL when triggered),
+ * modifiers. Everything renders at once — no progressive reveal. Whitespace
+ * on the right. */
 
 export function DeliveryPanel({
   deliveryMethods,
@@ -152,7 +153,7 @@ export function DeliveryPanel({
   /* Fixed base view: the date field, method radios, and modifiers always
    * render. CSR brands show the CSR note in place of the picker. */
   // All delivery methods stay exposed at all times, even out-of-radius —
-  // the radius warning below informs the user without hiding options.
+  // the inline note under Freight / LTL informs the user without hiding options.
   const visibleMethods = deliveryMethods;
 
   return (
@@ -232,6 +233,14 @@ export function DeliveryPanel({
                   {rateUnknown ? "N/A" : rate === 0 ? "Free" : formatUSD(rate)}
                 </span>
               </Label>
+              {/* Out-of-radius note: inline under the Freight / LTL row, the
+                  recommended method for addresses outside the 150-mile radius. */}
+              {id === "freight" && outOfRadius ? (
+                <p className="ml-7 text-xs text-amber-700 dark:text-amber-400">
+                  Outside the 150-mile delivery radius — method set to Freight / LTL;
+                  a carrier will quote the final rate.
+                </p>
+              ) : null}
               {/* Local-delivery sub-options: indented children of the Local
                   Delivery row, always visible under Local Delivery. */}
               {id === "local" && showModifiers ? (
@@ -256,18 +265,6 @@ export function DeliveryPanel({
           );
         })}
       </RadioGroup>
-
-      {/* 150-mile warning beneath the method radio (out-of-radius only). */}
-      {outOfRadius ? (
-        <Alert variant="warning">
-          <TriangleAlert />
-          <AlertTitle>Outside the 150-mile delivery radius</AlertTitle>
-          <AlertDescription>
-            The delivery address must be within 150 miles of the selected branch to qualify for Local
-            Delivery. We have set the method to Freight / LTL — a carrier will quote the final rate.
-          </AlertDescription>
-        </Alert>
-      ) : null}
 
       {/* Riverside retrofit: requested method/date may need alternatives. */}
       {!outOfRadius && addressId === "hom-job-riverside" ? (
