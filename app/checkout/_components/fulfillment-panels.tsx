@@ -234,8 +234,8 @@ export function DeliveryPanel({
                 </span>
               </Label>
               {/* Local-delivery sub-options: indented children of the Local
-                  Delivery row, visible only when Local is selected. */}
-              {id === "local" && showModifiers && method === "local" ? (
+                  Delivery row, always visible under Local Delivery. */}
+              {id === "local" && showModifiers ? (
                 <div className="ml-7 space-y-1 pl-1">
                   <Label className="flex cursor-pointer items-start gap-2.5 py-1 text-sm font-normal">
                     <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
