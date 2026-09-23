@@ -151,10 +151,9 @@ export function DeliveryPanel({
   const groupAddresses = addresses.filter((a) => a.group === defaultGroup).slice(0, 4);
   /* Fixed base view: the date field, method radios, and modifiers always
    * render. CSR brands show the CSR note in place of the picker. */
-  // Unavailable methods are hidden entirely — never rendered greyed/disabled.
-  const visibleMethods = outOfRadius
-    ? deliveryMethods.filter((m) => m === "freight")
-    : deliveryMethods;
+  // All delivery methods stay exposed at all times, even out-of-radius —
+  // the radius warning below informs the user without hiding options.
+  const visibleMethods = deliveryMethods;
 
   return (
     <div className="space-y-5">
