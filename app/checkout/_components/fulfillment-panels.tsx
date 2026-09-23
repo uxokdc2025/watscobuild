@@ -236,15 +236,15 @@ export function DeliveryPanel({
               {/* Local-delivery sub-options: indented children of the Local
                   Delivery row, visible only when Local is selected. */}
               {id === "local" && showModifiers && method === "local" ? (
-                <div className="ml-7 space-y-2 pl-1">
-                  <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
+                <div className="ml-7 space-y-1 pl-1">
+                  <Label className="flex cursor-pointer items-start gap-2.5 py-1 text-sm font-normal">
                     <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
                     <span>
                       <span className="block font-medium text-foreground">Ship complete</span>
                       <span className="block text-xs text-muted-foreground">Hold until all items are ready</span>
                     </span>
                   </Label>
-                  <Label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm font-normal">
+                  <Label className="flex cursor-pointer items-start gap-2.5 py-1 text-sm font-normal">
                     <Checkbox checked={liftgate === "required"} onCheckedChange={(v) => setLiftgate(v === true ? "required" : "none")} className="mt-0.5" />
                     <span>
                       <span className="block font-medium text-foreground">Liftgate Required</span>
