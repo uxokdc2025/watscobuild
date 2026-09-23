@@ -83,29 +83,31 @@ export function OrderDetailsStep({
     <>
       <SectionHeading number="1" title="Order details" />
       <div className="space-y-5 p-5">
-        {/* Order-level fields — single column, full-width: Account · PO number · Job name · Order notes. */}
+        {/* Order-level fields — Account + PO share a responsive two-column row; Job name · Order notes below. */}
         <div className="space-y-4">
-          {/* Account — a CLICKABLE field: click to open the switch-account drawer
-              and change it. Reflects the account chosen on the cart page (bound to
-              brand config for now). */}
-          <div className="space-y-2">
-            <Label htmlFor="account-field">Account</Label>
-            <button
-              id="account-field"
-              type="button"
-              onClick={onSwitchAccount}
-              aria-haspopup="dialog"
-              className="flex min-h-11 w-full items-center justify-between gap-3 rounded-md border bg-background px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            >
-              <span className="min-w-0 truncate">
-                <span className="font-semibold">{account.name}</span>
-                <span className="text-muted-foreground"> · {account.detail}</span>
-              </span>
-              <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-            </button>
-          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/* Account — a CLICKABLE field: click to open the switch-account drawer
+                and change it. Reflects the account chosen on the cart page (bound to
+                brand config for now). */}
+            <div className="space-y-2">
+              <Label htmlFor="account-field">Account</Label>
+              <button
+                id="account-field"
+                type="button"
+                onClick={onSwitchAccount}
+                aria-haspopup="dialog"
+                className="flex min-h-11 w-full items-center justify-between gap-3 rounded-md border bg-background px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              >
+                <span className="min-w-0 truncate">
+                  <span className="font-semibold">{account.name}</span>
+                  <span className="text-muted-foreground"> · {account.detail}</span>
+                </span>
+                <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              </button>
+            </div>
 
-          <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
+            <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
+          </div>
 
           <Field
             id="job-name"
