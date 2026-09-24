@@ -29,7 +29,7 @@ function StyleHeading({
 }
 
 /**
- * Style 3 — Folder tab, blue active.
+ * Style 4 — Folder tab, blue active.
  *
  * Self-contained tab group using plain <button> elements + local state
  * (NOT the shared Tabs/TabsTrigger primitive), so the exact folder-tab
@@ -38,7 +38,7 @@ function StyleHeading({
  * (rounded-t-md, square bottom corners) and a 44–48px tab height
  * (px-6 py-3 text-sm). Uses the primary blue token to match the repo.
  */
-function Style3FolderTabs({
+function Style4FolderTabs({
   sections,
   defaultValue,
 }: {
@@ -80,8 +80,8 @@ function Style3FolderTabs({
 /**
  * Four blue-active tab styles over the real About content of `product`
  * (Description / Specifications / Documents / Part List). Client review
- * showcase — styles 1–2 and 4 are full Tabs instances differing only in
- * classNames; style 3 is a self-contained button group (see above).
+ * showcase — styles 1–3 are full Tabs instances differing only in
+ * classNames; style 4 is a self-contained button group (see above).
  */
 export function AboutVariants({ product }: { product: PdpProduct }) {
   const sections = React.useMemo(() => aboutSections(product), [product]);
@@ -120,11 +120,42 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
         </Tabs>
       </section>
 
-      {/* ── Style 2 — Segmented pill with counts ── */}
-      <section aria-label="Style 2 — Segmented pill with counts">
+      {/* ── Style 2 — Connected bar, soft blue active ── */}
+      <section aria-label="Style 2 — Connected bar, soft blue active">
         <StyleHeading
           n={2}
-          title="Style 2 — Segmented pill with counts"
+          title="Style 2 — Connected bar, soft blue active"
+          note="Same connected bar as Style 1, but the active segment is a soft 20% blue fill with blue icon and label; top and bottom rule."
+        />
+        <Tabs defaultValue={defaultValue}>
+          <TabsList
+            variant="segmented"
+            className="h-11 w-full items-center gap-0 divide-x divide-border overflow-hidden rounded-md border border-border bg-white p-0"
+          >
+            {sections.map((s) => (
+              <TabsTrigger
+                key={s.id}
+                value={s.id}
+                className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-primary/20! data-[state=active]:font-semibold data-[state=active]:text-primary! data-[state=active]:[&_svg]:text-primary! data-[state=active]:hover:bg-primary/20 data-[state=active]:hover:text-primary data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+              >
+                <s.Icon className="size-4" />
+                {s.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {sections.map((s) => (
+            <TabsContent key={s.id} value={s.id} className="pt-6">
+              <s.Body />
+            </TabsContent>
+          ))}
+        </Tabs>
+      </section>
+
+      {/* ── Style 3 — Segmented pill with counts ── */}
+      <section aria-label="Style 3 — Segmented pill with counts">
+        <StyleHeading
+          n={3}
+          title="Style 3 — Segmented pill with counts"
           note="Grey track, white active pill; section counts stay muted, hover stays blue."
         />
         <Tabs defaultValue={defaultValue}>
@@ -153,45 +184,17 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
         </Tabs>
       </section>
 
-      {/* ── Style 3 — Folder tab, blue active ── */}
-      <section aria-label="Style 3 — Folder tab, blue active">
+      {/* ── Style 4 — Folder tab, blue active ── */}
+      <section aria-label="Style 4 — Folder tab, blue active">
         <StyleHeading
-          n={3}
-          title="Style 3 — Folder tab, blue active"
+          n={4}
+          title="Style 4 — Folder tab, blue active"
           note="The active tab connects to the content panel with a blue top accent."
         />
-        <Style3FolderTabs
+        <Style4FolderTabs
           sections={sections}
           defaultValue={defaultValue}
         />
-      </section>
-
-      {/* ── Style 4 — Soft blue active (no outline) ── */}
-      <section aria-label="Style 4 — Soft blue active (no outline)">
-        <StyleHeading
-          n={4}
-          title="Style 4 — Soft blue active (no outline)"
-          note="Active tab is a soft 20% blue fill with blue icon and label — no outline."
-        />
-        <Tabs defaultValue={defaultValue}>
-          <TabsList className="h-11 w-full justify-start gap-1 border-0 bg-transparent p-0">
-            {sections.map((s) => (
-              <TabsTrigger
-                key={s.id}
-                value={s.id}
-                className="h-full flex-1 rounded-md border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-primary/20 data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:[&_svg]:text-primary data-[state=inactive]:bg-transparent data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
-              >
-                <s.Icon className="size-4" />
-                {s.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {sections.map((s) => (
-            <TabsContent key={s.id} value={s.id} className="pt-6">
-              <s.Body />
-            </TabsContent>
-          ))}
-        </Tabs>
       </section>
     </div>
   );
