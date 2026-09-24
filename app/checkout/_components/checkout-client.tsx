@@ -542,6 +542,7 @@ export default function CheckoutClient({
                       addedCards={addedCards}
                       setAddedCards={setAddedCards}
                       onBack={() => setStep("fulfillment")}
+                      hideBack
                     />
                     <div className="flex justify-end border-t px-5 py-4">
                       <Button size="sm" onClick={() => goToStep("review")}>
@@ -907,9 +908,8 @@ function PaymentStep({
   addedCards: CardOption[];
   setAddedCards: React.Dispatch<React.SetStateAction<CardOption[]>>;
   onBack: () => void;
-  /** Horizontal (tabbed) flow renders its own Back+Continue footer outside, so
-   *  the in-component Back row is hidden there. Defaults to false (accordion
-   *  unchanged). */
+  /** The surrounding flow renders its own footer outside, so the in-component
+   *  Back row is hidden when true. Defaults to false. */
   hideBack?: boolean;
 }) {
   const [cardDrawerOpen, setCardDrawerOpen] = React.useState(false);
@@ -1094,9 +1094,8 @@ function ReviewStep({
   onEditDetails: () => void;
   onEditFulfillment: () => void;
   onEditPayment: () => void;
-  /** Horizontal (tabbed) flow renders its own Back footer outside, so the
-   *  in-component Back row is hidden there. Defaults to false (accordion
-   *  unchanged). */
+  /** The surrounding flow renders its own footer outside, so the
+   *  in-component Back row is hidden when true. Defaults to false. */
   hideBack?: boolean;
 }) {
   const commentsMissing = specialHandling && !handlingComments.trim();

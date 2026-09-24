@@ -4,6 +4,7 @@ import * as React from "react";
 import { Info, MapPin, Plus, TriangleAlert } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -57,6 +58,7 @@ export function PickupPanel({
   setAddonOn: (v: boolean) => void;
 }) {
   const [open, setOpen] = React.useState(false);
+  const [contactPhone, setContactPhone] = React.useState("");
   return (
     <div className="max-w-[440px] space-y-5">
       <SummaryCard
@@ -68,6 +70,22 @@ export function PickupPanel({
         <p className="text-muted-foreground">{branch.address}</p>
         <p className="text-xs font-medium text-in-stock">{branch.hours}</p>
       </SummaryCard>
+
+      <div className="space-y-2">
+        <Label htmlFor="pickup-contact-phone">
+          Contact Cell Phone
+          <span className="ml-0.5 text-destructive">*</span>
+        </Label>
+        <Input
+          id="pickup-contact-phone"
+          type="tel"
+          required
+          value={contactPhone}
+          onChange={(e) => setContactPhone(e.target.value)}
+          placeholder="(555) 555-5555"
+          className="h-10 w-full"
+        />
+      </div>
 
       <DateField
         id="pickup-date"
@@ -148,6 +166,7 @@ export function DeliveryPanel({
 }) {
   const [addOpen, setAddOpen] = React.useState(false);
   const [bookOpen, setBookOpen] = React.useState(false);
+  const [contactPhone, setContactPhone] = React.useState("");
   const defaultGroup = (addresses.find((a) => a.isDefault) ?? addresses[0])?.group ?? "job";
   const groupAddresses = addresses.filter((a) => a.group === defaultGroup).slice(0, 4);
   /* Date gate: methods + Ship complete stay hidden until a delivery date is
@@ -180,6 +199,22 @@ export function DeliveryPanel({
         </div>
       </RadioGroup>
       <div className="max-w-[560px] space-y-4">
+
+      <div className="space-y-2">
+        <Label htmlFor="delivery-contact-phone">
+          Contact Cell Phone
+          <span className="ml-0.5 text-destructive">*</span>
+        </Label>
+        <Input
+          id="delivery-contact-phone"
+          type="tel"
+          required
+          value={contactPhone}
+          onChange={(e) => setContactPhone(e.target.value)}
+          placeholder="(555) 555-5555"
+          className="h-10 w-full"
+        />
+      </div>
 
       {/* Requested date, always visible. Peirce's ship date is CSR-confirmed,
           not picked. */}
