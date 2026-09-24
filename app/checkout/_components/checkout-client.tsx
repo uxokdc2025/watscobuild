@@ -1017,7 +1017,7 @@ function PaymentStep({
                         </span>
                       ) : null}
                     </span>
-                    <p className="mt-0.5 text-xs leading-normal whitespace-nowrap text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
+                    <p className="mt-0.5 text-xs leading-normal whitespace-nowrap text-muted-foreground">•••• {c.tail}</p>
                     <p className="text-xs leading-normal text-muted-foreground">Expires: {c.expires}</p>
                     {c.shared ? (
                       <Badge variant="solid" color="slate" className="mt-2">
