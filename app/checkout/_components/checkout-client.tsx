@@ -7,7 +7,6 @@ import {
   Check,
   ChevronLeft,
   CreditCard,
-  LockKeyhole,
   Package,
   Plus,
   Printer,
@@ -428,14 +427,8 @@ export default function CheckoutClient({
             Back to cart
           </Link>
 
-          <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <LockKeyhole className="size-4" aria-hidden="true" />
-              Secure checkout
-            </div>
+          <div className="mt-5">
+            <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
           </div>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -690,14 +683,8 @@ export default function CheckoutClient({
           Back to cart
         </Link>
 
-        <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <LockKeyhole className="size-4" aria-hidden="true" />
-            Secure checkout
-          </div>
+        <div className="mt-5">
+          <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
         </div>
 
         <ol aria-label="Checkout progress" className="mt-6 grid max-w-3xl grid-cols-4 gap-2 text-sm">

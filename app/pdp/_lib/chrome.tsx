@@ -4,6 +4,7 @@ import {
   Facebook,
   Home,
   Linkedin,
+  Lock,
   Twitter,
   Youtube,
 } from "lucide-react";
@@ -469,7 +470,8 @@ export function CheckoutHeader({ brand }: { brand: BrandChrome }) {
           >
             <BrandMark brand={brand} theme={theme} />
           </Link>
-          <span className="border-l border-white/25 pl-3 text-sm font-semibold whitespace-nowrap opacity-95">
+          <span className="flex items-center gap-1.5 border-l border-white/25 pl-3 text-sm font-semibold whitespace-nowrap opacity-95">
+            <Lock className="size-3.5" aria-hidden="true" />
             Secure Checkout
           </span>
         </div>
