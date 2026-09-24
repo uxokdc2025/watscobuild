@@ -78,9 +78,9 @@ function Style3FolderTabs({
 }
 
 /**
- * Three blue-active tab styles over the real About content of `product`
+ * Four blue-active tab styles over the real About content of `product`
  * (Description / Specifications / Documents / Part List). Client review
- * showcase — styles 1–2 are full Tabs instances differing only in
+ * showcase — styles 1–2 and 4 are full Tabs instances differing only in
  * classNames; style 3 is a self-contained button group (see above).
  */
 export function AboutVariants({ product }: { product: PdpProduct }) {
@@ -164,6 +164,34 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
           sections={sections}
           defaultValue={defaultValue}
         />
+      </section>
+
+      {/* ── Style 4 — Soft blue active (no outline) ── */}
+      <section aria-label="Style 4 — Soft blue active (no outline)">
+        <StyleHeading
+          n={4}
+          title="Style 4 — Soft blue active (no outline)"
+          note="Active tab is a soft 20% blue fill with blue icon and label — no outline."
+        />
+        <Tabs defaultValue={defaultValue}>
+          <TabsList className="h-11 w-full justify-start gap-1 border-0 bg-transparent p-0">
+            {sections.map((s) => (
+              <TabsTrigger
+                key={s.id}
+                value={s.id}
+                className="h-full flex-1 rounded-md border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-primary/20 data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:[&_svg]:text-primary data-[state=inactive]:bg-transparent data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+              >
+                <s.Icon className="size-4" />
+                {s.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {sections.map((s) => (
+            <TabsContent key={s.id} value={s.id} className="pt-6">
+              <s.Body />
+            </TabsContent>
+          ))}
+        </Tabs>
       </section>
     </div>
   );
