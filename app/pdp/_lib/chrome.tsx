@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import type { ComponentType } from "react";
 import Link from "next/link";
-import { AccountFlyout, CartTrigger } from "./account-flyout";
+import { AccountFlyout, CartTrigger, CheckoutCartTrigger } from "./account-flyout";
 import { SearchAutocomplete } from "@/components/ui/search-autocomplete";
 import { MegaMenu } from "@/components/ui/mega-menu";
 
@@ -448,4 +448,65 @@ function HeaderSearchQuerySync({ value }: { value: string }) {
 
 export function SiteFooter({ brand }: { brand: BrandChrome }) {
   return <UnifiedFooter brand={brand} />;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Minimal checkout chrome — Secure Checkout header + slim help/legal footer.
+   Same brand bar color + BrandMark as SiteHeader; no nav, search, or
+   account/utility links.
+   ════════════════════════════════════════════════════════════════════════ */
+
+export function CheckoutHeader({ brand }: { brand: BrandChrome }) {
+  const theme = themeFor(brand);
+  return (
+    <header className={cn(theme.barClass, "border-b border-black/15")}>
+      <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center justify-between gap-3 px-4 py-3 md:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <Link
+            href="/"
+            className="shrink-0 rounded-md px-1 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            aria-label={`${brand.name} home`}
+          >
+            <BrandMark brand={brand} theme={theme} />
+          </Link>
+          <span className="border-l border-white/25 pl-3 text-sm font-semibold whitespace-nowrap opacity-95">
+            Secure Checkout
+          </span>
+        </div>
+        <CheckoutCartTrigger />
+      </div>
+    </header>
+  );
+}
+
+const CHECKOUT_LEGAL_LINKS = ["Guest Service Center", "Privacy Policy", "Terms & Conditions"];
+
+export function CheckoutFooter({ brand }: { brand: BrandChrome }) {
+  const phone = brand.phone ?? "(800) 555-0199";
+  return (
+    <footer className="mt-16 border-t bg-background">
+      <div className="mx-auto max-w-[var(--layout-max-width)] px-4 md:px-6">
+        <div className="flex flex-col gap-1 py-5 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2">
+          <span className="font-semibold">Need Help?</span>
+          <span className="text-muted-foreground">
+            Call us at <a href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="font-medium text-foreground underline-offset-4 hover:underline">{phone}</a>
+            {" "}(Mon–Fri, 7am–6pm ET) or{" "}
+            <a href="#" className="font-medium text-foreground underline-offset-4 hover:underline">
+              Chat with a specialist
+            </a>
+          </span>
+        </div>
+        <div className="flex flex-col gap-2 border-t py-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <p>© {brand.copyright}</p>
+          <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            {CHECKOUT_LEGAL_LINKS.map((l) => (
+              <a key={l} href="#" className="underline-offset-4 transition-colors hover:text-foreground hover:underline">
+                {l}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </div>
+    </footer>
+  );
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getBrand } from "@/app/pdp/_lib/brands";
-import { SiteFooter, SiteHeader } from "@/app/pdp/_lib/chrome";
+import { CheckoutFooter, CheckoutHeader } from "@/app/pdp/_lib/chrome";
 import CheckoutClient from "./_components/checkout-client";
 
 const CHECKOUT_CASES = [
@@ -30,8 +30,8 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
     : undefined;
 
   return <>
-    <SiteHeader brand={brand} signedIn />
+    <CheckoutHeader brand={brand} />
     <CheckoutClient scenario={scenario} demo={params.demo === "1"} brandKey={brand.key} initialAccountId={params.account} />
-    <SiteFooter brand={brand} />
+    <CheckoutFooter brand={brand} />
   </>;
 }

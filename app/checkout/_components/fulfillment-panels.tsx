@@ -83,7 +83,7 @@ export function PickupPanel({
           value={contactPhone}
           onChange={(e) => setContactPhone(e.target.value)}
           placeholder="(555) 555-5555"
-          className="h-10 w-full"
+          className="h-9 w-full max-w-[336px]"
         />
       </div>
 
@@ -212,7 +212,7 @@ export function DeliveryPanel({
           value={contactPhone}
           onChange={(e) => setContactPhone(e.target.value)}
           placeholder="(555) 555-5555"
-          className="h-10 w-full"
+          className="h-9 w-full max-w-[336px]"
         />
       </div>
 
@@ -233,7 +233,7 @@ export function DeliveryPanel({
           <Label htmlFor="delivery-date-csr">Ship date</Label>
           <div
             id="delivery-date-csr"
-            className="flex h-9 items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
+            className="flex h-9 w-full max-w-[336px] items-center rounded-md border bg-muted/30 px-3 text-sm text-muted-foreground"
           >
             Set by your CSR
           </div>

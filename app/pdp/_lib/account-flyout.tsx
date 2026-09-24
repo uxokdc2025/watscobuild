@@ -138,6 +138,28 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
   );
 }
 
+export function CheckoutCartTrigger() {
+  const { totalCount, openCart } = useCart();
+  return (
+    <button
+      type="button"
+      aria-label={`Cart, ${totalCount} item${totalCount === 1 ? "" : "s"}`}
+      onClick={openCart}
+      className="relative grid size-11 place-items-center rounded-md transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+    >
+      <ShoppingCart className="size-6 shrink-0" aria-hidden />
+      {totalCount > 0 ? (
+        <span
+          aria-hidden="true"
+          className="absolute top-0.5 right-0.5 grid min-h-5 min-w-5 place-items-center rounded-full bg-white px-1 text-[11px] leading-none font-bold text-neutral-900"
+        >
+          {totalCount}
+        </span>
+      ) : null}
+    </button>
+  );
+}
+
 export function CartTrigger({ signedIn }: { signedIn: boolean }) {
   const { totalCount, openCart } = useCart();
   return (
