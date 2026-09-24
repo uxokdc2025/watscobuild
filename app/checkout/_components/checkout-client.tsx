@@ -993,55 +993,53 @@ function PaymentStep({
           </RadioCard>
           {payment === "card" ? (
             <div className="mt-2 rounded-md border bg-muted/30 p-4">
-              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <RadioGroup value={cardId} onValueChange={setCardId} className="flex flex-wrap gap-4">
                 {cards.map((c, i) => (
                   <Label
                     key={c.id}
                     className={cn(
-                      "w-full max-w-[232px] cursor-pointer justify-self-start rounded-md border bg-background p-3 transition-colors",
+                      "flex h-[152px] w-[272px] shrink-0 grow-0 cursor-pointer items-start gap-2.5 rounded-md border bg-background p-3 text-left transition-colors",
                       cardId === c.id
                         ? "border-primary bg-primary/10 shadow-sm ring-2 ring-primary"
                         : "hover:bg-muted/50"
                     )}
                   >
-                  <span className="flex items-center gap-2">
-                    <RadioGroupItem value={c.id} className="shrink-0" />
-                    <CardMark brand={c.brand} />
-                  </span>
-                  <span className="mt-2 block min-w-0">
-                    <span className="flex flex-wrap items-center gap-1.5 text-sm font-medium leading-normal">
-                      {c.name}
-                      {i === 0 ? (
-                        <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
-                          Default
-                        </span>
-                      ) : null}
+                    <RadioGroupItem value={c.id} className="mt-0.5 shrink-0" />
+                    <CardMark brand={c.brand} className="h-8 w-12 shrink-0 rounded-sm px-1.5 text-[9px] font-bold" />
+                    <span className="block min-w-0 flex-1 text-left">
+                      <span className="flex flex-wrap items-center gap-1.5 text-[13px] font-semibold leading-tight">
+                        <span className="truncate">{c.name}</span>
+                        {i === 0 ? (
+                          <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
+                            Default
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="mt-0.5 block text-xs leading-normal whitespace-nowrap text-muted-foreground">•••• {c.tail}</span>
+                      <span className="block text-xs leading-normal whitespace-nowrap text-muted-foreground">Expires: {c.expires}</span>
+                      {c.shared ? (
+                        <Badge variant="solid" color="slate" className="mt-1.5">
+                          Company
+                        </Badge>
+                      ) : c.added ? (
+                        <Badge variant="solid" color="slate" className="mt-1.5">
+                          Added this order
+                        </Badge>
+                      ) : (
+                        <Badge variant="solid" color="slate" className="mt-1.5">
+                          Personal
+                        </Badge>
+                      )}
                     </span>
-                    <p className="mt-0.5 text-xs leading-normal whitespace-nowrap text-muted-foreground">•••• {c.tail}</p>
-                    <p className="text-xs leading-normal text-muted-foreground">Expires: {c.expires}</p>
-                    {c.shared ? (
-                      <Badge variant="solid" color="slate" className="mt-2">
-                        Company
-                      </Badge>
-                    ) : c.added ? (
-                      <Badge variant="solid" color="slate" className="mt-2">
-                        Added this order
-                      </Badge>
-                    ) : (
-                      <Badge variant="solid" color="slate" className="mt-2">
-                        Personal
-                      </Badge>
-                    )}
-                  </span>
-                </Label>
-              ))}
-                {/* Blank tile (same footprint) — its only content is the CTA
-                    that opens the full card list. */}
-                <div className="flex min-h-[150px] w-full max-w-[232px] flex-col items-center justify-center justify-self-start rounded-md border border-dashed bg-background p-3">
+                  </Label>
+                ))}
+                {/* See-all tile — same fixed footprint as the saved cards, with
+                    the CTA that opens the full card list. */}
+                <div className="flex h-[152px] w-[272px] shrink-0 grow-0 flex-col items-start justify-center rounded-md border border-dashed bg-background p-3 text-left">
                   <button
                     type="button"
                     onClick={() => setAllCardsOpen(true)}
-                    className="rounded-sm text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                    className="rounded-sm text-left text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   >
                     See all credit cards
                   </button>
