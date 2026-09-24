@@ -971,21 +971,30 @@ function PaymentStep({
           {payment === "card" ? (
             <div className="mt-2 rounded-md border bg-muted/30 p-4">
               <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-3 gap-3">
-                {cards.map((c) => (
+                {cards.map((c, i) => (
                   <Label
                     key={c.id}
                     className={cn(
-                      "flex cursor-pointer items-start gap-3 rounded-md border bg-background p-4 transition-colors",
+                      "w-full max-w-[190px] cursor-pointer justify-self-start rounded-md border bg-background p-3 transition-colors",
                       cardId === c.id
                         ? "border-primary bg-primary/10 shadow-sm ring-2 ring-primary"
                         : "hover:bg-muted/50"
                     )}
                   >
-                  <RadioGroupItem value={c.id} className="mt-1" />
-                  <CardMark brand={c.brand} />
-                  <span className="min-w-0">
-                    <p className="text-sm font-medium leading-normal">{c.name}</p>
-                    <p className="text-xs leading-normal text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
+                  <span className="flex items-center gap-2">
+                    <RadioGroupItem value={c.id} className="shrink-0" />
+                    <CardMark brand={c.brand} />
+                  </span>
+                  <span className="mt-2 block min-w-0">
+                    <span className="flex flex-wrap items-center gap-1.5 text-sm font-medium leading-normal">
+                      {c.name}
+                      {i === 0 ? (
+                        <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
+                          Default
+                        </span>
+                      ) : null}
+                    </span>
+                    <p className="mt-0.5 text-xs leading-normal text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
                     <p className="text-xs leading-normal text-muted-foreground">Expires: {c.expires}</p>
                     {c.shared ? (
                       <Badge variant="solid" color="slate" className="mt-2">
