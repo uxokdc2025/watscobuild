@@ -259,7 +259,7 @@ export function DeliveryPanel({
       {/* Ship complete — a light grey box directly below the date field,
           shown only once a date is selected. */}
       {showModifiers && dateSelected ? (
-        <div className="rounded-md bg-muted/40 p-4">
+        <div className="rounded-lg border bg-muted/40 p-4">
           <Label className="flex cursor-pointer items-start gap-2.5 text-sm font-normal">
             <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
             <span>
