@@ -984,9 +984,14 @@ function PaymentStep({
                 <span className="mt-1 block text-sm text-muted-foreground">Use a saved card or add one securely.</span>
               </span>
               {payment === "card" ? (
-                <Button variant="outline" size="sm" onClick={() => setCardDrawerOpen(true)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCardDrawerOpen(true)}
+                  className="h-auto flex-col items-center gap-1 py-2 text-center"
+                >
                   <Plus className="size-4" aria-hidden="true" />
-                  Add new card
+                  <span>Add new card</span>
                 </Button>
               ) : null}
             </span>
