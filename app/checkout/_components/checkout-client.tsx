@@ -1040,11 +1040,11 @@ function PaymentStep({
                 ))}
                 {/* See-all tile — same fixed footprint as the saved cards, with
                     the CTA that opens the full card list. */}
-                <div className="flex h-[152px] w-[272px] shrink-0 grow-0 flex-col items-start justify-center rounded-md border border-dashed bg-background p-3 text-left">
+                <div className="flex h-[152px] w-[272px] shrink-0 grow-0 items-center justify-center rounded-md border border-dashed bg-background p-3 text-center">
                   <button
                     type="button"
                     onClick={() => setAllCardsOpen(true)}
-                    className="rounded-sm text-left text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                    className="rounded-sm text-center text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   >
                     See all credit cards
                   </button>
