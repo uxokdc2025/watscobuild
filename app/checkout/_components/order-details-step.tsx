@@ -195,16 +195,14 @@ function NotifySalespersonBlock() {
       </Label>
 
       {notifyRep ? (
-        <div className="pl-7">
-          <Textarea
-            rows={2}
-            value={repMessage}
-            onChange={(e) => setRepMessage(e.target.value)}
-            placeholder="Send a heads-up to your assigned rep when this order is placed."
-            aria-label="Message to your salesperson"
-            className="min-h-[88px] resize-none"
-          />
-        </div>
+        <Textarea
+          rows={2}
+          value={repMessage}
+          onChange={(e) => setRepMessage(e.target.value)}
+          placeholder="Send a heads-up to your assigned rep when this order is placed."
+          aria-label="Message to your salesperson"
+          className="min-h-[88px] resize-none"
+        />
       ) : null}
     </div>
   );
