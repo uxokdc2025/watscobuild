@@ -4,6 +4,7 @@ import * as React from "react";
 import { Building2, Check, Phone, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,6 +26,7 @@ import type {
   BrandBranch,
   BrandCheckoutConfig,
 } from "../_lib/brand-checkout";
+import { CardMark } from "./card-mark";
 
 /* ───────────────────────── Shared right-drawer shell ─────────────────────────
  * Every centered checkout Dialog is now a right drawer. This shell owns the
@@ -545,6 +547,80 @@ export function SwitchAccountDrawer({
           );
         })}
       </ul>
+    </CheckoutDrawer>
+  );
+}
+
+/* ───────────────────────── All credit cards ("See all") ─────────────────────────
+ * Right-side drawer listing every card on file as selectable rows. Selecting a
+ * row applies it as the active payment card and closes — same CheckoutDrawer
+ * shell as the address book. */
+
+export type DrawerCardOption = {
+  id: string;
+  brand: string;
+  name: string;
+  tail: string;
+  expires: string;
+  shared?: boolean;
+  added?: boolean;
+};
+
+export function AllCreditCardsDrawer({
+  open,
+  onClose,
+  cards,
+  selectedId,
+  onSelect,
+}: {
+  open: boolean;
+  onClose: () => void;
+  cards: DrawerCardOption[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <CheckoutDrawer open={open} onClose={onClose} title="All credit cards" description={`${cards.length} saved cards`}>
+      <RadioGroup
+        value={selectedId}
+        onValueChange={(id) => {
+          onSelect(id);
+          onClose();
+        }}
+        className="grid gap-2"
+      >
+        {cards.map((c, i) => {
+          const selected = c.id === selectedId;
+          return (
+            <Label
+              key={c.id}
+              className={cn(
+                "flex cursor-pointer items-center gap-3 rounded-md border px-3 py-3 transition-colors",
+                selected ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50"
+              )}
+            >
+              <RadioGroupItem value={c.id} className="shrink-0" />
+              <CardMark brand={c.brand} />
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-center gap-1.5 text-sm font-medium">
+                  {c.name}
+                  {i === 0 ? (
+                    <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
+                      Default
+                    </span>
+                  ) : null}
+                </span>
+                <span className="mt-0.5 block text-xs whitespace-nowrap text-muted-foreground">
+                  •••• {c.tail} · Expires {c.expires}
+                </span>
+              </span>
+              <Badge variant="solid" color="slate" className="shrink-0">
+                {c.shared ? "Company" : c.added ? "Added this order" : "Personal"}
+              </Badge>
+            </Label>
+          );
+        })}
+      </RadioGroup>
     </CheckoutDrawer>
   );
 }

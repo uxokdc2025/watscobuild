@@ -40,7 +40,7 @@ import { fmtDate } from "./fulfillment-calendar";
 import { CardMark } from "./card-mark";
 import { SummaryCard } from "./summary-card";
 import { OrderDetailsStep } from "./order-details-step";
-import { SwitchAccountDrawer, CreditCardDrawer } from "./checkout-drawers";
+import { SwitchAccountDrawer, CreditCardDrawer, AllCreditCardsDrawer } from "./checkout-drawers";
 import {
   getBrandCheckout,
   type BrandBranch,
@@ -67,7 +67,21 @@ const SAVED_CARDS: CardOption[] = [
   { id: "visa-6177", brand: "VISA", name: "Company Card", tail: "6177", expires: "4/2028", shared: true },
   { id: "mc-8801", brand: "MASTERCARD", name: "Field Ops", tail: "8801", expires: "2/2027", shared: true },
   { id: "personal-4412", brand: "VISA", name: "Personal", tail: "4412", expires: "9/2029", shared: false },
+  { id: "mc-3092", brand: "MASTERCARD", name: "Warehouse", tail: "3092", expires: "6/2028", shared: true },
+  { id: "visa-5521", brand: "VISA", name: "Fleet Fuel", tail: "5521", expires: "11/2027", shared: true },
 ];
+
+/* Extra company/personal cards that live only in the "All credit cards" drawer
+ * — together with SAVED_CARDS they total 10. */
+const MORE_CARDS: CardOption[] = [
+  { id: "amex-1005", brand: "AMEX", name: "Travel", tail: "1005", expires: "3/2026", shared: false },
+  { id: "visa-7788", brand: "VISA", name: "Jobsite", tail: "7788", expires: "8/2028", shared: true },
+  { id: "mc-6644", brand: "MASTERCARD", name: "Office", tail: "6644", expires: "1/2029", shared: true },
+  { id: "visa-9234", brand: "VISA", name: "Emergency", tail: "9234", expires: "12/2026", shared: false },
+  { id: "mc-1209", brand: "MASTERCARD", name: "Projects", tail: "1209", expires: "5/2027", shared: true },
+];
+
+const ALL_CREDIT_CARDS: CardOption[] = [...SAVED_CARDS, ...MORE_CARDS];
 
 /* The in-checkout switch-account control, pickup branches, and grouped "Deliver
  * to" addresses are all per-brand — they come from the brand checkout config, so
@@ -249,7 +263,10 @@ export default function CheckoutClient({
   const [addedCards, setAddedCards] = React.useState<CardOption[]>([]);
   const [paymentCardId, setPaymentCardId] = React.useState(SAVED_CARDS[0].id);
   const cards: CardOption[] = [...SAVED_CARDS, ...addedCards];
-  const selectedCard = cards.find((c) => c.id === paymentCardId) ?? SAVED_CARDS[0];
+  // The drawer lists every card on file (10 samples + anything added this
+  // order), so a drawer pick always resolves to a real card for Review.
+  const drawerCards: CardOption[] = [...ALL_CREDIT_CARDS, ...addedCards];
+  const selectedCard = drawerCards.find((c) => c.id === paymentCardId) ?? SAVED_CARDS[0];
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   // Applied coupon takes 10% off the subtotal.
@@ -537,6 +554,7 @@ export default function CheckoutClient({
                       total={total}
                       setPayment={setPayment}
                       cards={cards}
+                      drawerCards={drawerCards}
                       cardId={paymentCardId}
                       setCardId={setPaymentCardId}
                       addedCards={addedCards}
@@ -783,6 +801,7 @@ export default function CheckoutClient({
                   total={total}
                   setPayment={setPayment}
                   cards={cards}
+                  drawerCards={drawerCards}
                   cardId={paymentCardId}
                   setCardId={setPaymentCardId}
                   addedCards={addedCards}
@@ -890,6 +909,7 @@ function PaymentStep({
   total,
   setPayment,
   cards,
+  drawerCards,
   cardId,
   setCardId,
   addedCards,
@@ -903,6 +923,8 @@ function PaymentStep({
   total: number;
   setPayment: (v: Payment) => void;
   cards: CardOption[];
+  /** Every card on file (drawer list) — grid shows `cards`, drawer shows these. */
+  drawerCards: CardOption[];
   cardId: string;
   setCardId: (v: string) => void;
   addedCards: CardOption[];
@@ -913,6 +935,7 @@ function PaymentStep({
   hideBack?: boolean;
 }) {
   const [cardDrawerOpen, setCardDrawerOpen] = React.useState(false);
+  const [allCardsOpen, setAllCardsOpen] = React.useState(false);
 
   const addCard = (tail: string) => {
     const id = `card-${tail}-${addedCards.length}`;
@@ -970,12 +993,12 @@ function PaymentStep({
           </RadioCard>
           {payment === "card" ? (
             <div className="mt-2 rounded-md border bg-muted/30 p-4">
-              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-3 gap-3">
+              <RadioGroup value={cardId} onValueChange={setCardId} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {cards.map((c, i) => (
                   <Label
                     key={c.id}
                     className={cn(
-                      "w-full max-w-[190px] cursor-pointer justify-self-start rounded-md border bg-background p-3 transition-colors",
+                      "w-full max-w-[232px] cursor-pointer justify-self-start rounded-md border bg-background p-3 transition-colors",
                       cardId === c.id
                         ? "border-primary bg-primary/10 shadow-sm ring-2 ring-primary"
                         : "hover:bg-muted/50"
@@ -994,7 +1017,7 @@ function PaymentStep({
                         </span>
                       ) : null}
                     </span>
-                    <p className="mt-0.5 text-xs leading-normal text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
+                    <p className="mt-0.5 text-xs leading-normal whitespace-nowrap text-muted-foreground">XXXX–XXXX–XXXX–{c.tail}</p>
                     <p className="text-xs leading-normal text-muted-foreground">Expires: {c.expires}</p>
                     {c.shared ? (
                       <Badge variant="solid" color="slate" className="mt-2">
@@ -1012,6 +1035,17 @@ function PaymentStep({
                   </span>
                 </Label>
               ))}
+                {/* Blank tile (same footprint) — its only content is the CTA
+                    that opens the full card list. */}
+                <div className="flex min-h-[150px] w-full max-w-[232px] flex-col items-center justify-center justify-self-start rounded-md border border-dashed bg-background p-3">
+                  <button
+                    type="button"
+                    onClick={() => setAllCardsOpen(true)}
+                    className="rounded-sm text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  >
+                    See all credit cards
+                  </button>
+                </div>
               </RadioGroup>
             </div>
           ) : null}
@@ -1032,6 +1066,13 @@ function PaymentStep({
       </div>
 
       <CreditCardDrawer open={cardDrawerOpen} onClose={() => setCardDrawerOpen(false)} onSave={addCard} />
+      <AllCreditCardsDrawer
+        open={allCardsOpen}
+        onClose={() => setAllCardsOpen(false)}
+        cards={drawerCards}
+        selectedId={cardId}
+        onSelect={setCardId}
+      />
     </>
   );
 }
