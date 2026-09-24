@@ -11,7 +11,6 @@ import {
   Package,
   Plus,
   Printer,
-  ShieldCheck,
   TriangleAlert,
   X,
 } from "lucide-react";
@@ -173,8 +172,9 @@ export default function CheckoutClient({
   const backordered = items.filter((i) => BACKORDER_IDS.has(i.id));
   const regular = items.filter((i) => !BACKORDER_IDS.has(i.id));
 
-  // Fixed base view: the default/first address starts selected, so Delivery
-  // shows every field at once on arrival.
+  // The default/first address starts selected. Delivery is date-gated: the
+  // address cards + date field show on arrival, and the Ship-complete box +
+  // method radios reveal once a date is chosen.
   const initialAddressId =
     brand.addresses.find((a) => a.isDefault)?.id ?? brand.addresses[0]?.id ?? "";
   // A scenario may request a method this brand doesn't expose — clamp it to the
@@ -217,9 +217,10 @@ export default function CheckoutClient({
   // Fulfillment detail state is lifted here (FulfillmentSection is controlled) so
   // the Review "Fulfillment" card can show the requested date, delivery address,
   // and per-brand modifiers — not just the method.
-  // Fixed base view: the default/first address starts selected, the method is
-  // preselected, the date picker opens BLANK (null until the user picks a
-  // date), and both modifiers start unchecked. Nothing hides behind a reveal.
+  // The default/first address starts selected, the method is preselected,
+  // the date picker opens BLANK (null until the user picks a date), and both
+  // modifiers start unchecked. The method radios + Ship complete reveal once
+  // a delivery date is chosen (CSR-date brands always show them).
   const [addressId, setAddressId] = React.useState(initialAddressId);
   const [pickupDate, setPickupDate] = React.useState<Date | null>(null);
   const [deliveryDate, setDeliveryDate] = React.useState<Date | null>(null);
@@ -227,7 +228,8 @@ export default function CheckoutClient({
   const [liftgate, setLiftgate] = React.useState<"none" | "required">("none");
   const [expressOn, setExpressOn] = React.useState(false);
   // The delivery method starts preselected, so the choice flag starts true and
-  // stays true — changing the address or date never hides the base view.
+  // stays true — changing the address never unpicks it; picking a date
+  // reveals the radios with the preselected method intact.
   const [deliveryMethodChosen, setDeliveryMethodChosen] = React.useState(true);
 
   const [payment, setPayment] = React.useState<Payment>(cfg.payment);
@@ -1308,24 +1310,6 @@ function OrderSummary({
         </h2>
       </div>
       <div className="space-y-4 p-5">
-        {/* Review-only special-handling note — a dismissible alert directly under
-            the summary header, above the itemized list. */}
-        {showConfirm && !handlingDismissed ? (
-          <Alert variant="warning" className="pr-9">
-            <TriangleAlert aria-hidden="true" />
-            <AlertDescription>
-              Commercial rooftop equipment may require special handling and additional freight costs. Customer support will follow up.
-            </AlertDescription>
-            <button
-              type="button"
-              onClick={() => setHandlingDismissed(true)}
-              aria-label="Dismiss special handling notice"
-              className="absolute top-2.5 right-2.5 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            >
-              <X className="size-4" aria-hidden="true" />
-            </button>
-          </Alert>
-        ) : null}
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="font-medium">Subtotal:</span>
@@ -1372,10 +1356,23 @@ function OrderSummary({
           ) : null}
         </div>
 
-        <div className="rounded-md bg-muted/50 p-3 text-xs leading-5 text-muted-foreground">
-          <ShieldCheck className="mr-1 inline size-4 text-in-stock" aria-hidden="true" />
-          Your total is shown before payment details, with no surprise fees.
-        </div>
+        {/* Special-handling note — between Coupon/Apply and Place order. */}
+        {showConfirm && !handlingDismissed ? (
+          <Alert variant="warning" className="pr-9">
+            <TriangleAlert aria-hidden="true" />
+            <AlertDescription>
+              Commercial rooftop equipment may require special handling and additional freight costs. Customer support will follow up.
+            </AlertDescription>
+            <button
+              type="button"
+              onClick={() => setHandlingDismissed(true)}
+              aria-label="Dismiss special handling notice"
+              className="absolute top-2.5 right-2.5 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            >
+              <X className="size-4" aria-hidden="true" />
+            </button>
+          </Alert>
+        ) : null}
 
         {/* Sticky primary CTA — the strongest action, always reachable.
             "Save cart for later" lives on the cart page only, not in checkout. */}

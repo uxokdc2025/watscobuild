@@ -8,6 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { BrandBranch, SwitchAccount } from "../_lib/brand-checkout";
 
@@ -46,11 +53,11 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
 
 const MAX_NOTES = 2000;
 
-/** Step 1 — Order Details. A single column — Account (clickable, opens the
- *  switch drawer), PO number, Job name, Order notes — over the
- *  confirmation-email + notify-salesperson controls. Branch is changed elsewhere
- *  (via the account switcher), so it's no longer edited here; the notes helper
- *  still names the receiving branch.
+/** Step 1 — Order Details. Two-column rows: Account | Job account, then
+ *  PO number | Job name; a divider; then Order notes | Notify salesperson;
+ *  Send-confirmation email full-width last, before the step footer. Branch is
+ *  changed elsewhere (via the account switcher), so it's no longer edited
+ *  here; the notes helper still names the receiving branch.
  *
  *  Account is passed in from the client (bound to the brand-checkout config for
  *  now). SEAM: the cart page's selected account should feed this via the same
@@ -83,7 +90,7 @@ export function OrderDetailsStep({
     <>
       <SectionHeading number="1" title="Order details" />
       <div className="space-y-5 p-5">
-        {/* Order-level fields — Account + PO share a responsive two-column row; Job name · Order notes below. */}
+        {/* Row 1: Account | Job account. Row 2: PO number | Job name. */}
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* Account — a CLICKABLE field: click to open the switch-account drawer
@@ -106,19 +113,24 @@ export function OrderDetailsStep({
               </button>
             </div>
 
-            <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
+            <JobAccountField />
           </div>
 
-          <Field
-            id="job-name"
-            label="Job name"
-            placeholder="Optional job name"
-            value={jobName}
-            onChange={(e) => setJobName(e.target.value)}
-          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Field id="po" label="PO number" required value={po} onChange={(e) => setPo(e.target.value)} placeholder="Enter PO number" error={poError} />
+            <Field
+              id="job-name"
+              label="Job name"
+              placeholder="Optional job name"
+              value={jobName}
+              onChange={(e) => setJobName(e.target.value)}
+            />
+          </div>
+        </div>
 
-          {/* Order notes. */}
-          <div className="max-w-[600px] space-y-2">
+        {/* Divider, then Row 3: Order notes | Notify salesperson. */}
+        <div className="grid grid-cols-1 gap-4 border-t pt-5 sm:grid-cols-2">
+          <div className="space-y-2">
             <div className="flex items-baseline justify-between gap-2">
               <Label htmlFor="order-notes">Order notes</Label>
               <span className="text-xs text-muted-foreground" aria-live="polite">
@@ -136,21 +148,74 @@ export function OrderDetailsStep({
             />
             <p className="text-xs text-muted-foreground">Your branch, {branch.name}, will receive these.</p>
           </div>
+
+          <NotifySalespersonBlock />
         </div>
 
-        <OrderConfirmationExtras />
+        {/* Last section, full width: send order confirmation email. */}
+        <SendConfirmationBlock />
       </div>
     </>
   );
 }
 
-/** Confirmation email + additional recipients + notify-salesperson (ECM). None
- *  of these gate submit, so their state stays local to this step. */
-function OrderConfirmationExtras() {
-  const [sendEmail, setSendEmail] = React.useState(true);
+/** Job account — a NEW select, h-10 like the other fields, placeholder until
+ *  chosen (local state, default none). It doesn't gate submit, so the state
+ *  stays local to this step. */
+function JobAccountField() {
+  const [jobAccount, setJobAccount] = React.useState("");
+  return (
+    <div className="space-y-2">
+      <Label htmlFor="job-account">Job account</Label>
+      <Select value={jobAccount} onValueChange={setJobAccount}>
+        <SelectTrigger id="job-account" className="h-10 w-full">
+          <SelectValue placeholder="Select job account" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="job-4821">Job #4821 — Spring maintenance</SelectItem>
+          <SelectItem value="job-5106">Job #5106 — Riverside retrofit</SelectItem>
+          <SelectItem value="none">No job account</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+/** Notify-salesperson (ECM) — lives in the RIGHT column beside Order notes.
+ *  State stays local; it doesn't gate submit. */
+function NotifySalespersonBlock() {
   const [notifyRep, setNotifyRep] = React.useState(true);
-  const [recipients, setRecipients] = React.useState<string[]>([]);
   const [repMessage, setRepMessage] = React.useState("");
+
+  return (
+    <div className="space-y-2">
+      <Label className="flex items-start gap-3 text-sm font-normal">
+        <Checkbox checked={notifyRep} onCheckedChange={(v) => setNotifyRep(v === true)} className="mt-0.5" />
+        <span className="block font-semibold text-foreground">Notify your salesperson (Dana Whitfield)</span>
+      </Label>
+
+      {notifyRep ? (
+        <div className="pl-7">
+          <Textarea
+            rows={2}
+            value={repMessage}
+            onChange={(e) => setRepMessage(e.target.value)}
+            placeholder="Send a heads-up to your assigned rep when this order is placed."
+            aria-label="Message to your salesperson"
+            className="min-h-[88px] resize-none"
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** Confirmation email + additional recipients — the LAST section of the step,
+ *  full width, directly above the step footer. State stays local; it doesn't
+ *  gate submit. */
+function SendConfirmationBlock() {
+  const [sendEmail, setSendEmail] = React.useState(true);
+  const [recipients, setRecipients] = React.useState<string[]>([]);
 
   const addRecipient = () => setRecipients((r) => [...r, ""]);
   const removeRecipient = (index: number) => setRecipients((r) => r.filter((_, i) => i !== index));
@@ -158,66 +223,44 @@ function OrderConfirmationExtras() {
     setRecipients((r) => r.map((v, i) => (i === index ? value : v)));
 
   return (
-    <div className="space-y-4 border-t pt-5">
-      <div className="space-y-2">
-        <Label className="flex items-start gap-3 text-sm font-normal">
-          <Checkbox checked={sendEmail} onCheckedChange={(v) => setSendEmail(v === true)} className="mt-0.5" />
-          <span>
-            <span className="block font-semibold text-foreground">Send order confirmation email</span>
-            <span className="block text-xs text-muted-foreground">A copy of this order goes to your account email.</span>
-          </span>
-        </Label>
+    <div className="space-y-2 border-t pt-5">
+      <Label className="flex items-start gap-3 text-sm font-normal">
+        <Checkbox checked={sendEmail} onCheckedChange={(v) => setSendEmail(v === true)} className="mt-0.5" />
+        <span>
+          <span className="block font-semibold text-foreground">Send order confirmation email</span>
+          <span className="block text-xs text-muted-foreground">A copy of this order goes to your account email.</span>
+        </span>
+      </Label>
 
-        {sendEmail ? (
-          <div className="space-y-2 pl-7">
-            {recipients.map((email, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setRecipient(index, e.target.value)}
-                  placeholder="name@company.com"
-                  aria-label={`Additional recipient ${index + 1}`}
-                  className="h-9"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  onClick={() => removeRecipient(index)}
-                  aria-label={`Remove recipient ${index + 1}`}
-                >
-                  <Trash2 className="size-4" />
-                </Button>
-              </div>
-            ))}
-            <Button type="button" variant="outline" size="sm" onClick={addRecipient}>
-              <Plus className="size-4" />
-              {recipients.length ? "More" : "Add recipient"}
-            </Button>
-          </div>
-        ) : null}
-      </div>
-
-      <div className="space-y-2 border-t pt-4">
-        <Label className="flex items-start gap-3 text-sm font-normal">
-          <Checkbox checked={notifyRep} onCheckedChange={(v) => setNotifyRep(v === true)} className="mt-0.5" />
-          <span className="block font-semibold text-foreground">Notify your salesperson (Dana Whitfield)</span>
-        </Label>
-
-        {notifyRep ? (
-          <div className="max-w-[600px] pl-7">
-            <Textarea
-              rows={2}
-              value={repMessage}
-              onChange={(e) => setRepMessage(e.target.value)}
-              placeholder="Send a heads-up to your assigned rep when this order is placed."
-              aria-label="Message to your salesperson"
-              className="min-h-[88px] resize-none"
-            />
-          </div>
-        ) : null}
-      </div>
+      {sendEmail ? (
+        <div className="space-y-2 pl-7">
+          {recipients.map((email, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setRecipient(index, e.target.value)}
+                placeholder="name@company.com"
+                aria-label={`Additional recipient ${index + 1}`}
+                className="h-9"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                onClick={() => removeRecipient(index)}
+                aria-label={`Remove recipient ${index + 1}`}
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
+          ))}
+          <Button type="button" variant="outline" size="sm" onClick={addRecipient}>
+            <Plus className="size-4" />
+            {recipients.length ? "More" : "Add recipient"}
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

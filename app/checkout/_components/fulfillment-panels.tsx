@@ -98,11 +98,11 @@ export function PickupPanel({
 }
 
 /* ───────────────────────── Delivery panel ─────────────────────────
- * Fixed base view, one compact 600px column: Deliver to header (See all +
- * New address), flat 3-up address row, requested date, method radios/rate
- * (with a yellow warning Alert under Freight / LTL when triggered),
- * modifiers. Everything renders at once — no progressive reveal. Whitespace
- * on the right. */
+ * Date-gated: address cards + requested date render first; the Ship-complete
+ * box and the method radios/rate reveal only once a date is chosen (CSR
+ * brands have no picker, so they always show). A yellow warning Alert sits
+ * under Freight / LTL when triggered. Liftgate stays nested under Local
+ * Delivery. Whitespace on the right. */
 
 export function DeliveryPanel({
   deliveryMethods,
@@ -150,9 +150,11 @@ export function DeliveryPanel({
   const [bookOpen, setBookOpen] = React.useState(false);
   const defaultGroup = (addresses.find((a) => a.isDefault) ?? addresses[0])?.group ?? "job";
   const groupAddresses = addresses.filter((a) => a.group === defaultGroup).slice(0, 4);
-  /* Fixed base view: the date field, method radios, and modifiers always
-   * render. CSR brands show the CSR note in place of the picker. */
-  // All delivery methods stay exposed at all times, even out-of-radius —
+  /* Date gate: methods + Ship complete stay hidden until a delivery date is
+   * chosen. CSR brands show the CSR note in place of the picker, so their
+   * methods always show. */
+  const dateSelected = dateMode === "csr" || deliveryDate != null;
+  // All delivery methods stay exposed once shown, even out-of-radius —
   // the inline note under Freight / LTL informs the user without hiding options.
   const visibleMethods = deliveryMethods;
 
@@ -219,69 +221,78 @@ export function DeliveryPanel({
         </Alert>
       ) : null}
 
-      {/* Delivery methods, always visible as plain radio rows with prices. The
-          radio reflects the current method, preselected by the parent. */}
-      <RadioGroup
-        value={method}
-        onValueChange={(v) => {
-          onSelectMethod(v as FulfillmentMethod);
-          setDeliveryMethodChosen(true);
-        }}
-        className="gap-1.5"
-        aria-label="Delivery method"
-      >
-        {visibleMethods.map((id) => {
-          const meta = METHOD_META[id];
-          const rate = METHOD_RATE[id];
-          // Picker-mode rates are unknown until a date is chosen; CSR brands
-          // confirm the date themselves, so their rates always show.
-          const rateUnknown = dateMode === "picker" && deliveryDate == null;
-          return (
-            <React.Fragment key={id}>
-              <Label className="flex items-center gap-2.5 py-1 text-sm">
-                <RadioGroupItem value={id} />
-                <span className="flex-1">{meta.label}</span>
-                <span className="text-xs text-muted-foreground">
-                  {rateUnknown ? "N/A" : rate === 0 ? "Free" : formatUSD(rate)}
-                </span>
-              </Label>
-              {/* Out-of-radius warning: yellow Alert box right under the
-                  Freight / LTL row, the recommended method for addresses
-                  outside the 150-mile radius. */}
-              {id === "freight" && outOfRadius ? (
-                <Alert variant="warning" className="ml-7 w-auto">
-                  <TriangleAlert />
-                  <AlertTitle>Outside the 150-mile delivery radius</AlertTitle>
-                  <AlertDescription>
-                    The delivery address must be within 150 miles of the selected branch to qualify for Local
-                    Delivery. We have set the method to Freight / LTL — a carrier will quote the final rate.
-                  </AlertDescription>
-                </Alert>
-              ) : null}
-              {/* Local-delivery sub-options: indented children of the Local
-                  Delivery row, always visible under Local Delivery. */}
-              {id === "local" && showModifiers ? (
-                <div className="ml-7 space-y-1 pl-1">
-                  <Label className="flex cursor-pointer items-start gap-2.5 py-1 text-sm font-normal">
-                    <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
-                    <span>
-                      <span className="block font-medium text-foreground">Ship complete</span>
-                      <span className="block text-xs text-muted-foreground">Hold until all items are ready</span>
-                    </span>
-                  </Label>
-                  <Label className="flex cursor-pointer items-start gap-2.5 py-1 text-sm font-normal">
-                    <Checkbox checked={liftgate === "required"} onCheckedChange={(v) => setLiftgate(v === true ? "required" : "none")} className="mt-0.5" />
-                    <span>
-                      <span className="block font-medium text-foreground">Liftgate Required</span>
-                      <span className="block text-xs text-muted-foreground">No dock — lower to ground</span>
-                    </span>
-                  </Label>
-                </div>
-              ) : null}
-            </React.Fragment>
-          );
-        })}
-      </RadioGroup>
+      {/* Ship complete — a light grey box directly below the date field,
+          shown only once a date is selected. */}
+      {showModifiers && dateSelected ? (
+        <div className="rounded-md bg-muted/40 p-4">
+          <Label className="flex cursor-pointer items-start gap-2.5 text-sm font-normal">
+            <Checkbox checked={split === "complete"} onCheckedChange={(v) => setSplit(v === true ? "complete" : "partial")} className="mt-0.5" />
+            <span>
+              <span className="block font-medium text-foreground">Ship complete</span>
+              <span className="block text-xs text-muted-foreground">Hold until all items are ready</span>
+            </span>
+          </Label>
+        </div>
+      ) : null}
+
+      {/* Delivery methods reveal once a date is chosen — plain radio rows
+          with prices. The radio reflects the current method, preselected by
+          the parent. */}
+      {dateSelected ? (
+        <RadioGroup
+          value={method}
+          onValueChange={(v) => {
+            onSelectMethod(v as FulfillmentMethod);
+            setDeliveryMethodChosen(true);
+          }}
+          className="gap-1.5"
+          aria-label="Delivery method"
+        >
+          {visibleMethods.map((id) => {
+            const meta = METHOD_META[id];
+            const rate = METHOD_RATE[id];
+            // Picker-mode rates are unknown until a date is chosen; CSR brands
+            // confirm the date themselves, so their rates always show.
+            const rateUnknown = dateMode === "picker" && deliveryDate == null;
+            return (
+              <React.Fragment key={id}>
+                <Label className="flex items-center gap-2.5 py-1 text-sm">
+                  <RadioGroupItem value={id} />
+                  <span className="flex-1">{meta.label}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {rateUnknown ? "N/A" : rate === 0 ? "Free" : formatUSD(rate)}
+                  </span>
+                </Label>
+                {/* Out-of-radius warning: yellow Alert box right under the
+                    Freight / LTL row, the recommended method for addresses
+                    outside the 150-mile radius. */}
+                {id === "freight" && outOfRadius ? (
+                  <Alert variant="warning" className="ml-7 w-auto">
+                    <TriangleAlert />
+                    <AlertTitle>Outside the 150-mile delivery radius</AlertTitle>
+                    <AlertDescription>
+                      The delivery address must be within 150 miles of the selected branch to qualify for Local
+                      Delivery. We have set the method to Freight / LTL — a carrier will quote the final rate.
+                    </AlertDescription>
+                  </Alert>
+                ) : null}
+                {/* Liftgate stays nested under the Local Delivery row. */}
+                {id === "local" && showModifiers ? (
+                  <div className="ml-7 space-y-1 pl-1">
+                    <Label className="flex cursor-pointer items-start gap-2.5 py-1 text-sm font-normal">
+                      <Checkbox checked={liftgate === "required"} onCheckedChange={(v) => setLiftgate(v === true ? "required" : "none")} className="mt-0.5" />
+                      <span>
+                        <span className="block font-medium text-foreground">Liftgate Required</span>
+                        <span className="block text-xs text-muted-foreground">No dock — lower to ground</span>
+                      </span>
+                    </Label>
+                  </div>
+                ) : null}
+              </React.Fragment>
+            );
+          })}
+        </RadioGroup>
+      ) : null}
       </div>
 
       <AddAddressDrawer open={addOpen} onClose={() => setAddOpen(false)} />
