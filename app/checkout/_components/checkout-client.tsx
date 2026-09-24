@@ -68,13 +68,13 @@ const SAVED_CARDS: CardOption[] = [
   { id: "personal-4412", brand: "VISA", name: "Personal", tail: "4412", expires: "9/2029", shared: false },
   { id: "mc-3092", brand: "MASTERCARD", name: "Warehouse", tail: "3092", expires: "6/2028", shared: true },
   { id: "visa-5521", brand: "VISA", name: "Fleet Fuel", tail: "5521", expires: "11/2027", shared: true },
+  { id: "amex-1005", brand: "AMEX", name: "Travel", tail: "1005", expires: "3/2026", shared: false },
+  { id: "visa-7788", brand: "VISA", name: "Jobsite", tail: "7788", expires: "8/2028", shared: true },
 ];
 
 /* Extra company/personal cards that live only in the "All credit cards" drawer
  * — together with SAVED_CARDS they total 10. */
 const MORE_CARDS: CardOption[] = [
-  { id: "amex-1005", brand: "AMEX", name: "Travel", tail: "1005", expires: "3/2026", shared: false },
-  { id: "visa-7788", brand: "VISA", name: "Jobsite", tail: "7788", expires: "8/2028", shared: true },
   { id: "mc-6644", brand: "MASTERCARD", name: "Office", tail: "6644", expires: "1/2029", shared: true },
   { id: "visa-9234", brand: "VISA", name: "Emergency", tail: "9234", expires: "12/2026", shared: false },
   { id: "mc-1209", brand: "MASTERCARD", name: "Projects", tail: "1209", expires: "5/2027", shared: true },
@@ -999,29 +999,29 @@ function PaymentStep({
                     <RadioGroupItem value={c.id} className="mt-0.5 shrink-0" />
                     <CardMark brand={c.brand} className="h-8 w-12 shrink-0 rounded-sm px-1.5 text-[9px] font-bold" />
                     <span className="block min-w-0 flex-1 text-left">
-                      <span className="flex flex-wrap items-center gap-1.5 text-[13px] font-semibold leading-tight">
-                        <span className="truncate">{c.name}</span>
+                      <span className="block truncate text-[13px] font-semibold leading-tight">{c.name}</span>
+                      <span className="mt-0.5 block text-xs leading-normal whitespace-nowrap text-muted-foreground">•••• {c.tail}</span>
+                      <span className="block text-xs leading-normal whitespace-nowrap text-muted-foreground">Expires: {c.expires}</span>
+                      <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                        {c.shared ? (
+                          <Badge variant="solid" color="slate">
+                            Company
+                          </Badge>
+                        ) : c.added ? (
+                          <Badge variant="solid" color="slate">
+                            Added this order
+                          </Badge>
+                        ) : (
+                          <Badge variant="solid" color="slate">
+                            Personal
+                          </Badge>
+                        )}
                         {i === 0 ? (
                           <span className="rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">
                             Default
                           </span>
                         ) : null}
                       </span>
-                      <span className="mt-0.5 block text-xs leading-normal whitespace-nowrap text-muted-foreground">•••• {c.tail}</span>
-                      <span className="block text-xs leading-normal whitespace-nowrap text-muted-foreground">Expires: {c.expires}</span>
-                      {c.shared ? (
-                        <Badge variant="solid" color="slate" className="mt-1.5">
-                          Company
-                        </Badge>
-                      ) : c.added ? (
-                        <Badge variant="solid" color="slate" className="mt-1.5">
-                          Added this order
-                        </Badge>
-                      ) : (
-                        <Badge variant="solid" color="slate" className="mt-1.5">
-                          Personal
-                        </Badge>
-                      )}
                     </span>
                   </Label>
                 ))}
