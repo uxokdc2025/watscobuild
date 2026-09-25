@@ -621,7 +621,8 @@ function StockLine({ result }: { result: SearchResult }) {
   // Homans "never shows out-of-stock": flagged rows swap every stock line
   // (including "Out of stock") for a single "Contact Us" link — or, on the
   // richer reference-style variant, for "Limited Availability" (info icon,
-  // friendly low-stock token) plus the muted helper subline.
+  // friendly low-stock token) plus the muted helper subline and a primary
+  // "Contact Us" link directly underneath (same block).
   if (result.contactForAvailability) {
     if (result.contactVariant === "rich") {
       return (
@@ -632,6 +633,14 @@ function StockLine({ result }: { result: SearchResult }) {
           </p>
           <p className="text-xs text-muted-foreground">
             Let us help you find this product.
+          </p>
+          <p className="text-xs font-medium">
+            <a
+              href="#"
+              className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            >
+              Contact Us
+            </a>
           </p>
         </div>
       );

@@ -96,7 +96,8 @@ export type ProductCardData = {
    * Richer reference-style rendering of the contact-for-availability state
    * ("rich"): an info icon + "Limited Availability" in the friendly
    * low-stock token (never red) with a muted "Let us help you find this
-   * product." subline. Omitted keeps the bare "Contact Us" link.
+   * product." subline plus a primary "Contact Us" link underneath.
+   * Omitted keeps the bare "Contact Us" link.
    */
   contactVariant?: "rich";
   /** Optional per-item unit-of-measure. Defaults to "EACH". */
@@ -274,8 +275,9 @@ export function ProductCard({
               instead of any stock line (rich variant: info icon +
               "Limited Availability" in the friendly low-stock token);
               slot 8 below stays empty for the minimal variant, or carries
-              the muted helper subline for the rich variant (height reserved
-              either way) so the card keeps its fixed height. */}
+              the muted helper subline + "Contact Us" link for the rich
+              variant (height reserved either way) so the card keeps its
+              fixed height. */}
         <p className="min-h-4 truncate text-xs font-medium leading-4 text-in-stock">
           {hasCommerce && data.contactForAvailability ? (
             data.contactVariant === "rich" ? (
@@ -299,21 +301,32 @@ export function ProductCard({
         {/* 8. Nearby Branch link — primary blue, 12px/16px medium. Opens the
               shared inventory drawer (Direction C) overlaid on the PLP.
               Rich contact-us variant: muted "Let us help you find this
-              product." helper subline. */}
-        <p className="min-h-4 truncate text-xs font-medium leading-4">
+              product." helper subline with a primary "Contact Us" link
+              directly underneath (same block). */}
+        <div className="min-h-4 text-xs font-medium leading-4">
           {hasCommerce && data.contactForAvailability && data.contactVariant === "rich" ? (
-            <span className="font-normal text-muted-foreground">
-              Let us help you find this product.
-            </span>
+            <div className="flex flex-col gap-0.5">
+              <span className="truncate font-normal text-muted-foreground">
+                Let us help you find this product.
+              </span>
+              <a
+                href="#"
+                className="self-start text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              >
+                Contact Us
+              </a>
+            </div>
           ) : !data.contactForAvailability && hasCommerce && data.nearbyBranchQty != null ? (
-            <a
-              href="/store-locator/inventory/in-plp?v=c"
-              className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            >
-              {data.nearbyBranchQty.toLocaleString()} Nearby Branch
-            </a>
+            <p className="min-h-4 truncate">
+              <a
+                href="/store-locator/inventory/in-plp?v=c"
+                className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              >
+                {data.nearbyBranchQty.toLocaleString()} Nearby Branch
+              </a>
+            </p>
           ) : null}
-        </p>
+        </div>
 
         {/* 9. Price — 16px/24px bold foreground, "/ EACH" 12px muted. */}
         <p className="flex min-h-6 flex-wrap items-baseline gap-1.5 pt-1">
