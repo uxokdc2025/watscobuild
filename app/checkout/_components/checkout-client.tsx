@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   CreditCard,
   Package,
-  Plus,
   Printer,
   TriangleAlert,
   X,
@@ -975,10 +974,9 @@ function PaymentStep({
                   variant="outline"
                   size="sm"
                   onClick={() => setCardDrawerOpen(true)}
-                  className="h-auto flex-col items-center gap-1 py-2 text-center"
+                  className="shrink-0 whitespace-nowrap"
                 >
-                  <Plus className="size-4" aria-hidden="true" />
-                  <span>Add new card</span>
+                  Add new card
                 </Button>
               ) : null}
             </span>
