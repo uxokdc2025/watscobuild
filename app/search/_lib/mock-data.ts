@@ -21,6 +21,14 @@ export type SearchResult = {
   stockStatus?: "in-stock" | "low-stock" | "out-of-stock";
   /** All-branches stock count (rendered in the "All Branches" facet). */
   allBranchesQty?: number;
+  /**
+   * Homans "never shows out-of-stock" behavior: when true, cards and list
+   * rows show a "Contact Us" link instead of any stock line or "out of
+   * stock" wording. Everything else (price, Add, Save) stays as-is.
+   */
+  contactForAvailability?: boolean;
+  /** Card/row title link override. Defaults to the derived /pdp tradepro path. */
+  href?: string;
   /** Facet index — the sidebar counts derive from these. */
   amps?: string;
   basisOfRotationView?: "Drive End" | "Lead End" | "Shaft End";

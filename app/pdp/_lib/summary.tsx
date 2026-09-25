@@ -309,7 +309,18 @@ export function PdpSummary({
             </div>
           ) : null}
 
-          {product.commerce!.yourBranch ||
+          {/* Homans "never shows out-of-stock": flagged products swap the
+              whole BranchAvailability block (Your Branch / Nearby Branches /
+              View All Branches) for a single "Contact Us" link. Price,
+              Quantity, Add to Cart, and Add to List below are untouched. */}
+          {product.commerce!.contactForAvailability ? (
+            <a
+              href="#"
+              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Contact Us
+            </a>
+          ) : product.commerce!.yourBranch ||
           product.commerce!.nearbyBranches?.length ? (
             <BranchAvailability commerce={product.commerce!} />
           ) : null}

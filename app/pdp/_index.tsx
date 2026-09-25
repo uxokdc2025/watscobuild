@@ -519,6 +519,55 @@ export default function PdpMasterPage() {
           </AccordionItem>
 
           <AccordionItem
+            value="homans-contact-us"
+            id="homans-contact-us"
+            className="scroll-mt-6 rounded-xl border bg-card px-5"
+          >
+            <AccordionTrigger className="hover:no-underline">
+              <span className="flex items-center gap-3">
+                <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
+                  Homans
+                </Badge>
+                <span className="text-lg font-bold tracking-tight">
+                  Out-of-stock → Contact Us (Homans)
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                Homans never shows out-of-stock — a zero-availability product
+                renders a simple{" "}
+                <span className="font-medium text-foreground">Contact Us</span>{" "}
+                link instead of branch-availability zeros or any
+                &ldquo;out of stock&rdquo; wording. Price, Quantity, Add to
+                Cart, and Add to List stay exactly as-is.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-2 pb-2">
+                <Button asChild>
+                  <Link
+                    href="/pdp/homans-contact-us?signedin=1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open Homans PDP (signed in)
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link
+                    href="/search/homans-contact-us?signedin=1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open Homans PLP (signed in)
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem
             value="checkout"
             id="checkout"
             className="scroll-mt-6 rounded-xl border bg-card px-5"

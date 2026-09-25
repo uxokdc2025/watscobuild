@@ -90,6 +90,14 @@ export type PdpCommerce = {
   nearbyBranches?: Branch[];
   /** Shown instead of branch inventory when fulfillment is call-based (Homans). */
   fulfillmentNote?: string;
+  /**
+   * Homans "never shows out-of-stock" behavior: when true, the storefront
+   * hides every branch-availability zero ("0 Your Branch", "0 Nearby
+   * Branches", "View All Branches", "Call for availability") and any "out
+   * of stock" wording, showing a single "Contact Us" link instead. Price,
+   * Quantity, Add to Cart, and Add to List stay exactly as-is.
+   */
+  contactForAvailability?: boolean;
   /** CE Rewards points earned on purchase — shows an "Earn N points" line. */
   points?: number;
   /** Original price for strike-through ("was") pricing. */

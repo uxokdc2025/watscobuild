@@ -86,6 +86,12 @@ export type ProductCardData = {
   branchName?: string;
   /** "N Nearby Branch" line (blue link). */
   nearbyBranchQty?: number;
+  /**
+   * Homans "never shows out-of-stock" behavior: when true, the two stock
+   * lines ("N in Your Branch" / "N Nearby Branch") are replaced by a single
+   * "Contact Us" link. Everything else on the card stays exactly as-is.
+   */
+  contactForAvailability?: boolean;
   /** Optional per-item unit-of-measure. Defaults to "EACH". */
   uom?: string;
   /** Link target for the title + brand. */
@@ -256,9 +262,19 @@ export function ProductCard({
 
       {/* Pinned bottom — every subsequent slot reserves fixed height. */}
       <div className="mt-auto flex flex-col gap-1 pt-1">
-        {/* 7. Your Branch stock — green, 12px/16px medium, real branch name. */}
+        {/* 7. Your Branch stock — green, 12px/16px medium, real branch name.
+              Homans contact-us products show a "Contact Us" primary link here
+              instead of any stock line; slot 8 below stays empty (height
+              reserved) so the card keeps its fixed height. */}
         <p className="min-h-4 truncate text-xs font-medium leading-4 text-in-stock">
-          {hasCommerce && data.yourBranchQty != null
+          {hasCommerce && data.contactForAvailability ? (
+            <a
+              href="#"
+              className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            >
+              Contact Us
+            </a>
+          ) : hasCommerce && data.yourBranchQty != null
             ? `${data.yourBranchQty.toLocaleString()} in ${data.branchName ?? "Your Branch"}`
             : null}
         </p>
@@ -266,7 +282,7 @@ export function ProductCard({
         {/* 8. Nearby Branch link — primary blue, 12px/16px medium. Opens the
               shared inventory drawer (Direction C) overlaid on the PLP. */}
         <p className="min-h-4 truncate text-xs font-medium leading-4">
-          {hasCommerce && data.nearbyBranchQty != null ? (
+          {!data.contactForAvailability && hasCommerce && data.nearbyBranchQty != null ? (
             <a
               href="/store-locator/inventory/in-plp?v=c"
               className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"

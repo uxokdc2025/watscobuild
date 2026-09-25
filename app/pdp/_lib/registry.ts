@@ -1886,8 +1886,60 @@ const ucTabsAccordions: PdpProduct = {
   },
 };
 
+// ── Homans use case: out-of-stock → Contact Us ──
+// Homans never shows out-of-stock: this Gree air handler has zero
+// availability, so the buy box shows a single "Contact Us" link instead of
+// the BranchAvailability block (no zeros, no "out of stock" wording).
+// Price still shows normally ($0.00 / EACH in this demo). Image reuses the
+// existing fan-coil registry asset (indoor air-handler unit).
+const homansContactUs: PdpProduct = {
+  slug: "homans-contact-us",
+  brand: "Gree",
+  brandKey: "homans",
+  store: { name: "Manchester, NH — Homans", hours: "Opens at 06:00" },
+  title:
+    "Gree - Flexx Ultra R32 - 48K BTU/H - Air Handler - Multi Position - Indoor Unit - 230V",
+  item: "FXU48HP230V1R32AH",
+  mfg: "FXU48HP230V1R32AH",
+  thumbnailCount: 1,
+  images: ["/uc/fancoil-pf5mnx.avif"],
+  description: {
+    intro:
+      "Flexx Ultra R32 multi-position air handler — 48K BTU/H indoor unit for ducted residential systems, paired with a Flexx Ultra outdoor unit for a complete R-32 system.",
+    bullets: [
+      "48K BTU/H nominal capacity",
+      "Multi-position indoor air handler",
+      "R-32 refrigerant",
+      "230V single phase",
+    ],
+  },
+  specTabLabel: "Equipment Specification",
+  specGroupsLeft: [
+    {
+      title: "Unit",
+      rows: [
+        { label: "Brand", value: "Gree" },
+        { label: "Capacity", value: "48K BTU/H" },
+        { label: "Configuration", value: "Multi Position" },
+        { label: "Type", value: "Air Handler - Indoor Unit" },
+      ],
+    },
+  ],
+  specGroupsRight: [
+    {
+      title: "Electrical",
+      rows: [
+        { label: "Voltage", value: "230V" },
+        { label: "Refrigerant", value: "R-32" },
+      ],
+    },
+  ],
+  commerce: { price: 0, uom: "EACH", contactForAvailability: true },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
+  homansContactUs,
   tradeproEc13Homans,
   tradeproEc13Gemaire,
   carrierTpE50,

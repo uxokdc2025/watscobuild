@@ -516,8 +516,13 @@ function ProductCard({
   brandKey: string;
 }) {
   const imageSrc = productImageFor(brandKey, index, result.image);
-  const yourBranchQty = result.stockStatus === "out-of-stock" ? 0 : 2;
-  const nearbyBranchQty = result.allBranchesQty ?? 0;
+  const isContact = result.contactForAvailability === true;
+  const yourBranchQty = isContact
+    ? undefined
+    : result.stockStatus === "out-of-stock"
+      ? 0
+      : 2;
+  const nearbyBranchQty = isContact ? undefined : (result.allBranchesQty ?? 0);
   const cardData: ProductCardData = {
     id: result.id,
     brand: result.brand,
@@ -529,7 +534,8 @@ function ProductCard({
     points: result.points,
     yourBranchQty,
     nearbyBranchQty,
-    href: `/pdp/tradepro-${result.item.toLowerCase()}`,
+    contactForAvailability: isContact,
+    href: result.href ?? `/pdp/tradepro-${result.item.toLowerCase()}`,
   };
   return <CanonicalProductCard data={cardData} signedIn={signedIn} />;
 }
@@ -551,7 +557,7 @@ function ProductRow({
       image={imageSrc}
       imageAlt={result.title}
       brand={result.brand}
-      title={<Link href={`/pdp/tradepro-${result.item.toLowerCase()}`} className="hover:text-primary">{result.title}</Link>}
+      title={<Link href={result.href ?? `/pdp/tradepro-${result.item.toLowerCase()}`} className="hover:text-primary">{result.title}</Link>}
       item={result.item}
       mfg={result.mfg}
       meta={signedIn ? <StockLine result={result} /> : undefined}
@@ -611,6 +617,20 @@ function SignedInCommerce({
 }
 
 function StockLine({ result }: { result: SearchResult }) {
+  // Homans "never shows out-of-stock": flagged rows swap every stock line
+  // (including "Out of stock") for a single "Contact Us" link.
+  if (result.contactForAvailability) {
+    return (
+      <p className="text-xs font-medium">
+        <a
+          href="#"
+          className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+        >
+          Contact Us
+        </a>
+      </p>
+    );
+  }
   const status = result.stockStatus;
   if (!status) return null;
   if (status === "in-stock")
