@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, LayoutGrid, List as ListIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, Info, LayoutGrid, List as ListIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -535,6 +535,7 @@ function ProductCard({
     yourBranchQty,
     nearbyBranchQty,
     contactForAvailability: isContact,
+    contactVariant: result.contactVariant,
     href: result.href ?? `/pdp/tradepro-${result.item.toLowerCase()}`,
   };
   return <CanonicalProductCard data={cardData} signedIn={signedIn} />;
@@ -618,8 +619,23 @@ function SignedInCommerce({
 
 function StockLine({ result }: { result: SearchResult }) {
   // Homans "never shows out-of-stock": flagged rows swap every stock line
-  // (including "Out of stock") for a single "Contact Us" link.
+  // (including "Out of stock") for a single "Contact Us" link — or, on the
+  // richer reference-style variant, for "Limited Availability" (info icon,
+  // friendly low-stock token) plus the muted helper subline.
   if (result.contactForAvailability) {
+    if (result.contactVariant === "rich") {
+      return (
+        <div className="flex flex-col gap-0.5">
+          <p className="inline-flex items-center gap-1 text-xs font-medium text-low-stock">
+            <Info className="size-3.5 shrink-0" aria-hidden />
+            Limited Availability
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Let us help you find this product.
+          </p>
+        </div>
+      );
+    }
     return (
       <p className="text-xs font-medium">
         <a

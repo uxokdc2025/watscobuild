@@ -86,6 +86,42 @@ function BranchAvailability({
   );
 }
 
+/**
+ * Richer reference-style contact-for-availability block (Homans v2).
+ * Keeps an Availability block for "Your Branch" (branch name + hours note)
+ * but renders the pickup-availability VALUE as a "Contact Us" link instead
+ * of a stock number — no "0", no "out of stock" wording. Followed by the
+ * delivery helper line. Slim single box, same border/padding rhythm as
+ * BranchAvailability, standard tokens only.
+ */
+function ContactAvailabilityRich({ product }: { product: PdpProduct }) {
+  const branchName =
+    product.commerce?.yourBranch?.name ??
+    product.store?.name ??
+    "Your Branch";
+  return (
+    <div className="rounded-lg border p-4">
+      <p className="text-sm font-semibold">Availability — Your Branch</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {branchName}
+        {product.store?.hours ? ` · ${product.store.hours}` : null}
+      </p>
+      <p className="mt-2 text-sm">
+        <span className="text-muted-foreground">Pickup: </span>
+        <a
+          href="#"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          Contact Us
+        </a>
+      </p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Want your order delivered? Delivery is available.
+      </p>
+    </div>
+  );
+}
+
 function SaveToList() {
   return (
     <button
@@ -311,15 +347,22 @@ export function PdpSummary({
 
           {/* Homans "never shows out-of-stock": flagged products swap the
               whole BranchAvailability block (Your Branch / Nearby Branches /
-              View All Branches) for a single "Contact Us" link. Price,
-              Quantity, Add to Cart, and Add to List below are untouched. */}
+              View All Branches) for a single "Contact Us" link — or, on the
+              richer reference-style variant (`contactVariant: "rich"`), for
+              a slim Availability block whose pickup value IS the Contact Us
+              link, plus a delivery helper line. Price, Quantity, Add to
+              Cart, and Add to List below are untouched in both variants. */}
           {product.commerce!.contactForAvailability ? (
-            <a
-              href="#"
-              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-            >
-              Contact Us
-            </a>
+            product.commerce!.contactVariant === "rich" ? (
+              <ContactAvailabilityRich product={product} />
+            ) : (
+              <a
+                href="#"
+                className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Contact Us
+              </a>
+            )
           ) : product.commerce!.yourBranch ||
           product.commerce!.nearbyBranches?.length ? (
             <BranchAvailability commerce={product.commerce!} />

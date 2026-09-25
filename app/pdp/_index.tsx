@@ -563,6 +563,26 @@ export default function PdpMasterPage() {
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>
+                <Button asChild variant="secondary">
+                  <Link
+                    href="/pdp/homans-contact-us-v2?signedin=1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    PDP (richer / reference-style)
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+                <Button asChild variant="secondary">
+                  <Link
+                    href="/search/homans-contact-us-v2?signedin=1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    PLP (richer / reference-style)
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
               </div>
             </AccordionContent>
           </AccordionItem>

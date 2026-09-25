@@ -1937,9 +1937,26 @@ const homansContactUs: PdpProduct = {
   commerce: { price: 0, uom: "EACH", contactForAvailability: true },
 };
 
+// ── Homans v2: same zero-availability Gree air handler, richer
+// reference-style treatment. The buy box keeps a slim "Availability — Your
+// Branch" block (branch name + hours, pickup value is a "Contact Us" link)
+// plus the delivery helper line; PLP cards show "Limited Availability" +
+// helper subline. The minimal v1 entry above is untouched for comparison.
+const homansContactUsV2: PdpProduct = {
+  ...homansContactUs,
+  slug: "homans-contact-us-v2",
+  commerce: {
+    price: 0,
+    uom: "EACH",
+    contactForAvailability: true,
+    contactVariant: "rich",
+  },
+};
+
 export const pdps: PdpProduct[] = [
   glasflossZlp,
   homansContactUs,
+  homansContactUsV2,
   tradeproEc13Homans,
   tradeproEc13Gemaire,
   carrierTpE50,

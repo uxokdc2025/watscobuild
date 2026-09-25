@@ -52,7 +52,7 @@
  */
 
 import * as React from "react";
-import { ImageOff, ListPlus, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ImageOff, Info, ListPlus, Minus, Plus, ShoppingCart } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -92,6 +92,13 @@ export type ProductCardData = {
    * "Contact Us" link. Everything else on the card stays exactly as-is.
    */
   contactForAvailability?: boolean;
+  /**
+   * Richer reference-style rendering of the contact-for-availability state
+   * ("rich"): an info icon + "Limited Availability" in the friendly
+   * low-stock token (never red) with a muted "Let us help you find this
+   * product." subline. Omitted keeps the bare "Contact Us" link.
+   */
+  contactVariant?: "rich";
   /** Optional per-item unit-of-measure. Defaults to "EACH". */
   uom?: string;
   /** Link target for the title + brand. */
@@ -264,25 +271,41 @@ export function ProductCard({
       <div className="mt-auto flex flex-col gap-1 pt-1">
         {/* 7. Your Branch stock — green, 12px/16px medium, real branch name.
               Homans contact-us products show a "Contact Us" primary link here
-              instead of any stock line; slot 8 below stays empty (height
-              reserved) so the card keeps its fixed height. */}
+              instead of any stock line (rich variant: info icon +
+              "Limited Availability" in the friendly low-stock token);
+              slot 8 below stays empty for the minimal variant, or carries
+              the muted helper subline for the rich variant (height reserved
+              either way) so the card keeps its fixed height. */}
         <p className="min-h-4 truncate text-xs font-medium leading-4 text-in-stock">
           {hasCommerce && data.contactForAvailability ? (
-            <a
-              href="#"
-              className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            >
-              Contact Us
-            </a>
+            data.contactVariant === "rich" ? (
+              <span className="inline-flex items-center gap-1 text-low-stock">
+                <Info className="size-3.5 shrink-0" aria-hidden />
+                Limited Availability
+              </span>
+            ) : (
+              <a
+                href="#"
+                className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              >
+                Contact Us
+              </a>
+            )
           ) : hasCommerce && data.yourBranchQty != null
             ? `${data.yourBranchQty.toLocaleString()} in ${data.branchName ?? "Your Branch"}`
             : null}
         </p>
 
         {/* 8. Nearby Branch link — primary blue, 12px/16px medium. Opens the
-              shared inventory drawer (Direction C) overlaid on the PLP. */}
+              shared inventory drawer (Direction C) overlaid on the PLP.
+              Rich contact-us variant: muted "Let us help you find this
+              product." helper subline. */}
         <p className="min-h-4 truncate text-xs font-medium leading-4">
-          {!data.contactForAvailability && hasCommerce && data.nearbyBranchQty != null ? (
+          {hasCommerce && data.contactForAvailability && data.contactVariant === "rich" ? (
+            <span className="font-normal text-muted-foreground">
+              Let us help you find this product.
+            </span>
+          ) : !data.contactForAvailability && hasCommerce && data.nearbyBranchQty != null ? (
             <a
               href="/store-locator/inventory/in-plp?v=c"
               className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"

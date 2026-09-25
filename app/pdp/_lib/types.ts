@@ -98,6 +98,15 @@ export type PdpCommerce = {
    * Quantity, Add to Cart, and Add to List stay exactly as-is.
    */
   contactForAvailability?: boolean;
+  /**
+   * Richer reference-style rendering of the contact-for-availability state
+   * ("rich"): PDP keeps a slim "Availability — Your Branch" block whose
+   * pickup value is a "Contact Us" link plus a delivery helper line; PLP
+   * cards show "Limited Availability" + helper subline. Omitted (minimal)
+   * keeps the bare "Contact Us" link. Only read when
+   * `contactForAvailability` is true.
+   */
+  contactVariant?: "rich";
   /** CE Rewards points earned on purchase — shows an "Earn N points" line. */
   points?: number;
   /** Original price for strike-through ("was") pricing. */

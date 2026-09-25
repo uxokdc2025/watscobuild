@@ -27,6 +27,12 @@ export type SearchResult = {
    * stock" wording. Everything else (price, Add, Save) stays as-is.
    */
   contactForAvailability?: boolean;
+  /**
+   * Richer reference-style rendering ("rich"): cards show an info icon +
+   * "Limited Availability" (friendly low-stock token) with a muted helper
+   * subline; list rows match. Omitted keeps the bare "Contact Us" link.
+   */
+  contactVariant?: "rich";
   /** Card/row title link override. Defaults to the derived /pdp tradepro path. */
   href?: string;
   /** Facet index — the sidebar counts derive from these. */
