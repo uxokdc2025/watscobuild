@@ -119,13 +119,18 @@ function ColumnHeader({
   onNavigate: () => void;
 }) {
   return (
-    <Link
-      href={taxonomyHref(node)}
-      onClick={onNavigate}
-      className="mb-1 inline-flex min-h-11 items-center rounded-md px-3 py-2 text-sm font-medium text-primary underline-offset-4 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      View all
-    </Link>
+    // Section name (bold, left) with "View all" pushed to the right, and a light
+    // rule beneath to separate the column heading from its items.
+    <div className="mb-1 flex items-center justify-between gap-3 border-b border-border/70 px-3 pt-1 pb-2">
+      <span className="text-sm font-bold text-foreground">{node.label}</span>
+      <Link
+        href={taxonomyHref(node)}
+        onClick={onNavigate}
+        className="shrink-0 rounded-md py-1 text-sm font-medium text-primary underline-offset-4 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        View all
+      </Link>
+    </div>
   );
 }
 

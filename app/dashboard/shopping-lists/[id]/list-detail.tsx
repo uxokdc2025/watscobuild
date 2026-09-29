@@ -432,8 +432,12 @@ function DetailRow({
   const [comment, setComment] = React.useState("");
 
   return (
-    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start border-b last:border-0">
-      <div className="flex flex-col items-center gap-2 pt-4 pl-4">
+    // Canonical 3-column storefront row grid: [image] [details] [actions].
+    // The select checkbox + drag handle live within the first (image) column;
+    // on narrow widths the actions block spans full width beneath the row.
+    <div className="grid grid-cols-[64px_minmax(0,1fr)] items-start gap-x-4 gap-y-4 border-b p-4 last:border-0 sm:grid-cols-[64px_minmax(0,1fr)_auto] sm:gap-x-6">
+      {/* Column 1 — select + drag handle + product image */}
+      <div className="flex flex-col items-center gap-2">
         <Checkbox
           checked={selected}
           onCheckedChange={(v) => onToggle(v === true)}
@@ -446,108 +450,111 @@ function DetailRow({
         >
           ⠿
         </span>
+        <div className="grid aspect-square w-full place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={product.image}
+            alt={product.title}
+            loading="lazy"
+            className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
+          />
+        </div>
       </div>
-      <ProductListRow
-        image={product.image}
-        imageAlt={product.title}
-        brand={product.brand}
-        title={
-          <div className="space-y-1">
-            <Link
-              href={`/pdp/${product.id}`}
-              className="text-sm font-semibold leading-snug hover:underline"
-            >
-              {product.title}
-            </Link>
-            <div>
-              <Button
-                type="button"
-                variant="link"
-                size="sm"
-                className="h-auto px-0"
-                onClick={() => setShowComment((v) => !v)}
-              >
-                {comment ? "Edit comment" : "Add comment"}
-              </Button>
-            </div>
-            {showComment ? (
-              <Textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Add a note for this line item…"
-                className="mt-1 min-h-16"
-                aria-label={`Comment for ${product.mfg}`}
-              />
-            ) : null}
-          </div>
-        }
-        item={product.item}
-        mfg={product.mfg}
-        meta={
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            {/* Label column */}
-            {product.label ? (
-              <Badge variant="soft" color="slate">
-                <Tag className="size-3" />
-                {product.label}
-              </Badge>
-            ) : (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-8 text-muted-foreground"
-              >
-                <Tag className="size-3.5" />
-                Add label
-              </Button>
-            )}
-            {/* Availability column */}
-            <StockStatus qty={product.qty}>
-              {product.qty > 0 ? "In stock" : "Out of stock"}
-            </StockStatus>
-            {product.replacement ? <ReplacementBadge /> : null}
-            {/* Remove sits in the item cluster, away from the price. */}
+
+      {/* Column 2 — brand / title / comment / item-mfg / labels */}
+      <div className="min-w-0 space-y-2">
+        <p className="text-xs font-medium text-primary">{product.brand}</p>
+        <Link
+          href={`/pdp/${product.id}`}
+          className="block text-sm font-semibold leading-snug hover:underline"
+        >
+          {product.title}
+        </Link>
+        <p className="text-xs text-muted-foreground">
+          Item: {product.item} · MFG: {product.mfg}
+        </p>
+        <div>
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="h-auto px-0"
+            onClick={() => setShowComment((v) => !v)}
+          >
+            {comment ? "Edit comment" : "Add comment"}
+          </Button>
+        </div>
+        {showComment ? (
+          <Textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Add a note for this line item…"
+            className="min-h-16"
+            aria-label={`Comment for ${product.mfg}`}
+          />
+        ) : null}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          {product.label ? (
+            <Badge variant="soft" color="slate">
+              <Tag className="size-3" />
+              {product.label}
+            </Badge>
+          ) : (
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="min-h-11 gap-1.5 px-0 text-destructive hover:bg-transparent hover:text-destructive/80"
-              aria-label={`Remove ${product.mfg}`}
-              onClick={onRemove}
+              className="h-8 text-muted-foreground"
             >
-              <Trash2 className="size-4" />
-              Remove
+              <Tag className="size-3.5" />
+              Add label
             </Button>
-          </div>
-        }
-        actions={
-          <div className="flex w-full flex-col items-start gap-2.5 sm:w-auto sm:items-end">
-            <span className="text-base font-semibold">
-              {formatUSD(product.price)}
-            </span>
-            <div className="flex items-center gap-2">
-              <QtyStepper value={qty} onChange={onQty} label={product.mfg} />
-              <Button size="sm" className="min-h-11" onClick={onAdd}>
-                <Plus />
-                Add
-              </Button>
-            </div>
-            {product.replacement ? (
-              <Button
-                type="button"
-                variant="link"
-                size="sm"
-                className="h-auto px-0"
-                onClick={onViewSubstitutes}
-              >
-                <Replace className="size-3.5" />
-                View substitutes
-              </Button>
-            ) : null}
-          </div>
-        }
-      />
+          )}
+          <StockStatus qty={product.qty}>
+            {product.qty > 0 ? "In stock" : "Out of stock"}
+          </StockStatus>
+          {product.replacement ? <ReplacementBadge /> : null}
+          {/* Remove sits in the item cluster, away from the price — matches the
+              cart's inline link-style Remove. */}
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="h-auto px-0"
+            aria-label={`Remove ${product.mfg}`}
+            onClick={onRemove}
+          >
+            Remove
+          </Button>
+        </div>
+      </div>
+
+      {/* Column 3 — price + quantity + row actions. Full-width beneath the row
+          on mobile; right-aligned trailing column at sm+. */}
+      <div className="col-span-2 flex flex-wrap items-center gap-x-4 gap-y-2.5 sm:col-span-1 sm:w-auto sm:flex-col sm:items-end">
+        <span className="text-base font-semibold">
+          {formatUSD(product.price)}
+        </span>
+        <div className="flex items-center gap-2">
+          <QtyStepper value={qty} onChange={onQty} label={product.mfg} />
+          <Button size="sm" className="min-h-11" onClick={onAdd}>
+            <Plus className="size-4" />
+            Add
+          </Button>
+        </div>
+        {product.replacement ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={onViewSubstitutes}
+          >
+            <Replace className="size-4" />
+            View substitutes
+          </Button>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -689,7 +696,7 @@ export function ListDetail({ id }: { id: string }) {
               <span className="font-semibold text-foreground">{formatUSD(total)}</span>
             </span>
             <Button className="min-h-11" onClick={addAll}>
-              <ShoppingCart size={16} />
+              <ShoppingCart className="size-4" />
               Add all to cart
             </Button>
           </div>
@@ -740,12 +747,12 @@ export function ListDetail({ id }: { id: string }) {
                         Dismiss
                       </Button>
                       <Button
-                        variant="secondary"
+                        variant="outline"
                         size="sm"
                         className="min-h-11"
                         onClick={() => setDrawerFor(p)}
                       >
-                        <Replace className="size-3.5" />
+                        <Replace className="size-4" />
                         View substitutes
                       </Button>
                     </div>
@@ -767,7 +774,7 @@ export function ListDetail({ id }: { id: string }) {
               className="min-w-[240px] flex-1"
             />
             <Button variant="outline" className="min-h-11">
-              <Settings2 size={16} />
+              <Settings2 className="size-4" />
               Sort
             </Button>
           </div>
@@ -804,25 +811,25 @@ export function ListDetail({ id }: { id: string }) {
                 Add selected to cart
               </Button>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="min-h-11 text-muted-foreground"
+                className="min-h-11"
                 disabled={selectedIds.length === 0}
               >
                 <FolderInput className="size-4" />
                 Move to
               </Button>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="min-h-11 text-muted-foreground"
+                className="min-h-11"
                 disabled={selectedIds.length === 0}
               >
                 <Copy className="size-4" />
                 Copy to
               </Button>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 className="min-h-11 text-destructive hover:text-destructive/80"
                 disabled={selectedIds.length === 0}

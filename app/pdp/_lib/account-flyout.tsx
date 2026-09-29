@@ -90,9 +90,9 @@ export function AccountFlyout({ signedIn }: { signedIn: boolean }) {
                 <span className="block">Ship To:</span>
                 <span className="block">613 MAIN STREET · ALL CASH SALES ARE FINAL</span>
               </button>
-              <div className="mt-4 flex gap-2">
-                <Button type="button" variant="outline" size="lg" onClick={() => setAccountOpen(true)} className="flex-1 text-xs font-semibold">Change account</Button>
-                <Button type="button" size="lg" onClick={() => setShipToOpen(true)} className="flex-1 gap-1 text-xs font-semibold">Change ship to <ChevronRight className="size-4" /></Button>
+              <div className="mt-4 flex flex-col items-start gap-2">
+                <Button type="button" size="sm" onClick={() => setAccountOpen(true)} className="w-44 text-xs font-semibold">Change account</Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => setShipToOpen(true)} className="w-44 gap-1 text-xs font-semibold">Change ship to <ChevronRight className="size-4" /></Button>
               </div>
             </div>
             <div className="relative flex min-h-0 flex-1 flex-col">

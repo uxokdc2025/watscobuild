@@ -12,10 +12,12 @@ import {
   Package,
   Plus,
   Search,
+  Settings,
   Settings2,
   Share2,
   ShieldCheck,
   ShoppingCart,
+  SlidersHorizontal,
   Star,
   Wrench,
   Zap,
@@ -594,7 +596,7 @@ export function aboutSections(product: PdpProduct): AboutSection[] {
     sections.push({
       id: "specifications",
       label: "Specifications",
-      Icon: ClipboardList,
+      Icon: SlidersHorizontal,
       Body: () => <Specifications product={product} />,
     });
   }
@@ -611,7 +613,7 @@ export function aboutSections(product: PdpProduct): AboutSection[] {
     sections.push({
       id: "parts",
       label: "Part List",
-      Icon: Wrench,
+      Icon: Settings,
       count: partCount,
       Body: () =>
         hasCatalog ? (
