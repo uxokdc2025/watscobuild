@@ -639,7 +639,7 @@ function ProductRow({
   const details = (
     <div className="min-w-0">
       <p className="truncate text-xs font-medium text-primary">{result.brand}</p>
-      <Link href={href} className="line-clamp-2 text-sm font-semibold leading-snug hover:text-primary hover:underline">
+      <Link href={href} className="line-clamp-3 text-sm font-semibold leading-snug hover:text-primary hover:underline">
         {result.title}
       </Link>
       <p className="mt-1 truncate text-xs text-muted-foreground">
@@ -658,13 +658,16 @@ function ProductRow({
   );
   return (
     <article className="p-4">
-      {/* Desktop — [image] [details] [availability] [actions right-aligned] */}
-      <div className="hidden grid-cols-[96px_minmax(0,1fr)_minmax(140px,180px)_auto] items-center gap-5 sm:grid">
+      {/* Desktop — [image] [capped description] [availability, centered] [actions].
+          The description is capped so the title wraps (2–3 lines) instead of
+          sprawling; availability takes the middle slack and centers between the
+          description and the Add CTA. */}
+      <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
         <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
           {media}
         </div>
         {details}
-        <div className="text-sm">{availability}</div>
+        <div className="text-center text-sm">{availability}</div>
         <div className="justify-self-end">
           {signedIn ? (
             <SignedInCommerce result={result} align="right" showStock={false} />
