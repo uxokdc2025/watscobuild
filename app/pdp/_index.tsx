@@ -185,6 +185,43 @@ function TemplateCard({
   );
 }
 
+/* ── Today's changes — a dated, at-a-glance review list for Ryan & Melissa.
+   New work lands here at the top; everything else lives in the sections below. */
+const TODAYS_CHANGES: { title: string; desc: string; links: { label: string; href: string }[] }[] = [
+  {
+    title: "Cart & Checkout — mobile pass",
+    desc: "Sticky bottom CTAs, no inner-scroll lists, slimmer saved-card tiles, responsive item rows, and step auto-scroll — across both the horizontal (v1) and accordion (v2) flows.",
+    links: [
+      { label: "Cart", href: "/cart?demo=1" },
+      { label: "Checkout v1", href: "/checkout?demo=1" },
+      { label: "Checkout v2", href: "/checkout/v2?demo=1" },
+    ],
+  },
+  {
+    title: "Homans “Contact Us” — Limited Availability message",
+    desc: "The buy box and PLP cards now show “Limited Availability / Let us help you find this product / Contact Us” instead of a bare Contact Us link.",
+    links: [
+      { label: "PDP", href: "/pdp/homans-contact-us?signedin=1" },
+      { label: "PLP", href: "/search/homans-contact-us?signedin=1" },
+    ],
+  },
+  {
+    title: "Tab styles — Style 2 + icons",
+    desc: "Style 2 active segment is now a soft, AA-accessible light blue; Specifications uses a gauge icon and Part List a gear icon so they no longer read like Description.",
+    links: [{ label: "Tab styles", href: "/pdp/about-variants" }],
+  },
+  {
+    title: "Shopping list — design-system buttons + 3-column rows",
+    desc: "Every button normalized to the design system and each product row rebuilt on the 3-column layout used across cart and checkout.",
+    links: [{ label: "Shopping list", href: "/dashboard/shopping-lists/hvac-maintenance-kit" }],
+  },
+  {
+    title: "Header & search refinements",
+    desc: "Mega-menu column header (section name left, View all right, rule under), account panel actions (Change account primary, stacked), and tighter search-sidebar spacing.",
+    links: [{ label: "Open PLP", href: "/search?q=blower%20motor&signedin=1" }],
+  },
+];
+
 export default function PdpMasterPage() {
   // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
   const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
@@ -275,9 +312,46 @@ export default function PdpMasterPage() {
           </div>
         </div>
 
-        {/* Each section is its own accordion panel. "In Review" opens by
-            default — that is where every active design decision lands. All
-            other panels start collapsed to keep the review focused. */}
+        {/* ── Today's changes — dated, at-a-glance review list. New work lands
+            here at the top; everything else lives in the sections below. ── */}
+        <section
+          aria-labelledby="todays-changes"
+          className="mt-8 rounded-xl border-2 border-primary/30 bg-primary/[0.04] p-5"
+        >
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
+              New · Sep 29, 2026
+            </Badge>
+            <h2 id="todays-changes" className="text-lg font-bold tracking-tight">
+              Today&apos;s Changes
+            </h2>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            New this session — click through to review each change.
+          </p>
+          <ul className="mt-4 flex flex-col gap-3">
+            {TODAYS_CHANGES.map((c) => (
+              <li key={c.title} className="rounded-lg border bg-card p-4">
+                <p className="font-semibold">{c.title}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{c.desc}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {c.links.map((l) => (
+                    <Button key={l.href} asChild variant="outline" size="sm">
+                      <Link href={l.href} target="_blank" rel="noopener noreferrer">
+                        {l.label}
+                        <ArrowUpRight className="size-3.5" />
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Everything below is prior work, organized by area. Each section is
+            its own accordion panel; all panels start collapsed to keep the
+            review focused on Today's Changes above. */}
         <Accordion
           type="multiple"
           defaultValue={[]}
@@ -565,21 +639,11 @@ export default function PdpMasterPage() {
                 </Button>
                 <Button asChild variant="secondary">
                   <Link
-                    href="/pdp/homans-contact-us-v2?signedin=1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    PDP (richer / reference-style)
-                    <ArrowUpRight className="size-3.5" />
-                  </Link>
-                </Button>
-                <Button asChild variant="secondary">
-                  <Link
                     href="/search/homans-contact-us-v2?signedin=1"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    PLP (richer / reference-style)
+                    PLP (multi-result example)
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>

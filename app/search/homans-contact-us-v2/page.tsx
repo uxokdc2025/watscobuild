@@ -28,7 +28,7 @@ const GREE_RESULT: SearchResult = {
   price: 0,
   contactForAvailability: true,
   contactVariant: "rich",
-  href: "/pdp/homans-contact-us-v2?signedin=1",
+  href: "/pdp/homans-contact-us?signedin=1",
 };
 
 const GREE_36K_RESULT: SearchResult = {
@@ -42,7 +42,7 @@ const GREE_36K_RESULT: SearchResult = {
   price: 0,
   contactForAvailability: true,
   contactVariant: "rich",
-  href: "/pdp/homans-contact-us-v2?signedin=1",
+  href: "/pdp/homans-contact-us?signedin=1",
 };
 
 const GREE_60K_RESULT: SearchResult = {
@@ -56,7 +56,7 @@ const GREE_60K_RESULT: SearchResult = {
   price: 0,
   contactForAvailability: true,
   contactVariant: "rich",
-  href: "/pdp/homans-contact-us-v2?signedin=1",
+  href: "/pdp/homans-contact-us?signedin=1",
 };
 
 const RESULTS: SearchResult[] = [
