@@ -52,7 +52,9 @@ import { toast } from "sonner";
  * The lead, Qty, and actions columns are fixed widths (not `auto`) precisely so
  * the header — which is a SEPARATE grid — aligns to the rows column-for-column. */
 const LIST_GRID_COLS =
-  "grid-cols-[2.75rem_minmax(0,1fr)_120px_140px_110px_7.5rem_9.5rem]";
+  // Product Details is capped so the title wraps (2–3 lines) instead of sprawling;
+  // Availability takes the slack (minmax → 1fr) so it centers between the columns.
+  "grid-cols-[2.75rem_minmax(0,340px)_120px_minmax(140px,1fr)_110px_7.5rem_9.5rem]";
 
 /* ─────────────────────────── Demo data ─────────────────────────── */
 
@@ -470,7 +472,7 @@ function DetailRow({
       <p className="text-xs font-medium text-primary">{product.brand}</p>
       <Link
         href={`/pdp/${product.id}`}
-        className="block text-sm font-semibold leading-snug hover:underline"
+        className="line-clamp-3 block text-sm font-semibold leading-snug hover:underline"
       >
         {product.title}
       </Link>
@@ -572,8 +574,8 @@ function DetailRow({
         {/* Col 3 — Label */}
         <div className="min-w-0">{labelNode}</div>
 
-        {/* Col 4 — Availability */}
-        <div className="flex flex-col gap-1">
+        {/* Col 4 — Availability (centered in its column) */}
+        <div className="flex flex-col items-center gap-1 text-center">
           <span className="text-xs text-muted-foreground">Inventory</span>
           {availabilityLine}
           {product.replacement ? <ReplacementBadge /> : null}
@@ -996,7 +998,7 @@ export function ListDetail({ id }: { id: string }) {
                 <span aria-hidden="true" />
                 <span>Product Details</span>
                 <span>Label</span>
-                <span>Availability</span>
+                <span className="text-center">Availability</span>
                 <span>Price</span>
                 <span>Qty</span>
                 <span aria-hidden="true" />
