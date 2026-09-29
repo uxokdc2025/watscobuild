@@ -85,41 +85,57 @@ function CartLineRow({
   onQty: (next: number) => void;
   onRemove: () => void;
 }) {
+  const media = line.image ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={line.image} alt={line.title} loading="lazy" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+  ) : (
+    <ImageOff className="size-6 opacity-40" aria-hidden="true" />
+  );
+  const titleBlock = (
+    <>
+      <p className="truncate text-xs font-medium text-primary">{line.brand ?? "Watsco"}</p>
+      <p className="line-clamp-2 text-sm font-semibold leading-snug">{line.title}</p>
+      <p className="mt-1 truncate text-xs text-muted-foreground">Item: {line.item} · MFG: {line.mfg}</p>
+    </>
+  );
+  const removeBtn = (
+    <Button type="button" variant="link" size="sm" className="h-auto px-0" aria-label={`Remove ${line.mfg}`} onClick={onRemove}>
+      Remove
+    </Button>
+  );
   return (
-    // Fixed columns: image (64px) · product capped at 340px · Qty (1fr) · price (1fr).
-    // The product column cap stops the description stretching the row so the
-    // title wraps to ~2 lines, leaving whitespace before the fixed Qty column.
-    <div className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
-      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-        {line.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={line.image} alt={line.title} loading="lazy" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-        ) : (
-          <ImageOff className="size-6 opacity-40" aria-hidden="true" />
-        )}
+    <div className="border-b last:border-0">
+      {/* Desktop — image (64px) · product capped at 340px · Qty · price */}
+      <div className="hidden grid-cols-[64px_minmax(0,340px)_minmax(max-content,1fr)_minmax(max-content,1fr)] items-center gap-x-6 p-4 sm:grid">
+        <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">{media}</div>
+        <div className="min-w-0">{titleBlock}</div>
+        <div className="flex flex-col items-center gap-1.5">
+          <span className="text-xs text-muted-foreground">Qty</span>
+          <QtyStepper value={line.quantity} onChange={onQty} label={line.mfg} />
+        </div>
+        <div className="flex flex-col items-end gap-0.5 text-right">
+          <span className="text-base font-semibold">{formatUSD(line.price * line.quantity)}</span>
+          <span className="text-xs text-muted-foreground">{formatUSD(line.price)} / each</span>
+          <span className="mt-1">{removeBtn}</span>
+        </div>
       </div>
-      <div className="min-w-0">
-        <p className="truncate text-xs font-medium text-primary">{line.brand ?? "Watsco"}</p>
-        <p className="line-clamp-2 text-sm font-semibold leading-snug">{line.title}</p>
-        <p className="mt-1 truncate text-xs text-muted-foreground">Item: {line.item} · MFG: {line.mfg}</p>
-      </div>
-      <div className="flex flex-col items-center gap-1.5">
-        <span className="text-xs text-muted-foreground">Qty</span>
-        <QtyStepper value={line.quantity} onChange={onQty} label={line.mfg} />
-      </div>
-      <div className="flex flex-col items-end gap-0.5 text-right">
-        <span className="text-base font-semibold">{formatUSD(line.price * line.quantity)}</span>
-        <span className="text-xs text-muted-foreground">{formatUSD(line.price)} / each</span>
-        <Button
-          type="button"
-          variant="link"
-          size="sm"
-          className="mt-1 h-auto px-0"
-          aria-label={`Remove ${line.mfg}`}
-          onClick={onRemove}
-        >
-          Remove
-        </Button>
+      {/* Mobile — image + title, with Qty stepper and price/Remove on a row beneath */}
+      <div className="flex items-start gap-3 p-4 sm:hidden">
+        <div className="grid size-14 shrink-0 place-items-center self-start rounded-md bg-muted/40 p-1 text-muted-foreground">{media}</div>
+        <div className="min-w-0 flex-1">
+          {titleBlock}
+          <div className="mt-3 flex items-end justify-between gap-3">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs text-muted-foreground">Qty</span>
+              <QtyStepper value={line.quantity} onChange={onQty} label={line.mfg} />
+            </div>
+            <div className="flex flex-col items-end gap-0.5 text-right">
+              <span className="text-sm font-semibold text-foreground">{formatUSD(line.price * line.quantity)}</span>
+              <span className="text-xs text-muted-foreground">{formatUSD(line.price)} / each</span>
+              {removeBtn}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
