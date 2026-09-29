@@ -486,7 +486,9 @@ const CHECKOUT_LEGAL_LINKS = ["Guest Service Center", "Privacy Policy", "Terms &
 export function CheckoutFooter({ brand }: { brand: BrandChrome }) {
   const phone = brand.phone ?? "(800) 555-0199";
   return (
-    <footer className="mt-16 border-t bg-background">
+    // Mobile: tight top margin (no dead space under the order summary) and bottom
+    // padding to clear the fixed sticky CTA bar. Desktop keeps the roomy margin.
+    <footer className="mt-6 border-t bg-background pb-24 lg:mt-16 lg:pb-0">
       <div className="mx-auto max-w-[var(--layout-max-width)] px-4 md:px-6">
         <div className="flex flex-col gap-1 py-5 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2">
           <span className="font-semibold">Need Help?</span>

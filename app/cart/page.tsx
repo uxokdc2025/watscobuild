@@ -20,5 +20,7 @@ export default async function CartPage({ searchParams }: { searchParams: Promise
     <SiteHeader brand={brand} signedIn />
     <CartClient brandKey={brand.key} />
     <SiteFooter brand={brand} />
+    {/* Clearance so the fixed mobile checkout bar doesn't cover the footer. */}
+    <div aria-hidden className="h-24 lg:hidden" />
   </>;
 }

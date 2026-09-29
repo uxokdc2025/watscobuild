@@ -307,7 +307,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
   };
 
   return (
-    <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8 max-lg:pb-28">
+    <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
       <div className="mx-auto max-w-[var(--layout-max-width)]">
         <Link href={SHOP_HREF} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ChevronLeft className="size-4" aria-hidden="true" />

@@ -364,15 +364,18 @@ export default function CheckoutClient({
   // to the existing place-order gating.
   const placeOrderDisabled = step !== "review" || handlingBlocks;
 
-  // The current step's forward action — drives the mobile sticky CTA bar in both
-  // the tabbed and accordion flows (same steps and gates).
+  const scrollToTopSmooth = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const saveQuote = () => toast.success("Quote saved — find it under Quotes in your account.");
+
+  // V1 (tabbed) mobile sticky bar: the current step's forward action. Advancing
+  // scrolls back to the top so the newly active step is in view.
   const stepCta =
     step === "details"
-      ? { label: "Continue to fulfillment", onClick: goToFulfillment, disabled: false }
+      ? { label: "Continue to fulfillment", onClick: () => { goToFulfillment(); scrollToTopSmooth(); }, disabled: false }
       : step === "fulfillment"
-        ? { label: "Continue to payment", onClick: () => setStep("payment"), disabled: fulfillmentContinueDisabled }
+        ? { label: "Continue to payment", onClick: () => { setStep("payment"); scrollToTopSmooth(); }, disabled: fulfillmentContinueDisabled }
         : step === "payment"
-          ? { label: "Continue to review", onClick: () => setStep("review"), disabled: paymentContinueDisabled }
+          ? { label: "Continue to review", onClick: () => { setStep("review"); scrollToTopSmooth(); }, disabled: paymentContinueDisabled }
           : { label: "Place order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled };
 
   /* ── Accordion (v2) progressive layout — reuses the SAME state, handlers,
@@ -430,7 +433,7 @@ export default function CheckoutClient({
     );
 
     return (
-      <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8 max-lg:pb-28">
+      <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
         <div className="mx-auto max-w-[var(--layout-max-width)]">
           <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
             <ChevronLeft className="size-4" aria-hidden="true" />
@@ -467,7 +470,7 @@ export default function CheckoutClient({
                         notes={notes}
                         setNotes={setNotes}
                       />
-                      <div className="flex justify-end border-t px-5 py-4 max-lg:hidden">
+                      <div className="flex justify-end border-t px-5 py-4">
                         <Button
                           size="sm"
                           onClick={() => {
@@ -523,7 +526,7 @@ export default function CheckoutClient({
                       deliveryMethodChosen={deliveryMethodChosen}
                       setDeliveryMethodChosen={setDeliveryMethodChosen}
                     />
-                    <div className="flex justify-end border-t px-5 py-4 max-lg:hidden">
+                    <div className="flex justify-end border-t px-5 py-4">
                       <Button size="sm" onClick={() => goToStep("payment")}>
                         Continue to payment
                       </Button>
@@ -565,7 +568,7 @@ export default function CheckoutClient({
                       onBack={() => setStep("fulfillment")}
                       hideBack
                     />
-                    <div className="flex justify-end border-t px-5 py-4 max-lg:hidden">
+                    <div className="flex justify-end border-t px-5 py-4">
                       <Button size="sm" onClick={() => goToStep("review")}>
                         Continue to review
                       </Button>
@@ -654,13 +657,24 @@ export default function CheckoutClient({
           onSetDefault={setDefaultAccountId}
         />
 
-        <MobileCtaBar label={stepCta.label} onClick={stepCta.onClick} disabled={stepCta.disabled} total={total} shippingUnknown={shippingUnknown} />
+        {/* Accordion (v2): the per-step Continue lives inside each card; the sticky
+            bar is the final Place order + Save quote, greyed until Review. */}
+        <MobileCtaBar
+          label="Place order"
+          onClick={() => setSubmitted(true)}
+          disabled={placeOrderDisabled}
+          total={total}
+          shippingUnknown={shippingUnknown}
+          secondaryLabel="Save quote"
+          onSecondary={saveQuote}
+          secondaryDisabled={step !== "review"}
+        />
       </main>
     );
   }
 
   return (
-    <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8 max-lg:pb-28">
+    <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
       <div className="mx-auto max-w-[var(--layout-max-width)]">
         <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ChevronLeft className="size-4" aria-hidden="true" />
@@ -760,7 +774,7 @@ export default function CheckoutClient({
                   deliveryMethodChosen={deliveryMethodChosen}
                   setDeliveryMethodChosen={setDeliveryMethodChosen}
                 />
-                <div className="flex justify-between border-t px-5 py-4">
+                <div className="flex justify-between border-t px-5 py-4 max-lg:hidden">
                   <Button variant="outline" size="sm" onClick={() => setStep("details")}>Back</Button>
                   <Button size="sm" onClick={() => setStep("payment")} disabled={fulfillmentContinueDisabled} className="max-lg:hidden">
                     Continue to payment
@@ -785,7 +799,7 @@ export default function CheckoutClient({
                   onBack={() => setStep("fulfillment")}
                   hideBack
                 />
-                <div className="flex justify-between border-t px-5 py-4">
+                <div className="flex justify-between border-t px-5 py-4 max-lg:hidden">
                   <Button variant="outline" size="sm" onClick={() => setStep("fulfillment")}>Back</Button>
                   <Button size="sm" onClick={() => setStep("review")} disabled={paymentContinueDisabled} className="max-lg:hidden">
                     Continue to review
@@ -823,7 +837,7 @@ export default function CheckoutClient({
                   onEditPayment={() => setStep("payment")}
                   hideBack
                 />
-                <div className="flex justify-between border-t px-5 py-4">
+                <div className="flex justify-between border-t px-5 py-4 max-lg:hidden">
                   <Button variant="outline" size="sm" onClick={() => setStep("payment")}>Back</Button>
                 </div>
               </>
@@ -862,7 +876,15 @@ export default function CheckoutClient({
         onSetDefault={setDefaultAccountId}
       />
 
-      <MobileCtaBar label={stepCta.label} onClick={stepCta.onClick} disabled={stepCta.disabled} total={total} shippingUnknown={shippingUnknown} />
+      <MobileCtaBar
+        label={stepCta.label}
+        onClick={stepCta.onClick}
+        disabled={stepCta.disabled}
+        total={total}
+        shippingUnknown={shippingUnknown}
+        secondaryLabel={step === "review" ? "Save quote" : undefined}
+        onSecondary={saveQuote}
+      />
     </main>
   );
 }
@@ -931,26 +953,49 @@ function MobileCtaBar({
   disabled,
   total,
   shippingUnknown,
+  secondaryLabel,
+  onSecondary,
+  secondaryDisabled = false,
 }: {
   label: string;
   onClick: () => void;
   disabled: boolean;
   total: number;
   shippingUnknown: boolean;
+  /** Optional secondary action (e.g. Save quote) shown under the primary — used
+   *  by the accordion flow, where the sticky bar is the final Place order. */
+  secondaryLabel?: string;
+  onSecondary?: () => void;
+  secondaryDisabled?: boolean;
 }) {
   return (
     <div
       className="fixed inset-x-0 bottom-0 z-40 border-t bg-background px-4 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] lg:hidden"
       style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
     >
-      <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-4">
-        <div className="flex flex-col leading-tight">
-          <span className="text-xs text-muted-foreground">Total</span>
-          <span className="text-lg font-bold">{shippingUnknown ? "N/A" : formatUSD(total)}</span>
+      <div className="mx-auto max-w-[var(--layout-max-width)]">
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col leading-tight">
+            <span className="text-xs text-muted-foreground">Total</span>
+            <span className="text-lg font-bold">{shippingUnknown ? "N/A" : formatUSD(total)}</span>
+          </div>
+          <Button className="flex-1" onClick={onClick} disabled={disabled}>
+            {label}
+          </Button>
         </div>
-        <Button className="flex-1" onClick={onClick} disabled={disabled}>
-          {label}
-        </Button>
+        {secondaryLabel ? (
+          <button
+            type="button"
+            onClick={onSecondary}
+            disabled={secondaryDisabled}
+            className={cn(
+              "mx-auto mt-1.5 block text-sm font-medium",
+              secondaryDisabled ? "text-muted-foreground" : "text-primary hover:underline"
+            )}
+          >
+            {secondaryLabel}
+          </button>
+        ) : null}
       </div>
     </div>
   );
@@ -1064,7 +1109,23 @@ function PaymentStep({
                   >
                     <RadioGroupItem value={c.id} className="mt-0.5 shrink-0" />
                     <CardMark brand={c.brand} className="h-8 w-12 shrink-0 rounded-sm px-1.5 text-[9px] font-bold" />
-                    <span className="block min-w-0 flex-1 text-left">
+                    {/* Mobile — compact: name with badges top-right, card + expiry on one line beneath */}
+                    <span className="flex min-w-0 flex-1 flex-col gap-1 sm:hidden">
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="min-w-0 flex-1 truncate text-sm font-semibold leading-tight">{c.name}</span>
+                        <span className="shrink-0">
+                          <Badge variant="solid" color="slate">{c.shared ? "Company" : c.added ? "Added" : "Personal"}</Badge>
+                        </span>
+                      </span>
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="min-w-0 truncate text-xs text-muted-foreground">•••• {c.tail} · Expires {c.expires}</span>
+                        {i === 0 ? (
+                          <span className="shrink-0 rounded-sm bg-in-stock/12 px-1.5 py-0.5 text-[11px] font-semibold text-in-stock">Default</span>
+                        ) : null}
+                      </span>
+                    </span>
+                    {/* Desktop — original stacked tile */}
+                    <span className="hidden min-w-0 flex-1 text-left sm:block">
                       <span className="block truncate text-[13px] font-semibold leading-tight">{c.name}</span>
                       <span className="mt-0.5 block text-xs leading-normal whitespace-nowrap text-muted-foreground">•••• {c.tail}</span>
                       <span className="block text-xs leading-normal whitespace-nowrap text-muted-foreground">Expires: {c.expires}</span>
@@ -1451,11 +1512,10 @@ function OrderSummary({
           </Alert>
         ) : null}
 
-        {/* Sticky primary CTA — the strongest action, always reachable.
-            "Save cart for later" lives on the cart page only, not in checkout. */}
-        <div>
-          {/* Primary lives in the mobile sticky bar; shown here on desktop only. */}
-          <Button className="hidden w-full lg:flex" onClick={primary.onClick} disabled={primary.disabled}>
+        {/* Primary + Save quote — the mobile sticky bar carries these on phones,
+            so this in-summary block is desktop-only. */}
+        <div className="hidden lg:block">
+          <Button className="flex w-full" onClick={primary.onClick} disabled={primary.disabled}>
             {primary.label}
           </Button>
           {showConfirm ? (
