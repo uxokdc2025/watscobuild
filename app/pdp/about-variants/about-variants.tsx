@@ -125,7 +125,7 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
         <StyleHeading
           n={2}
           title="Style 2 — Connected bar, soft blue active"
-          note="Same connected bar as Style 1, but the active segment is a light blue (50%) fill with an AA-accessible dark-blue icon and label; top and bottom rule."
+          note="Same connected bar as Style 1, but the active segment is a soft light-blue fill with an AA-accessible blue icon and label; top and bottom rule."
         />
         <Tabs defaultValue={defaultValue}>
           <TabsList
@@ -136,7 +136,7 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
               <TabsTrigger
                 key={s.id}
                 value={s.id}
-                className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-primary/50! data-[state=active]:font-semibold data-[state=active]:text-[var(--blue-950)]! data-[state=active]:[&_svg]:text-[var(--blue-950)]! data-[state=active]:hover:bg-primary/50 data-[state=active]:hover:text-[var(--blue-950)] data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+                className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--blue-100)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--blue-800)]! data-[state=active]:[&_svg]:text-[var(--blue-800)]! data-[state=active]:hover:bg-[var(--blue-100)] data-[state=active]:hover:text-[var(--blue-800)] data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
               >
                 <s.Icon className="size-4" />
                 {s.label}

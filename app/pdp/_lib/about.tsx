@@ -7,6 +7,7 @@ import {
   ClipboardList,
   Fan,
   FileText,
+  Gauge,
   Hammer,
   Minus,
   Package,
@@ -17,7 +18,6 @@ import {
   Share2,
   ShieldCheck,
   ShoppingCart,
-  SlidersHorizontal,
   Star,
   Wrench,
   Zap,
@@ -596,7 +596,7 @@ export function aboutSections(product: PdpProduct): AboutSection[] {
     sections.push({
       id: "specifications",
       label: "Specifications",
-      Icon: SlidersHorizontal,
+      Icon: Gauge,
       Body: () => <Specifications product={product} />,
     });
   }
