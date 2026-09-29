@@ -975,22 +975,23 @@ function MobileCtaBar({
       style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
     >
       <div className="mx-auto max-w-[var(--layout-max-width)]">
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col leading-tight">
-            <span className="text-xs text-muted-foreground">Total</span>
-            <span className="text-lg font-bold">{shippingUnknown ? "N/A" : formatUSD(total)}</span>
-          </div>
-          <Button className="flex-1" onClick={onClick} disabled={disabled}>
-            {label}
-          </Button>
+        {/* Total on its own line (label left, amount right), then a full-width
+            primary and a centered secondary — everything shares the full width,
+            so the stack reads balanced. */}
+        <div className="flex items-baseline justify-between">
+          <span className="text-sm font-medium text-muted-foreground">Total</span>
+          <span className="text-lg font-bold">{shippingUnknown ? "N/A" : formatUSD(total)}</span>
         </div>
+        <Button className="mt-2 w-full" onClick={onClick} disabled={disabled}>
+          {label}
+        </Button>
         {secondaryLabel ? (
           <button
             type="button"
             onClick={onSecondary}
             disabled={secondaryDisabled}
             className={cn(
-              "mx-auto mt-1.5 block text-sm font-medium",
+              "mx-auto mt-2 block text-sm font-medium",
               secondaryDisabled ? "text-muted-foreground" : "text-primary hover:underline"
             )}
           >

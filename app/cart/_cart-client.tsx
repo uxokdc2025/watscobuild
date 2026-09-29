@@ -378,12 +378,12 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
               className="fixed inset-x-0 bottom-0 z-40 border-t bg-background px-4 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] lg:hidden"
               style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
             >
-              <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-4">
-                <div className="flex flex-col leading-tight">
-                  <span className="text-xs text-muted-foreground">Total</span>
+              <div className="mx-auto max-w-[var(--layout-max-width)]">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm font-medium text-muted-foreground">Total</span>
                   <span className="text-lg font-bold">{formatUSD(total)}</span>
                 </div>
-                <Button asChild className="flex-1">
+                <Button asChild className="mt-2 w-full">
                   <Link href={checkoutHref}>Proceed to checkout</Link>
                 </Button>
               </div>

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, Info, LayoutGrid, List as ListIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, ImageOff, Info, LayoutGrid, List as ListIcon, ListPlus, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,7 +17,6 @@ import {
 import type { SearchResult } from "./mock-data";
 import { useCart } from "@/components/cart/cart-context";
 import { FilterPill } from "@/components/ui/plp-filters";
-import { ProductListRow } from "@/components/ui/product-list-row";
 
 const STOCK_LOCATIONS = [
   { value: "your-branch", label: "Your Store" },
@@ -355,9 +354,12 @@ export function SearchBody({
                 ))}
               </ul>
             ) : (
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              // True full-width horizontal list — one product per row, spanning
+              // the content column. Rows are divided within a single card, using
+              // the shared [image | details | actions] storefront row pattern.
+              <ul className="divide-y overflow-hidden rounded-lg border bg-card">
                 {results.map((r, i) => (
-                  <li key={r.id} className="overflow-hidden rounded-lg border bg-card">
+                  <li key={r.id}>
                     <ProductRow result={r} signedIn={signedIn} index={i} brandKey={brandKey} />
                   </li>
                 ))}
@@ -541,6 +543,12 @@ function ProductCard({
   return <CanonicalProductCard data={cardData} signedIn={signedIn} />;
 }
 
+/** PLP list row — a TRUE full-width horizontal row spanning the content column.
+ *  Canonical 3-zone storefront grid: [image 96px] [details flex-1] [actions,
+ *  right-aligned] at sm+, matching the cart / checkout review / shopping-list
+ *  rows. Below sm it stacks: image + details side-by-side on top, actions full
+ *  width beneath (no horizontal overflow at 375px). Stock/price/contact logic is
+ *  shared via StockLine + SignedInCommerce — never duplicated. */
 function ProductRow({
   result,
   signedIn,
@@ -553,26 +561,69 @@ function ProductRow({
   brandKey: string;
 }) {
   const imageSrc = productImageFor(brandKey, index, result.image);
-  return (
-    <ProductListRow
-      image={imageSrc}
-      imageAlt={result.title}
-      brand={result.brand}
-      title={<Link href={result.href ?? `/pdp/tradepro-${result.item.toLowerCase()}`} className="hover:text-primary">{result.title}</Link>}
-      item={result.item}
-      mfg={result.mfg}
-      meta={signedIn ? <StockLine result={result} /> : undefined}
-      actions={
-        signedIn ? (
-          <SignedInCommerce result={result} align="right" showStock={false} />
-        ) : (
-          <p>
-            <span className="font-medium">Sign in</span>{" "}
-            <span className="text-muted-foreground">for pricing.</span>
-          </p>
-        )
-      }
+  const href = result.href ?? `/pdp/tradepro-${result.item.toLowerCase()}`;
+  const media = imageSrc ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={imageSrc}
+      alt={result.title}
+      loading="lazy"
+      className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
     />
+  ) : (
+    <ImageOff className="size-6 opacity-40" aria-hidden="true" />
+  );
+  const details = (
+    <div className="min-w-0">
+      <p className="truncate text-xs font-medium text-primary">{result.brand}</p>
+      <Link href={href} className="line-clamp-2 text-sm font-semibold leading-snug hover:text-primary hover:underline">
+        {result.title}
+      </Link>
+      <p className="mt-1 truncate text-xs text-muted-foreground">
+        Item: {result.item} · MFG: {result.mfg}
+      </p>
+      {signedIn ? <div className="mt-2">{<StockLine result={result} />}</div> : null}
+    </div>
+  );
+  const signedOutActions = (
+    <p className="text-sm">
+      <span className="font-medium">Sign in</span>{" "}
+      <span className="text-muted-foreground">for pricing.</span>
+    </p>
+  );
+  return (
+    <article className="p-4">
+      {/* Desktop — [image 96px] [details] [actions right-aligned] */}
+      <div className="hidden grid-cols-[96px_minmax(0,1fr)_auto] items-center gap-6 sm:grid">
+        <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+          {media}
+        </div>
+        {details}
+        <div className="justify-self-end">
+          {signedIn ? (
+            <SignedInCommerce result={result} align="right" showStock={false} />
+          ) : (
+            signedOutActions
+          )}
+        </div>
+      </div>
+      {/* Mobile — image + details side-by-side, actions full width beneath */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        <div className="flex items-start gap-3">
+          <div className="grid size-20 shrink-0 place-items-center self-start rounded-md bg-muted/40 p-1 text-muted-foreground">
+            {media}
+          </div>
+          <div className="min-w-0 flex-1">{details}</div>
+        </div>
+        <div>
+          {signedIn ? (
+            <SignedInCommerce result={result} align="left" showStock={false} />
+          ) : (
+            signedOutActions
+          )}
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -600,19 +651,37 @@ function SignedInCommerce({
         </p>
       ) : null}
       {showStock ? <StockLine result={result} /> : null}
-      <Button
-        size="sm"
-        className="mt-2"
-        onClick={() => addItem({
-          id: result.id,
-          title: result.title,
-          brand: result.brand,
-          image: result.image,
-          price: result.price ?? 0,
-        })}
-      >
-        Add to Cart
-      </Button>
+      {result.price != null ? (
+        <>
+          {/* Add to Cart — design-system primary Button (solid), with the cart
+              icon. Matches the grid card's Add button. */}
+          <Button
+            size="sm"
+            className="mt-2"
+            onClick={() => addItem({
+              id: result.id,
+              title: result.title,
+              brand: result.brand,
+              image: result.image,
+              price: result.price ?? 0,
+            })}
+          >
+            <ShoppingCart className="size-4" />
+            Add to Cart
+          </Button>
+          {/* Save to List — muted affordance below the Add button, mirroring the
+              grid card's Save. */}
+          <div className="pt-1">
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ListPlus className="size-4" />
+              Save
+            </button>
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }
