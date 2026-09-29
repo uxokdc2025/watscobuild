@@ -240,7 +240,7 @@ function OrderSummary({
 
         {/* Button pair — secondary LEFT (save for later), primary RIGHT, equal
             width. Continue-shopping is covered by the "Back to shopping" crumb. */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           <Button
             type="button"
             variant="outline"
@@ -258,7 +258,8 @@ function OrderSummary({
               "Save cart"
             )}
           </Button>
-          <Button asChild size="sm" className="w-full">
+          {/* Primary lives in the mobile sticky bar; shown here on desktop only. */}
+          <Button asChild size="sm" className="hidden w-full lg:inline-flex">
             <Link href={checkoutHref}>Proceed to checkout</Link>
           </Button>
         </div>
@@ -306,7 +307,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
   };
 
   return (
-    <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
+    <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8 max-lg:pb-28">
       <div className="mx-auto max-w-[var(--layout-max-width)]">
         <Link href={SHOP_HREF} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ChevronLeft className="size-4" aria-hidden="true" />
@@ -353,8 +354,9 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
                 <AccountContextRow brandKey={brandKey} accountId={accountId} onSelectAccount={setAccountId} />
                 <section className="rounded-md border bg-background shadow-sm">
                   <div className="border-b px-5 py-4 font-semibold">Items ({lines.length})</div>
-                  {/* Long carts scroll their own container so the summary stays put. */}
-                  <div className="max-h-[70svh] overflow-y-auto">
+                  {/* Desktop: long carts scroll their own container so the sticky
+                      summary stays put. Mobile: the whole page scrolls — no inner box. */}
+                  <div className="lg:max-h-[70svh] lg:overflow-y-auto">
                     {lines.map((l) => (
                       <CartLineRow
                         key={l.id}
@@ -368,6 +370,23 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
               </div>
 
               <OrderSummary count={count} subtotal={subtotal} tax={tax} total={total} checkoutHref={checkoutHref} />
+            </div>
+
+            {/* Mobile-only sticky checkout bar — the primary action stays reachable
+                on a long cart without scrolling to the summary. */}
+            <div
+              className="fixed inset-x-0 bottom-0 z-40 border-t bg-background px-4 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] lg:hidden"
+              style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+            >
+              <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-4">
+                <div className="flex flex-col leading-tight">
+                  <span className="text-xs text-muted-foreground">Total</span>
+                  <span className="text-lg font-bold">{formatUSD(total)}</span>
+                </div>
+                <Button asChild className="flex-1">
+                  <Link href={checkoutHref}>Proceed to checkout</Link>
+                </Button>
+              </div>
             </div>
           </>
         )}

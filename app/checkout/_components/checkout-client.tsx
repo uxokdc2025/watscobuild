@@ -364,6 +364,17 @@ export default function CheckoutClient({
   // to the existing place-order gating.
   const placeOrderDisabled = step !== "review" || handlingBlocks;
 
+  // The current step's forward action — drives the mobile sticky CTA bar in both
+  // the tabbed and accordion flows (same steps and gates).
+  const stepCta =
+    step === "details"
+      ? { label: "Continue to fulfillment", onClick: goToFulfillment, disabled: false }
+      : step === "fulfillment"
+        ? { label: "Continue to payment", onClick: () => setStep("payment"), disabled: fulfillmentContinueDisabled }
+        : step === "payment"
+          ? { label: "Continue to review", onClick: () => setStep("review"), disabled: paymentContinueDisabled }
+          : { label: "Place order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled };
+
   /* ── Accordion (v2) progressive layout — reuses the SAME state, handlers,
    *    and step components as v1. v1's return below is unchanged. ── */
   if (variant === "accordion") {
@@ -419,7 +430,7 @@ export default function CheckoutClient({
     );
 
     return (
-      <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
+      <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8 max-lg:pb-28">
         <div className="mx-auto max-w-[var(--layout-max-width)]">
           <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
             <ChevronLeft className="size-4" aria-hidden="true" />
@@ -456,7 +467,7 @@ export default function CheckoutClient({
                         notes={notes}
                         setNotes={setNotes}
                       />
-                      <div className="flex justify-end border-t px-5 py-4">
+                      <div className="flex justify-end border-t px-5 py-4 max-lg:hidden">
                         <Button
                           size="sm"
                           onClick={() => {
@@ -512,7 +523,7 @@ export default function CheckoutClient({
                       deliveryMethodChosen={deliveryMethodChosen}
                       setDeliveryMethodChosen={setDeliveryMethodChosen}
                     />
-                    <div className="flex justify-end border-t px-5 py-4">
+                    <div className="flex justify-end border-t px-5 py-4 max-lg:hidden">
                       <Button size="sm" onClick={() => goToStep("payment")}>
                         Continue to payment
                       </Button>
@@ -554,7 +565,7 @@ export default function CheckoutClient({
                       onBack={() => setStep("fulfillment")}
                       hideBack
                     />
-                    <div className="flex justify-end border-t px-5 py-4">
+                    <div className="flex justify-end border-t px-5 py-4 max-lg:hidden">
                       <Button size="sm" onClick={() => goToStep("review")}>
                         Continue to review
                       </Button>
@@ -642,12 +653,14 @@ export default function CheckoutClient({
           onSelect={setAccountId}
           onSetDefault={setDefaultAccountId}
         />
+
+        <MobileCtaBar label={stepCta.label} onClick={stepCta.onClick} disabled={stepCta.disabled} total={total} shippingUnknown={shippingUnknown} />
       </main>
     );
   }
 
   return (
-    <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
+    <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8 max-lg:pb-28">
       <div className="mx-auto max-w-[var(--layout-max-width)]">
         <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ChevronLeft className="size-4" aria-hidden="true" />
@@ -714,7 +727,7 @@ export default function CheckoutClient({
                   notes={notes}
                   setNotes={setNotes}
                 />
-                <div className="flex justify-between border-t px-5 py-4">
+                <div className="flex justify-between border-t px-5 py-4 max-lg:hidden">
                   <span aria-hidden="true" />
                   <Button size="sm" onClick={goToFulfillment}>
                     Continue to fulfillment
@@ -749,7 +762,7 @@ export default function CheckoutClient({
                 />
                 <div className="flex justify-between border-t px-5 py-4">
                   <Button variant="outline" size="sm" onClick={() => setStep("details")}>Back</Button>
-                  <Button size="sm" onClick={() => setStep("payment")} disabled={fulfillmentContinueDisabled}>
+                  <Button size="sm" onClick={() => setStep("payment")} disabled={fulfillmentContinueDisabled} className="max-lg:hidden">
                     Continue to payment
                   </Button>
                 </div>
@@ -774,7 +787,7 @@ export default function CheckoutClient({
                 />
                 <div className="flex justify-between border-t px-5 py-4">
                   <Button variant="outline" size="sm" onClick={() => setStep("fulfillment")}>Back</Button>
-                  <Button size="sm" onClick={() => setStep("review")} disabled={paymentContinueDisabled}>
+                  <Button size="sm" onClick={() => setStep("review")} disabled={paymentContinueDisabled} className="max-lg:hidden">
                     Continue to review
                   </Button>
                 </div>
@@ -848,6 +861,8 @@ export default function CheckoutClient({
         onSelect={setAccountId}
         onSetDefault={setDefaultAccountId}
       />
+
+      <MobileCtaBar label={stepCta.label} onClick={stepCta.onClick} disabled={stepCta.disabled} total={total} shippingUnknown={shippingUnknown} />
     </main>
   );
 }
@@ -902,6 +917,40 @@ function ReviewLine({ item, className }: { item: CartItem; className?: string })
             </span>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* Mobile-only sticky bottom bar carrying the current step's primary action so it
+   is always reachable without scrolling past a long step. Hidden at lg+, where the
+   in-step footers and the sticky Order Summary provide the same actions. */
+function MobileCtaBar({
+  label,
+  onClick,
+  disabled,
+  total,
+  shippingUnknown,
+}: {
+  label: string;
+  onClick: () => void;
+  disabled: boolean;
+  total: number;
+  shippingUnknown: boolean;
+}) {
+  return (
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background px-4 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] lg:hidden"
+      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+    >
+      <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-4">
+        <div className="flex flex-col leading-tight">
+          <span className="text-xs text-muted-foreground">Total</span>
+          <span className="text-lg font-bold">{shippingUnknown ? "N/A" : formatUSD(total)}</span>
+        </div>
+        <Button className="flex-1" onClick={onClick} disabled={disabled}>
+          {label}
+        </Button>
       </div>
     </div>
   );
@@ -1405,7 +1454,8 @@ function OrderSummary({
         {/* Sticky primary CTA — the strongest action, always reachable.
             "Save cart for later" lives on the cart page only, not in checkout. */}
         <div>
-          <Button className="w-full" onClick={primary.onClick} disabled={primary.disabled}>
+          {/* Primary lives in the mobile sticky bar; shown here on desktop only. */}
+          <Button className="hidden w-full lg:flex" onClick={primary.onClick} disabled={primary.disabled}>
             {primary.label}
           </Button>
           {showConfirm ? (
