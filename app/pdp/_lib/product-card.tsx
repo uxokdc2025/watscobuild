@@ -280,19 +280,10 @@ export function ProductCard({
               fixed height. */}
         <p className="min-h-4 truncate text-xs font-medium leading-4 text-in-stock">
           {hasCommerce && data.contactForAvailability ? (
-            data.contactVariant === "rich" ? (
-              <span className="inline-flex items-center gap-1 text-low-stock">
-                <Info className="size-3.5 shrink-0" aria-hidden />
-                Limited Availability
-              </span>
-            ) : (
-              <a
-                href="#"
-                className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-              >
-                Contact Us
-              </a>
-            )
+            <span className="inline-flex items-center gap-1 text-low-stock">
+              <Info className="size-3.5 shrink-0" aria-hidden />
+              Limited Availability
+            </span>
           ) : hasCommerce && data.yourBranchQty != null
             ? `${data.yourBranchQty.toLocaleString()} in ${data.branchName ?? "Your Branch"}`
             : null}
@@ -304,7 +295,7 @@ export function ProductCard({
               product." helper subline with a primary "Contact Us" link
               directly underneath (same block). */}
         <div className="min-h-4 text-xs font-medium leading-4">
-          {hasCommerce && data.contactForAvailability && data.contactVariant === "rich" ? (
+          {hasCommerce && data.contactForAvailability ? (
             <div className="flex flex-col gap-0.5">
               <span className="truncate font-normal text-muted-foreground">
                 Let us help you find this product.

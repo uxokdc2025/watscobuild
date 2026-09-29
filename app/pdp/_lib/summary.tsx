@@ -356,12 +356,19 @@ export function PdpSummary({
             product.commerce!.contactVariant === "rich" ? (
               <ContactAvailabilityRich product={product} />
             ) : (
-              <a
-                href="#"
-                className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-              >
-                Contact Us
-              </a>
+              <div className="flex flex-col gap-1">
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-low-stock">
+                  <Info className="size-4 shrink-0" aria-hidden />
+                  Limited Availability
+                </span>
+                <span className="text-sm text-muted-foreground">Let us help you find this product.</span>
+                <a
+                  href="#"
+                  className="self-start text-sm font-medium text-primary underline-offset-4 hover:underline"
+                >
+                  Contact Us
+                </a>
+              </div>
             )
           ) : product.commerce!.yourBranch ||
           product.commerce!.nearbyBranches?.length ? (
