@@ -589,6 +589,14 @@ export default function PdpMasterPage() {
                   <PlpCard key={p.brandKey} p={p} />
                 ))}
               </ul>
+              <div className="pb-2">
+                <Button asChild size="sm">
+                  <Link href="/search/plp-v2?signedin=1" target="_blank" rel="noopener noreferrer">
+                    PLP v2 — checkbox availability
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+              </div>
             </AccordionContent>
           </AccordionItem>
 

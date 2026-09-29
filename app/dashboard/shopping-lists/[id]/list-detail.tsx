@@ -432,17 +432,13 @@ function DetailRow({
   const [comment, setComment] = React.useState("");
 
   return (
-    // Canonical 3-column storefront row grid: [image] [details] [actions].
-    // The select checkbox + drag handle live within the first (image) column;
-    // on narrow widths the actions block spans full width beneath the row.
-    <div className="grid grid-cols-[64px_minmax(0,1fr)] items-start gap-x-4 gap-y-4 border-b p-4 last:border-0 sm:grid-cols-[64px_minmax(0,1fr)_auto] sm:gap-x-6">
-      {/* Column 1 — select + drag handle + product image */}
-      <div className="flex flex-col items-center gap-2">
-        <Checkbox
-          checked={selected}
-          onCheckedChange={(v) => onToggle(v === true)}
-          aria-label={`Select ${product.mfg}`}
-        />
+    // Canonical list row: [drag + select] [image] [description] [availability] [actions].
+    // Availability and actions are their own columns at sm+ and stack full-width
+    // beneath the description on mobile. Drag handle + checkbox sit together on the
+    // far left — never stacked above the image.
+    <div className="grid grid-cols-[auto_56px_minmax(0,1fr)] items-start gap-x-3 gap-y-3 border-b p-4 last:border-0 sm:grid-cols-[auto_64px_minmax(0,1fr)_150px_auto] sm:items-center sm:gap-x-5">
+      {/* Lead — drag handle + select checkbox, side by side on the left */}
+      <div className="flex items-center gap-2 self-center">
         <span
           aria-hidden="true"
           className="cursor-grab text-base leading-none text-muted-foreground"
@@ -450,15 +446,22 @@ function DetailRow({
         >
           ⠿
         </span>
-        <div className="grid aspect-square w-full place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={product.image}
-            alt={product.title}
-            loading="lazy"
-            className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
-          />
-        </div>
+        <Checkbox
+          checked={selected}
+          onCheckedChange={(v) => onToggle(v === true)}
+          aria-label={`Select ${product.mfg}`}
+        />
+      </div>
+
+      {/* Image */}
+      <div className="grid aspect-square w-full place-items-center self-start rounded-md bg-muted/40 p-1 text-muted-foreground sm:self-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={product.image}
+          alt={product.title}
+          loading="lazy"
+          className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
+        />
       </div>
 
       {/* Column 2 — brand / title / comment / item-mfg / labels */}
@@ -510,10 +513,6 @@ function DetailRow({
               Add label
             </Button>
           )}
-          <StockStatus qty={product.qty}>
-            {product.qty > 0 ? "In stock" : "Out of stock"}
-          </StockStatus>
-          {product.replacement ? <ReplacementBadge /> : null}
           {/* Remove sits in the item cluster, away from the price — matches the
               cart's inline link-style Remove. */}
           <Button
@@ -529,9 +528,18 @@ function DetailRow({
         </div>
       </div>
 
-      {/* Column 3 — price + quantity + row actions. Full-width beneath the row
+      {/* Availability — stock status + replacement (own column at sm+; full-width
+          row beneath the description on mobile) */}
+      <div className="col-span-3 flex flex-wrap items-center gap-x-3 gap-y-1 sm:col-span-1 sm:flex-col sm:items-start sm:gap-1.5">
+        <StockStatus qty={product.qty}>
+          {product.qty > 0 ? "In stock" : "Out of stock"}
+        </StockStatus>
+        {product.replacement ? <ReplacementBadge /> : null}
+      </div>
+
+      {/* Actions — price + quantity + row actions. Full-width beneath the row
           on mobile; right-aligned trailing column at sm+. */}
-      <div className="col-span-2 flex flex-wrap items-center gap-x-4 gap-y-2.5 sm:col-span-1 sm:w-auto sm:flex-col sm:items-end">
+      <div className="col-span-3 flex flex-wrap items-center gap-x-4 gap-y-2.5 sm:col-span-1 sm:w-auto sm:flex-col sm:items-end">
         <span className="text-base font-semibold">
           {formatUSD(product.price)}
         </span>

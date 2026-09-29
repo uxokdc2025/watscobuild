@@ -85,6 +85,12 @@ type SearchBodyProps = {
   branchName?: string;
   /** Brand key — picks the correct image manifest for product cards. */
   brandKey: string;
+  /**
+   * Availability filter treatment for the top grey-box section.
+   * "radio" (default) = the current "Stocked At" RadioGroup.
+   * "checkbox" = a "Shop By Availability" checkbox stack (Peirce-Phelps style).
+   */
+  availabilityVariant?: "radio" | "checkbox";
 };
 
 export function SearchBody({
@@ -97,11 +103,16 @@ export function SearchBody({
   storeName = "Manchester, NH - Homans",
   branchName,
   brandKey,
+  availabilityVariant = "radio",
 }: SearchBodyProps) {
   const [view, setView] = React.useState<"grid" | "list">("grid");
   const [stockLocation, setStockLocation] = React.useState<typeof STOCK_LOCATIONS[number]["value"]>("your-branch");
   const [selectedFacets, setSelectedFacets] = React.useState<Record<string, Set<string>>>({});
   const [selectedBrands, setSelectedBrands] = React.useState<Set<string>>(new Set());
+  // Checkbox-variant "Shop By Availability" state — demo-only, all default checked.
+  const [pickUpToday, setPickUpToday] = React.useState(true);
+  const [branchAvailability, setBranchAvailability] = React.useState(true);
+  const [allStoresAvailability, setAllStoresAvailability] = React.useState(true);
 
   const displayName = branchName ?? storeName.split(" - ")[0];
   const displayLocations = React.useMemo(
@@ -187,33 +198,85 @@ export function SearchBody({
         <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
           {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-5 text-sm">
-            <section aria-labelledby="stocked-at-heading" className="space-y-2 rounded-md bg-muted/50 p-4">
-              <h2 id="stocked-at-heading" className="pb-3 font-semibold">Stocked At</h2>
-              <RadioGroup
-                value={stockLocation}
-                onValueChange={(value) => setStockLocation(value as typeof STOCK_LOCATIONS[number]["value"])}
-                className="space-y-2"
-              >
-                {displayLocations.map((location) => (
+            {availabilityVariant === "checkbox" ? (
+              <section aria-labelledby="availability-heading" className="space-y-2 rounded-md bg-muted/50 p-4">
+                <h2 id="availability-heading" className="pb-3 font-semibold">Shop By Availability</h2>
+                {/* Parent — Pick Up Today */}
+                <label
+                  htmlFor="avail-pickup-today"
+                  className="flex min-h-11 items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-background/70"
+                >
+                  <Checkbox
+                    id="avail-pickup-today"
+                    checked={pickUpToday}
+                    onCheckedChange={(v) => setPickUpToday(v === true)}
+                  />
+                  <span className="font-medium">Pick Up Today</span>
+                </label>
+                {/* Nested — this branch + all stores */}
+                <div className="space-y-1 pl-6">
                   <label
-                    key={location.value}
-                    className={cn(
-                      "flex items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors",
-                      stockLocation === location.value ? "bg-background font-medium shadow-sm" : "hover:bg-background/70",
-                    )}
+                    htmlFor="avail-branch"
+                    className="flex min-h-11 items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-background/70"
                   >
                     <span className="flex items-center gap-2">
-                      <RadioGroupItem value={location.value} id={`loc-${location.value}`} />
-                      <span>{location.label}</span>
+                      <Checkbox
+                        id="avail-branch"
+                        checked={branchAvailability}
+                        onCheckedChange={(v) => setBranchAvailability(v === true)}
+                      />
+                      <span>{displayName}</span>
                     </span>
-                    <span className="text-xs text-muted-foreground">({location.value === "all" ? totalResults : 0})</span>
+                    <span className="text-xs text-muted-foreground">(5)</span>
                   </label>
-                ))}
-              </RadioGroup>
-              <Link href="/store-locator/in-plp?v=c" className="text-xs font-medium text-primary hover:underline">
-                Change
-              </Link>
-            </section>
+                  <Link href="/store-locator/in-plp?v=c" className="block px-2 text-xs font-medium text-primary hover:underline">
+                    Change
+                  </Link>
+                  <label
+                    htmlFor="avail-all-stores"
+                    className="flex min-h-11 items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-background/70"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Checkbox
+                        id="avail-all-stores"
+                        checked={allStoresAvailability}
+                        onCheckedChange={(v) => setAllStoresAvailability(v === true)}
+                      />
+                      <span>All Stores</span>
+                    </span>
+                    <span className="text-xs text-muted-foreground">({totalResults})</span>
+                  </label>
+                </div>
+              </section>
+            ) : (
+              <section aria-labelledby="stocked-at-heading" className="space-y-2 rounded-md bg-muted/50 p-4">
+                <h2 id="stocked-at-heading" className="pb-3 font-semibold">Stocked At</h2>
+                <RadioGroup
+                  value={stockLocation}
+                  onValueChange={(value) => setStockLocation(value as typeof STOCK_LOCATIONS[number]["value"])}
+                  className="space-y-2"
+                >
+                  {displayLocations.map((location) => (
+                    <label
+                      key={location.value}
+                      className={cn(
+                        "flex items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors",
+                        stockLocation === location.value ? "bg-background font-medium shadow-sm" : "hover:bg-background/70",
+                      )}
+                    >
+                      <span className="flex items-center gap-2">
+                        <RadioGroupItem value={location.value} id={`loc-${location.value}`} />
+                        <span>{location.label}</span>
+                      </span>
+                      <span className="text-xs text-muted-foreground">({location.value === "all" ? totalResults : 0})</span>
+                    </label>
+                  ))}
+                </RadioGroup>
+                <Link href="/store-locator/in-plp?v=c" className="text-xs font-medium text-primary hover:underline">
+                  Change
+                </Link>
+              </section>
+            )}
 
             <section aria-labelledby="categories-heading" className="space-y-2 pt-4">
               <h2 id="categories-heading" className="border-b border-border/70 pb-3 font-semibold">
