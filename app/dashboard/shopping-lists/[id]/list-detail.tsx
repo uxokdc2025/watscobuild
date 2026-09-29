@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  ChevronDown,
   Copy,
   FolderInput,
   Minus,
@@ -41,7 +42,17 @@ import {
 } from "@/components/ui/drawer";
 import { useCart } from "@/components/cart/cart-context";
 import { formatUSD } from "@/app/pdp/_lib/types";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+/* ─────────────────────────── Table column template ───────────────────────────
+ * Shared by the desktop column-header row and every desktop DetailRow so the two
+ * separate grids line up. Left → right:
+ *   [select+drag] · Product Details · Label · Availability · Price · Qty · [actions]
+ * The lead, Qty, and actions columns are fixed widths (not `auto`) precisely so
+ * the header — which is a SEPARATE grid — aligns to the rows column-for-column. */
+const LIST_GRID_COLS =
+  "grid-cols-[2.75rem_minmax(0,1fr)_120px_140px_110px_7.5rem_9.5rem]";
 
 /* ─────────────────────────── Demo data ─────────────────────────── */
 
@@ -58,6 +69,8 @@ type AltProduct = {
 
 type Product = AltProduct & {
   label?: string;
+  /** Representative on-hand inventory shown in the Availability column. */
+  inventory?: number;
   /** When present, the row carries a replacement/substitute set. */
   replacement?: {
     note: string;
@@ -79,6 +92,7 @@ const PRODUCTS: Product[] = [
     image: img("01"),
     price: 168.42,
     qty: 8,
+    inventory: 168,
     label: "Preventative",
     replacement: {
       note: "This motor has a newer revision and cross-compatible options.",
@@ -127,6 +141,7 @@ const PRODUCTS: Product[] = [
     image: img("06"),
     price: 14.28,
     qty: 40,
+    inventory: 342,
     label: "Job supplies",
   },
   {
@@ -138,6 +153,7 @@ const PRODUCTS: Product[] = [
     image: img("09"),
     price: 22.75,
     qty: 0,
+    inventory: 0,
     replacement: {
       note: "Out of stock — a form-fit-function equivalent ships today.",
       replacements: [
@@ -175,6 +191,7 @@ const PRODUCTS: Product[] = [
     image: img("17"),
     price: 18.6,
     qty: 15,
+    inventory: 96,
     label: "Preventative",
   },
   {
@@ -186,6 +203,7 @@ const PRODUCTS: Product[] = [
     image: img("21"),
     price: 96.0,
     qty: 4,
+    inventory: 27,
   },
 ];
 
@@ -431,131 +449,246 @@ function DetailRow({
   const [showComment, setShowComment] = React.useState(false);
   const [comment, setComment] = React.useState("");
 
+  // Representative on-hand count for the Availability column; falls back to the
+  // row's stock qty when no explicit inventory is set on the demo product.
+  const inv = product.inventory ?? product.qty;
+
+  /* eslint-disable @next/next/no-img-element */
+  const media = (
+    <img
+      src={product.image}
+      alt={product.title}
+      loading="lazy"
+      className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
+    />
+  );
+  /* eslint-enable @next/next/no-img-element */
+
+  // Brand / title / item-mfg — shared between the desktop and mobile layouts.
+  const titleBlock = (
+    <>
+      <p className="text-xs font-medium text-primary">{product.brand}</p>
+      <Link
+        href={`/pdp/${product.id}`}
+        className="block text-sm font-semibold leading-snug hover:underline"
+      >
+        {product.title}
+      </Link>
+      <p className="text-xs text-muted-foreground">
+        Item: {product.item} · MFG: {product.mfg}
+      </p>
+    </>
+  );
+
+  // Add-comment toggle + textarea + saved-comment display (shared).
+  const commentBlock = (
+    <div className="space-y-1.5">
+      <Button
+        type="button"
+        variant="link"
+        size="sm"
+        className="h-auto px-0"
+        onClick={() => setShowComment((v) => !v)}
+      >
+        {comment ? "Edit comment" : "Add comment"}
+      </Button>
+      {showComment ? (
+        <Textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Add a note for this line item…"
+          className="min-h-16"
+          aria-label={`Comment for ${product.mfg}`}
+        />
+      ) : comment ? (
+        <p className="text-xs text-muted-foreground italic">“{comment}”</p>
+      ) : null}
+    </div>
+  );
+
+  // Label: a compact dropdown-style badge ("Preventative ⌄"); falls back to the
+  // ghost "Add label" affordance when the row has no label yet.
+  const labelNode = product.label ? (
+    <Badge variant="soft" color="slate" className="max-w-full cursor-pointer gap-1">
+      <span className="truncate">{product.label}</span>
+      <ChevronDown className="size-3 shrink-0 opacity-60" />
+    </Badge>
+  ) : (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className="h-8 text-muted-foreground"
+    >
+      <Tag className="size-3.5" />
+      Add label
+    </Button>
+  );
+
+  // Availability: "Inventory" over the stock line ("168 In Stock" / "Out of stock").
+  const availabilityLine = (
+    <StockStatus qty={inv}>
+      {inv > 0 ? `${inv} In Stock` : "Out of stock"}
+    </StockStatus>
+  );
+
   return (
-    // Canonical list row: [drag + select] [image] [description] [availability] [actions].
-    // Availability and actions are their own columns at sm+ and stack full-width
-    // beneath the description on mobile. Drag handle + checkbox sit together on the
-    // far left — never stacked above the image.
-    <div className="grid grid-cols-[auto_56px_minmax(0,1fr)] items-start gap-x-3 gap-y-3 border-b p-4 last:border-0 sm:grid-cols-[auto_64px_minmax(0,1fr)_150px_auto] sm:items-center sm:gap-x-5">
-      {/* Lead — drag handle + select checkbox, side by side on the left */}
-      <div className="flex items-center gap-2 self-center">
-        <span
-          aria-hidden="true"
-          className="cursor-grab text-base leading-none text-muted-foreground"
-          title="Drag to reorder"
-        >
-          ⠿
-        </span>
-        <Checkbox
-          checked={selected}
-          onCheckedChange={(v) => onToggle(v === true)}
-          aria-label={`Select ${product.mfg}`}
-        />
-      </div>
-
-      {/* Image */}
-      <div className="grid aspect-square w-full place-items-center self-start rounded-md bg-muted/40 p-1 text-muted-foreground sm:self-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={product.image}
-          alt={product.title}
-          loading="lazy"
-          className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
-        />
-      </div>
-
-      {/* Column 2 — brand / title / comment / item-mfg / labels */}
-      <div className="min-w-0 space-y-2">
-        <p className="text-xs font-medium text-primary">{product.brand}</p>
-        <Link
-          href={`/pdp/${product.id}`}
-          className="block text-sm font-semibold leading-snug hover:underline"
-        >
-          {product.title}
-        </Link>
-        <p className="text-xs text-muted-foreground">
-          Item: {product.item} · MFG: {product.mfg}
-        </p>
-        <div>
-          <Button
-            type="button"
-            variant="link"
-            size="sm"
-            className="h-auto px-0"
-            onClick={() => setShowComment((v) => !v)}
+    <div className="border-b last:border-0">
+      {/* ── Desktop: column table, aligned to the shared header grid ── */}
+      <div
+        className={cn(
+          "hidden sm:grid",
+          LIST_GRID_COLS,
+          "items-center gap-x-4 px-4 py-4",
+        )}
+      >
+        {/* Col 1 — select + drag, side by side on the far left */}
+        <div className="flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="cursor-grab text-base leading-none text-muted-foreground"
+            title="Drag to reorder"
           >
-            {comment ? "Edit comment" : "Add comment"}
-          </Button>
-        </div>
-        {showComment ? (
-          <Textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Add a note for this line item…"
-            className="min-h-16"
-            aria-label={`Comment for ${product.mfg}`}
+            ⠿
+          </span>
+          <Checkbox
+            checked={selected}
+            onCheckedChange={(v) => onToggle(v === true)}
+            aria-label={`Select ${product.mfg}`}
           />
-        ) : null}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          {product.label ? (
-            <Badge variant="soft" color="slate">
-              <Tag className="size-3" />
-              {product.label}
-            </Badge>
-          ) : (
+        </div>
+
+        {/* Col 2 — Product Details: image beside the text block */}
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="grid size-14 shrink-0 place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+            {media}
+          </div>
+          <div className="min-w-0 space-y-1">
+            {titleBlock}
+            {commentBlock}
+          </div>
+        </div>
+
+        {/* Col 3 — Label */}
+        <div className="min-w-0">{labelNode}</div>
+
+        {/* Col 4 — Availability */}
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground">Inventory</span>
+          {availabilityLine}
+          {product.replacement ? <ReplacementBadge /> : null}
+        </div>
+
+        {/* Col 5 — Price */}
+        <div className="text-sm font-semibold leading-snug">
+          {formatUSD(product.price)}
+          <span className="block text-xs font-normal text-muted-foreground">
+            / EACH
+          </span>
+        </div>
+
+        {/* Col 6 — Qty */}
+        <div>
+          <QtyStepper value={qty} onChange={onQty} label={product.mfg} />
+        </div>
+
+        {/* Col 7 — Actions: Add + remove; View substitutes beneath when present */}
+        <div className="flex flex-col items-stretch gap-2">
+          <div className="flex items-center justify-end gap-1.5">
+            <Button size="sm" className="flex-1" onClick={onAdd}>
+              <ShoppingCart className="size-4" />
+              Add
+            </Button>
             <Button
               type="button"
               variant="ghost"
-              size="sm"
-              className="h-8 text-muted-foreground"
+              size="icon-sm"
+              className="shrink-0 text-destructive hover:text-destructive/80"
+              aria-label={`Remove ${product.mfg}`}
+              onClick={onRemove}
             >
-              <Tag className="size-3.5" />
-              Add label
+              <Trash2 className="size-4" />
             </Button>
-          )}
-          {/* Remove sits in the item cluster, away from the price — matches the
-              cart's inline link-style Remove. */}
-          <Button
-            type="button"
-            variant="link"
-            size="sm"
-            className="h-auto px-0"
-            aria-label={`Remove ${product.mfg}`}
-            onClick={onRemove}
-          >
-            Remove
-          </Button>
+          </div>
+          {product.replacement ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="w-full text-xs"
+              onClick={onViewSubstitutes}
+            >
+              <Replace className="size-4" />
+              View substitutes
+            </Button>
+          ) : null}
         </div>
       </div>
 
-      {/* Availability — stock status + replacement (own column at sm+; full-width
-          row beneath the description on mobile) */}
-      <div className="col-span-3 flex flex-wrap items-center gap-x-3 gap-y-1 sm:col-span-1 sm:flex-col sm:items-start sm:gap-1.5">
-        <StockStatus qty={product.qty}>
-          {product.qty > 0 ? "In stock" : "Out of stock"}
-        </StockStatus>
-        {product.replacement ? <ReplacementBadge /> : null}
-      </div>
+      {/* ── Mobile: stacked card (image + details on top; the rest beneath) ── */}
+      <div className="p-4 sm:hidden">
+        <div className="flex gap-3">
+          <div className="flex flex-col items-center gap-2 pt-0.5">
+            <Checkbox
+              checked={selected}
+              onCheckedChange={(v) => onToggle(v === true)}
+              aria-label={`Select ${product.mfg}`}
+            />
+            <span
+              aria-hidden="true"
+              className="cursor-grab text-base leading-none text-muted-foreground"
+              title="Drag to reorder"
+            >
+              ⠿
+            </span>
+          </div>
+          <div className="grid size-16 shrink-0 place-items-center self-start rounded-md bg-muted/40 p-1 text-muted-foreground">
+            {media}
+          </div>
+          <div className="min-w-0 flex-1 space-y-1">{titleBlock}</div>
+        </div>
 
-      {/* Actions — price + quantity + row actions. Full-width beneath the row
-          on mobile; right-aligned trailing column at sm+. */}
-      <div className="col-span-3 flex flex-wrap items-center gap-x-4 gap-y-2.5 sm:col-span-1 sm:w-auto sm:flex-col sm:items-end">
-        <span className="text-base font-semibold">
-          {formatUSD(product.price)}
-        </span>
-        <div className="flex items-center gap-2">
+        <div className="mt-2 pl-9">{commentBlock}</div>
+
+        {/* Label · Availability · Price wrap beneath the details */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          {labelNode}
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">Inventory</span>
+            {availabilityLine}
+          </div>
+          <span className="text-sm">
+            <span className="font-semibold">{formatUSD(product.price)}</span>
+            <span className="text-muted-foreground"> / EACH</span>
+          </span>
+        </div>
+
+        {/* Qty + actions on the final row */}
+        <div className="mt-3 flex items-center justify-between gap-3">
           <QtyStepper value={qty} onChange={onQty} label={product.mfg} />
-          <Button size="sm" className="min-h-11" onClick={onAdd}>
-            <Plus className="size-4" />
-            Add
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" className="min-h-11" onClick={onAdd}>
+              <ShoppingCart className="size-4" />
+              Add
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="min-h-11 min-w-11 text-destructive hover:text-destructive/80"
+              aria-label={`Remove ${product.mfg}`}
+              onClick={onRemove}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
         </div>
         {product.replacement ? (
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="min-h-11"
+            className="mt-2 min-h-11 w-full"
             onClick={onViewSubstitutes}
           >
             <Replace className="size-4" />
@@ -851,6 +984,24 @@ export function ListDetail({ id }: { id: string }) {
 
           {/* Product rows */}
           <div>
+            {/* Column header row — desktop only, aligned to the row grid */}
+            {filtered.length > 0 ? (
+              <div
+                className={cn(
+                  "hidden sm:grid",
+                  LIST_GRID_COLS,
+                  "items-center gap-x-4 border-b bg-muted/20 px-4 py-2.5 text-xs font-medium text-muted-foreground",
+                )}
+              >
+                <span aria-hidden="true" />
+                <span>Product Details</span>
+                <span>Label</span>
+                <span>Availability</span>
+                <span>Price</span>
+                <span>Qty</span>
+                <span aria-hidden="true" />
+              </div>
+            ) : null}
             {filtered.map((p) => (
               <DetailRow
                 key={p.id}
