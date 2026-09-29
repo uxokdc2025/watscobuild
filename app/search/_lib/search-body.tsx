@@ -199,12 +199,12 @@ export function SearchBody({
           {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-5 text-sm">
             {availabilityVariant === "checkbox" ? (
-              <section aria-labelledby="availability-heading" className="space-y-2 rounded-md bg-muted/50 p-4">
-                <h2 id="availability-heading" className="pb-3 font-semibold">Shop By Availability</h2>
+              <section aria-labelledby="availability-heading" className="space-y-1 rounded-md bg-muted/50 p-4">
+                <h2 id="availability-heading" className="pb-2 font-semibold">Shop By Availability</h2>
                 {/* Parent — Pick Up Today */}
                 <label
                   htmlFor="avail-pickup-today"
-                  className="flex min-h-11 items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-background/70"
+                  className="flex min-h-9 items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-background/70"
                 >
                   <Checkbox
                     id="avail-pickup-today"
@@ -214,10 +214,10 @@ export function SearchBody({
                   <span className="font-medium">Pick Up Today</span>
                 </label>
                 {/* Nested — this branch + all stores */}
-                <div className="space-y-1 pl-6">
+                <div className="space-y-0.5 pl-6">
                   <label
                     htmlFor="avail-branch"
-                    className="flex min-h-11 items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-background/70"
+                    className="flex min-h-9 items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-background/70"
                   >
                     <span className="flex items-center gap-2">
                       <Checkbox
@@ -234,7 +234,7 @@ export function SearchBody({
                   </Link>
                   <label
                     htmlFor="avail-all-stores"
-                    className="flex min-h-11 items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-background/70"
+                    className="flex min-h-9 items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-background/70"
                   >
                     <span className="flex items-center gap-2">
                       <Checkbox
@@ -249,18 +249,18 @@ export function SearchBody({
                 </div>
               </section>
             ) : (
-              <section aria-labelledby="stocked-at-heading" className="space-y-2 rounded-md bg-muted/50 p-4">
-                <h2 id="stocked-at-heading" className="pb-3 font-semibold">Stocked At</h2>
+              <section aria-labelledby="stocked-at-heading" className="space-y-1 rounded-md bg-muted/50 p-4">
+                <h2 id="stocked-at-heading" className="pb-2 font-semibold">Stocked At</h2>
                 <RadioGroup
                   value={stockLocation}
                   onValueChange={(value) => setStockLocation(value as typeof STOCK_LOCATIONS[number]["value"])}
-                  className="space-y-2"
+                  className="space-y-0.5"
                 >
                   {displayLocations.map((location) => (
                     <label
                       key={location.value}
                       className={cn(
-                        "flex items-center justify-between gap-2 rounded-md px-2 py-2 text-sm transition-colors",
+                        "flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
                         stockLocation === location.value ? "bg-background font-medium shadow-sm" : "hover:bg-background/70",
                       )}
                     >
@@ -645,9 +645,11 @@ function ProductRow({
       <p className="mt-1 truncate text-xs text-muted-foreground">
         Item: {result.item} · MFG: {result.mfg}
       </p>
-      {signedIn ? <div className="mt-2">{<StockLine result={result} />}</div> : null}
     </div>
   );
+  // Availability is its own column between the description and the CTAs — keeps
+  // the description from sprawling and gives the row a clear middle.
+  const availability = signedIn ? <StockLine result={result} /> : null;
   const signedOutActions = (
     <p className="text-sm">
       <span className="font-medium">Sign in</span>{" "}
@@ -656,12 +658,13 @@ function ProductRow({
   );
   return (
     <article className="p-4">
-      {/* Desktop — [image 96px] [details] [actions right-aligned] */}
-      <div className="hidden grid-cols-[96px_minmax(0,1fr)_auto] items-center gap-6 sm:grid">
+      {/* Desktop — [image] [details] [availability] [actions right-aligned] */}
+      <div className="hidden grid-cols-[96px_minmax(0,1fr)_minmax(140px,180px)_auto] items-center gap-5 sm:grid">
         <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
           {media}
         </div>
         {details}
+        <div className="text-sm">{availability}</div>
         <div className="justify-self-end">
           {signedIn ? (
             <SignedInCommerce result={result} align="right" showStock={false} />
@@ -670,13 +673,16 @@ function ProductRow({
           )}
         </div>
       </div>
-      {/* Mobile — image + details side-by-side, actions full width beneath */}
+      {/* Mobile — image + details side-by-side (availability beneath), actions full width */}
       <div className="flex flex-col gap-3 sm:hidden">
         <div className="flex items-start gap-3">
           <div className="grid size-20 shrink-0 place-items-center self-start rounded-md bg-muted/40 p-1 text-muted-foreground">
             {media}
           </div>
-          <div className="min-w-0 flex-1">{details}</div>
+          <div className="min-w-0 flex-1">
+            {details}
+            {availability ? <div className="mt-1.5 text-sm">{availability}</div> : null}
+          </div>
         </div>
         <div>
           {signedIn ? (
