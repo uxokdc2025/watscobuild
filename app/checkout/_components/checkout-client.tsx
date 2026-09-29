@@ -592,21 +592,7 @@ export default function CheckoutClient({
                                 <p>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</p>
                                 <div className="mt-3 grid w-full gap-3">
                                   {backordered.map((item) => (
-                                    <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 rounded-md border bg-background p-4">
-                                      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-                                        {item.image ? (
-                                          // eslint-disable-next-line @next/next/no-img-element
-                                          <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-                                        ) : null}
-                                      </div>
-                                      <div className="min-w-0">
-                                        {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
-                                        <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                                        {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
-                                      </div>
-                                      <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
-                                      <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
-                                    </div>
+                                    <ReviewLine key={item.id} item={item} className="rounded-md border bg-background" />
                                   ))}
                                 </div>
                               </AlertDescription>
@@ -615,21 +601,7 @@ export default function CheckoutClient({
                           <div className="rounded-md border">
                             <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
                             {regular.map((item) => (
-                              <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
-                                <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-                                  {item.image ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-                                  ) : null}
-                                </div>
-                                <div className="min-w-0">
-                                  {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
-                                  <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                                  {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
-                                </div>
-                                <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
-                                <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
-                              </div>
+                              <ReviewLine key={item.id} item={item} className="border-b last:border-0" />
                             ))}
                           </div>
                         </div>
@@ -686,20 +658,25 @@ export default function CheckoutClient({
           <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
         </div>
 
-        <ol aria-label="Checkout progress" className="mt-6 grid max-w-3xl grid-cols-4 gap-2 text-sm">
+        {/* On mobile the four labels won't fit in one row, so we name the active
+            step above a compact numbered progress bar. */}
+        <p className="mt-6 text-sm font-semibold text-foreground sm:hidden">
+          Step {currentIndex + 1} of {steps.length}: {steps[currentIndex]?.label}
+        </p>
+        <ol aria-label="Checkout progress" className="mt-3 grid max-w-3xl grid-cols-4 gap-2 text-sm sm:mt-6">
           {steps.map((entry, index) => {
             const isActive = step === entry.id;
             const isComplete = index < currentIndex;
             const content = (
               <>
-                <span className="grid size-6 place-items-center rounded-full border text-xs">
+                <span className="grid size-6 shrink-0 place-items-center rounded-full border text-xs">
                   {isComplete ? <Check className="size-3.5" /> : index + 1}
                 </span>
-                {entry.label}
+                <span className="hidden truncate sm:inline">{entry.label}</span>
               </>
             );
             const className = cn(
-              "flex w-full items-center gap-2 border-b-2 pb-3 text-left",
+              "flex w-full items-center justify-center gap-2 border-b-2 pb-3 sm:justify-start sm:text-left",
               isActive
                 ? "border-primary font-semibold text-foreground"
                 : isComplete
@@ -888,6 +865,48 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
   );
 }
 
+/* One review line item. Two purpose-built layouts toggled at `sm`: the original
+   4-column row on desktop, and on mobile a compact card (image + title, with Qty
+   and line price on one row beneath the title) so a long title is never crushed. */
+function ReviewLine({ item, className }: { item: CartItem; className?: string }) {
+  const media = item.image ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+  ) : null;
+  const titleBlock = (
+    <>
+      {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
+      <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+      {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
+    </>
+  );
+  return (
+    <div className={className}>
+      {/* Desktop — original four-column row */}
+      <div className="hidden grid-cols-[64px_minmax(0,340px)_minmax(max-content,1fr)_minmax(max-content,1fr)] items-center gap-x-6 p-4 sm:grid">
+        <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">{media}</div>
+        <div className="min-w-0">{titleBlock}</div>
+        <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
+        <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
+      </div>
+      {/* Mobile — image + title, with Qty and price on a row beneath */}
+      <div className="flex items-start gap-3 p-4 sm:hidden">
+        <div className="grid size-14 shrink-0 place-items-center self-start rounded-md bg-muted/40 p-1 text-muted-foreground">{media}</div>
+        <div className="min-w-0 flex-1">
+          {titleBlock}
+          <div className="mt-2 flex items-end justify-between gap-3">
+            <span className="text-sm text-muted-foreground">Qty <span className="font-medium text-foreground">{item.quantity}</span></span>
+            <span className="flex flex-col items-end text-right">
+              <span className="text-sm font-semibold text-foreground">{formatUSD(item.price * item.quantity)}</span>
+              <span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PaymentStep({
   brand,
   account,
@@ -961,7 +980,7 @@ function PaymentStep({
             ) : null}
           </RadioCard>
           <RadioCard value="card" selected={payment === "card"}>
-            <span className="flex items-start justify-between gap-3">
+            <span className="flex flex-col items-start gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
               <span>
                 <span className="flex items-center gap-2 font-semibold">
                   <CreditCard className="size-4" aria-hidden="true" />
@@ -988,7 +1007,7 @@ function PaymentStep({
                   <Label
                     key={c.id}
                     className={cn(
-                      "flex h-[152px] w-[272px] shrink-0 grow-0 cursor-pointer items-start gap-2.5 rounded-md border bg-background p-3 text-left transition-colors",
+                      "flex h-auto w-full cursor-pointer items-start gap-2.5 rounded-md border bg-background p-3 text-left transition-colors sm:h-[152px] sm:w-[272px] sm:shrink-0 sm:grow-0",
                       cardId === c.id
                         ? "border-primary bg-primary/10 shadow-sm ring-2 ring-primary"
                         : "hover:bg-muted/50"
@@ -1025,7 +1044,7 @@ function PaymentStep({
                 ))}
                 {/* See-all tile — same fixed footprint as the saved cards, with
                     the CTA that opens the full card list. */}
-                <div className="flex h-[152px] w-[272px] shrink-0 grow-0 items-center justify-center rounded-md border border-dashed bg-background p-3 text-center">
+                <div className="flex h-auto w-full items-center justify-center rounded-md border border-dashed bg-background p-4 text-center sm:h-[152px] sm:w-[272px] sm:shrink-0 sm:grow-0 sm:p-3">
                   <button
                     type="button"
                     onClick={() => setAllCardsOpen(true)}
@@ -1251,21 +1270,7 @@ function ReviewStep({
                 <p>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</p>
                 <div className="mt-3 grid w-full gap-3">
                   {backordered.map((item) => (
-                    <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 rounded-md border bg-background p-4">
-                      <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-                        {item.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-                        ) : null}
-                      </div>
-                      <div className="min-w-0">
-                        {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
-                        <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                        {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
-                      </div>
-                      <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
-                      <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
-                    </div>
+                    <ReviewLine key={item.id} item={item} className="rounded-md border bg-background" />
                   ))}
                 </div>
               </AlertDescription>
@@ -1274,21 +1279,7 @@ function ReviewStep({
           <div className="rounded-md border">
             <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
             {regular.map((item) => (
-              <div key={item.id} className="grid grid-cols-[64px_minmax(0,340px)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-6 border-b p-4 last:border-0">
-                <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-                  {item.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" />
-                  ) : null}
-                </div>
-                <div className="min-w-0">
-                  {item.brand ? <p className="truncate text-xs font-medium text-primary">{item.brand}</p> : null}
-                  <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
-                  {item.item || item.mfg ? <p className="mt-1 truncate text-xs text-muted-foreground">Item: {item.item} · MFG: {item.mfg}</p> : null}
-                </div>
-                <div className="flex flex-col items-center gap-1"><span className="text-xs text-muted-foreground">Qty</span><span className="text-sm font-medium">{item.quantity}</span></div>
-                <div className="flex flex-col items-end text-right"><span className="text-base font-semibold">{formatUSD(item.price * item.quantity)}</span><span className="text-xs text-muted-foreground">{formatUSD(item.price)} / each</span></div>
-              </div>
+              <ReviewLine key={item.id} item={item} className="border-b last:border-0" />
             ))}
           </div>
         </div>

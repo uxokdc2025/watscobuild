@@ -472,7 +472,7 @@ export function CheckoutHeader({ brand }: { brand: BrandChrome }) {
           </Link>
           <span className="flex items-center gap-1.5 border-l border-white/25 pl-3 text-sm font-semibold whitespace-nowrap opacity-95">
             <Lock className="size-3.5" aria-hidden="true" />
-            Secure Checkout
+            <span className="hidden sm:inline">Secure Checkout</span>
           </span>
         </div>
         <CheckoutCartTrigger />
