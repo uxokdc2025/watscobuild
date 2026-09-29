@@ -211,9 +211,17 @@ const TODAYS_CHANGES: { title: string; desc: string; links: { label: string; hre
     links: [{ label: "Tab styles", href: "/pdp/about-variants" }],
   },
   {
-    title: "Shopping list — design-system buttons + 3-column rows",
-    desc: "Every button normalized to the design system and each product row rebuilt on the 3-column layout used across cart and checkout.",
+    title: "Shopping list — design system + unified list rows",
+    desc: "Buttons normalized to the design system; rows rebuilt on the shared list-row pattern — [drag + select] · image · description/item# · availability · price/qty/add.",
     links: [{ label: "Shopping list", href: "/dashboard/shopping-lists/hvac-maintenance-kit" }],
+  },
+  {
+    title: "Search results (PLP) — List view + availability nav",
+    desc: "List view is now a full-width horizontal list on the shared row pattern with DS Add-to-Cart buttons; a PLP v2 adds a checkbox “Shop By Availability” filter (Pick Up Today / All Stores) in our grey-box treatment.",
+    links: [
+      { label: "PLP (Grid/List)", href: "/search?q=blower%20motor&signedin=1" },
+      { label: "PLP v2 — availability checkboxes", href: "/search/plp-v2?signedin=1" },
+    ],
   },
   {
     title: "Header & search refinements",
