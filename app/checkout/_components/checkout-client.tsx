@@ -473,6 +473,7 @@ export default function CheckoutClient({
                       <div className="flex justify-end border-t px-5 py-4">
                         <Button
                           size="sm"
+                          disabled={!po.trim()}
                           onClick={() => {
                             goToFulfillment();
                             if (po.trim()) scrollToTop();
@@ -527,7 +528,7 @@ export default function CheckoutClient({
                       setDeliveryMethodChosen={setDeliveryMethodChosen}
                     />
                     <div className="flex justify-end border-t px-5 py-4">
-                      <Button size="sm" onClick={() => goToStep("payment")}>
+                      <Button size="sm" disabled={fulfillmentContinueDisabled} onClick={() => goToStep("payment")}>
                         Continue to payment
                       </Button>
                     </div>
@@ -569,7 +570,7 @@ export default function CheckoutClient({
                       hideBack
                     />
                     <div className="flex justify-end border-t px-5 py-4">
-                      <Button size="sm" onClick={() => goToStep("review")}>
+                      <Button size="sm" disabled={paymentContinueDisabled} onClick={() => goToStep("review")}>
                         Continue to review
                       </Button>
                     </div>
