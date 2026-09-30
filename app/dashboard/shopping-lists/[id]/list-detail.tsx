@@ -31,13 +31,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductListRow } from "@/components/ui/product-list-row";
 import { StockStatus } from "@/components/ui/label-badges";
@@ -915,9 +908,7 @@ export function ListDetail({ id }: { id: string }) {
 
         {/* Card: toolbar + bulk actions + rows */}
         <section className="rounded-lg border bg-background shadow-sm">
-          {/* Toolbar — search, Sort, and a single Actions menu. The bulk actions
-              (add to cart / move / copy / remove) live in the Actions dropdown and
-              enable once items are selected, so the top stays uncluttered. */}
+          {/* Toolbar — search + Sort. */}
           <div className="flex flex-wrap items-center gap-3 border-b p-4">
             <AccountSearchInput
               value={q}
@@ -929,41 +920,11 @@ export function ListDetail({ id }: { id: string }) {
               <Settings2 className="size-4" />
               Sort
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="min-h-11" disabled={selectedIds.length === 0}>
-                  Actions{selectedIds.length > 0 ? ` (${selectedIds.length})` : ""}
-                  <ChevronDown className="size-4 opacity-60" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={addSelected}>
-                  <ShoppingCart className="size-4" />
-                  Add selected to cart
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <FolderInput className="size-4" />
-                  Move to
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Copy className="size-4" />
-                  Copy to
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  variant="destructive"
-                  onClick={() => selectedIds.forEach(removeRow)}
-                >
-                  <Trash2 className="size-4" />
-                  Remove
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
 
-          {/* Selection row — Select all + live count (bulk actions live in the
-              Actions menu above). */}
-          <div className="flex flex-wrap items-center gap-3 border-b bg-muted/30 px-4 py-2.5">
+          {/* Selection row — Select all + count on the left, the bulk actions
+              (visible now that the column header sits below) on the right. */}
+          <div className="flex flex-wrap items-center gap-3 border-b bg-muted/30 px-4 py-3">
             <label className="flex min-h-9 items-center gap-2 text-sm font-medium">
               <Checkbox
                 checked={
@@ -983,6 +944,35 @@ export function ListDetail({ id }: { id: string }) {
             <span className="text-sm text-muted-foreground">
               {selectedIds.length} selected
             </span>
+            <div className="ml-auto flex flex-wrap items-center gap-1">
+              <Button
+                size="sm"
+                className="min-h-9"
+                disabled={selectedIds.length === 0}
+                onClick={addSelected}
+              >
+                <ShoppingCart className="size-4" />
+                Add selected to cart
+              </Button>
+              <Button variant="outline" size="sm" className="min-h-9" disabled={selectedIds.length === 0}>
+                <FolderInput className="size-4" />
+                Move to
+              </Button>
+              <Button variant="outline" size="sm" className="min-h-9" disabled={selectedIds.length === 0}>
+                <Copy className="size-4" />
+                Copy to
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-h-9 text-destructive hover:text-destructive/80"
+                disabled={selectedIds.length === 0}
+                onClick={() => selectedIds.forEach(removeRow)}
+              >
+                <Trash2 className="size-4" />
+                Remove
+              </Button>
+            </div>
           </div>
 
           {/* Product rows */}
