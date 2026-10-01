@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Banknote,
   Check,
@@ -48,7 +49,7 @@ import {
 
 /* ───────────────────────── Demo data ───────────────────────── */
 
-const DEMO_ITEMS: CartItem[] = [
+export const DEMO_ITEMS: CartItem[] = [
   { id: "cart-air-handler", title: "Aspen® 3-Ton Multi-Position Electric Air Handler", brand: "Aspen", item: "AH3-676A", mfg: "ASP-3T-MP", price: 676.5, quantity: 1, image: "/peirce-search/blower-motor-07.avif" },
   { id: "cart-contactor", title: "TP-CON-2P30A — Definite Purpose Contactor, 2 Pole, 30 Amp, 24V Coil", brand: "TRADEPRO®", item: "34530C", mfg: "TP-CON-2P30A", price: 22.75, quantity: 2, image: "/peirce-search/blower-motor-09.avif" },
   { id: "cart-blower-motor", title: "TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230V, 1/2 HP", brand: "TRADEPRO®", item: "54510A", mfg: "TP-EC13-50", price: 168.42, quantity: 1, image: "/peirce-search/blower-motor-01.avif" },
@@ -61,7 +62,7 @@ const BACKORDER_IDS = new Set(["cart-air-handler", "cart-wire-rope"]);
  * individual, owns the card on file (ECM pattern). */
 type CardOption = { id: string; brand: string; name: string; tail: string; expires: string; shared?: boolean; added?: boolean };
 
-const SAVED_CARDS: CardOption[] = [
+export const SAVED_CARDS: CardOption[] = [
   { id: "visa-6177", brand: "VISA", name: "Company Card", tail: "6177", expires: "4/2028", shared: true },
   { id: "mc-8801", brand: "MASTERCARD", name: "Field Ops", tail: "8801", expires: "2/2027", shared: true },
   { id: "personal-4412", brand: "VISA", name: "Personal", tail: "4412", expires: "9/2029", shared: false },
@@ -89,10 +90,10 @@ const ALL_CREDIT_CARDS: CardOption[] = [...SAVED_CARDS, ...MORE_CARDS];
  * The 6 use cases are STATES of one flow, not separate flows. Each case is a
  * single config entry — no scattered `scenario === "…"` branching in the JSX. */
 
-type Step = "details" | "fulfillment" | "payment" | "review";
-type Payment = "terms" | "cash" | "card";
+export type Step = "details" | "fulfillment" | "payment" | "review";
+export type Payment = "terms" | "cash" | "card";
 
-type ScenarioConfig = {
+export type ScenarioConfig = {
   initialStep: Step;
   submitted: boolean;
   method: FulfillmentMethod;
@@ -128,7 +129,7 @@ const CHECKOUT_SCENARIOS: Record<CheckoutCase, Partial<ScenarioConfig>> = {
   "order-confirmation": { initialStep: "review", submitted: true },
 };
 
-function resolveScenario(scenario?: CheckoutCase): ScenarioConfig {
+export function resolveScenario(scenario?: CheckoutCase): ScenarioConfig {
   return scenario ? { ...BASE, ...CHECKOUT_SCENARIOS[scenario] } : BASE;
 }
 
@@ -174,9 +175,12 @@ export default function CheckoutClient({
    *  brand default when absent or unknown for this brand. */
   initialAccountId?: string;
   /** Layout variant: 'tabs' is the existing tabbed checkout (v1, unchanged);
-   *  'accordion' is the vertical progressive checkout (v2). */
-  variant?: "tabs" | "accordion";
+   *  'accordion' is the vertical progressive checkout (v2); 'open' is the
+   *  everything-open single page (v3) whose summary CTA routes to a separate
+   *  review page. */
+  variant?: "tabs" | "accordion" | "open";
 }) {
+  const router = useRouter();
   const cfg = resolveScenario(scenario);
   const brand = getBrandCheckout(brandKey);
   const { items: cartItems } = useCart();
@@ -279,36 +283,7 @@ export default function CheckoutClient({
     isDeliveryMethod(method) && brand.deliveryDateMode !== "csr" && deliveryDate == null;
 
   if (submitted) {
-    return (
-      <main className="min-h-[60svh] bg-muted/30 px-4 py-12 md:px-6">
-        <div className="mx-auto max-w-[var(--layout-max-width)]">
-          <section className="mx-auto max-w-2xl rounded-md border bg-background p-8 text-center shadow-sm">
-            <div className="mx-auto grid size-12 place-items-center rounded-full bg-in-stock/15 text-in-stock">
-              <Check aria-hidden="true" />
-            </div>
-            <h1 className="mt-4 text-2xl font-bold">Order submitted</h1>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground text-balance">
-              Order <span className="font-semibold text-foreground">{brand.orderNumber}</span> is being reviewed.
-              We&apos;ll send confirmation and fulfillment details to your account.
-            </p>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground text-balance">
-              Track status and delivery updates from Open Orders.
-            </p>
-            {/* Primary ("View open orders") on the RIGHT, secondary on the LEFT,
-                equal width — the global button-pair rule. */}
-            <div className="mx-auto mt-6 grid max-w-md grid-cols-2 gap-3">
-              <Button variant="outline" size="sm" className="w-full" onClick={() => window.print()}>
-                <Printer className="size-4" aria-hidden="true" />
-                Print confirmation
-              </Button>
-              <Button asChild size="sm" className="w-full">
-                <Link href="/dashboard/orders?status=open">View open orders</Link>
-              </Button>
-            </div>
-          </section>
-        </div>
-      </main>
-    );
+    return <OrderConfirmation brand={brand} />;
   }
 
   if (!items.length) {
@@ -674,6 +649,138 @@ export default function CheckoutClient({
     );
   }
 
+  /* ── Open (v3) everything-open layout — every section expanded at once on a
+   *    single page, no accordion / progress bar / per-section buttons. The
+   *    Order Summary CTA is "Review Order", routing to the standalone
+   *    /checkout/v3/review page. Reuses the SAME state + step components. ── */
+  if (variant === "open") {
+    const reviewParams = new URLSearchParams();
+    reviewParams.set("brand", brandKey);
+    if (demo) reviewParams.set("demo", "1");
+    if (scenario) reviewParams.set("case", scenario);
+    const goToReview = () => router.push(`/checkout/v3/review?${reviewParams.toString()}`);
+
+    return (
+      <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
+        <div className="mx-auto max-w-[var(--layout-max-width)]">
+          <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
+            <ChevronLeft className="size-4" aria-hidden="true" />
+            Back to cart
+          </Link>
+
+          <div className="mt-5">
+            <h1 className="text-2xl font-bold tracking-tight">Checkout</h1>
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="flex min-w-0 flex-col gap-4">
+              {/* 1 · Order details — open (renders its own numbered heading). */}
+              <section className="rounded-md border bg-background shadow-sm" aria-label="Order details">
+                <OrderDetailsStep
+                  account={account}
+                  onSwitchAccount={() => setAccountDrawerOpen(true)}
+                  branch={branch}
+                  po={po}
+                  setPo={setPo}
+                  poError={poError}
+                  jobName={job}
+                  setJobName={setJob}
+                  notes={notes}
+                  setNotes={setNotes}
+                />
+              </section>
+
+              {/* 2 · Fulfillment — open. */}
+              <section className="rounded-md border bg-background shadow-sm" aria-label="Fulfillment">
+                <SectionHeading number="2" title="Fulfillment" />
+                <FulfillmentSection
+                  config={brand}
+                  method={method}
+                  setMethod={setMethod}
+                  availabilityConstraint={cfg.availabilityConstraint}
+                  branch={branch}
+                  onChangeBranch={changeBranch}
+                  addressId={addressId}
+                  setAddressId={setAddressId}
+                  pickupDate={pickupDate}
+                  setPickupDate={setPickupDate}
+                  deliveryDate={deliveryDate}
+                  setDeliveryDate={setDeliveryDate}
+                  split={split}
+                  setSplit={setSplit}
+                  liftgate={liftgate}
+                  setLiftgate={setLiftgate}
+                  expressOn={expressOn}
+                  setExpressOn={setExpressOn}
+                  deliveryMethodChosen={deliveryMethodChosen}
+                  setDeliveryMethodChosen={setDeliveryMethodChosen}
+                />
+              </section>
+
+              {/* 3 · Payment — open (renders its own numbered heading). */}
+              <section className="rounded-md border bg-background shadow-sm" aria-label="Payment">
+                <PaymentStep
+                  brand={brand}
+                  account={account}
+                  payment={payment}
+                  total={total}
+                  setPayment={setPayment}
+                  cards={cards}
+                  drawerCards={drawerCards}
+                  cardId={paymentCardId}
+                  setCardId={setPaymentCardId}
+                  addedCards={addedCards}
+                  setAddedCards={setAddedCards}
+                  onBack={() => {}}
+                  hideBack
+                />
+              </section>
+            </div>
+
+            <OrderSummary
+              items={items}
+              subtotal={subtotal}
+              discount={discount}
+              tax={tax}
+              shipping={shipping}
+              shippingUnknown={shippingUnknown}
+              total={total}
+              primary={{ label: "Review Order", onClick: goToReview, disabled: false }}
+              coupon={coupon}
+              setCoupon={setCoupon}
+              appliedCoupon={appliedCoupon}
+              onApplyCoupon={() => coupon.trim() && setAppliedCoupon(coupon.trim().toUpperCase())}
+              showConfirm
+              onSaveQuote={saveQuote}
+            />
+          </div>
+        </div>
+
+        <SwitchAccountDrawer
+          open={accountDrawerOpen}
+          onClose={() => setAccountDrawerOpen(false)}
+          accounts={accounts}
+          currentId={accountId}
+          defaultId={defaultAccountId}
+          onSelect={setAccountId}
+          onSetDefault={setDefaultAccountId}
+        />
+
+        {/* Mobile sticky CTA mirrors the Order Summary — "Review Order" primary
+            (always enabled) + Save quote secondary. */}
+        <MobileCtaBar
+          label="Review Order"
+          onClick={goToReview}
+          disabled={false}
+          total={total}
+          shippingUnknown={shippingUnknown}
+          secondaryLabel="Save quote"
+          onSecondary={saveQuote}
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-svh bg-muted/30 px-4 py-6 md:px-6 md:py-8">
       <div className="mx-auto max-w-[var(--layout-max-width)]">
@@ -892,6 +999,41 @@ export default function CheckoutClient({
 
 /* ───────────────────────── Sections ───────────────────────── */
 
+/* Order-confirmation success state — shown when an order is submitted. Exported
+   so the standalone v3 review page shows the identical confirmation on submit. */
+export function OrderConfirmation({ brand }: { brand: BrandCheckoutConfig }) {
+  return (
+    <main className="min-h-[60svh] bg-muted/30 px-4 py-12 md:px-6">
+      <div className="mx-auto max-w-[var(--layout-max-width)]">
+        <section className="mx-auto max-w-2xl rounded-md border bg-background p-8 text-center shadow-sm">
+          <div className="mx-auto grid size-12 place-items-center rounded-full bg-in-stock/15 text-in-stock">
+            <Check aria-hidden="true" />
+          </div>
+          <h1 className="mt-4 text-2xl font-bold">Order submitted</h1>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground text-balance">
+            Order <span className="font-semibold text-foreground">{brand.orderNumber}</span> is being reviewed.
+            We&apos;ll send confirmation and fulfillment details to your account.
+          </p>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground text-balance">
+            Track status and delivery updates from Open Orders.
+          </p>
+          {/* Primary ("View open orders") on the RIGHT, secondary on the LEFT,
+              equal width — the global button-pair rule. */}
+          <div className="mx-auto mt-6 grid max-w-md grid-cols-2 gap-3">
+            <Button variant="outline" size="sm" className="w-full" onClick={() => window.print()}>
+              <Printer className="size-4" aria-hidden="true" />
+              Print confirmation
+            </Button>
+            <Button asChild size="sm" className="w-full">
+              <Link href="/dashboard/orders?status=open">View open orders</Link>
+            </Button>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
 function SectionHeading({ number, title }: { number: string; title: string }) {
   return (
     <div className="flex items-center justify-between border-b px-5 py-4">
@@ -948,7 +1090,7 @@ function ReviewLine({ item, className }: { item: CartItem; className?: string })
 /* Mobile-only sticky bottom bar carrying the current step's primary action so it
    is always reachable without scrolling past a long step. Hidden at lg+, where the
    in-step footers and the sticky Order Summary provide the same actions. */
-function MobileCtaBar({
+export function MobileCtaBar({
   label,
   onClick,
   disabled,
@@ -1204,7 +1346,7 @@ function paymentLabel(payment: Payment): string {
 
 const MAX_HANDLING_COMMENTS = 300;
 
-function ReviewStep({
+export function ReviewStep({
   brand,
   items,
   account,
@@ -1406,7 +1548,7 @@ function ReviewStep({
   );
 }
 
-function OrderSummary({
+export function OrderSummary({
   items,
   subtotal,
   discount,

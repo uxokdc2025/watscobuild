@@ -189,6 +189,14 @@ function TemplateCard({
    New work lands here at the top; everything else lives in the sections below. */
 const TODAYS_CHANGES: { title: string; desc: string; links: { label: string; href: string }[] }[] = [
   {
+    title: "Checkout v3 — everything open",
+    desc: "All sections open on one page (no accordion, no per-section buttons); the Order Summary CTA is “Review Order”, and Review is its own page reusing the v1 review layout without the progress bar.",
+    links: [
+      { label: "Checkout v3", href: "/checkout/v3?demo=1" },
+      { label: "Review page", href: "/checkout/v3/review?demo=1" },
+    ],
+  },
+  {
     title: "Cart & Checkout — mobile pass",
     desc: "Sticky bottom CTAs, no inner-scroll lists, slimmer saved-card tiles, responsive item rows, and step auto-scroll — across both the horizontal (v1) and accordion (v2) flows.",
     links: [
@@ -688,6 +696,12 @@ export default function PdpMasterPage() {
                 <Button asChild variant="outline" size="sm">
                   <Link href="/checkout/v2?demo=1">
                     Checkout — Progressive (v2)
+                    <ArrowUpRight className="size-3.5" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/checkout/v3?demo=1">
+                    Checkout v3 — everything open
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>
