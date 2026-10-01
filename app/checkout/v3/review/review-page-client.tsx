@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, Package } from "lucide-react";
 import { toast } from "sonner";
 
@@ -36,6 +37,7 @@ export default function ReviewPageClient({
   brandKey?: string;
   initialAccountId?: string;
 }) {
+  const router = useRouter();
   const cfg = resolveScenario(scenario);
   const brand = getBrandCheckout(brandKey);
   const { items: cartItems } = useCart();
@@ -146,9 +148,9 @@ export default function ReviewPageClient({
               handlingComments={handlingComments}
               setHandlingComments={setHandlingComments}
               onBack={() => {}}
-              onEditDetails={() => {}}
-              onEditFulfillment={() => {}}
-              onEditPayment={() => {}}
+              onEditDetails={() => router.push(`${backHref}#order-details`)}
+              onEditFulfillment={() => router.push(`${backHref}#fulfillment`)}
+              onEditPayment={() => router.push(`${backHref}#payment`)}
               hideBack
             />
           </section>

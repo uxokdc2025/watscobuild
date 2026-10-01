@@ -675,7 +675,7 @@ export default function CheckoutClient({
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
             <div className="flex min-w-0 flex-col gap-4">
               {/* 1 · Order details — open (renders its own numbered heading). */}
-              <section className="rounded-md border bg-background shadow-sm" aria-label="Order details">
+              <section id="order-details" className="scroll-mt-24 rounded-md border bg-background shadow-sm" aria-label="Order details">
                 <OrderDetailsStep
                   account={account}
                   onSwitchAccount={() => setAccountDrawerOpen(true)}
@@ -691,7 +691,7 @@ export default function CheckoutClient({
               </section>
 
               {/* 2 · Fulfillment — open. */}
-              <section className="rounded-md border bg-background shadow-sm" aria-label="Fulfillment">
+              <section id="fulfillment" className="scroll-mt-24 rounded-md border bg-background shadow-sm" aria-label="Fulfillment">
                 <SectionHeading number="2" title="Fulfillment" />
                 <FulfillmentSection
                   config={brand}
@@ -718,7 +718,7 @@ export default function CheckoutClient({
               </section>
 
               {/* 3 · Payment — open (renders its own numbered heading). */}
-              <section className="rounded-md border bg-background shadow-sm" aria-label="Payment">
+              <section id="payment" className="scroll-mt-24 rounded-md border bg-background shadow-sm" aria-label="Payment">
                 <PaymentStep
                   brand={brand}
                   account={account}
@@ -1369,6 +1369,9 @@ export function ReviewStep({
   handlingComments,
   setHandlingComments,
   onBack,
+  onEditDetails,
+  onEditFulfillment,
+  onEditPayment,
   hideBack = false,
 }: {
   brand: BrandCheckoutConfig;
@@ -1417,7 +1420,7 @@ export function ReviewStep({
       <SectionHeading number="4" title="Review & submit" />
       <div className="space-y-5 p-5">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <SummaryCard label="Order details">
+          <SummaryCard label="Order details" onEdit={onEditDetails} editLabel="Edit order details">
             <p className="font-medium text-foreground">{account.name}</p>
             <p className="text-muted-foreground">{account.detail}</p>
             <p className="text-muted-foreground">PO {po || "—"}</p>
@@ -1425,7 +1428,7 @@ export function ReviewStep({
             {notes.trim() ? <p className="text-muted-foreground line-clamp-2">Notes: {notes}</p> : null}
           </SummaryCard>
 
-          <SummaryCard label="Fulfillment">
+          <SummaryCard label="Fulfillment" onEdit={onEditFulfillment} editLabel="Edit fulfillment">
             {isDeliveryMethod(method) ? (
               <>
                 <p className="font-medium text-foreground">Delivery — {methodLabel(method)}</p>
@@ -1462,7 +1465,7 @@ export function ReviewStep({
             )}
           </SummaryCard>
 
-          <SummaryCard label="Payment">
+          <SummaryCard label="Payment" onEdit={onEditPayment} editLabel="Edit payment">
             {payment === "card" ? (
               <>
                 <p className="font-medium text-foreground">Credit card •••• {cardTail}</p>
