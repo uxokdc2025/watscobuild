@@ -82,6 +82,8 @@ export type AhriSystem = {
   eer2?: number;
   hspf2?: number;
   afue?: number;
+  /** Furnace heating input (BTU/h) — furnace-coil systems only. */
+  furnaceBtu?: number;
   capacityBTU: number;
   airflow: "upflow-horizontal" | "downflow" | "multipoise";
   stage: "single" | "two";
@@ -408,6 +410,7 @@ export const SYSTEMS: AhriSystem[] = [
     eer2: 12.0,
     hspf2: 7.8,
     afue: 96,
+    furnaceBtu: 80000,
     capacityBTU: 42000,
     airflow: "upflow-horizontal",
     stage: "single",
@@ -429,6 +432,7 @@ export const SYSTEMS: AhriSystem[] = [
     eer2: 12.0,
     hspf2: 7.8,
     afue: 80,
+    furnaceBtu: 80000,
     capacityBTU: 42000,
     airflow: "upflow-horizontal",
     stage: "single",
@@ -450,6 +454,7 @@ export const SYSTEMS: AhriSystem[] = [
     eer2: 12.0,
     hspf2: 7.8,
     afue: 96,
+    furnaceBtu: 100000,
     capacityBTU: 42000,
     airflow: "multipoise",
     stage: "two",
@@ -458,7 +463,7 @@ export const SYSTEMS: AhriSystem[] = [
     components: [
       OUTDOOR_GLZS4B,
       coil("capta4230d3", "CAPTA4230D3", "381121A", 3.5, 648.0, 8),
-      furnace("gc9s960804cn", "GC9S960804CN", "379461A", 96, 80000, "Two-Stage", 1512.0, 6),
+      furnace("gc9s961005cn", "GC9S961005CN", "379463A", 96, 100000, "Two-Stage", 1612.0, 6),
     ],
     addOns: ADD_ONS,
   },
@@ -574,4 +579,121 @@ export function systemPrice(sys: AhriSystem): number {
 
 export function systemTypeLabel(id: SystemTypeId): string {
   return SYSTEM_TYPES.find((t) => t.id === id)?.label ?? id;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Wizard model (V1 — progressive, matches the ecmdi AHRI Lookup flow)
+ *
+ * After System Type, a sequence of required attribute steps is revealed one at
+ * a time. Each step is [Attribute] · [Operator] · [Value]. Numeric attributes
+ * expose an operator (Equals / ≤ / ≥); categorical ones are fixed to Equals.
+ * Matched systems render only after the LAST required step is completed.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+export type Operator = "eq" | "lte" | "gte";
+
+export const OPERATOR_LABEL: Record<Operator, string> = {
+  eq: "Equals",
+  lte: "Lesser or equal to",
+  gte: "Greater or equal to",
+};
+
+export type WizardStep = {
+  key: string;
+  label: string;
+  kind: "numeric" | "categorical";
+  options: { value: string; label: string }[];
+  /** The system's value for this attribute (for matching). */
+  get: (s: AhriSystem) => number | string | undefined;
+};
+
+const STEP_DEFS: Record<string, WizardStep> = {
+  afue: {
+    key: "afue",
+    label: "AFUE",
+    kind: "numeric",
+    options: [
+      { value: "80", label: "80" },
+      { value: "92", label: "92" },
+      { value: "96", label: "96" },
+    ],
+    get: (s) => s.afue,
+  },
+  btu: {
+    key: "btu",
+    label: "BTU Input",
+    kind: "numeric",
+    options: [
+      { value: "80000", label: "80,000" },
+      { value: "100000", label: "100,000" },
+    ],
+    get: (s) => s.furnaceBtu,
+  },
+  seer2: {
+    key: "seer2",
+    label: "SEER2",
+    kind: "numeric",
+    options: [
+      { value: "14.3", label: "14.3" },
+      { value: "15.2", label: "15.2" },
+      { value: "16", label: "16.0" },
+    ],
+    get: (s) => s.seer2,
+  },
+  tonnage: {
+    key: "tonnage",
+    label: "Capacity (Tons)",
+    kind: "numeric",
+    options: [
+      { value: "2.5", label: "2.5" },
+      { value: "3", label: "3" },
+      { value: "3.5", label: "3.5" },
+      { value: "4", label: "4" },
+      { value: "5", label: "5" },
+    ],
+    get: (s) => s.tonnage,
+  },
+  airflow: {
+    key: "airflow",
+    label: "Air Flow",
+    kind: "categorical",
+    options: [
+      { value: "upflow-horizontal", label: "Upflow / Horizontal" },
+      { value: "downflow", label: "Downflow" },
+      { value: "multipoise", label: "Multipoise" },
+    ],
+    get: (s) => s.airflow,
+  },
+};
+
+/** Required step sequence per system type (System Type itself is step 0). */
+export const WIZARD_STEPS: Record<SystemTypeId, WizardStep[]> = {
+  "furnace-coil": [STEP_DEFS.afue, STEP_DEFS.btu, STEP_DEFS.airflow],
+  "air-handler": [STEP_DEFS.seer2, STEP_DEFS.tonnage, STEP_DEFS.airflow],
+  "indoor-coil": [STEP_DEFS.tonnage, STEP_DEFS.airflow],
+  "mobile-home": [STEP_DEFS.tonnage, STEP_DEFS.airflow],
+};
+
+export type WizardSelection = { key: string; op: Operator; value: string };
+
+export function stepMatches(step: WizardStep, op: Operator, value: string, s: AhriSystem): boolean {
+  const actual = step.get(s);
+  if (actual == null) return false;
+  if (step.kind === "categorical") return String(actual) === value;
+  const a = Number(actual);
+  const v = Number(value);
+  if (op === "lte") return a <= v;
+  if (op === "gte") return a >= v;
+  return a === v;
+}
+
+/** Systems of `systemType` that satisfy every completed selection. */
+export function wizardMatches(systemType: SystemTypeId, selections: WizardSelection[]): AhriSystem[] {
+  const steps = WIZARD_STEPS[systemType];
+  return SYSTEMS.filter((s) => s.systemType === systemType).filter((s) =>
+    selections.every((sel) => {
+      const step = steps.find((st) => st.key === sel.key);
+      return step ? stepMatches(step, sel.op, sel.value, s) : true;
+    }),
+  );
 }
