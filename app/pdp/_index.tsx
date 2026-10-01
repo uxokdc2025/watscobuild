@@ -192,7 +192,7 @@ const TODAYS_CHANGES: { title: string; desc: string; links: { label: string; hre
     title: "AHRI Lookup — in-PDP system builder (NEW)",
     desc: "Rebuilt to live inside the PDP's About tabs (Style 2 tab pattern): Description · Specifications · AHRI Lookup · Parts List. The AHRI Lookup tab is a filter builder — pick the required System Type (everything stays disabled until then), add refinement filters, and matched systems render in our canonical product-list-row grid. “View System” opens the system detail page.",
     links: [
-      { label: "PDP → AHRI Lookup tab", href: "/pdp/uc-ahri-matched-system?signedin=1#ahri-lookup" },
+      { label: "PDP (GLZS4B heat pump)", href: "/pdp/uc-ahri-matched-system?signedin=1" },
       { label: "System detail", href: "/ahri/215217523" },
     ],
   },

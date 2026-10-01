@@ -36,32 +36,32 @@ import { ThumbTile } from "@/app/ahri/_lib/parts";
 type AddedFilter = { key: string; value: string };
 
 export function AhriLookup() {
-  const [systemType, setSystemType] = React.useState<SystemTypeId | "">("");
+  // Pre-populated to the first record so the lookup opens with a real
+  // selection (and matched systems) already showing — no empty/required/error
+  // state. The user just changes it. (Per client direction.)
+  const [systemType, setSystemType] = React.useState<SystemTypeId>(SYSTEM_TYPES[0].id);
   const [filters, setFilters] = React.useState<AddedFilter[]>([]);
 
-  // Which refinement filters apply to the chosen system type (System Type is
-  // handled separately as the required first row).
+  // Refinement filters that apply to the chosen system type.
   const availableFilters = React.useMemo(
-    () =>
-      systemType
-        ? FILTERS.filter((f) => !f.appliesTo || f.appliesTo.includes(systemType))
-        : [],
+    () => FILTERS.filter((f) => !f.appliesTo || f.appliesTo.includes(systemType)),
     [systemType],
   );
   const unusedFilters = availableFilters.filter(
     (f) => !filters.some((af) => af.key === f.key),
   );
 
-  const matches = React.useMemo(() => {
-    if (!systemType) return [];
-    return SYSTEMS.filter((s) => s.systemType === systemType).filter((s) =>
-      filters.every((af) => {
-        if (!af.value) return true; // incomplete filter — ignore until a value is picked
-        const def = FILTERS.find((f) => f.key === af.key);
-        return def ? def.test(s, af.value) : true;
-      }),
-    );
-  }, [systemType, filters]);
+  const matches = React.useMemo(
+    () =>
+      SYSTEMS.filter((s) => s.systemType === systemType).filter((s) =>
+        filters.every((af) => {
+          if (!af.value) return true; // incomplete filter — ignored until a value is picked
+          const def = FILTERS.find((f) => f.key === af.key);
+          return def ? def.test(s, af.value) : true;
+        }),
+      ),
+    [systemType, filters],
+  );
 
   function changeSystemType(v: string) {
     setSystemType(v as SystemTypeId);
@@ -86,24 +86,20 @@ export function AhriLookup() {
       <div>
         <h3 className="text-base font-bold tracking-tight">Select System Options</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Start by choosing a system type — we&rsquo;ll show the AHRI-certified
-          systems that match. Add more filters to narrow the results.
+          Choose a system type to see the AHRI-certified systems that match. Add
+          more filters to narrow the results.
         </p>
       </div>
 
-      {/* Filter builder */}
-      <div className="flex flex-col gap-3">
-        {/* Required first row — System Type */}
+      {/* Filter builder — condensed, left-aligned rows (attribute · equals · value) */}
+      <div className="flex flex-col gap-2.5">
+        {/* First row — System Type (attribute + operator are fixed/disabled) */}
         <FilterRow
           attribute="System Type"
-          required
           valueNode={
             <Select value={systemType} onValueChange={changeSystemType}>
-              <SelectTrigger
-                className={cn("w-full", !systemType && "border-destructive/60")}
-                aria-label="System Type value"
-              >
-                <SelectValue placeholder="Select Values" />
+              <SelectTrigger className="w-full" aria-label="System Type value">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {SYSTEM_TYPES.map((t) => (
@@ -114,57 +110,53 @@ export function AhriLookup() {
               </SelectContent>
             </Select>
           }
-          error={!systemType ? "Filter System Type is required" : undefined}
         />
 
-        {/* Refinement rows — only once a system type is chosen */}
-        {systemType
-          ? filters.map((af, idx) => {
-              const def = FILTERS.find((f) => f.key === af.key)!;
-              // attribute options = this row's current filter + any still-unused
-              const attrOptions = availableFilters.filter(
-                (f) => f.key === af.key || !filters.some((o) => o.key === f.key),
-              );
-              return (
-                <FilterRow
-                  key={`${af.key}-${idx}`}
-                  attributeNode={
-                    <Select value={af.key} onValueChange={(v) => setFilterKey(idx, v)}>
-                      <SelectTrigger className="w-full" aria-label="Filter attribute">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {attrOptions.map((f) => (
-                          <SelectItem key={f.key} value={f.key}>
-                            {f.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  }
-                  valueNode={
-                    <Select value={af.value} onValueChange={(v) => setFilterValue(idx, v)}>
-                      <SelectTrigger className="w-full" aria-label={`${def.label} value`}>
-                        <SelectValue placeholder="Select Values" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {def.options
-                          .filter((o) => o.value !== "any")
-                          .map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  }
-                  onRemove={() => removeFilter(idx)}
-                />
-              );
-            })
-          : null}
+        {/* Refinement rows */}
+        {filters.map((af, idx) => {
+          const def = FILTERS.find((f) => f.key === af.key)!;
+          const attrOptions = availableFilters.filter(
+            (f) => f.key === af.key || !filters.some((o) => o.key === f.key),
+          );
+          return (
+            <FilterRow
+              key={`${af.key}-${idx}`}
+              attributeNode={
+                <Select value={af.key} onValueChange={(v) => setFilterKey(idx, v)}>
+                  <SelectTrigger className="w-full" aria-label="Filter attribute">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {attrOptions.map((f) => (
+                      <SelectItem key={f.key} value={f.key}>
+                        {f.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              }
+              valueNode={
+                <Select value={af.value} onValueChange={(v) => setFilterValue(idx, v)}>
+                  <SelectTrigger className="w-full" aria-label={`${def.label} value`}>
+                    <SelectValue placeholder="Select value" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {def.options
+                      .filter((o) => o.value !== "any")
+                      .map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              }
+              onRemove={() => removeFilter(idx)}
+            />
+          );
+        })}
 
-        {systemType && unusedFilters.length ? (
+        {unusedFilters.length ? (
           <div>
             <Button variant="outline" size="sm" onClick={addFilter}>
               <Plus className="size-4" />
@@ -174,67 +166,54 @@ export function AhriLookup() {
         ) : null}
       </div>
 
-      {/* Results */}
-      {systemType ? (
-        <ResultsList matches={matches} onReset={() => setFilters([])} hasFilters={filters.length > 0} />
-      ) : (
-        <div className="rounded-xl border border-dashed px-6 py-12 text-center text-sm text-muted-foreground">
-          Select a system type above to see matched AHRI systems.
-        </div>
-      )}
+      {/* Results — always shown (a system type is always selected) */}
+      <ResultsList matches={matches} onReset={() => setFilters([])} hasFilters={filters.length > 0} />
     </section>
   );
 }
 
-/* One filter row: [attribute] [Equals] [value] (+ optional remove). The
-   attribute + operator are fixed cells on the required row and selects on
-   refinement rows. Layout matches the ecmdi reference (three cells). */
+/* One condensed filter row: [attribute] [Equals] [value] (+ optional remove).
+   The attribute + operator are fixed, disabled-looking cells; the value is a
+   live Select. Fields are compact — full width on mobile, fixed widths at sm+
+   (value and attribute even, Equals narrower) so they don't stretch the row. */
 function FilterRow({
   attribute,
   attributeNode,
   valueNode,
-  required,
-  error,
   onRemove,
 }: {
   attribute?: string;
   attributeNode?: React.ReactNode;
   valueNode: React.ReactNode;
-  required?: boolean;
-  error?: string;
   onRemove?: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-[1fr_8rem_1fr_auto]">
-        {/* Attribute */}
-        {attributeNode ?? (
-          <div className="flex h-9 items-center rounded-md border bg-muted/40 px-3 text-sm font-medium">
-            {attribute}
-            {required ? <span className="ml-0.5 text-destructive">*</span> : null}
-          </div>
-        )}
-        {/* Operator (fixed) */}
-        <div className="flex h-9 items-center rounded-md border bg-muted/40 px-3 text-sm text-muted-foreground">
-          Equals
+    <div className="flex flex-wrap items-center gap-2">
+      {/* Attribute */}
+      {attributeNode ? (
+        <div className="w-full sm:w-48">{attributeNode}</div>
+      ) : (
+        <div className="flex h-9 w-full items-center rounded-md border bg-muted/40 px-3 text-sm font-medium text-muted-foreground sm:w-48">
+          {attribute}
         </div>
-        {/* Value */}
-        {valueNode}
-        {/* Remove (refinement rows only) */}
-        {onRemove ? (
-          <button
-            type="button"
-            onClick={onRemove}
-            aria-label="Remove filter"
-            className="grid size-9 place-items-center rounded-md border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground max-sm:justify-self-end"
-          >
-            <X className="size-4" />
-          </button>
-        ) : (
-          <span className="hidden sm:block" />
-        )}
+      )}
+      {/* Operator (fixed, narrower) */}
+      <div className="flex h-9 w-full items-center rounded-md border bg-muted/40 px-3 text-sm text-muted-foreground sm:w-24">
+        Equals
       </div>
-      {error ? <p className="text-xs font-medium text-destructive">{error}</p> : null}
+      {/* Value */}
+      <div className="w-full sm:w-48">{valueNode}</div>
+      {/* Remove (refinement rows only) */}
+      {onRemove ? (
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label="Remove filter"
+          className="grid size-9 shrink-0 place-items-center rounded-md border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        >
+          <X className="size-4" />
+        </button>
+      ) : null}
     </div>
   );
 }
