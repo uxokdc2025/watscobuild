@@ -35,33 +35,72 @@ import { ThumbTile } from "@/app/ahri/_lib/parts";
 
 type AddedFilter = { key: string; value: string };
 
-export function AhriLookup() {
-  // Pre-populated to the first record so the lookup opens with a real
-  // selection (and matched systems) already showing — no empty/required/error
-  // state. The user just changes it. (Per client direction.)
-  const [systemType, setSystemType] = React.useState<SystemTypeId>(SYSTEM_TYPES[0].id);
+type LookupMode = "progressive" | "all";
+
+/** The AHRI Lookup tab body. Two review versions, switchable:
+ *  · Step-by-step (progressive) — nothing is pre-selected; matched systems stay
+ *    hidden until the user picks a system type, then reveal.
+ *  · Show all — pre-populated to the first record so results show immediately. */
+export function AhriLookupTab() {
+  const [mode, setMode] = React.useState<LookupMode>("progressive");
+  return (
+    <section aria-label="AHRI Lookup" className="flex flex-col gap-5">
+      <div className="inline-flex w-fit rounded-md border bg-muted/40 p-0.5 text-sm">
+        {([
+          ["progressive", "Step-by-step"],
+          ["all", "Show all"],
+        ] as [LookupMode, string][]).map(([m, label]) => (
+          <button
+            key={m}
+            type="button"
+            aria-pressed={mode === m}
+            onClick={() => setMode(m)}
+            className={cn(
+              "rounded px-3 py-1.5 font-medium transition-colors",
+              mode === m
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {/* key={mode} remounts so switching versions starts each cleanly */}
+      <AhriLookup key={mode} mode={mode} />
+    </section>
+  );
+}
+
+function AhriLookup({ mode }: { mode: LookupMode }) {
+  const [systemType, setSystemType] = React.useState<SystemTypeId | "">(
+    mode === "all" ? SYSTEM_TYPES[0].id : "",
+  );
   const [filters, setFilters] = React.useState<AddedFilter[]>([]);
+  const selected = systemType !== "";
 
   // Refinement filters that apply to the chosen system type.
   const availableFilters = React.useMemo(
-    () => FILTERS.filter((f) => !f.appliesTo || f.appliesTo.includes(systemType)),
-    [systemType],
+    () =>
+      selected
+        ? FILTERS.filter((f) => !f.appliesTo || f.appliesTo.includes(systemType as SystemTypeId))
+        : [],
+    [systemType, selected],
   );
   const unusedFilters = availableFilters.filter(
     (f) => !filters.some((af) => af.key === f.key),
   );
 
-  const matches = React.useMemo(
-    () =>
-      SYSTEMS.filter((s) => s.systemType === systemType).filter((s) =>
-        filters.every((af) => {
-          if (!af.value) return true; // incomplete filter — ignored until a value is picked
-          const def = FILTERS.find((f) => f.key === af.key);
-          return def ? def.test(s, af.value) : true;
-        }),
-      ),
-    [systemType, filters],
-  );
+  const matches = React.useMemo(() => {
+    if (!selected) return [];
+    return SYSTEMS.filter((s) => s.systemType === systemType).filter((s) =>
+      filters.every((af) => {
+        if (!af.value) return true; // incomplete filter — ignored until a value is picked
+        const def = FILTERS.find((f) => f.key === af.key);
+        return def ? def.test(s, af.value) : true;
+      }),
+    );
+  }, [systemType, filters, selected]);
 
   function changeSystemType(v: string) {
     setSystemType(v as SystemTypeId);
@@ -82,12 +121,13 @@ export function AhriLookup() {
   }
 
   return (
-    <section aria-label="AHRI Lookup" className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div>
         <h3 className="text-base font-bold tracking-tight">Select System Options</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Choose a system type to see the AHRI-certified systems that match. Add
-          more filters to narrow the results.
+          {mode === "progressive"
+            ? "Choose a system type to begin — matched systems appear once you make a selection."
+            : "Change the system type or add filters to narrow the matched systems below."}
         </p>
       </div>
 
@@ -99,7 +139,7 @@ export function AhriLookup() {
           valueNode={
             <Select value={systemType} onValueChange={changeSystemType}>
               <SelectTrigger className="w-full" aria-label="System Type value">
-                <SelectValue />
+                <SelectValue placeholder="Select system type" />
               </SelectTrigger>
               <SelectContent>
                 {SYSTEM_TYPES.map((t) => (
@@ -112,8 +152,8 @@ export function AhriLookup() {
           }
         />
 
-        {/* Refinement rows */}
-        {filters.map((af, idx) => {
+        {/* Refinement rows — only after a system type is chosen */}
+        {selected && filters.map((af, idx) => {
           const def = FILTERS.find((f) => f.key === af.key)!;
           const attrOptions = availableFilters.filter(
             (f) => f.key === af.key || !filters.some((o) => o.key === f.key),
@@ -156,7 +196,7 @@ export function AhriLookup() {
           );
         })}
 
-        {unusedFilters.length ? (
+        {selected && unusedFilters.length ? (
           <div>
             <Button variant="outline" size="sm" onClick={addFilter}>
               <Plus className="size-4" />
@@ -166,9 +206,16 @@ export function AhriLookup() {
         ) : null}
       </div>
 
-      {/* Results — always shown (a system type is always selected) */}
-      <ResultsList matches={matches} onReset={() => setFilters([])} hasFilters={filters.length > 0} />
-    </section>
+      {/* Results — revealed only after a system type is selected (progressive
+          disclosure); "Show all" mode pre-selects, so they appear immediately. */}
+      {selected ? (
+        <ResultsList matches={matches} onReset={() => setFilters([])} hasFilters={filters.length > 0} />
+      ) : (
+        <div className="rounded-xl border border-dashed px-6 py-12 text-center text-sm text-muted-foreground/70">
+          Select a system type to see matched AHRI systems.
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -113,6 +113,14 @@ export function Pdp({
             </div>
           ) : null}
 
+          {/* Customers also purchased — on the AHRI PDP this sits ABOVE the
+              About tabs (matches the ecmdi reference). */}
+          {product.ahriLookup && product.customersAlsoPurchased?.length ? (
+            <div className="mt-14">
+              <CustomersAlsoPurchased product={product} />
+            </div>
+          ) : null}
+
           {/* About This Product — one data-driven accordion for EVERY PDP
               (Description / Specifications / Documents / Part List). Replaces
               the retired Description/Specifications tabs. */}
@@ -129,8 +137,8 @@ export function Pdp({
             </div>
           ) : null}
 
-          {/* Customers also purchased */}
-          {product.customersAlsoPurchased?.length ? (
+          {/* Customers also purchased — default position (below) for non-AHRI PDPs. */}
+          {!product.ahriLookup && product.customersAlsoPurchased?.length ? (
             <div className="mt-14">
               <CustomersAlsoPurchased product={product} />
             </div>

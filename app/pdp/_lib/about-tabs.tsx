@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { aboutSections, type AboutSection } from "./about";
-import { AhriLookup } from "./ahri-lookup";
+import { AhriLookupTab } from "./ahri-lookup";
 import type { PdpProduct } from "./types";
 
 const AHRI_TAB_ID = "ahri-lookup";
@@ -27,7 +27,7 @@ export function AboutThisProductTabs({ product }: { product: PdpProduct }) {
       id: AHRI_TAB_ID,
       label: "AHRI Lookup",
       Icon: Search,
-      Body: () => <AhriLookup />,
+      Body: () => <AhriLookupTab />,
     };
     const specIdx = base.findIndex((s) => s.id === "specifications");
     const at = specIdx === -1 ? base.length : specIdx + 1;
