@@ -189,6 +189,15 @@ function TemplateCard({
    New work lands here at the top; everything else lives in the sections below. */
 const TODAYS_CHANGES: { title: string; desc: string; links: { label: string; href: string }[] }[] = [
   {
+    title: "AHRI System Builder — full flow (NEW)",
+    desc: "A guided, best-in-class rebuild of the AHRI matched-system experience, launched from the GLZS4B heat pump PDP. Pick a system type → refine with plain-English filters (each with an “Any / Not sure” escape hatch) → browse matched systems as clean cards (no wide scroll table) → open a system detail page with every component, inventory, a right-rail system summary (Add System to Cart / Save to List), and our canonical “Customers Also Purchased” rail.",
+    links: [
+      { label: "PDP entry", href: "/pdp/uc-ahri-matched-system?signedin=1" },
+      { label: "AHRI Builder", href: "/ahri" },
+      { label: "System detail", href: "/ahri/215217523" },
+    ],
+  },
+  {
     title: "Checkout v3 — everything open",
     desc: "All sections open on one page (no accordion, no per-section buttons); the Order Summary CTA is “Review Order”, and Review is its own page reusing the v1 review layout without the progress bar.",
     links: [

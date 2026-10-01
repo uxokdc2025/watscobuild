@@ -141,7 +141,7 @@ function SaveToList() {
 function FindAhriMatchedSystem() {
   return (
     <Button asChild variant="ahri" size="sm" className="h-8 text-xs">
-      <a href="#">
+      <a href="/ahri">
         <Search className="size-3.5" />
         Find an AHRI Matched System
       </a>
