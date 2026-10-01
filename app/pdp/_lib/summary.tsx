@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { Info, ListPlus, LogIn, Minus, Plus, Search, ShoppingCart } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -142,10 +141,10 @@ function SaveToList() {
 function FindAhriMatchedSystem() {
   return (
     <Button asChild variant="ahri" size="sm" className="h-8 text-xs">
-      <Link href="/ahri">
+      <a href="#ahri-lookup">
         <Search className="size-3.5" />
         Find an AHRI Matched System
-      </Link>
+      </a>
     </Button>
   );
 }

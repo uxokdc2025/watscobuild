@@ -48,8 +48,8 @@ export function AhriSystemDetail({ system }: { system: AhriSystem }) {
           </li>
           <li aria-hidden className="text-muted-foreground/50">/</li>
           <li>
-            <Link href="/ahri" className="hover:text-foreground hover:underline">
-              AHRI System Builder
+            <Link href="/pdp/uc-ahri-matched-system?signedin=1#ahri-lookup" className="hover:text-foreground hover:underline">
+              AHRI Lookup
             </Link>
           </li>
           <li aria-hidden className="text-muted-foreground/50">/</li>
@@ -97,7 +97,7 @@ export function AhriSystemDetail({ system }: { system: AhriSystem }) {
               </span>
             </h2>
             <Button asChild variant="ghost" size="sm">
-              <Link href="/ahri">
+              <Link href="/pdp/uc-ahri-matched-system?signedin=1#ahri-lookup">
                 <ArrowLeft className="size-4" />
                 Back to results
               </Link>

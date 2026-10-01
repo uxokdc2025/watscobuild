@@ -189,11 +189,10 @@ function TemplateCard({
    New work lands here at the top; everything else lives in the sections below. */
 const TODAYS_CHANGES: { title: string; desc: string; links: { label: string; href: string }[] }[] = [
   {
-    title: "AHRI System Builder — full flow (NEW)",
-    desc: "A guided, best-in-class rebuild of the AHRI matched-system experience, launched from the GLZS4B heat pump PDP. Pick a system type → refine with plain-English filters (each with an “Any / Not sure” escape hatch) → browse matched systems as clean cards (no wide scroll table) → open a system detail page with every component, inventory, a right-rail system summary (Add System to Cart / Save to List), and our canonical “Customers Also Purchased” rail.",
+    title: "AHRI Lookup — in-PDP system builder (NEW)",
+    desc: "Rebuilt to live inside the PDP's About tabs (Style 2 tab pattern): Description · Specifications · AHRI Lookup · Parts List. The AHRI Lookup tab is a filter builder — pick the required System Type (everything stays disabled until then), add refinement filters, and matched systems render in our canonical product-list-row grid. “View System” opens the system detail page.",
     links: [
-      { label: "PDP entry", href: "/pdp/uc-ahri-matched-system?signedin=1" },
-      { label: "AHRI Builder", href: "/ahri" },
+      { label: "PDP → AHRI Lookup tab", href: "/pdp/uc-ahri-matched-system?signedin=1#ahri-lookup" },
       { label: "System detail", href: "/ahri/215217523" },
     ],
   },

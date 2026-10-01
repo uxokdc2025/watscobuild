@@ -4,6 +4,7 @@ import { PdpAuthProvider } from "./auth";
 import { PdpSummary } from "./summary";
 import { CustomersAlsoPurchased, FrequentlyBoughtTogether } from "./fbt";
 import { AboutThisProduct, AhriMatchup, BundleComponents, ProPicks, RecentlyViewed, Replacements, Substitutes } from "./about";
+import { AboutThisProductTabs } from "./about-tabs";
 import { SiteFooter, SiteHeader } from "./chrome";
 import { getBrand } from "./brands";
 import type { PdpProduct } from "./types";
@@ -116,7 +117,11 @@ export function Pdp({
               (Description / Specifications / Documents / Part List). Replaces
               the retired Description/Specifications tabs. */}
           <div className="mt-14">
-            <AboutThisProduct product={product} />
+            {product.ahriLookup ? (
+              <AboutThisProductTabs product={product} />
+            ) : (
+              <AboutThisProduct product={product} />
+            )}
           </div>
           {product.recentlyViewed?.length ? (
             <div className="mt-14">

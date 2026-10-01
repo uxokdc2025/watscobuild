@@ -154,6 +154,9 @@ export type PdpProduct = {
    *    Part List / Where Used, plus Substitutes + Recently Viewed sections.
    */
   detailsStyle?: "tabs" | "about";
+  /** When set, render the tabbed About (Style 2) with an in-page "AHRI Lookup"
+   *  system-builder tab instead of the default accordion. */
+  ahriLookup?: boolean;
   /** Grouped specs for the Carrier "Product Info" panel (Dimensions, Attributes…). */
   productSpecs?: SpecGroup[];
   /** Substitute products ("May not be covered by warranty"). */
