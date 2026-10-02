@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight, Plus, X } from "lucide-react";
+import { ChevronRight, Columns3, LayoutList, SlidersHorizontal, Table2, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { formatUSD } from "./types";
 import {
   AIRFLOW_LABEL,
@@ -46,6 +54,21 @@ import { ThumbTile } from "@/app/ahri/_lib/parts";
 
 const SIGN: Record<Operator, string> = { eq: "=", lte: "≤", gte: "≥" };
 
+/* Selectable spec columns for the "View in table" view (toggled via Columns). */
+type SysCol = { key: string; label: string; get: (s: AhriSystem) => string };
+const SYSTEM_COLS: SysCol[] = [
+  { key: "airflow", label: "Air Flow", get: (s) => AIRFLOW_LABEL[s.airflow] },
+  { key: "capacity", label: "Capacity", get: (s) => `${s.tonnage} Ton` },
+  { key: "afue", label: "AFUE", get: (s) => (s.afue != null ? `${s.afue}%` : "—") },
+  { key: "btu", label: "BTU Input", get: (s) => (s.furnaceBtu != null ? s.furnaceBtu.toLocaleString() : "—") },
+  { key: "eer2", label: "EER2", get: (s) => (s.eer2 != null ? String(s.eer2) : "—") },
+  { key: "hspf2", label: "HSPF2", get: (s) => (s.hspf2 != null ? String(s.hspf2) : "—") },
+  { key: "seer2", label: "SEER2", get: (s) => String(s.seer2) },
+];
+const ALL_COL_KEYS = SYSTEM_COLS.map((c) => c.key);
+
+type ResultsView = "list" | "table";
+
 export function AhriLookupTab() {
   const [mode, setMode] = React.useState<"progressive" | "all">("progressive");
   React.useEffect(() => {
@@ -65,6 +88,8 @@ function WizardLookup() {
   // Optional filters added AFTER the required flow completes ("add filter is at
   // the end"). Drawn from attributes not already covered by the wizard steps.
   const [extras, setExtras] = React.useState<AddedFilter[]>([]);
+  const [view, setView] = React.useState<ResultsView>("list");
+  const [cols, setCols] = React.useState<string[]>(ALL_COL_KEYS);
 
   const steps = systemType ? WIZARD_STEPS[systemType] : [];
 
@@ -155,13 +180,49 @@ function WizardLookup() {
 
       {showChips ? (
         <>
-          <ChipBar
-            systemType={systemType as SystemTypeId}
-            steps={steps}
-            sel={sel}
-            onRemove={removeSelection}
-            onClearAll={clearAll}
-          />
+          {/* Chips on the left; filter + columns + view controls on the right */}
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <ChipBar
+              systemType={systemType as SystemTypeId}
+              steps={steps}
+              sel={sel}
+              onRemove={removeSelection}
+              onClearAll={clearAll}
+            />
+            <div className="flex shrink-0 items-center gap-2">
+              {unusedOptional.length ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const next = unusedOptional[0];
+                    if (next) setExtras((x) => [...x, { key: next.key, value: "" }]);
+                  }}
+                >
+                  <SlidersHorizontal className="size-4" />
+                  Add filter
+                </Button>
+              ) : null}
+              {view === "table" ? <ColumnsMenu cols={cols} onChange={setCols} /> : null}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setView((v) => (v === "list" ? "table" : "list"))}
+              >
+                {view === "list" ? (
+                  <>
+                    <Table2 className="size-4" />
+                    View in table
+                  </>
+                ) : (
+                  <>
+                    <LayoutList className="size-4" />
+                    View as list
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
 
           {/* Optional filters — added only at the end, after the required flow */}
           {extras.length ? (
@@ -221,23 +282,11 @@ function WizardLookup() {
             </div>
           ) : null}
 
-          {unusedOptional.length ? (
-            <div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const next = unusedOptional[0];
-                  if (next) setExtras((x) => [...x, { key: next.key, value: "" }]);
-                }}
-              >
-                <Plus className="size-4" />
-                Add filter
-              </Button>
-            </div>
-          ) : null}
-
-          <ResultsList matches={matches} />
+          {view === "table" ? (
+            <SystemTable systems={matches} cols={SYSTEM_COLS.filter((c) => cols.includes(c.key))} />
+          ) : (
+            <ResultsList matches={matches} />
+          )}
         </>
       ) : (
         <div className="flex flex-col gap-2.5">
@@ -495,6 +544,96 @@ function FilterRow({
           <X className="size-4" />
         </button>
       ) : null}
+    </div>
+  );
+}
+
+/* Columns chooser (shown in table view) — toggles which system spec columns show. */
+function ColumnsMenu({ cols, onChange }: { cols: string[]; onChange: (c: string[]) => void }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Columns3 className="size-4" />
+          Columns
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuLabel>System columns</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {SYSTEM_COLS.map((c) => (
+          <DropdownMenuCheckboxItem
+            key={c.key}
+            checked={cols.includes(c.key)}
+            onCheckedChange={(v) =>
+              onChange(v === true ? [...cols, c.key] : cols.filter((k) => k !== c.key))
+            }
+            onSelect={(e) => e.preventDefault()}
+          >
+            {c.label}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+/* Matched systems as a table (optional "View in table"), with selectable columns. */
+function SystemTable({ systems, cols }: { systems: AhriSystem[]; cols: SysCol[] }) {
+  if (!systems.length) {
+    return (
+      <div className="rounded-xl border border-dashed px-6 py-12 text-center text-sm font-medium text-destructive">
+        There are no results for the selected filter.
+      </div>
+    );
+  }
+  return (
+    <div className="overflow-x-auto rounded-xl border">
+      <table className="w-full min-w-[640px] text-sm">
+        <thead className="border-b bg-muted/40 text-left">
+          <tr>
+            <th className="px-4 py-3 font-semibold">AHRI · Components</th>
+            {cols.map((c) => (
+              <th key={c.key} className="px-3 py-3 text-center font-semibold whitespace-nowrap">
+                {c.label}
+              </th>
+            ))}
+            <th className="px-4 py-3 text-right font-semibold whitespace-nowrap">System total</th>
+            <th className="px-4 py-3" />
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {systems.map((s) => (
+            <tr key={s.ahriNumber} className="align-top">
+              <td className="px-4 py-3">
+                <Link href={`/ahri/${s.ahriNumber}`} className="text-xs font-medium text-primary hover:underline">
+                  AHRI #{s.ahriNumber}
+                </Link>
+                <p className="font-semibold leading-snug">{s.headline}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {s.components.map((c) => c.model).join(" · ")}
+                </p>
+              </td>
+              {cols.map((c) => (
+                <td key={c.key} className="px-3 py-3 text-center tabular-nums whitespace-nowrap">
+                  {c.get(s)}
+                </td>
+              ))}
+              <td className="px-4 py-3 text-right font-semibold tabular-nums whitespace-nowrap">
+                {formatUSD(systemPrice(s))}
+              </td>
+              <td className="px-4 py-3 text-right">
+                <Button asChild size="sm">
+                  <Link href={`/ahri/${s.ahriNumber}`}>
+                    View
+                    <ChevronRight className="size-4" />
+                  </Link>
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
