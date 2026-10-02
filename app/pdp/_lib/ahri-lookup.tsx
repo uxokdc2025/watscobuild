@@ -453,6 +453,8 @@ type AddedFilter = { key: string; value: string };
 function AllVisibleLookup() {
   const [systemType, setSystemType] = React.useState<SystemTypeId>(SYSTEM_TYPES[0].id);
   const [sel, setSel] = React.useState<StepState>({});
+  const [view, setView] = React.useState<ResultsView>("list");
+  const [cols, setCols] = React.useState<string[]>(ALL_COL_KEYS);
 
   const steps = WIZARD_STEPS[systemType];
   const selections: WizardSelection[] = steps
@@ -493,7 +495,35 @@ function AllVisibleLookup() {
         ))}
       </div>
 
-      <ResultsList matches={matches} />
+      {/* Results header controls — same top-right set as the progressive flow */}
+      <div className="flex justify-end">
+        <div className="flex shrink-0 items-center gap-2">
+          {view === "table" ? <ColumnsMenu cols={cols} onChange={setCols} /> : null}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setView((v) => (v === "list" ? "table" : "list"))}
+          >
+            {view === "list" ? (
+              <>
+                <Table2 className="size-4" />
+                View in table
+              </>
+            ) : (
+              <>
+                <LayoutList className="size-4" />
+                View as list
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {view === "table" ? (
+        <SystemTable systems={matches} cols={SYSTEM_COLS.filter((c) => cols.includes(c.key))} />
+      ) : (
+        <ResultsList matches={matches} />
+      )}
     </div>
   );
 }
