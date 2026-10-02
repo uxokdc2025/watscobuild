@@ -19,7 +19,6 @@ import {
   FILTERS,
   OPERATOR_LABEL,
   STAGE_LABEL,
-  SYSTEMS,
   SYSTEM_TYPES,
   WIZARD_STEPS,
   systemPrice,
