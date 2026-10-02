@@ -5,6 +5,8 @@ import { ChevronRight, ExternalLink, ImageOff, Minus, Plus, Replace, ShoppingCar
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { StockStatus } from "@/components/ui/label-badges";
+import { InventoryLine } from "@/app/ahri/_lib/parts";
 import { PreviewCode, Guidance } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
 
@@ -29,8 +31,9 @@ type RowItem = {
   brand: string;
   title: string;
   meta: string;
-  qty: number;
+  branchQty: number;
   branch: string;
+  allBranches: number;
   price: string;
 };
 const SAMPLE_ROWS: RowItem[] = [
@@ -38,56 +41,47 @@ const SAMPLE_ROWS: RowItem[] = [
     brand: "TRADEPRO®",
     title: "TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230V, 1/2 HP",
     meta: "Item: 54510A · MFG: TP-EC13-50",
-    qty: 168,
+    branchQty: 18,
     branch: "Durham NC #1",
+    allBranches: 168,
     price: "$168.42",
   },
   {
     brand: "TRADEPRO®",
     title: "TP-CAP-370-455 — Run Capacitor, 45/5 MFD, 370V, Round Dual",
     meta: "Item: 11822 · MFG: TP-CAP-370-455",
-    qty: 1240,
+    branchQty: 240,
     branch: "Durham NC #1",
+    allBranches: 1240,
     price: "$12.87",
   },
   {
     brand: "TRADEPRO®",
     title: "TP-CONT-2P30 — Contactor, 2-Pole, 30 Amp, 24V Coil",
     meta: "Item: 90313 · MFG: TP-CONT-2P30",
-    qty: 54,
+    branchQty: 6,
     branch: "Durham NC #1",
+    allBranches: 54,
     price: "$19.95",
   },
   {
     brand: "TRADEPRO®",
     title: "TP-TXV-R410-3 — Thermostatic Expansion Valve, R-410A, 3 Ton, Bi-Flow",
     meta: "Item: 66145 · MFG: TP-TXV-R410-3",
-    qty: 0,
+    branchQty: 0,
     branch: "Durham NC #1",
+    allBranches: 12,
     price: "$78.30",
   },
 ];
 
 /* The one canonical storefront list row: [image] [capped description]
    [availability, its own centered column] [price + action]. Full width on
-   mobile it stacks; at sm+ it's the 4-zone grid. */
+   mobile it stacks; at sm+ it's the 4-zone grid. Availability uses the DS
+   InventoryLine — never hand-rolled stock text. */
 function Row({ item }: { item: RowItem }) {
-  const inStock = item.qty > 0;
   const availability = (
-    <div className="text-xs">
-      <span
-        className={`inline-flex items-center gap-1.5 font-semibold ${
-          inStock ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"
-        }`}
-      >
-        <span
-          className={`size-1.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-amber-500"}`}
-          aria-hidden
-        />
-        {inStock ? `${item.qty.toLocaleString()} In Stock` : "To Order"}
-      </span>
-      <p className="text-muted-foreground">{item.branch}</p>
-    </div>
+    <InventoryLine branchQty={item.branchQty} branchName={item.branch} allBranchesQty={item.allBranches} />
   );
   const price = (
     <p className="text-base font-semibold text-price">
@@ -110,7 +104,7 @@ function Row({ item }: { item: RowItem }) {
           <ImageOff className="size-6 opacity-40" aria-hidden />
         </div>
         {details}
-        <div className="text-center">{availability}</div>
+        <div className="flex justify-center">{availability}</div>
         <div className="justify-self-end text-right">
           {price}
           <Button size="sm" className="mt-2">
@@ -164,27 +158,6 @@ function Thumb({ className = "size-24" }: { className?: string }) {
   );
 }
 
-function Avail({ qty, sub }: { qty: number; sub: string[] }) {
-  const inStock = qty > 0;
-  return (
-    <div className="text-xs">
-      <span
-        className={`inline-flex items-center gap-1.5 font-semibold ${
-          inStock ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"
-        }`}
-      >
-        <span className={`size-1.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-amber-500"}`} aria-hidden />
-        {inStock ? `${qty.toLocaleString()} In Stock` : "To Order"}
-      </span>
-      {sub.map((s) => (
-        <p key={s} className="text-muted-foreground">
-          {s}
-        </p>
-      ))}
-    </div>
-  );
-}
-
 /* Display-only quantity stepper (no handlers — examples are static). */
 function StaticQty({ value }: { value: number }) {
   return (
@@ -202,10 +175,10 @@ function StaticQty({ value }: { value: number }) {
 
 /* 2 — AHRI matched systems: same 4-zone grid, detail column carries AHRI# +
    headline + component models + spec line; action is "View System". */
-type AhriItem = { ahri: string; headline: string; models: string; spec: string; qty: number; stage: string; airflow: string; price: string };
+type AhriItem = { ahri: string; headline: string; models: string; spec: string; branchQty: number; branch: string; allBranches: number; price: string };
 const AHRI_ROWS: AhriItem[] = [
-  { ahri: "215217523", headline: "80% AFUE Gas Furnace + 14.3 SEER2 AC — 3 Ton, Downflow", models: "CAPTA4230C3 · GD9S801005CN", spec: "14.3 SEER2 · 80% AFUE · 3 Ton", qty: 12, stage: "Single-stage", airflow: "Downflow", price: "$7,332.39" },
-  { ahri: "215217524", headline: "96% AFUE Gas Furnace + 15.2 SEER2 AC — 3.5 Ton, Upflow", models: "CAPTA4230D3 · GD9S960805CN", spec: "15.2 SEER2 · 96% AFUE · 3.5 Ton", qty: 0, stage: "Two-stage", airflow: "Upflow", price: "$8,104.57" },
+  { ahri: "215217523", headline: "80% AFUE Gas Furnace + 14.3 SEER2 AC — 3 Ton, Downflow", models: "CAPTA4230C3 · GD9S801005CN", spec: "14.3 SEER2 · 80% AFUE · 3 Ton · Single-stage · Downflow", branchQty: 4, branch: "Durham NC #1", allBranches: 12, price: "$7,332.39" },
+  { ahri: "215217524", headline: "96% AFUE Gas Furnace + 15.2 SEER2 AC — 3.5 Ton, Upflow", models: "CAPTA4230D3 · GD9S960805CN", spec: "15.2 SEER2 · 96% AFUE · 3.5 Ton · Two-stage · Upflow", branchQty: 0, branch: "Durham NC #1", allBranches: 7, price: "$8,104.57" },
 ];
 function AhriMatchedRow({ s }: { s: AhriItem }) {
   const detail = (
@@ -227,8 +200,8 @@ function AhriMatchedRow({ s }: { s: AhriItem }) {
       <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
         <Thumb />
         {detail}
-        <div className="text-center">
-          <Avail qty={s.qty} sub={[s.stage, s.airflow]} />
+        <div className="flex justify-center">
+          <InventoryLine branchQty={s.branchQty} branchName={s.branch} allBranchesQty={s.allBranches} />
         </div>
         <div className="justify-self-end text-right">
           {price}
@@ -244,7 +217,7 @@ function AhriMatchedRow({ s }: { s: AhriItem }) {
           <div className="min-w-0 flex-1">
             {detail}
             <div className="mt-1.5">
-              <Avail qty={s.qty} sub={[s.stage, s.airflow]} />
+              <InventoryLine branchQty={s.branchQty} branchName={s.branch} allBranchesQty={s.allBranches} />
             </div>
           </div>
         </div>
@@ -262,11 +235,11 @@ function AhriMatchedRow({ s }: { s: AhriItem }) {
 
 /* 3 — AHRI system detail components: Outdoor / Indoor / Furnace rows; a role
    eyebrow, model as title, specs flow down; availability centered; Add. */
-type CompItem = { role: string; model: string; title: string; spec: string; qty: number; branch: string; price: string };
+type CompItem = { role: string; model: string; title: string; spec: string; branchQty: number; branch: string; allBranches: number; price: string };
 const COMP_ROWS: CompItem[] = [
-  { role: "Outdoor", model: "GSXH503610", title: "14.3 SEER2 Air Conditioner Condenser — 3 Ton, R-410A", spec: "14.3 SEER2 · 3 Ton · R-410A", qty: 9, branch: "Durham NC #1", price: "$2,119.84" },
-  { role: "Indoor coil", model: "CAPTA4230C3", title: "Cased Evaporator Coil — 2.5–3 Ton, Upflow/Downflow", spec: "3 Ton · TXV included", qty: 23, branch: "Durham NC #1", price: "$1,169.57" },
-  { role: "Furnace", model: "GD9S801005CN", title: "80% AFUE Single-Stage Gas Furnace — 100,000 BTU", spec: "80% AFUE · 100,000 BTU · Multi-position", qty: 0, branch: "Durham NC #1", price: "$2,042.98" },
+  { role: "Outdoor", model: "GSXH503610", title: "14.3 SEER2 Air Conditioner Condenser — 3 Ton, R-410A", spec: "14.3 SEER2 · 3 Ton · R-410A", branchQty: 9, branch: "Durham NC #1", allBranches: 46, price: "$2,119.84" },
+  { role: "Indoor coil", model: "CAPTA4230C3", title: "Cased Evaporator Coil — 2.5–3 Ton, Upflow/Downflow", spec: "3 Ton · TXV included", branchQty: 23, branch: "Durham NC #1", allBranches: 118, price: "$1,169.57" },
+  { role: "Furnace", model: "GD9S801005CN", title: "80% AFUE Single-Stage Gas Furnace — 100,000 BTU", spec: "80% AFUE · 100,000 BTU · Multi-position", branchQty: 0, branch: "Durham NC #1", allBranches: 15, price: "$2,042.98" },
 ];
 function ComponentRow({ c }: { c: CompItem }) {
   const detail = (
@@ -288,8 +261,8 @@ function ComponentRow({ c }: { c: CompItem }) {
       <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
         <Thumb />
         {detail}
-        <div className="text-center">
-          <Avail qty={c.qty} sub={[c.branch]} />
+        <div className="flex justify-center">
+          <InventoryLine branchQty={c.branchQty} branchName={c.branch} allBranchesQty={c.allBranches} />
         </div>
         <div className="justify-self-end text-right">
           {price}
@@ -305,7 +278,7 @@ function ComponentRow({ c }: { c: CompItem }) {
           <div className="min-w-0 flex-1">
             {detail}
             <div className="mt-1.5">
-              <Avail qty={c.qty} sub={[c.branch]} />
+              <InventoryLine branchQty={c.branchQty} branchName={c.branch} allBranchesQty={c.allBranches} />
             </div>
           </div>
         </div>
@@ -468,7 +441,9 @@ function ShoppingTable() {
             </div>
             <div className="flex flex-col items-center gap-1 text-center">
               <span className="text-xs text-muted-foreground">Inventory</span>
-              <Avail qty={r.onHand} sub={[]} />
+              <StockStatus qty={r.onHand}>
+                {r.onHand > 0 ? `${r.onHand} In Stock` : "Out of stock"}
+              </StockStatus>
               {r.replacement ? (
                 <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 dark:text-amber-400">
                   <Replace className="size-3" />
