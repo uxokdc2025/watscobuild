@@ -99,6 +99,11 @@ Lives INSIDE the GLZS4B PDP's About tabs (NOT a standalone page).
 - Tab styles: `/pdp/about-variants`
 - Master index: `/pdp`
 
+## Next tasks (requested, not yet done)
+- **Design-system list-view patterns page**: document ALL list-view patterns (PLP list row, cart row, checkout review row, shopping-list row, AHRI results row) in ONE canonical place, note where each is used, and surface it on the **`/components`** showcase so David can review them all. This is the formal "everything comes from the DS" deliverable.
+- **Shopping list — match the live reference closer**: columns now distributed evenly; keep refining spacing/label chips/availability to the Shopware original; confirm availability uses our canonical inventory pattern everywhere.
+- **Review "View substitutes"** flow end-to-end (shopping list → substitutes drawer/page) and fix anything off.
+
 ## Open / possible next
 - Full **Specifications** block on the AHRI detail page like ecmdi (AHRI Type, Indoor Air Quantity, Phase, BTU Input, Indoor/Furnace Unit Model…). Ryan approved current layout → optional.
 - Columns/View-in-Table is V1 only (after results collapse to chips); not wired into V2 all-open.
