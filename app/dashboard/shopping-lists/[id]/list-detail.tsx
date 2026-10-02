@@ -34,6 +34,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductListRow } from "@/components/ui/product-list-row";
 import { StockStatus } from "@/components/ui/label-badges";
+import { InventoryLine } from "@/app/ahri/_lib/parts";
 import {
   DRAWER_MOTION_MS,
   DrawerCloseButton,
@@ -72,8 +73,12 @@ type AltProduct = {
 
 type Product = AltProduct & {
   label?: string;
-  /** Representative on-hand inventory shown in the Availability column. */
+  /** On-hand at the current branch — the first line of the Availability column. */
   inventory?: number;
+  /** Current branch name shown beside the on-hand count. */
+  branchName?: string;
+  /** Network total shown on the "N across all branches" line. */
+  allBranches?: number;
   /** When present, the row carries a replacement/substitute set. */
   replacement?: {
     note: string;
@@ -96,6 +101,8 @@ const PRODUCTS: Product[] = [
     price: 168.42,
     qty: 8,
     inventory: 168,
+    branchName: "Durham NC #1",
+    allBranches: 1240,
     label: "Preventative",
     replacement: {
       note: "This motor has a newer revision and cross-compatible options.",
@@ -145,6 +152,8 @@ const PRODUCTS: Product[] = [
     price: 14.28,
     qty: 40,
     inventory: 342,
+    branchName: "Durham NC #1",
+    allBranches: 2680,
     label: "Job supplies",
   },
   {
@@ -157,6 +166,8 @@ const PRODUCTS: Product[] = [
     price: 22.75,
     qty: 0,
     inventory: 0,
+    branchName: "Durham NC #1",
+    allBranches: 14,
     replacement: {
       note: "Out of stock — a form-fit-function equivalent ships today.",
       replacements: [
@@ -195,6 +206,8 @@ const PRODUCTS: Product[] = [
     price: 18.6,
     qty: 15,
     inventory: 96,
+    branchName: "Durham NC #1",
+    allBranches: 720,
     label: "Preventative",
   },
   {
@@ -207,6 +220,8 @@ const PRODUCTS: Product[] = [
     price: 96.0,
     qty: 4,
     inventory: 27,
+    branchName: "Durham NC #1",
+    allBranches: 180,
   },
 ];
 
@@ -528,11 +543,14 @@ function DetailRow({
     </Button>
   );
 
-  // Availability: "Inventory" over the stock line ("168 In Stock" / "Out of stock").
+  // Availability: the DS InventoryLine — on-hand at branch + network total.
   const availabilityLine = (
-    <StockStatus qty={inv}>
-      {inv > 0 ? `${inv} In Stock` : "Out of stock"}
-    </StockStatus>
+    <InventoryLine
+      className="items-center text-center"
+      branchQty={inv}
+      branchName={product.branchName ?? "Durham NC #1"}
+      allBranchesQty={product.allBranches ?? inv}
+    />
   );
 
   return (
@@ -577,7 +595,6 @@ function DetailRow({
 
         {/* Col 4 — Availability (centered in its column) */}
         <div className="flex flex-col items-center gap-1 text-center">
-          <span className="text-xs text-muted-foreground">Inventory</span>
           {availabilityLine}
           {product.replacement ? <ReplacementBadge /> : null}
         </div>
@@ -656,10 +673,7 @@ function DetailRow({
         {/* Label · Availability · Price wrap beneath the details */}
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
           {labelNode}
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">Inventory</span>
-            {availabilityLine}
-          </div>
+          {availabilityLine}
           <span className="text-sm">
             <span className="font-semibold">{formatUSD(product.price)}</span>
             <span className="text-muted-foreground"> / EACH</span>
