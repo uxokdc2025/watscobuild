@@ -247,7 +247,8 @@ function WizardLookup() {
   );
 }
 
-/* System Type row (shared). */
+/* System Type row (shared). First/driving row — just the selector, no Equals
+   or attribute-label cell (per client direction). */
 function SystemTypeRow({
   value,
   onChange,
@@ -256,23 +257,20 @@ function SystemTypeRow({
   onChange: (v: string) => void;
 }) {
   return (
-    <FilterRow
-      attribute="System Type"
-      valueNode={
-        <Select value={value} onValueChange={onChange}>
-          <SelectTrigger className="w-full" aria-label="System Type value">
-            <SelectValue placeholder="Select system type" />
-          </SelectTrigger>
-          <SelectContent>
-            {SYSTEM_TYPES.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      }
-    />
+    <div className="w-full sm:w-48">
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className="w-full" aria-label="System Type">
+          <SelectValue placeholder="Select system type" />
+        </SelectTrigger>
+        <SelectContent>
+          {SYSTEM_TYPES.map((t) => (
+            <SelectItem key={t.id} value={t.id}>
+              {t.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
 

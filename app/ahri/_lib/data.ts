@@ -29,26 +29,26 @@ export type SystemType = {
 
 export const SYSTEM_TYPES: SystemType[] = [
   {
-    id: "furnace-coil",
-    label: "Furnace + Indoor Coil",
-    tagline: "Pair a gas furnace and cased coil with your outdoor unit.",
-    icon: "flame",
-  },
-  {
     id: "air-handler",
     label: "Air Handler",
     tagline: "Match an air handler to a heat pump or condenser.",
     icon: "fan",
   },
   {
+    id: "furnace-coil",
+    label: "Furnace + Indoor Coil",
+    tagline: "Pair a gas furnace and cased coil with your outdoor unit.",
+    icon: "flame",
+  },
+  {
     id: "indoor-coil",
-    label: "Indoor Coil Only",
+    label: "Indoor Coil",
     tagline: "Find a cased or uncased coil that matches your system.",
     icon: "snowflake",
   },
   {
     id: "mobile-home",
-    label: "Mobile Home Coils",
+    label: "Mortex Mobile Home Coils",
     tagline: "Coils engineered for manufactured-home applications.",
     icon: "home",
   },
@@ -666,12 +666,16 @@ const STEP_DEFS: Record<string, WizardStep> = {
   },
 };
 
-/** Required step sequence per system type (System Type itself is step 0). */
+/** Required step sequence per system type (System Type itself is step 0).
+ *  Only Furnace + Indoor Coil needs follow-up specs (AFUE/BTU/Air Flow); the
+ *  coil/air-handler types match the outdoor unit directly, so choosing the
+ *  system type shows matched systems immediately (further narrowing is
+ *  available via "Add filter"). */
 export const WIZARD_STEPS: Record<SystemTypeId, WizardStep[]> = {
   "furnace-coil": [STEP_DEFS.afue, STEP_DEFS.btu, STEP_DEFS.airflow],
-  "air-handler": [STEP_DEFS.seer2, STEP_DEFS.tonnage, STEP_DEFS.airflow],
-  "indoor-coil": [STEP_DEFS.tonnage, STEP_DEFS.airflow],
-  "mobile-home": [STEP_DEFS.tonnage, STEP_DEFS.airflow],
+  "air-handler": [],
+  "indoor-coil": [],
+  "mobile-home": [],
 };
 
 export type WizardSelection = { key: string; op: Operator; value: string };
