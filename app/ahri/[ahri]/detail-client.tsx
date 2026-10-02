@@ -88,7 +88,7 @@ export function AhriSystemDetail({ system }: { system: AhriSystem }) {
 
       <div className="mt-6 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_22rem]">
         {/* Components */}
-        <section aria-label="System components" className="flex flex-col gap-4">
+        <section aria-label="System components" className="flex min-w-0 flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold tracking-tight">
               System components
@@ -151,41 +151,66 @@ export function AhriSystemDetail({ system }: { system: AhriSystem }) {
   );
 }
 
-/* ── One component card (Outdoor / Indoor Coil / Furnace / Air Handler) ── */
+/* ── One component row — canonical storefront list pattern:
+   [image] [capped description → specs flow down] [availability, own centered
+   column] [price]. Matches the PLP / cart / AHRI-results rows. ── */
 function ComponentCard({ c }: { c: AhriComponent }) {
+  const details = (
+    <div className="min-w-0">
+      <p className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+        {c.role} · {c.brand}
+      </p>
+      <Link href={componentHref(c)} className="mt-0.5 line-clamp-2 block text-sm font-semibold text-primary hover:underline">
+        {c.title}
+      </Link>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Item {c.item} · MFG {c.model}
+      </p>
+      <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+        {c.specs.map((s) => (
+          <span key={s.label}>
+            <span className="text-foreground/70">{s.label}:</span>{" "}
+            <span className="font-medium text-foreground">{s.value}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+  const price = (
+    <div className="sm:text-right">
+      <span className="text-lg font-bold tabular-nums">{formatUSD(c.price)}</span>
+      <span className="ml-1 text-[11px] text-muted-foreground">/ EACH</span>
+    </div>
+  );
   return (
-    <div className="grid grid-cols-[auto_1fr] gap-4 rounded-2xl border p-4 sm:grid-cols-[7rem_1fr_auto] sm:gap-5 sm:p-5">
-      <ThumbTile kind={c.kind} src={c.image} alt={c.title} className="size-20 sm:size-28" />
-
-      <div className="min-w-0">
-        <p className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-          {c.role} · {c.brand}
-        </p>
-        <Link href={componentHref(c)} className="mt-0.5 block text-sm font-semibold text-primary hover:underline">
-          {c.title}
-        </Link>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Item {c.item} &nbsp;·&nbsp; MFG {c.model}
-        </p>
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
-          {c.specs.map((s) => (
-            <span key={s.label}>
-              <span className="text-foreground/70">{s.label}:</span>{" "}
-              <span className="font-medium text-foreground">{s.value}</span>
-            </span>
-          ))}
-        </div>
+    <div className="rounded-2xl border p-4 sm:p-5">
+      {/* Desktop — [image] [capped desc] [availability, centered] [price] */}
+      <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
+        <ThumbTile kind={c.kind} src={c.image} alt={c.title} className="size-24" />
+        {details}
         <InventoryLine
-          className="mt-2"
+          className="items-center text-center"
           branchQty={c.branchQty}
           branchName={c.branchName}
           allBranchesQty={c.allBranchesQty}
         />
+        <div className="justify-self-end">{price}</div>
       </div>
-
-      <div className="col-span-2 flex items-center justify-between border-t pt-3 sm:col-span-1 sm:w-32 sm:flex-col sm:items-end sm:justify-center sm:border-t-0 sm:pt-0">
-        <span className="text-lg font-bold tabular-nums">{formatUSD(c.price)}</span>
-        <span className="text-[11px] text-muted-foreground">/ EACH</span>
+      {/* Mobile — image + details on top, availability beneath, price */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        <div className="flex items-start gap-3">
+          <ThumbTile kind={c.kind} src={c.image} alt={c.title} className="size-20 shrink-0" />
+          <div className="min-w-0 flex-1">
+            {details}
+            <InventoryLine
+              className="mt-1.5"
+              branchQty={c.branchQty}
+              branchName={c.branchName}
+              allBranchesQty={c.allBranchesQty}
+            />
+          </div>
+        </div>
+        <div className="border-t pt-3">{price}</div>
       </div>
     </div>
   );
