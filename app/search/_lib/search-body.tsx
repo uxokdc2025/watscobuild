@@ -257,24 +257,28 @@ export function SearchBody({
                   className="space-y-0.5"
                 >
                   {displayLocations.map((location) => (
-                    <label
-                      key={location.value}
-                      className={cn(
-                        "flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                        stockLocation === location.value ? "bg-background font-medium shadow-sm" : "hover:bg-background/70",
-                      )}
-                    >
-                      <span className="flex items-center gap-2">
-                        <RadioGroupItem value={location.value} id={`loc-${location.value}`} />
-                        <span>{location.label}</span>
-                      </span>
-                      <span className="text-xs text-muted-foreground">({location.value === "all" ? totalResults : 0})</span>
-                    </label>
+                    <React.Fragment key={location.value}>
+                      <label
+                        className={cn(
+                          "flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                          stockLocation === location.value ? "bg-background font-medium shadow-sm" : "hover:bg-background/70",
+                        )}
+                      >
+                        <span className="flex items-center gap-2">
+                          <RadioGroupItem value={location.value} id={`loc-${location.value}`} />
+                          <span>{location.label}</span>
+                        </span>
+                        <span className="text-xs text-muted-foreground">({location.value === "all" ? totalResults : 0})</span>
+                      </label>
+                      {/* Change sits directly under the current ("Your Store") row */}
+                      {location.value === "your-branch" ? (
+                        <Link href="/store-locator/in-plp?v=c" className="block pl-8 text-xs font-medium text-primary hover:underline">
+                          Change
+                        </Link>
+                      ) : null}
+                    </React.Fragment>
                   ))}
                 </RadioGroup>
-                <Link href="/store-locator/in-plp?v=c" className="mt-1 block pl-8 text-xs font-medium text-primary hover:underline">
-                  Change
-                </Link>
               </section>
             )}
 
