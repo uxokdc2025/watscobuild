@@ -185,8 +185,6 @@ export default function CheckoutClient({
   const brand = getBrandCheckout(brandKey);
   const { items: cartItems } = useCart();
   const items = cartItems.length ? cartItems : (demo || scenario ? DEMO_ITEMS : []);
-  const backordered = items.filter((i) => BACKORDER_IDS.has(i.id));
-  const regular = items.filter((i) => !BACKORDER_IDS.has(i.id));
 
   // The default/first address starts selected. Delivery is date-gated: the
   // address cards + date field show on arrival, and the Ship-complete box +
@@ -368,6 +366,15 @@ export default function CheckoutClient({
       : `${methodLabel(method)} · ${branch.name}`;
     const paymentSummary = payment === "card" ? `Credit card •••• ${selectedCard.tail}` : paymentLabel(payment);
 
+    // v2 review lives on its own page (like v3): after Payment the flow routes
+    // to /checkout/v2/review.
+    const reviewParams = new URLSearchParams();
+    reviewParams.set("brand", brandKey);
+    if (demo) reviewParams.set("demo", "1");
+    if (scenario) reviewParams.set("case", scenario);
+    if (accountId) reviewParams.set("account", accountId);
+    const goToReview = () => router.push(`/checkout/v2/review?${reviewParams.toString()}`);
+
     const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
     const goToStep = (target: Step) => {
       setStep(target);
@@ -545,7 +552,7 @@ export default function CheckoutClient({
                       hideBack
                     />
                     <div className="flex justify-end border-t px-5 py-4">
-                      <Button size="sm" disabled={paymentContinueDisabled} onClick={() => goToStep("review")}>
+                      <Button size="sm" disabled={paymentContinueDisabled} onClick={goToReview}>
                         Continue to review
                       </Button>
                     </div>
@@ -559,48 +566,8 @@ export default function CheckoutClient({
                 )}
               </section>
 
-              {/* Review */}
-              <section className="rounded-md border bg-background shadow-sm" aria-label="Review">
-                <AnimatePresence initial={false}>
-                  {currentAccordionIndex === 3 ? (
-                    <motion.div
-                      key="body"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <SectionHeading number="4" title="Review" />
-                      <div className="p-5">
-                        <div className="space-y-4">
-                          {backordered.length > 0 ? (
-                            <Alert variant="warning">
-                              <TriangleAlert />
-                              <AlertTitle>Backordered items ({backordered.length})</AlertTitle>
-                              <AlertDescription>
-                                <p>Some items are available on backorder. We&apos;ll contact you with an estimated availability date.</p>
-                                <div className="mt-3 grid w-full gap-3">
-                                  {backordered.map((item) => (
-                                    <ReviewLine key={item.id} item={item} className="rounded-md border bg-background" />
-                                  ))}
-                                </div>
-                              </AlertDescription>
-                            </Alert>
-                          ) : null}
-                          <div className="rounded-md border">
-                            <div className="border-b px-5 py-4 font-semibold">Items ({regular.length})</div>
-                            {regular.map((item) => (
-                              <ReviewLine key={item.id} item={item} className="border-b last:border-0" />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-                {currentAccordionIndex === 3 ? null : futureHeader("4", "Review")}
-              </section>
+              {/* Review is its own page (v2) — reached via "Continue to review"
+                  / "Review Order", just like v3. No inline review section. */}
             </div>
 
             <OrderSummary
@@ -611,13 +578,12 @@ export default function CheckoutClient({
               shipping={shipping}
               shippingUnknown={shippingUnknown}
               total={total}
-              primary={{ label: "Place order", onClick: () => setSubmitted(true), disabled: step !== "review" }}
+              primary={{ label: "Review Order", onClick: goToReview, disabled: false }}
               coupon={coupon}
               setCoupon={setCoupon}
               appliedCoupon={appliedCoupon}
               onApplyCoupon={() => coupon.trim() && setAppliedCoupon(coupon.trim().toUpperCase())}
               showConfirm
-              saveQuoteDisabled={step !== "review"}
               onSaveQuote={() => toast.success("Quote saved — find it under Quotes in your account.")}
             />
           </div>
@@ -633,17 +599,16 @@ export default function CheckoutClient({
           onSetDefault={setDefaultAccountId}
         />
 
-        {/* Accordion (v2): the per-step Continue lives inside each card; the sticky
-            bar is the final Place order + Save quote, greyed until Review. */}
+        {/* Accordion (v2): per-step Continue lives inside each card; the sticky
+            bar is "Review Order" (routes to the v2 review page) + Save quote. */}
         <MobileCtaBar
-          label="Place order"
-          onClick={() => setSubmitted(true)}
-          disabled={placeOrderDisabled}
+          label="Review Order"
+          onClick={goToReview}
+          disabled={false}
           total={total}
           shippingUnknown={shippingUnknown}
           secondaryLabel="Save quote"
           onSecondary={saveQuote}
-          secondaryDisabled={step !== "review"}
         />
       </main>
     );

@@ -31,11 +31,14 @@ export default function ReviewPageClient({
   demo = false,
   brandKey = "homans",
   initialAccountId,
+  basePath = "/checkout/v3",
 }: {
   scenario?: CheckoutCase;
   demo?: boolean;
   brandKey?: string;
   initialAccountId?: string;
+  /** The open-checkout page this review belongs to (v3 or v2). */
+  basePath?: string;
 }) {
   const router = useRouter();
   const cfg = resolveScenario(scenario);
@@ -84,7 +87,7 @@ export default function ReviewPageClient({
   const placeOrderDisabled = cfg.showSpecialHandling && specialHandling && !handlingComments.trim();
 
   const saveQuote = () => toast.success("Quote saved — find it under Quotes in your account.");
-  const backHref = `/checkout/v3?brand=${brandKey}${demo ? "&demo=1" : ""}${scenario ? `&case=${scenario}` : ""}`;
+  const backHref = `${basePath}?brand=${brandKey}${demo ? "&demo=1" : ""}${scenario ? `&case=${scenario}` : ""}`;
 
   if (submitted) {
     return <OrderConfirmation brand={brand} />;
