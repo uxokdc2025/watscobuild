@@ -7,14 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { StockStatus } from "@/components/ui/label-badges";
 import { InventoryLine } from "@/app/ahri/_lib/parts";
-import { PreviewCode, Guidance } from "../_ds/code";
+import { PreviewCode } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
 
 const TOC = [
   { id: "pattern", label: "The pattern" },
   { id: "anatomy", label: "Anatomy" },
   { id: "where", label: "Where it's used" },
-  { id: "guidance", label: "Guidance" },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -136,16 +135,12 @@ function Row({ item }: { item: RowItem }) {
   );
 }
 
-/* The pattern as it actually appears — rows stacked one after another. */
+/* The pattern — a single canonical row. */
 function CanonicalRow() {
   return (
-    <ul className="w-full divide-y rounded-md border">
-      {SAMPLE_ROWS.map((item) => (
-        <li key={item.meta}>
-          <Row item={item} />
-        </li>
-      ))}
-    </ul>
+    <div className="w-full rounded-md border">
+      <Row item={SAMPLE_ROWS[0]} />
+    </div>
   );
 }
 
@@ -415,7 +410,7 @@ function ShoppingTable() {
           <span className="text-right">Actions</span>
         </div>
         {/* Data rows */}
-        {SHOP_ROWS.map((r, i) => (
+        {SHOP_ROWS.slice(0, 1).map((r, i) => (
           <div
             key={r.item}
             className={`grid ${LIST_GRID_COLS} items-center gap-x-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
@@ -481,65 +476,35 @@ const USAGES: { name: string; grid: string; desc: string; href: string; example:
     grid: "[96px · minmax(0,340px) · minmax(0,1fr) · auto]",
     desc: "Full-width rows with availability as its own centered middle column; capped description.",
     href: "/search?q=blower%20motor&signedin=1",
-    example: (
-      <div className="divide-y">
-        {SAMPLE_ROWS.slice(0, 2).map((item) => (
-          <Row key={item.meta} item={item} />
-        ))}
-      </div>
-    ),
+    example: <Row item={SAMPLE_ROWS[0]} />,
   },
   {
     name: "AHRI matched systems",
     grid: "[96px · minmax(0,340px) · minmax(0,1fr) · auto]",
     desc: "Same grid; the detail column shows AHRI# + headline + component models + a spec line.",
     href: "/pdp/uc-ahri-matched-system?signedin=1#ahri-lookup",
-    example: (
-      <div className="divide-y">
-        {AHRI_ROWS.map((s) => (
-          <AhriMatchedRow key={s.ahri} s={s} />
-        ))}
-      </div>
-    ),
+    example: <AhriMatchedRow s={AHRI_ROWS[0]} />,
   },
   {
     name: "AHRI system detail — components",
     grid: "[96px · minmax(0,340px) · minmax(0,1fr) · auto]",
     desc: "Outdoor / Indoor / Furnace component rows; availability its own centered column, specs flow down.",
     href: "/ahri/215217523",
-    example: (
-      <div className="divide-y">
-        {COMP_ROWS.map((c) => (
-          <ComponentRow key={c.model} c={c} />
-        ))}
-      </div>
-    ),
+    example: <ComponentRow c={COMP_ROWS[0]} />,
   },
   {
     name: "Cart line rows",
     grid: "image · title · qty · price (stacked on mobile)",
     desc: "Same storefront row; Qty stepper + price in the actions zone.",
     href: "/cart?demo=1",
-    example: (
-      <div className="divide-y">
-        {CART_ROWS.map((c) => (
-          <CartRow key={c.item} c={c} />
-        ))}
-      </div>
-    ),
+    example: <CartRow c={CART_ROWS[0]} />,
   },
   {
     name: "Checkout review rows",
     grid: "image · title · qty · price",
     desc: "The ReviewLine — a read-only variant of the row, shared across v1 / v2 / v3 review.",
     href: "/checkout/v3/review?demo=1",
-    example: (
-      <div className="divide-y">
-        {CART_ROWS.map((c) => (
-          <ReviewRow key={c.item} c={c} />
-        ))}
-      </div>
-    ),
+    example: <ReviewRow c={CART_ROWS[0]} />,
   },
   {
     name: "Shopping list — column table",
@@ -645,25 +610,6 @@ export default function ListViewsReference() {
               </div>
             ))}
           </div>
-        </section>
-
-        {/* ── Guidance ── */}
-        <section className="space-y-4">
-          <H2 id="guidance">Guidance</H2>
-          <Guidance
-            dos={[
-              <>Reuse this grid for any new product list — same zones, same order.</>,
-              <>Give availability its own centered column; use StockStatus / InventoryLine.</>,
-              <>Cap the description so the title clamps and specs flow down.</>,
-              <>Use a shared column constant so the header row aligns to the data rows.</>,
-            ]}
-            donts={[
-              <>Stack availability under the title (it loses its column).</>,
-              <>Let the description sprawl full-width on wide screens.</>,
-              <>Invent a new row layout per surface — there is one canonical row.</>,
-              <>Hand-roll inventory text instead of the DS inventory component.</>,
-            ]}
-          />
         </section>
       </main>
 
