@@ -52,9 +52,10 @@ import { toast } from "sonner";
  * The lead, Qty, and actions columns are fixed widths (not `auto`) precisely so
  * the header — which is a SEPARATE grid — aligns to the rows column-for-column. */
 const LIST_GRID_COLS =
-  // Product Details is capped so the title wraps (2–3 lines) instead of sprawling;
-  // Availability takes the slack (minmax → 1fr) so it centers between the columns.
-  "grid-cols-[2.75rem_minmax(0,340px)_120px_minmax(140px,1fr)_110px_7.5rem_9.5rem]";
+  // Columns are distributed evenly (fr units) to match the reference layout:
+  // Product Details widest, then Label · Availability · Price spread evenly;
+  // Qty (stepper) and Actions stay fixed. min-w-0 lets the flexible cells shrink.
+  "grid-cols-[2.75rem_minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_7.5rem_9rem]";
 
 /* ─────────────────────────── Demo data ─────────────────────────── */
 
@@ -596,8 +597,8 @@ function DetailRow({
 
         {/* Col 7 — Actions: Add + remove; View substitutes beneath when present */}
         <div className="flex flex-col items-stretch gap-2">
-          <div className="flex items-center justify-end gap-1.5">
-            <Button size="sm" className="flex-1" onClick={onAdd}>
+          <div className="flex items-center justify-end gap-3">
+            <Button size="sm" onClick={onAdd}>
               <ShoppingCart className="size-4" />
               Add
             </Button>
