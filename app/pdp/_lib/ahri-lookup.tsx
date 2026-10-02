@@ -291,11 +291,11 @@ function StepRow({
       attribute={step.label}
       operatorNode={
         step.kind === "numeric" ? (
-          // Operator pre-filled to Equals (changeable to ≤/≥); not an empty
-          // "Select filter". The attribute label (right) stays non-editable.
-          <Select value={state?.op ?? "eq"} onValueChange={(v) => onOp(v as Operator)}>
+          // Operator defaults to "Choose" (prompt), changeable to Equals/≤/≥.
+          // The attribute label (right) stays non-editable.
+          <Select value={state?.op ?? ""} onValueChange={(v) => onOp(v as Operator)}>
             <SelectTrigger className="w-full" aria-label={`${step.label} operator`}>
-              <SelectValue placeholder="Equals" />
+              <SelectValue placeholder="Choose" />
             </SelectTrigger>
             <SelectContent>
               {(["eq", "lte", "gte"] as Operator[]).map((op) => (
@@ -310,7 +310,7 @@ function StepRow({
       valueNode={
         <Select value={state?.value ?? ""} onValueChange={onValue}>
           <SelectTrigger className="w-full" aria-label={`${step.label} value`}>
-            <SelectValue placeholder="Select value" />
+            <SelectValue placeholder={`Choose filter ${step.label}`} />
           </SelectTrigger>
           <SelectContent>
             {step.options.map((o) => (
