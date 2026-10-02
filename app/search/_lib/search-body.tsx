@@ -229,7 +229,7 @@ export function SearchBody({
                     </span>
                     <span className="text-xs text-muted-foreground">(5)</span>
                   </label>
-                  <Link href="/store-locator/in-plp?v=c" className="block px-2 text-xs font-medium text-primary hover:underline">
+                  <Link href="/store-locator/in-plp?v=c" className="block pl-8 text-xs font-medium text-primary hover:underline">
                     Change
                   </Link>
                   <label
@@ -272,7 +272,7 @@ export function SearchBody({
                     </label>
                   ))}
                 </RadioGroup>
-                <Link href="/store-locator/in-plp?v=c" className="text-xs font-medium text-primary hover:underline">
+                <Link href="/store-locator/in-plp?v=c" className="mt-1 block pl-8 text-xs font-medium text-primary hover:underline">
                   Change
                 </Link>
               </section>
