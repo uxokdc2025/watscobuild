@@ -97,6 +97,11 @@ function WizardLookup() {
         }),
       )
     : [];
+  // Collapse to chips + results only when the flow is done AND there are
+  // matches. When the completed flow yields nothing, keep the filter rows
+  // visible and show a "no results" message instead.
+  const showChips = allComplete && matches.length > 0;
+  const noResults = allComplete && matches.length === 0;
 
   function pickSystemType(v: string) {
     setSystemType(v as SystemTypeId);
@@ -135,13 +140,13 @@ function WizardLookup() {
       <div>
         <h3 className="text-base font-bold tracking-tight">Select System Options</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          {allComplete
+          {showChips
             ? "Matched systems for your selections. Edit a chip to change a step, or add a filter to narrow further."
             : "Answer each option in turn — matched systems appear once the required options are set."}
         </p>
       </div>
 
-      {allComplete ? (
+      {showChips ? (
         <>
           <ChipBar
             systemType={systemType as SystemTypeId}
@@ -241,6 +246,12 @@ function WizardLookup() {
               onValue={(v) => setStepValue(step.key, v)}
             />
           ))}
+
+          {noResults ? (
+            <p className="text-sm font-medium text-destructive">
+              There are no results for the selected filter.
+            </p>
+          ) : null}
         </div>
       )}
     </div>
@@ -489,8 +500,8 @@ function ResultsList({ matches }: { matches: AhriSystem[] }) {
         {matches.length} matched {matches.length === 1 ? "system" : "systems"}
       </h4>
       {matches.length === 0 ? (
-        <div className="rounded-xl border border-dashed px-6 py-12 text-center text-sm text-muted-foreground">
-          No systems match those selections. Edit a step to broaden the search.
+        <div className="rounded-xl border border-dashed px-6 py-12 text-center text-sm font-medium text-destructive">
+          There are no results for the selected filter.
         </div>
       ) : (
         <ul className="divide-y rounded-xl border">
