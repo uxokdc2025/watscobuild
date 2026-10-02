@@ -22,42 +22,135 @@ function H2({ id, children }: { id: string; children: React.ReactNode }) {
   );
 }
 
+/* Sample rows for the pattern preview — a few real-looking parts so the row
+   reads as a list, one after another, with both in-stock and to-order states. */
+type RowItem = {
+  brand: string;
+  title: string;
+  meta: string;
+  qty: number;
+  branch: string;
+  price: string;
+};
+const SAMPLE_ROWS: RowItem[] = [
+  {
+    brand: "TRADEPRO®",
+    title: "TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230V, 1/2 HP",
+    meta: "Item: 54510A · MFG: TP-EC13-50",
+    qty: 168,
+    branch: "Durham NC #1",
+    price: "$168.42",
+  },
+  {
+    brand: "TRADEPRO®",
+    title: "TP-CAP-370-455 — Run Capacitor, 45/5 MFD, 370V, Round Dual",
+    meta: "Item: 11822 · MFG: TP-CAP-370-455",
+    qty: 1240,
+    branch: "Durham NC #1",
+    price: "$12.87",
+  },
+  {
+    brand: "TRADEPRO®",
+    title: "TP-CONT-2P30 — Contactor, 2-Pole, 30 Amp, 24V Coil",
+    meta: "Item: 90313 · MFG: TP-CONT-2P30",
+    qty: 54,
+    branch: "Durham NC #1",
+    price: "$19.95",
+  },
+  {
+    brand: "TRADEPRO®",
+    title: "TP-TXV-R410-3 — Thermostatic Expansion Valve, R-410A, 3 Ton, Bi-Flow",
+    meta: "Item: 66145 · MFG: TP-TXV-R410-3",
+    qty: 0,
+    branch: "Durham NC #1",
+    price: "$78.30",
+  },
+];
+
 /* The one canonical storefront list row: [image] [capped description]
    [availability, its own centered column] [price + action]. Full width on
-   mobile it stacks; at sm+ it's the 4-zone grid below. */
-function CanonicalRow() {
+   mobile it stacks; at sm+ it's the 4-zone grid. */
+function Row({ item }: { item: RowItem }) {
+  const inStock = item.qty > 0;
+  const availability = (
+    <div className="text-xs">
+      <span
+        className={`inline-flex items-center gap-1.5 font-semibold ${
+          inStock ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"
+        }`}
+      >
+        <span
+          className={`size-1.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-amber-500"}`}
+          aria-hidden
+        />
+        {inStock ? `${item.qty.toLocaleString()} In Stock` : "To Order"}
+      </span>
+      <p className="text-muted-foreground">{item.branch}</p>
+    </div>
+  );
+  const price = (
+    <p className="text-base font-semibold text-price">
+      {item.price}
+      <span className="ml-1 text-xs font-normal text-muted-foreground">/ EACH</span>
+    </p>
+  );
+  const details = (
+    <div className="min-w-0">
+      <p className="truncate text-xs font-medium text-primary">{item.brand}</p>
+      <p className="line-clamp-3 text-sm font-semibold leading-snug">{item.title}</p>
+      <p className="mt-1 truncate text-xs text-muted-foreground">{item.meta}</p>
+    </div>
+  );
   return (
-    <article className="w-full rounded-md border p-4">
+    <article className="p-4">
+      {/* Desktop — [image] [capped description] [availability, centered] [price + action] */}
       <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
         <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
           <ImageOff className="size-6 opacity-40" aria-hidden />
         </div>
-        <div className="min-w-0">
-          <p className="truncate text-xs font-medium text-primary">TRADEPRO®</p>
-          <p className="line-clamp-3 text-sm font-semibold leading-snug">
-            TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230V, 1/2 HP
-          </p>
-          <p className="mt-1 truncate text-xs text-muted-foreground">Item: 54510A · MFG: TP-EC13-50</p>
-        </div>
-        <div className="text-center text-xs">
-          <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-700">
-            <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden />
-            168 In Stock
-          </span>
-          <p className="text-muted-foreground">Durham NC #1</p>
-        </div>
+        {details}
+        <div className="text-center">{availability}</div>
         <div className="justify-self-end text-right">
-          <p className="text-base font-semibold text-price">
-            $168.42
-            <span className="ml-1 text-xs font-normal text-muted-foreground">/ EACH</span>
-          </p>
+          {price}
           <Button size="sm" className="mt-2">
             <ShoppingCart className="size-4" />
             Add
           </Button>
         </div>
       </div>
+      {/* Mobile — image + details stacked, availability beneath, action full width */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        <div className="flex items-start gap-3">
+          <div className="grid size-20 shrink-0 place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
+            <ImageOff className="size-6 opacity-40" aria-hidden />
+          </div>
+          <div className="min-w-0 flex-1">
+            {details}
+            <div className="mt-1.5">{availability}</div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          {price}
+          <Button size="sm">
+            <ShoppingCart className="size-4" />
+            Add
+          </Button>
+        </div>
+      </div>
     </article>
+  );
+}
+
+/* The pattern as it actually appears — rows stacked one after another. */
+function CanonicalRow() {
+  return (
+    <ul className="w-full divide-y rounded-md border">
+      {SAMPLE_ROWS.map((item) => (
+        <li key={item.meta}>
+          <Row item={item} />
+        </li>
+      ))}
+    </ul>
   );
 }
 
