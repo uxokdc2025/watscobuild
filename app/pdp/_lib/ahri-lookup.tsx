@@ -291,9 +291,11 @@ function StepRow({
       attribute={step.label}
       operatorNode={
         step.kind === "numeric" ? (
-          <Select value={state?.op ?? ""} onValueChange={(v) => onOp(v as Operator)}>
+          // Operator pre-filled to Equals (changeable to ≤/≥); not an empty
+          // "Select filter". The attribute label (right) stays non-editable.
+          <Select value={state?.op ?? "eq"} onValueChange={(v) => onOp(v as Operator)}>
             <SelectTrigger className="w-full" aria-label={`${step.label} operator`}>
-              <SelectValue placeholder="Select filter" />
+              <SelectValue placeholder="Equals" />
             </SelectTrigger>
             <SelectContent>
               {(["eq", "lte", "gte"] as Operator[]).map((op) => (
