@@ -230,71 +230,99 @@ function WizardLookup() {
         </>
       ) : (
         <div className="flex flex-col gap-2.5">
-          {/* System Type (operator fixed) */}
-          <FilterRow
-            attribute="System Type"
-            valueNode={
-              <Select value={systemType} onValueChange={pickSystemType}>
-                <SelectTrigger className="w-full" aria-label="System Type value">
-                  <SelectValue placeholder="Select system type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SYSTEM_TYPES.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>
-                      {t.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            }
-          />
+          <SystemTypeRow value={systemType} onChange={pickSystemType} />
 
           {/* Revealed steps, one at a time */}
           {revealed.map((step) => (
-            <FilterRow
+            <StepRow
               key={step.key}
-              attribute={step.label}
-              operatorNode={
-                step.kind === "numeric" ? (
-                  <Select
-                    value={sel[step.key]?.op ?? ""}
-                    onValueChange={(v) => setStepOp(step.key, v as Operator)}
-                  >
-                    <SelectTrigger className="w-full" aria-label={`${step.label} operator`}>
-                      <SelectValue placeholder="Select filter" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(["eq", "lte", "gte"] as Operator[]).map((op) => (
-                        <SelectItem key={op} value={op}>
-                          {OPERATOR_LABEL[op]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : undefined
-              }
-              valueNode={
-                <Select
-                  value={sel[step.key]?.value ?? ""}
-                  onValueChange={(v) => setStepValue(step.key, v)}
-                >
-                  <SelectTrigger className="w-full" aria-label={`${step.label} value`}>
-                    <SelectValue placeholder="Select value" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {step.options.map((o) => (
-                      <SelectItem key={o.value} value={o.value}>
-                        {o.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              }
+              step={step}
+              state={sel[step.key]}
+              onOp={(op) => setStepOp(step.key, op)}
+              onValue={(v) => setStepValue(step.key, v)}
             />
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+/* System Type row (shared). */
+function SystemTypeRow({
+  value,
+  onChange,
+}: {
+  value: SystemTypeId | "";
+  onChange: (v: string) => void;
+}) {
+  return (
+    <FilterRow
+      attribute="System Type"
+      valueNode={
+        <Select value={value} onValueChange={onChange}>
+          <SelectTrigger className="w-full" aria-label="System Type value">
+            <SelectValue placeholder="Select system type" />
+          </SelectTrigger>
+          <SelectContent>
+            {SYSTEM_TYPES.map((t) => (
+              <SelectItem key={t.id} value={t.id}>
+                {t.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      }
+    />
+  );
+}
+
+/* One wizard step row (shared by the guided + all-open versions). */
+function StepRow({
+  step,
+  state,
+  onOp,
+  onValue,
+}: {
+  step: WizardStep;
+  state?: { op: Operator; value: string };
+  onOp: (op: Operator) => void;
+  onValue: (value: string) => void;
+}) {
+  return (
+    <FilterRow
+      attribute={step.label}
+      operatorNode={
+        step.kind === "numeric" ? (
+          <Select value={state?.op ?? ""} onValueChange={(v) => onOp(v as Operator)}>
+            <SelectTrigger className="w-full" aria-label={`${step.label} operator`}>
+              <SelectValue placeholder="Select filter" />
+            </SelectTrigger>
+            <SelectContent>
+              {(["eq", "lte", "gte"] as Operator[]).map((op) => (
+                <SelectItem key={op} value={op}>
+                  {OPERATOR_LABEL[op]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : undefined
+      }
+      valueNode={
+        <Select value={state?.value ?? ""} onValueChange={onValue}>
+          <SelectTrigger className="w-full" aria-label={`${step.label} value`}>
+            <SelectValue placeholder="Select value" />
+          </SelectTrigger>
+          <SelectContent>
+            {step.options.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      }
+    />
   );
 }
 
@@ -353,34 +381,28 @@ function ChipBar({
   );
 }
 
-/* ── V2 — all visible (pre-populated to the first system type) ── */
+/* ── V2 — all open (same flow as V1; every step shown at once) ── */
 type AddedFilter = { key: string; value: string };
 
 function AllVisibleLookup() {
   const [systemType, setSystemType] = React.useState<SystemTypeId>(SYSTEM_TYPES[0].id);
-  const [filters, setFilters] = React.useState<AddedFilter[]>([]);
+  const [sel, setSel] = React.useState<StepState>({});
 
-  const availableFilters = React.useMemo(
-    () => FILTERS.filter((f) => !f.appliesTo || f.appliesTo.includes(systemType)),
-    [systemType],
-  );
-  const unusedFilters = availableFilters.filter((f) => !filters.some((af) => af.key === f.key));
-
-  const matches = React.useMemo(
-    () =>
-      SYSTEMS.filter((s) => s.systemType === systemType).filter((s) =>
-        filters.every((af) => {
-          if (!af.value) return true;
-          const def = FILTERS.find((f) => f.key === af.key);
-          return def ? def.test(s, af.value) : true;
-        }),
-      ),
-    [systemType, filters],
-  );
+  const steps = WIZARD_STEPS[systemType];
+  const selections: WizardSelection[] = steps
+    .filter((st) => sel[st.key]?.value)
+    .map((st) => ({ key: st.key, op: sel[st.key].op, value: sel[st.key].value }));
+  const matches = wizardMatches(systemType, selections);
 
   function changeSystemType(v: string) {
     setSystemType(v as SystemTypeId);
-    setFilters([]);
+    setSel({});
+  }
+  function setStepValue(key: string, value: string) {
+    setSel((p) => ({ ...p, [key]: { op: p[key]?.op ?? "eq", value } }));
+  }
+  function setStepOp(key: string, op: Operator) {
+    setSel((p) => ({ ...p, [key]: { op, value: p[key]?.value ?? "" } }));
   }
 
   return (
@@ -388,97 +410,21 @@ function AllVisibleLookup() {
       <div>
         <h3 className="text-base font-bold tracking-tight">Select System Options</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Change the system type or add filters to narrow the matched systems below.
+          All options are shown — set any to narrow the matched systems below.
         </p>
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <FilterRow
-          attribute="System Type"
-          valueNode={
-            <Select value={systemType} onValueChange={changeSystemType}>
-              <SelectTrigger className="w-full" aria-label="System Type value">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {SYSTEM_TYPES.map((t) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    {t.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          }
-        />
-
-        {filters.map((af, idx) => {
-          const def = FILTERS.find((f) => f.key === af.key)!;
-          const attrOptions = availableFilters.filter(
-            (f) => f.key === af.key || !filters.some((o) => o.key === f.key),
-          );
-          return (
-            <FilterRow
-              key={`${af.key}-${idx}`}
-              attributeNode={
-                <Select
-                  value={af.key}
-                  onValueChange={(v) =>
-                    setFilters((f) => f.map((x, i) => (i === idx ? { key: v, value: "" } : x)))
-                  }
-                >
-                  <SelectTrigger className="w-full" aria-label="Filter attribute">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {attrOptions.map((f) => (
-                      <SelectItem key={f.key} value={f.key}>
-                        {f.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              }
-              valueNode={
-                <Select
-                  value={af.value}
-                  onValueChange={(v) =>
-                    setFilters((f) => f.map((x, i) => (i === idx ? { ...x, value: v } : x)))
-                  }
-                >
-                  <SelectTrigger className="w-full" aria-label={`${def.label} value`}>
-                    <SelectValue placeholder="Select value" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {def.options
-                      .filter((o) => o.value !== "any")
-                      .map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              }
-              onRemove={() => setFilters((f) => f.filter((_, i) => i !== idx))}
-            />
-          );
-        })}
-
-        {unusedFilters.length ? (
-          <div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const next = unusedFilters[0];
-                if (next) setFilters((f) => [...f, { key: next.key, value: "" }]);
-              }}
-            >
-              <Plus className="size-4" />
-              Add filter
-            </Button>
-          </div>
-        ) : null}
+        <SystemTypeRow value={systemType} onChange={changeSystemType} />
+        {steps.map((step) => (
+          <StepRow
+            key={step.key}
+            step={step}
+            state={sel[step.key]}
+            onOp={(op) => setStepOp(step.key, op)}
+            onValue={(v) => setStepValue(step.key, v)}
+          />
+        ))}
       </div>
 
       <ResultsList matches={matches} />
