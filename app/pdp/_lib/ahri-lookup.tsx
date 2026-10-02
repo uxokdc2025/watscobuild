@@ -57,7 +57,7 @@ export function AhriLookupTab() {
 }
 
 /* ── V1 — progressive wizard ── */
-type StepState = Record<string, { op: Operator; value: string }>;
+type StepState = Record<string, { op: Operator | ""; value: string }>;
 
 function WizardLookup() {
   const [systemType, setSystemType] = React.useState<SystemTypeId | "">("");
@@ -68,18 +68,25 @@ function WizardLookup() {
 
   const steps = systemType ? WIZARD_STEPS[systemType] : [];
 
-  // How many leading steps are fully answered (value set).
+  // A step is "answered" only when its value is set AND (for numeric steps) an
+  // operator has been explicitly chosen — only then does the next row appear.
+  const isAnswered = (st: WizardStep) => {
+    const s = sel[st.key];
+    if (!s?.value) return false;
+    return st.kind === "numeric" ? !!s.op : true;
+  };
+
   let completeCount = 0;
   for (; completeCount < steps.length; completeCount++) {
-    if (!sel[steps[completeCount].key]?.value) break;
+    if (!isAnswered(steps[completeCount])) break;
   }
   const allComplete = systemType !== "" && completeCount === steps.length;
-  // Reveal completed steps plus the current (first unanswered) one.
+  // Reveal answered steps plus the current (first unanswered) one.
   const revealed = steps.slice(0, Math.min(completeCount + 1, steps.length));
 
   const selections: WizardSelection[] = steps
-    .filter((st) => sel[st.key]?.value)
-    .map((st) => ({ key: st.key, op: sel[st.key].op, value: sel[st.key].value }));
+    .filter(isAnswered)
+    .map((st) => ({ key: st.key, op: (sel[st.key].op || "eq") as Operator, value: sel[st.key].value }));
   const stepKeys = new Set(steps.map((s) => s.key));
   const optionalFilters = systemType
     ? FILTERS.filter(
@@ -109,7 +116,7 @@ function WizardLookup() {
     setExtras([]);
   }
   function setStepValue(key: string, value: string) {
-    setSel((p) => ({ ...p, [key]: { op: p[key]?.op ?? "eq", value } }));
+    setSel((p) => ({ ...p, [key]: { op: p[key]?.op ?? "", value } }));
   }
   function setStepOp(key: string, op: Operator) {
     setSel((p) => ({ ...p, [key]: { op, value: p[key]?.value ?? "" } }));
@@ -293,7 +300,7 @@ function StepRow({
   onValue,
 }: {
   step: WizardStep;
-  state?: { op: Operator; value: string };
+  state?: { op: Operator | ""; value: string };
   onOp: (op: Operator) => void;
   onValue: (value: string) => void;
 }) {
@@ -357,7 +364,7 @@ function ChipBar({
       const valueLabel = st.options.find((o) => o.value === s.value)?.label ?? s.value;
       const text =
         st.kind === "numeric"
-          ? `${st.label} ${SIGN[s.op]} ${valueLabel}`
+          ? `${st.label} ${SIGN[(s.op || "eq") as Operator]} ${valueLabel}`
           : `${st.label}: ${valueLabel}`;
       return { key: st.key, label: text };
     }),
@@ -400,8 +407,8 @@ function AllVisibleLookup() {
 
   const steps = WIZARD_STEPS[systemType];
   const selections: WizardSelection[] = steps
-    .filter((st) => sel[st.key]?.value)
-    .map((st) => ({ key: st.key, op: sel[st.key].op, value: sel[st.key].value }));
+    .filter((st) => sel[st.key]?.value && (st.kind !== "numeric" || sel[st.key]?.op))
+    .map((st) => ({ key: st.key, op: (sel[st.key].op || "eq") as Operator, value: sel[st.key].value }));
   const matches = wizardMatches(systemType, selections);
 
   function changeSystemType(v: string) {
@@ -409,7 +416,7 @@ function AllVisibleLookup() {
     setSel({});
   }
   function setStepValue(key: string, value: string) {
-    setSel((p) => ({ ...p, [key]: { op: p[key]?.op ?? "eq", value } }));
+    setSel((p) => ({ ...p, [key]: { op: p[key]?.op ?? "", value } }));
   }
   function setStepOp(key: string, op: Operator) {
     setSel((p) => ({ ...p, [key]: { op, value: p[key]?.value ?? "" } }));
@@ -466,7 +473,7 @@ function FilterRow({
       {operatorNode ? (
         <div className="w-full sm:w-44">{operatorNode}</div>
       ) : (
-        <div className="flex h-9 w-full items-center rounded-md border bg-muted/40 px-3 text-sm text-muted-foreground sm:w-24">
+        <div className="flex h-9 w-full items-center rounded-md border bg-muted/40 px-3 text-sm text-muted-foreground sm:w-44">
           Equals
         </div>
       )}
