@@ -5,16 +5,7 @@ import { ChevronRight, ExternalLink, ImageOff, Minus, Plus, Replace, ShoppingCar
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { StockStatus } from "@/components/ui/label-badges";
 import { InventoryLine } from "@/app/ahri/_lib/parts";
-import { PreviewCode } from "../_ds/code";
-import { OnThisPage } from "../_ds/sidebar";
-
-const TOC = [
-  { id: "pattern", label: "The pattern" },
-  { id: "anatomy", label: "Anatomy" },
-  { id: "where", label: "Where it's used" },
-];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
   return (
@@ -132,15 +123,6 @@ function Row({ item }: { item: RowItem }) {
         </div>
       </div>
     </article>
-  );
-}
-
-/* The pattern — a single canonical row. */
-function CanonicalRow() {
-  return (
-    <div className="w-full rounded-md border">
-      <Row item={SAMPLE_ROWS[0]} />
-    </div>
   );
 }
 
@@ -390,10 +372,10 @@ function ReviewRow({ c }: { c: CartItemEx }) {
    the data rows via one shared column template. */
 const LIST_GRID_COLS =
   "grid-cols-[2.75rem_minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_7.5rem_9rem]";
-type ShopItem = { model: string; title: string; item: string; label: string; qty: number; onHand: number; price: string; replacement?: boolean };
+type ShopItem = { model: string; title: string; item: string; label: string; qty: number; onHand: number; branch: string; allBranches: number; price: string; replacement?: boolean };
 const SHOP_ROWS: ShopItem[] = [
-  { model: "TP-EC13-50", title: "TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1/2 HP", item: "54510A", label: "Preventative", qty: 4, onHand: 168, price: "$168.42" },
-  { model: "TP-CAP-370-455", title: "TP-CAP-370-455 — Run Capacitor, 45/5 MFD, 370V, Round Dual", item: "11822", label: "Consumable", qty: 12, onHand: 0, price: "$12.87", replacement: true },
+  { model: "TP-EC13-50", title: "TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1/2 HP", item: "54510A", label: "Preventative", qty: 4, onHand: 18, branch: "Durham NC #1", allBranches: 168, price: "$168.42" },
+  { model: "TP-CAP-370-455", title: "TP-CAP-370-455 — Run Capacitor, 45/5 MFD, 370V, Round Dual", item: "11822", label: "Consumable", qty: 12, onHand: 0, branch: "Durham NC #1", allBranches: 240, price: "$12.87", replacement: true },
 ];
 function ShoppingTable() {
   return (
@@ -435,10 +417,7 @@ function ShoppingTable() {
               </span>
             </div>
             <div className="flex flex-col items-center gap-1 text-center">
-              <span className="text-xs text-muted-foreground">Inventory</span>
-              <StockStatus qty={r.onHand}>
-                {r.onHand > 0 ? `${r.onHand} In Stock` : "Out of stock"}
-              </StockStatus>
+              <InventoryLine branchQty={r.onHand} branchName={r.branch} allBranchesQty={r.allBranches} />
               {r.replacement ? (
                 <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 dark:text-amber-400">
                   <Replace className="size-3" />
@@ -517,8 +496,8 @@ const USAGES: { name: string; grid: string; desc: string; href: string; example:
 
 export default function ListViewsReference() {
   return (
-    <div className="mx-auto flex max-w-6xl gap-10 px-4 py-10 md:px-8">
-      <main className="min-w-0 flex-1 space-y-12">
+    <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
+      <main className="min-w-0 space-y-12">
         <header className="space-y-3">
           <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
             Patterns
@@ -532,51 +511,6 @@ export default function ListViewsReference() {
             and <strong>price + action</strong>. Build new lists from this — never a one-off.
           </p>
         </header>
-
-        {/* ── The pattern ── */}
-        <section className="space-y-4">
-          <H2 id="pattern">The pattern</H2>
-          <p className="text-sm text-muted-foreground">
-            The 4-zone grid at <code className="rounded bg-muted px-1 py-0.5 text-xs">sm+</code>; it
-            stacks (image + details, availability beneath, action full width) below sm.
-          </p>
-          <PreviewCode
-            code={`<article className="rounded-md border p-4">
-  {/* Desktop — [image] [capped description] [availability, centered] [price + action] */}
-  <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
-    <Thumb />
-    <Details />                 {/* brand · title (line-clamp) · item/MFG */}
-    <div className="text-center">{availability}</div>
-    <div className="justify-self-end text-right">{price}{addButton}</div>
-  </div>
-  {/* Mobile — image+details stacked, availability beneath, action full width */}
-  <div className="flex flex-col gap-3 sm:hidden">…</div>
-</article>`}
-          >
-            <CanonicalRow />
-          </PreviewCode>
-        </section>
-
-        {/* ── Anatomy ── */}
-        <section className="space-y-4">
-          <H2 id="anatomy">Anatomy</H2>
-          <ol className="overflow-hidden rounded-xl border">
-            {[
-              { part: "Image", detail: "96px square tile (size-20 on mobile). DS placeholder when missing — never a broken image." },
-              { part: "Description", detail: "Capped at minmax(0,340px) so the title clamps (2–3 lines) and specs flow down, not across." },
-              { part: "Availability", detail: "Its own centered column (minmax(0,1fr)) — StockStatus / InventoryLine, never stacked under the title." },
-              { part: "Price + action", detail: "Right-aligned (justify-self-end): price + the DS Add button (and Qty stepper where the list is editable)." },
-            ].map((a, i) => (
-              <li key={a.part} className="flex gap-4 border-b px-4 py-3 last:border-0 sm:items-baseline">
-                <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-muted text-[11px] font-semibold tabular-nums text-muted-foreground">
-                  {i + 1}
-                </span>
-                <span className="w-32 shrink-0 text-sm font-medium">{a.part}</span>
-                <span className="text-sm text-muted-foreground">{a.detail}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
 
         {/* ── Where it's used ── */}
         <section className="space-y-6">
@@ -612,8 +546,6 @@ export default function ListViewsReference() {
           </div>
         </section>
       </main>
-
-      <OnThisPage items={TOC} />
     </div>
   );
 }
