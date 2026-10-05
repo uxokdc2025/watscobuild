@@ -185,9 +185,43 @@ function TemplateCard({
   );
 }
 
-/* ── Today's changes — a dated, at-a-glance review list for Ryan & Melissa.
-   New work lands here at the top; everything else lives in the sections below. */
-const TODAYS_CHANGES: { title: string; desc: string; links: { label: string; href: string }[] }[] = [
+/* ── Change log — grouped by review date. Each date is its own collapsible
+   folder; the newest sits open at the top, older dates collapse below. New
+   work lands in a new dated folder (newest first). */
+type ChangeItem = { title: string; desc: string; links: { label: string; href: string }[] };
+type ChangeLog = { id: string; date: string; items: ChangeItem[] };
+
+const CHANGE_LOGS: ChangeLog[] = [
+  {
+    id: "oct-3-2026",
+    date: "Oct 3, 2026",
+    items: [
+      {
+        title: "AHRI matched systems — table view + columns (all-open)",
+        desc: "The all-open AHRI view now has the same top-right controls as the step-by-step flow: switch between list and table, and choose which spec columns show.",
+        links: [{ label: "AHRI all-open view", href: "/pdp/uc-ahri-matched-system?signedin=1&ahri=all" }],
+      },
+      {
+        title: "List Views — every pattern shown live",
+        desc: "The List Views reference renders each list variant live (one row each) on the shared design-system stock component — PLP, AHRI matched, AHRI detail components, cart, checkout review, and the shopping-list table.",
+        links: [{ label: "List Views", href: "/components/list-views" }],
+      },
+      {
+        title: "Shopping list — design-system stock line",
+        desc: "Availability now uses the design-system component (on-hand at your branch + total across all branches), matching how every other list shows stock.",
+        links: [{ label: "Shopping list", href: "/dashboard/shopping-lists/hvac-maintenance-kit" }],
+      },
+      {
+        title: "Search — “Change” store link",
+        desc: "The “Change” link now lines up with the store name and sits directly under the currently selected store, in both the radio and checkbox availability variants.",
+        links: [{ label: "Search (PLP)", href: "/search?q=blower%20motor&signedin=1" }],
+      },
+    ],
+  },
+  {
+    id: "sep-29-2026",
+    date: "Sep 29, 2026",
+    items: [
   {
     title: "AHRI Lookup — in-PDP system builder (NEW)",
     desc: "Rebuilt to live inside the PDP's About tabs (Style 2 tab pattern): Description · Specifications · AHRI Lookup · Parts List. The AHRI Lookup tab is a filter builder — pick the required System Type (everything stays disabled until then), add refinement filters, and matched systems render in our canonical product-list-row grid. “View System” opens the system detail page.",
@@ -243,6 +277,8 @@ const TODAYS_CHANGES: { title: string; desc: string; links: { label: string; hre
     title: "Header & search refinements",
     desc: "Mega-menu column header (section name left, View all right, rule under), account panel actions (Change account primary, stacked), and tighter search-sidebar spacing.",
     links: [{ label: "Open PLP", href: "/search?q=blower%20motor&signedin=1" }],
+  },
+    ],
   },
 ];
 
@@ -342,35 +378,56 @@ export default function PdpMasterPage() {
           aria-labelledby="todays-changes"
           className="mt-8 rounded-xl border-2 border-primary/30 bg-primary/[0.04] p-5"
         >
-          <div className="flex flex-wrap items-center gap-3">
-            <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
-              New · Sep 29, 2026
-            </Badge>
-            <h2 id="todays-changes" className="text-lg font-bold tracking-tight">
-              Today&apos;s Changes
-            </h2>
-          </div>
+          <h2 id="todays-changes" className="text-lg font-bold tracking-tight">
+            Today&apos;s Changes
+          </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            New this session — click through to review each change.
+            Grouped by review date — newest open at the top; click through to review each change.
           </p>
-          <ul className="mt-4 flex flex-col gap-3">
-            {TODAYS_CHANGES.map((c) => (
-              <li key={c.title} className="rounded-lg border bg-card p-4">
-                <p className="font-semibold">{c.title}</p>
-                <p className="mt-0.5 text-sm text-muted-foreground">{c.desc}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {c.links.map((l) => (
-                    <Button key={l.href} asChild variant="outline" size="sm">
-                      <Link href={l.href} target="_blank" rel="noopener noreferrer">
-                        {l.label}
-                        <ArrowUpRight className="size-3.5" />
-                      </Link>
-                    </Button>
-                  ))}
-                </div>
-              </li>
+          <Accordion
+            type="multiple"
+            defaultValue={[CHANGE_LOGS[0].id]}
+            className="mt-4 flex flex-col gap-3"
+          >
+            {CHANGE_LOGS.map((log) => (
+              <AccordionItem
+                key={log.id}
+                value={log.id}
+                className="rounded-lg border bg-card px-4"
+              >
+                <AccordionTrigger className="hover:no-underline">
+                  <span className="flex items-center gap-3">
+                    <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
+                      {log.date}
+                    </Badge>
+                    <span className="text-sm font-semibold text-muted-foreground">
+                      {log.items.length} change{log.items.length === 1 ? "" : "s"}
+                    </span>
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="flex flex-col gap-3 pb-2">
+                    {log.items.map((c) => (
+                      <li key={c.title} className="rounded-lg border bg-background p-4">
+                        <p className="font-semibold">{c.title}</p>
+                        <p className="mt-0.5 text-sm text-muted-foreground">{c.desc}</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {c.links.map((l) => (
+                            <Button key={l.href} asChild variant="outline" size="sm">
+                              <Link href={l.href} target="_blank" rel="noopener noreferrer">
+                                {l.label}
+                                <ArrowUpRight className="size-3.5" />
+                              </Link>
+                            </Button>
+                          ))}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </ul>
+          </Accordion>
         </section>
 
         {/* Everything below is prior work, organized by area. Each section is
