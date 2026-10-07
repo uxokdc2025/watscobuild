@@ -50,9 +50,54 @@ export const ACCOUNT_ADDRESSES: Address[] = [
   },
 ];
 
+export const SAVED_ADDRESSES: Address[] = [
+  {
+    id: "saved-1",
+    kind: "user",
+    label: "Shop — main",
+    name: "David Whiteside",
+    company: "Whiteside Mechanical LLC",
+    street1: "613 Main Street",
+    street2: "Bay 2",
+    city: "Manchester",
+    state: "NH",
+    zip: "03102",
+    phone: "+1 603 555 0142",
+    isDefault: true,
+  },
+  {
+    id: "saved-2",
+    kind: "user",
+    label: "Nashua job site — Building B",
+    name: "Marcus Lee",
+    company: "Whiteside Mechanical LLC",
+    street1: "1248 Daniel Webster Hwy",
+    street2: "Building B",
+    city: "Nashua",
+    state: "NH",
+    zip: "03060",
+    phone: "+1 603 555 0187",
+    isDefault: false,
+  },
+  {
+    id: "saved-3",
+    kind: "user",
+    label: "Home office",
+    name: "David Whiteside",
+    company: "",
+    street1: "42 Birch Lane",
+    city: "Wilmington",
+    state: "MA",
+    zip: "01887",
+    phone: "+1 978 657 8990",
+    isDefault: false,
+  },
+];
+
 export const EMPTY_FORM: AddressFormData = {
   label: "",
-  name: "",
+  firstName: "",
+  lastName: "",
   company: "",
   street1: "",
   street2: "",
@@ -60,12 +105,14 @@ export const EMPTY_FORM: AddressFormData = {
   state: "",
   zip: "",
   phone: "",
+  isDefault: false,
 };
 
 export function validateAddressForm(form: AddressFormData): AddressFormErrors {
   const e: AddressFormErrors = {};
   if (!form.label.trim()) e.label = "Add a label so you can spot this address at checkout.";
-  if (!form.name.trim()) e.name = "Enter the recipient name.";
+  if (!form.firstName.trim()) e.firstName = "Enter the first name.";
+  if (!form.lastName.trim()) e.lastName = "Enter the last name.";
   if (!form.street1.trim()) e.street1 = "Enter the street address.";
   if (!form.city.trim()) e.city = "Enter the city.";
   if (!form.state.trim()) e.state = "Enter the state.";

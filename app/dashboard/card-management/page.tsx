@@ -95,23 +95,36 @@ const INITIAL_CARDS: PaymentCard[] = [
 export default function CardManagementPage() {
   const [cards, setCards] = useState(INITIAL_CARDS);
   const [open, setOpen] = useState(false);
-  function addCard(event: FormEvent<HTMLFormElement>) {
+  const [editing, setEditing] = useState<PaymentCard | null>(null);
+
+  function openAdd() {
+    setEditing(null);
+    setOpen(true);
+  }
+  function openEdit(card: PaymentCard) {
+    setEditing(card);
+    setOpen(true);
+  }
+  function saveCard(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setCards((current) => [
-      ...current,
-      {
-        id: Date.now(),
-        brand: "VISA",
-        name: "New payment card",
-        last4: "3456",
-        expires: "12/2029",
-        holder: "David Whiteside",
-        company: "Whiteside Mechanical LLC",
-        address: "613 Main Street\nManchester, NH 03102",
-        phone: "+1 978 657 8990",
-      },
-    ]);
+    if (!editing) {
+      setCards((current) => [
+        ...current,
+        {
+          id: Date.now(),
+          brand: "VISA",
+          name: "New payment card",
+          last4: "3456",
+          expires: "12/2029",
+          holder: "David Whiteside",
+          company: "Whiteside Mechanical LLC",
+          address: "613 Main Street\nManchester, NH 03102",
+          phone: "+1 978 657 8990",
+        },
+      ]);
+    }
     setOpen(false);
+    setEditing(null);
   }
 
   return (
@@ -119,7 +132,7 @@ export default function CardManagementPage() {
       title="Card Management"
       description="Manage payment methods securely for your account."
       actions={
-        <Button type="button" onClick={() => setOpen(true)} className="min-h-10">
+        <Button type="button" onClick={openAdd} className="min-h-10">
           <Plus aria-hidden="true" className="size-4" /> Add New Card
         </Button>
       }
@@ -165,7 +178,7 @@ export default function CardManagementPage() {
                 >
                   <Trash2 aria-hidden="true" className="size-4" /> Delete
                 </Button>
-                <Button type="button" className="h-10 w-[90px] text-[13px]">
+                <Button type="button" onClick={() => openEdit(card)} className="h-10 w-[90px] text-[13px]">
                   <Pencil aria-hidden="true" className="size-3.5" /> Edit
                 </Button>
               </div>
@@ -176,12 +189,14 @@ export default function CardManagementPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent drawerSide="right" className="top-0 right-0 left-auto h-svh max-h-none w-full max-w-none translate-x-0 translate-y-0 content-start overflow-y-auto rounded-none p-5 sm:max-w-[480px] sm:p-6">
           <DialogHeader>
-            <DialogTitle>Add New Card</DialogTitle>
+            <DialogTitle>{editing ? "Edit Card" : "Add New Card"}</DialogTitle>
             <DialogDescription>
-              Securely add a payment method for checkout.
+              {editing
+                ? `Update the details for ${editing.name}.`
+                : "Securely add a payment method for checkout."}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={addCard} className="space-y-5">
+          <form key={editing?.id ?? "new"} onSubmit={saveCard} className="space-y-5">
             <section className="space-y-4">
               <h2 className="font-semibold">Card Information</h2>
               <div>
@@ -234,6 +249,7 @@ export default function CardManagementPage() {
                   required
                   id="card-nickname"
                   placeholder="Store Supplies"
+                  defaultValue={editing?.name ?? ""}
                   className="mt-2 min-h-11"
                 />
               </div>
@@ -268,6 +284,7 @@ export default function CardManagementPage() {
                 </Label>
                 <Input
                   id="billing-company"
+                  defaultValue={editing?.company ?? ""}
                   className="mt-2 min-h-11"
                 />
               </div>
@@ -339,12 +356,13 @@ export default function CardManagementPage() {
                 <Input
                   required
                   id="billing-phone"
+                  defaultValue={editing?.phone ?? ""}
                   className="mt-2 min-h-11"
                 />
               </div>
             </section>
             <Button type="submit" size="lg" className="sticky bottom-0 z-10 w-full">
-              Save Card
+              {editing ? "Save changes" : "Save Card"}
             </Button>
           </form>
         </DialogContent>

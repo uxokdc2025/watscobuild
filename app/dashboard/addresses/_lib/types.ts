@@ -19,7 +19,8 @@ export type Address = {
 
 export type AddressFormData = {
   label: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   company: string;
   street1: string;
   street2: string;
@@ -27,6 +28,7 @@ export type AddressFormData = {
   state: string;
   zip: string;
   phone: string;
+  isDefault: boolean;
 };
 
 export type AddressFormErrors = Partial<Record<keyof AddressFormData, string>>;

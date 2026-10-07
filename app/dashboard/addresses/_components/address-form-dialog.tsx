@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -81,30 +82,46 @@ export function AddressFormDialog({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="addr-name">
-                Recipient name <span className="text-destructive">*</span>
+              <Label htmlFor="addr-first">
+                First name <span className="text-destructive">*</span>
               </Label>
               <Input
-                id="addr-name"
-                placeholder="David Whiteside"
-                value={form.name}
-                onChange={(e) => onChange({ name: e.target.value })}
-                aria-invalid={!!errors.name}
-                aria-describedby={errors.name ? "err-name" : undefined}
-                autoComplete="name"
+                id="addr-first"
+                placeholder="David"
+                value={form.firstName}
+                onChange={(e) => onChange({ firstName: e.target.value })}
+                aria-invalid={!!errors.firstName}
+                aria-describedby={errors.firstName ? "err-first" : undefined}
+                autoComplete="given-name"
               />
-              {errors.name ? <p id="err-name" className="text-xs text-destructive">{errors.name}</p> : null}
+              {errors.firstName ? <p id="err-first" className="text-xs text-destructive">{errors.firstName}</p> : null}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="addr-company">Company</Label>
+              <Label htmlFor="addr-last">
+                Last name <span className="text-destructive">*</span>
+              </Label>
               <Input
-                id="addr-company"
-                placeholder="Whiteside Mechanical LLC"
-                value={form.company}
-                onChange={(e) => onChange({ company: e.target.value })}
-                autoComplete="organization"
+                id="addr-last"
+                placeholder="Whiteside"
+                value={form.lastName}
+                onChange={(e) => onChange({ lastName: e.target.value })}
+                aria-invalid={!!errors.lastName}
+                aria-describedby={errors.lastName ? "err-last" : undefined}
+                autoComplete="family-name"
               />
+              {errors.lastName ? <p id="err-last" className="text-xs text-destructive">{errors.lastName}</p> : null}
             </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="addr-company">Company (optional)</Label>
+            <Input
+              id="addr-company"
+              placeholder="Whiteside Mechanical LLC"
+              value={form.company}
+              onChange={(e) => onChange({ company: e.target.value })}
+              autoComplete="organization"
+            />
           </div>
 
           <div className="space-y-1.5">
@@ -124,7 +141,7 @@ export function AddressFormDialog({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="addr-street2">Apt, suite, dock</Label>
+            <Label htmlFor="addr-street2">Street address 2 (optional)</Label>
             <Input
               id="addr-street2"
               placeholder="Suite 200, Dock B, Building C"
@@ -199,6 +216,17 @@ export function AddressFormDialog({
             />
             {errors.phone ? <p id="err-phone" className="text-xs text-destructive">{errors.phone}</p> : null}
             <p className="text-xs text-muted-foreground">Used for delivery updates and branch contact.</p>
+          </div>
+
+          <div className="flex min-h-11 items-center gap-3">
+            <Checkbox
+              id="addr-default"
+              checked={form.isDefault}
+              onCheckedChange={(v) => onChange({ isDefault: v === true })}
+            />
+            <Label htmlFor="addr-default" className="cursor-pointer">
+              Set as default
+            </Label>
           </div>
 
           <div className="sticky bottom-0 z-10 -mx-5 flex flex-col-reverse gap-3 border-t bg-background px-5 py-4 sm:-mx-6 sm:flex-row sm:justify-end sm:px-6">
