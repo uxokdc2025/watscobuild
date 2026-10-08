@@ -340,7 +340,7 @@ export default function DashboardPage() {
                     <td className="px-2 py-3 whitespace-nowrap">{order.orderedBy}</td>
                     <td className="px-2 py-3 text-right font-semibold whitespace-nowrap tabular-nums">{order.total}</td>
                     <td className="px-2 py-3 text-muted-foreground">{order.source}</td>
-                    <td className="px-2 py-3"><Badge variant="secondary">{order.status}</Badge></td>
+                    <td className="px-2 py-3"><Badge variant="soft" color="blue">{order.status}</Badge></td>
                     <td className="px-2 py-3 whitespace-nowrap">{order.account}</td>
                   </tr>
                 )) : <tr><td colSpan={8} className="px-2 py-8 text-center text-sm text-muted-foreground">No orders found.</td></tr>}

@@ -6,6 +6,7 @@ import { DashboardShell } from "../_components/dashboard-shell";
 import { accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +19,7 @@ import {
  * sign-off before they become orders. Columns: Approval # · Approval Rule ·
  * Requested By · Date · Cart Value · Items · Payment Method · Status. */
 type ApprovalLine = { name: string; item: string; qty: number; price: number };
-type ApprovalStatus = "To approve" | "Pending" | "Approved" | "Declined";
+type ApprovalStatus = "Pending" | "Approved" | "Declined";
 type ApprovalRequest = {
   number: string;
   rule: string;
@@ -29,12 +30,12 @@ type ApprovalRequest = {
   status: ApprovalStatus;
   lines: ApprovalLine[];
 };
-type TabKey = "To approve" | "Mine" | "Pending" | "Approved" | "Declined";
+type TabKey = ApprovalStatus;
 
-/** The signed-in user — "Mine" shows requests this person submitted. */
+/** The signed-in user who submitted some of these requests. */
 const CURRENT_USER = "David Whiteside";
 
-const TABS: TabKey[] = ["To approve", "Mine", "Pending", "Approved", "Declined"];
+const TABS: TabKey[] = ["Pending", "Approved", "Declined"];
 
 const INITIAL_REQUESTS: ApprovalRequest[] = [
   {
@@ -44,7 +45,7 @@ const INITIAL_REQUESTS: ApprovalRequest[] = [
     requestedByRole: "Manager",
     date: "10/06/2026",
     paymentMethod: "Invoice — Net 30",
-    status: "To approve",
+    status: "Pending",
     lines: [
       { name: "Goodman 3 Ton 14.3 SEER2 AC Condenser", item: "GSXH503610", qty: 2, price: 4205.0 },
       { name: "Cased Evaporator Coil, 3 Ton", item: "CAPTA4230C3", qty: 2, price: 1169.57 },
@@ -100,17 +101,16 @@ const cartValue = (r: ApprovalRequest) =>
 const itemCount = (r: ApprovalRequest) =>
   r.lines.reduce((s, l) => s + l.qty, 0);
 
-const STATUS_BADGE: Record<ApprovalStatus, "default" | "secondary" | "outline" | "destructive"> = {
-  "To approve": "default",
-  Pending: "secondary",
-  Approved: "outline",
-  Declined: "destructive",
+const STATUS_COLOR: Record<ApprovalStatus, "amber" | "green" | "red"> = {
+  Pending: "amber",
+  Approved: "green",
+  Declined: "red",
 };
 
-const matchesTab = (r: ApprovalRequest, tab: TabKey): boolean =>
-  tab === "Mine" ? r.requestedBy === CURRENT_USER : r.status === tab;
+const matchesTab = (r: ApprovalRequest, tab: TabKey): boolean => r.status === tab;
 
-/* ── Status tabs — outline pills; active = primary tint. ── */
+/* ── Status tabs — the Style-2 "connected bar, soft-blue active" pattern
+   (our established tabs, from /pdp/about-variants). ── */
 function StatusTabs({
   active,
   counts,
@@ -121,39 +121,23 @@ function StatusTabs({
   onChange: (t: TabKey) => void;
 }) {
   return (
-    <div
-      role="tablist"
-      aria-label="Approval status"
-      className="flex gap-2 overflow-x-auto pb-1"
-    >
-      {TABS.map((t) => {
-        const isActive = active === t;
-        return (
-          <Button
+    <Tabs value={active} onValueChange={(v) => onChange(v as TabKey)}>
+      <TabsList
+        aria-label="Approval status"
+        className="h-11 w-fit items-center gap-0 divide-x divide-border overflow-hidden rounded-md border border-border bg-white p-0"
+      >
+        {TABS.map((t) => (
+          <TabsTrigger
             key={t}
-            role="tab"
-            type="button"
-            variant="outline"
-            aria-selected={isActive}
-            onClick={() => onChange(t)}
-            className={`min-h-11 shrink-0 rounded-full px-4 ${
-              isActive
-                ? "border-primary bg-primary/10 font-semibold text-primary hover:bg-primary/10 hover:text-primary"
-                : ""
-            }`}
+            value={t}
+            className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--blue-100)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--blue-800)]! data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
           >
             {t}
-            <span
-              className={`tabular-nums text-xs ${
-                isActive ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              {counts[t]}
-            </span>
-          </Button>
-        );
-      })}
-    </div>
+            <span className="ml-1.5 tabular-nums text-xs text-muted-foreground">{counts[t]}</span>
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
   );
 }
 
@@ -168,7 +152,7 @@ function ApprovalDrawer({
   onDecide: (number: string, status: "Approved" | "Declined") => void;
 }) {
   const open = request !== null;
-  const actionable = request?.status === "To approve";
+  const actionable = request?.status === "Pending";
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent
@@ -181,7 +165,7 @@ function ApprovalDrawer({
               <div className="min-w-0">
                 <DialogTitle className="flex flex-wrap items-center gap-2">
                   Approval #{request.number}
-                  <Badge variant={STATUS_BADGE[request.status]}>{request.status}</Badge>
+                  <Badge variant="soft" color={STATUS_COLOR[request.status]}>{request.status}</Badge>
                 </DialogTitle>
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {request.requestedBy} ({request.requestedByRole}) · {request.date}
@@ -272,7 +256,7 @@ function DetailBlock({ title, children }: { title: string; children: React.React
 
 export default function PendingOrdersPage() {
   const [requests, setRequests] = useState<ApprovalRequest[]>(INITIAL_REQUESTS);
-  const [tab, setTab] = useState<TabKey>("To approve");
+  const [tab, setTab] = useState<TabKey>("Pending");
   const [perPage, setPerPage] = useState(18);
   const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
 
@@ -344,7 +328,7 @@ export default function PendingOrdersPage() {
                       {r.paymentMethod}
                     </td>
                     <td className={accountTable.cell}>
-                      <Badge variant={STATUS_BADGE[r.status]}>{r.status}</Badge>
+                      <Badge variant="soft" color={STATUS_COLOR[r.status]}>{r.status}</Badge>
                     </td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
                       <Button

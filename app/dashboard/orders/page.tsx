@@ -103,10 +103,10 @@ const ORDERS: Order[] = [
 const usd = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
-const STATUS_BADGE: Record<OrderStatus, "secondary" | "outline"> = {
-  OPEN: "secondary",
-  INVOICED: "outline",
-  VOID: "outline",
+const STATUS_COLOR: Record<OrderStatus, "blue" | "green" | "slate"> = {
+  OPEN: "blue",
+  INVOICED: "green",
+  VOID: "slate",
 };
 
 /* ── Find an Order — the reference filter bar (Order# / PO# / Item# / Branch /
@@ -199,7 +199,7 @@ function OrderDetailDrawer({ order, onClose }: { order: Order | null; onClose: (
               <div className="min-w-0">
                 <DialogTitle className="flex flex-wrap items-center gap-2">
                   Order #{order.number}
-                  <Badge variant={STATUS_BADGE[order.status]}>{order.status}</Badge>
+                  <Badge variant="soft" color={STATUS_COLOR[order.status]}>{order.status}</Badge>
                 </DialogTitle>
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {order.date} · {order.orderedBy} · Account {order.account}
@@ -367,7 +367,7 @@ export default function OrdersPage() {
                     </td>
                     <td className={`${accountTable.cell} text-muted-foreground`}>{o.source}</td>
                     <td className={accountTable.cell}>
-                      <Badge variant={STATUS_BADGE[o.status]}>{o.status}</Badge>
+                      <Badge variant="soft" color={STATUS_COLOR[o.status]}>{o.status}</Badge>
                     </td>
                     <td className={`${accountTable.cell} whitespace-nowrap`}>{o.account}</td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
