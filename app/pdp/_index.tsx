@@ -222,13 +222,8 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "AHRI matched systems — table view + columns (all-open)",
-        desc: "The all-open AHRI view now has the same top-right controls as the step-by-step flow: switch between list and table, and choose which spec columns show.",
-        links: [{ label: "AHRI all-open view", href: "/pdp/uc-ahri-matched-system?signedin=1&ahri=all" }],
-      },
-      {
         title: "List Views — every pattern shown live",
-        desc: "The List Views reference renders each list variant live (one row each) on the shared design-system stock component — PLP, AHRI matched, AHRI detail components, cart, checkout review, and the shopping-list table.",
+        desc: "The List Views reference renders each list variant live (one row each) on the shared design-system stock component — PLP, cart, checkout review, and the shopping-list table.",
         links: [{ label: "List Views", href: "/components/list-views" }],
       },
       {
@@ -240,89 +235,81 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
+        title: "Search results (PLP) — List view + availability nav",
+        desc: "List view is now a full-width horizontal list on the shared row pattern with DS Add-to-Cart buttons; a PLP v2 adds a checkbox “Shop By Availability” filter (Pick Up Today / All Stores) in our grey-box treatment.",
+        links: [
+          { label: "PLP (Grid/List)", href: "/search?q=blower%20motor&signedin=1" },
+          { label: "PLP v2 — availability checkboxes", href: "/search/plp-v2?signedin=1" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "previous",
+    badge: "Previous",
+    title: "Earlier passes — kept for reference",
+    items: [
+      {
+        title: "Checkout v3 — everything open",
+        desc: "All sections open on one page (no accordion, no per-section buttons); the Order Summary CTA is “Review Order”, and Review is its own page reusing the v1 review layout without the progress bar.",
+        links: [
+          { label: "Checkout v3", href: "/checkout/v3?demo=1" },
+          { label: "Review page", href: "/checkout/v3/review?demo=1" },
+        ],
+      },
+      {
+        title: "Cart & Checkout — mobile pass",
+        desc: "Sticky bottom CTAs, no inner-scroll lists, slimmer saved-card tiles, responsive item rows, and step auto-scroll — across both the horizontal (v1) and accordion (v2) flows.",
+        links: [
+          { label: "Cart", href: "/cart?demo=1" },
+          { label: "Checkout v1", href: "/checkout?demo=1" },
+          { label: "Checkout v2", href: "/checkout/v2?demo=1" },
+        ],
+      },
+      {
+        title: "Homans “Contact Us” — Limited Availability message",
+        desc: "The buy box and PLP cards now show “Limited Availability / Let us help you find this product / Contact Us” instead of a bare Contact Us link.",
+        links: [
+          { label: "PDP", href: "/pdp/homans-contact-us?signedin=1" },
+          { label: "PLP", href: "/search/homans-contact-us?signedin=1" },
+        ],
+      },
+      {
+        title: "Tab styles — Style 2 + icons",
+        desc: "Style 2 active segment is now a soft, AA-accessible light blue; Specifications uses a gauge icon and Part List a gear icon so they no longer read like Description.",
+        links: [{ label: "Tab styles", href: "/pdp/about-variants" }],
+      },
+      {
         title: "Search — “Change” store link",
         desc: "The “Change” link now lines up with the store name and sits directly under the currently selected store, in both the radio and checkbox availability variants.",
         links: [{ label: "Search (PLP)", href: "/search?q=blower%20motor&signedin=1" }],
       },
       {
-        title: "AHRI Lookup — in-PDP system builder (NEW)",
-    desc: "Rebuilt to live inside the PDP's About tabs (Style 2 tab pattern): Description · Specifications · AHRI Lookup · Parts List. The AHRI Lookup tab is a filter builder — pick the required System Type (everything stays disabled until then), add refinement filters, and matched systems render in our canonical product-list-row grid. “View System” opens the system detail page.",
-    links: [
-      { label: "PDP (GLZS4B heat pump)", href: "/pdp/uc-ahri-matched-system?signedin=1" },
-      { label: "System detail", href: "/ahri/215217523" },
-    ],
-  },
-  {
-    title: "Checkout v3 — everything open",
-    desc: "All sections open on one page (no accordion, no per-section buttons); the Order Summary CTA is “Review Order”, and Review is its own page reusing the v1 review layout without the progress bar.",
-    links: [
-      { label: "Checkout v3", href: "/checkout/v3?demo=1" },
-      { label: "Review page", href: "/checkout/v3/review?demo=1" },
-    ],
-  },
-  {
-    title: "Cart & Checkout — mobile pass",
-    desc: "Sticky bottom CTAs, no inner-scroll lists, slimmer saved-card tiles, responsive item rows, and step auto-scroll — across both the horizontal (v1) and accordion (v2) flows.",
-    links: [
-      { label: "Cart", href: "/cart?demo=1" },
-      { label: "Checkout v1", href: "/checkout?demo=1" },
-      { label: "Checkout v2", href: "/checkout/v2?demo=1" },
-    ],
-  },
-  {
-    title: "Homans “Contact Us” — Limited Availability message",
-    desc: "The buy box and PLP cards now show “Limited Availability / Let us help you find this product / Contact Us” instead of a bare Contact Us link.",
-    links: [
-      { label: "PDP", href: "/pdp/homans-contact-us?signedin=1" },
-      { label: "PLP", href: "/search/homans-contact-us?signedin=1" },
-    ],
-  },
-  {
-    title: "Tab styles — Style 2 + icons",
-    desc: "Style 2 active segment is now a soft, AA-accessible light blue; Specifications uses a gauge icon and Part List a gear icon so they no longer read like Description.",
-    links: [{ label: "Tab styles", href: "/pdp/about-variants" }],
-  },
-  {
-    title: "Search results (PLP) — List view + availability nav",
-    desc: "List view is now a full-width horizontal list on the shared row pattern with DS Add-to-Cart buttons; a PLP v2 adds a checkbox “Shop By Availability” filter (Pick Up Today / All Stores) in our grey-box treatment.",
-    links: [
-      { label: "PLP (Grid/List)", href: "/search?q=blower%20motor&signedin=1" },
-      { label: "PLP v2 — availability checkboxes", href: "/search/plp-v2?signedin=1" },
-    ],
-  },
-  {
-    title: "Header & search refinements",
-    desc: "Mega-menu column header (section name left, View all right, rule under), account panel actions (Change account primary, stacked), and tighter search-sidebar spacing.",
-    links: [{ label: "Open PLP", href: "/search?q=blower%20motor&signedin=1" }],
-  },
+        title: "Header & search refinements",
+        desc: "Mega-menu column header (section name left, View all right, rule under), account panel actions (Change account primary, stacked), and tighter search-sidebar spacing.",
+        links: [{ label: "Open PLP", href: "/search?q=blower%20motor&signedin=1" }],
+      },
     ],
   },
 ];
 
 export default function PdpMasterPage() {
   // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
-  const templates = pdps.filter((p) => p.slug !== "glasfloss-zlp17h211");
-  // In-review bucket: the PDP(s) David is actively reviewing right now.
-  // `uc-ahri-matched-system` is the canonical review PDP — it renders the
-  // full AHRI discovery pattern (Find AHRI outline button, matchup badge)
-  // that is the current review target.
-  const inReviewSlugs = ["uc-ahri-matched-system"];
+  // AHRI is out of scope for this review — its PDP is excluded everywhere.
+  const templates = pdps.filter(
+    (p) => p.slug !== "glasfloss-zlp17h211" && p.slug !== "uc-ahri-matched-system",
+  );
   const tabsAccordionsSlugs = ["uc-tabs-accordions"];
-  const inReview = templates.filter((p) => inReviewSlugs.includes(p.slug));
   const tabsAccordions = templates.filter((p) =>
     tabsAccordionsSlugs.includes(p.slug),
   );
   const useCases = templates.filter(
-    (p) =>
-      p.useCase &&
-      !inReviewSlugs.includes(p.slug) &&
-      !tabsAccordionsSlugs.includes(p.slug),
+    (p) => p.useCase && !tabsAccordionsSlugs.includes(p.slug),
   );
   const rest = templates.filter(
     (p) =>
       p.slug !== "ecmdi-pro-flush-v2" &&
       !p.useCase &&
-      !inReviewSlugs.includes(p.slug) &&
       !tabsAccordionsSlugs.includes(p.slug),
   );
   const inScope = rest
@@ -498,45 +485,14 @@ export default function PdpMasterPage() {
               <AccordionContent>
                 <p className="max-w-2xl text-sm text-muted-foreground">
                   One PDP per pattern — each demonstrates a specific state or badge
-                  (Replacement, AHRI matched system, pack size, bundle &amp; rebate,
-                  points, non-sellable, requires-license, strike-thru pricing). Open
+                  (Replacement, pack size, bundle &amp; rebate, points,
+                  non-sellable, requires-license, strike-thru pricing). Open
                   ours (signed in) next to the{" "}
                   <span className="font-medium text-foreground">reference</span> link
                   to compare.
                 </p>
                 <ul className="mt-4 flex flex-col gap-3 pb-2">
                   {useCases.map((p) => (
-                    <TemplateCard key={p.slug} p={p} signedInOnly />
-                  ))}
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-          ) : null}
-
-          {inReview.length ? (
-            <AccordionItem
-              value="in-review"
-              id="in-review"
-              className="scroll-mt-6 rounded-xl border-2 border-primary/40 bg-card px-5"
-            >
-              <AccordionTrigger className="hover:no-underline">
-                <span className="flex items-center gap-3">
-                  <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
-                    Product Details Page
-                  </Badge>
-                  <span className="text-lg font-bold tracking-tight">
-                    In Review ({inReview.length})
-                  </span>
-                </span>
-              </AccordionTrigger>
-              <AccordionContent>
-                <p className="max-w-2xl text-sm text-muted-foreground">
-                  Active review target. AHRI matched-system flow, buy-box
-                  layout, product cards, and the Find-AHRI outline button all
-                  render on this PDP.
-                </p>
-                <ul className="mt-4 flex flex-col gap-3 pb-2">
-                  {inReview.map((p) => (
                     <TemplateCard key={p.slug} p={p} signedInOnly />
                   ))}
                 </ul>
