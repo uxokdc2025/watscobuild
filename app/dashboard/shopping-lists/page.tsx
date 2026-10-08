@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
 import { GripVertical, Pencil, Plus, Tag, Trash2, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { AccountTableToolbar, accountTable } from "../_components/account-table";
+import { AccountTableToolbar, accountTable, labelColor } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -330,7 +330,7 @@ export default function ShoppingListsPage() {
                         </td>
                         <td className={accountTable.cell}>
                           {l.label ? (
-                            <Badge variant="secondary">{l.label}</Badge>
+                            <Badge variant="soft" color={labelColor(l.label)}>{l.label}</Badge>
                           ) : (
                             <span className="text-muted-foreground">—</span>
                           )}

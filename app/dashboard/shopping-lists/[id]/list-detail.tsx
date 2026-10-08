@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 import { DashboardShell } from "../../_components/dashboard-shell";
-import { AccountSearchInput } from "../../_components/account-table";
+import { AccountSearchInput, labelColor } from "../../_components/account-table";
 import { getListMeta } from "../_list-meta";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -527,7 +527,7 @@ function DetailRow({
   // Label: a compact dropdown-style badge ("Preventative ⌄"); falls back to the
   // ghost "Add label" affordance when the row has no label yet.
   const labelNode = product.label ? (
-    <Badge variant="soft" color="slate" className="max-w-full cursor-pointer gap-1">
+    <Badge variant="soft" color={labelColor(product.label)} className="max-w-full cursor-pointer gap-1">
       <span className="truncate">{product.label}</span>
       <ChevronDown className="size-3 shrink-0 opacity-60" />
     </Badge>

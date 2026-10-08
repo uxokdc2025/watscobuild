@@ -76,11 +76,11 @@ const PROPOSALS: Proposal[] = [
 const usd = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
-const STATUS_BADGE: Record<ProposalStatus, "secondary" | "outline"> = {
-  Draft: "outline",
-  Sent: "secondary",
-  Accepted: "secondary",
-  Expired: "outline",
+const STATUS_COLOR: Record<ProposalStatus, "slate" | "blue" | "green" | "amber"> = {
+  Draft: "slate",
+  Sent: "blue",
+  Accepted: "green",
+  Expired: "amber",
 };
 
 const subtotalOf = (p: Proposal) => p.lines.reduce((s, l) => s + l.price * l.qty, 0);
@@ -199,7 +199,7 @@ function ProposalDetailDrawer({
               <div className="min-w-0">
                 <DialogTitle className="flex flex-wrap items-center gap-2">
                   Proposal {proposal.number}
-                  <Badge variant={STATUS_BADGE[proposal.status]}>{proposal.status}</Badge>
+                  <Badge variant="soft" color={STATUS_COLOR[proposal.status]}>{proposal.status}</Badge>
                 </DialogTitle>
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">{proposal.name}</p>
               </div>
@@ -349,7 +349,7 @@ export default function ProposalsPage() {
                     <td className={accountTable.cell}>{p.name}</td>
                     <td className={`${accountTable.cell} whitespace-nowrap`}>{p.customer}</td>
                     <td className={accountTable.cell}>
-                      <Badge variant={STATUS_BADGE[p.status]}>{p.status}</Badge>
+                      <Badge variant="soft" color={STATUS_COLOR[p.status]}>{p.status}</Badge>
                     </td>
                     <td className={`${accountTable.cell} whitespace-nowrap`}>{p.created}</td>
                     <td className={`${accountTable.cell} whitespace-nowrap`}>{p.expires}</td>

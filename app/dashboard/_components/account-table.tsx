@@ -9,6 +9,17 @@ import { Input } from "@/components/ui/input";
  * (Shopping Lists, Orders, Quotes, …) renders identically. Mirrors the
  * Shopping Lists reference exactly.
  */
+/** Deterministic color for a shopping-list label chip, so each label reads
+ *  as its own category instead of a flat grey. */
+export function labelColor(label: string): "blue" | "amber" | "violet" | "teal" | "slate" {
+  const key = label.toLowerCase();
+  if (key.includes("prevent")) return "blue";
+  if (key.includes("job")) return "amber";
+  if (key.includes("project")) return "violet";
+  if (key.includes("consum") || key.includes("supply") || key.includes("supplies")) return "teal";
+  return "slate";
+}
+
 export const accountTable = {
   /** Bordered card that wraps the toolbar + table. */
   card: "rounded-lg border bg-background shadow-sm",
