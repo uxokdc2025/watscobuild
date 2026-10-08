@@ -189,26 +189,13 @@ function TemplateCard({
    folder; the newest sits open at the top, older dates collapse below. New
    work lands in a new dated folder (newest first). */
 type ChangeItem = { title: string; desc: string; links: { label: string; href: string }[] };
-type ChangeLog = { id: string; date: string; items: ChangeItem[] };
+type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[] };
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
-    id: "oct-8-2026",
-    date: "Oct 8, 2026",
-    items: [
-      {
-        title: "Shopping list detail — availability, replacements & bulk actions",
-        desc: "Availability now matches the product card everywhere — green “N in {branch}” + a blue “N Nearby Branch” link (fixed in the shared InventoryLine, so every list view updates together). Items with a replacement show only in the yellow banner, not twice in the table. Bulk actions (Add selected · Move · Copy · Remove) are grouped next to Select all, with Export CSV on the far right. Header carries Edit · Manage permissions · Add all to cart, and the meta row shows the Updated date.",
-        links: [
-          { label: "Shopping list (with replacements)", href: "/dashboard/shopping-lists/hvac-maintenance-kit?signedin=1" },
-          { label: "All shopping lists", href: "/dashboard/shopping-lists?signedin=1" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "oct-7-2026",
-    date: "Oct 7, 2026",
+    id: "since-sep-29",
+    badge: "This cycle",
+    title: "From the Sep 29 meeting through today — for the Oct 9 review",
     items: [
       {
         title: "Account Dashboard — full reimagine + grouped nav",
@@ -234,12 +221,6 @@ const CHANGE_LOGS: ChangeLog[] = [
           { label: "Roles & Permissions", href: "/dashboard/roles?signedin=1" },
         ],
       },
-    ],
-  },
-  {
-    id: "oct-3-2026",
-    date: "Oct 3, 2026",
-    items: [
       {
         title: "AHRI matched systems — table view + columns (all-open)",
         desc: "The all-open AHRI view now has the same top-right controls as the step-by-step flow: switch between list and table, and choose which spec columns show.",
@@ -251,23 +232,20 @@ const CHANGE_LOGS: ChangeLog[] = [
         links: [{ label: "List Views", href: "/components/list-views" }],
       },
       {
-        title: "Shopping list — design-system stock line",
-        desc: "Availability now uses the design-system component (on-hand at your branch + total across all branches), matching how every other list shows stock.",
-        links: [{ label: "Shopping list", href: "/dashboard/shopping-lists/hvac-maintenance-kit" }],
+        title: "Shopping list detail — availability, replacements & bulk actions",
+        desc: "Availability now matches the product card everywhere — green “N in {branch}” + a blue “N Nearby Branch” link (fixed in the shared InventoryLine, so every list view updates together). Items with a replacement show only in the yellow banner, not twice in the table. Bulk actions (Add selected · Move · Copy · Remove) are grouped next to Select all, with Export CSV on the far right. Header carries Edit · Manage permissions · Add all to cart, and the meta row shows the Updated date.",
+        links: [
+          { label: "Shopping list (with replacements)", href: "/dashboard/shopping-lists/hvac-maintenance-kit?signedin=1" },
+          { label: "All shopping lists", href: "/dashboard/shopping-lists?signedin=1" },
+        ],
       },
       {
         title: "Search — “Change” store link",
         desc: "The “Change” link now lines up with the store name and sits directly under the currently selected store, in both the radio and checkbox availability variants.",
         links: [{ label: "Search (PLP)", href: "/search?q=blower%20motor&signedin=1" }],
       },
-    ],
-  },
-  {
-    id: "sep-29-2026",
-    date: "Sep 29, 2026",
-    items: [
-  {
-    title: "AHRI Lookup — in-PDP system builder (NEW)",
+      {
+        title: "AHRI Lookup — in-PDP system builder (NEW)",
     desc: "Rebuilt to live inside the PDP's About tabs (Style 2 tab pattern): Description · Specifications · AHRI Lookup · Parts List. The AHRI Lookup tab is a filter builder — pick the required System Type (everything stays disabled until then), add refinement filters, and matched systems render in our canonical product-list-row grid. “View System” opens the system detail page.",
     links: [
       { label: "PDP (GLZS4B heat pump)", href: "/pdp/uc-ahri-matched-system?signedin=1" },
@@ -303,11 +281,6 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "Tab styles — Style 2 + icons",
     desc: "Style 2 active segment is now a soft, AA-accessible light blue; Specifications uses a gauge icon and Part List a gear icon so they no longer read like Description.",
     links: [{ label: "Tab styles", href: "/pdp/about-variants" }],
-  },
-  {
-    title: "Shopping list — design system + unified list rows",
-    desc: "Buttons normalized to the design system; rows rebuilt on the shared list-row pattern — [drag + select] · image · description/item# · availability · price/qty/add.",
-    links: [{ label: "Shopping list", href: "/dashboard/shopping-lists/hvac-maintenance-kit" }],
   },
   {
     title: "Search results (PLP) — List view + availability nav",
@@ -423,10 +396,10 @@ export default function PdpMasterPage() {
           className="mt-8 rounded-xl border-2 border-primary/30 bg-primary/[0.04] p-5"
         >
           <h2 id="todays-changes" className="text-lg font-bold tracking-tight">
-            Today&apos;s Changes
+            For the Oct 9 review
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Grouped by review date — the latest updates open, past reviews collapsed; click through to review each change.
+            Everything built this cycle — from the Sep 29 meeting through today — in one bucket for tomorrow&apos;s review. Click any link to open that change. Earlier baseline work is in the sections below.
           </p>
           <Accordion
             type="multiple"
@@ -440,12 +413,13 @@ export default function PdpMasterPage() {
                 className="rounded-lg border bg-card px-4"
               >
                 <AccordionTrigger className="hover:no-underline">
-                  <span className="flex items-center gap-3">
+                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-left">
                     <Badge className="px-3 py-1 font-bold tracking-wide uppercase">
-                      {log.date}
+                      {log.badge}
                     </Badge>
-                    <span className="text-sm font-semibold text-muted-foreground">
-                      {log.items.length} change{log.items.length === 1 ? "" : "s"}
+                    <span className="text-sm font-semibold">{log.title}</span>
+                    <span className="text-sm font-normal text-muted-foreground">
+                      · {log.items.length} change{log.items.length === 1 ? "" : "s"}
                     </span>
                   </span>
                 </AccordionTrigger>
