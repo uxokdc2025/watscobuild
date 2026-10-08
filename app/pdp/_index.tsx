@@ -413,11 +413,11 @@ export default function PdpMasterPage() {
             Today&apos;s Changes
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Grouped by review date — newest open at the top; click through to review each change.
+            Grouped by review date — the latest updates open, past reviews collapsed; click through to review each change.
           </p>
           <Accordion
             type="multiple"
-            defaultValue={[CHANGE_LOGS[0].id]}
+            defaultValue={CHANGE_LOGS.slice(0, -1).map((log) => log.id)}
             className="mt-4 flex flex-col gap-3"
           >
             {CHANGE_LOGS.map((log) => (
