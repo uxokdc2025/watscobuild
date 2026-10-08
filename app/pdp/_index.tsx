@@ -193,6 +193,20 @@ type ChangeLog = { id: string; date: string; items: ChangeItem[] };
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
+    id: "oct-8-2026",
+    date: "Oct 8, 2026",
+    items: [
+      {
+        title: "Shopping list detail — availability, replacements & bulk actions",
+        desc: "Availability now matches the product card everywhere — green “N in {branch}” + a blue “N Nearby Branch” link (fixed in the shared InventoryLine, so every list view updates together). Items with a replacement show only in the yellow banner, not twice in the table. Bulk actions (Add selected · Move · Copy · Remove) are grouped next to Select all, with Export CSV on the far right. Header carries Edit · Manage permissions · Add all to cart, and the meta row shows the Updated date.",
+        links: [
+          { label: "Shopping list (with replacements)", href: "/dashboard/shopping-lists/hvac-maintenance-kit?signedin=1" },
+          { label: "All shopping lists", href: "/dashboard/shopping-lists?signedin=1" },
+        ],
+      },
+    ],
+  },
+  {
     id: "oct-7-2026",
     date: "Oct 7, 2026",
     items: [
@@ -416,7 +430,7 @@ export default function PdpMasterPage() {
           </p>
           <Accordion
             type="multiple"
-            defaultValue={CHANGE_LOGS.slice(0, -1).map((log) => log.id)}
+            defaultValue={CHANGE_LOGS.length > 0 ? [CHANGE_LOGS[0].id] : []}
             className="mt-4 flex flex-col gap-3"
           >
             {CHANGE_LOGS.map((log) => (
