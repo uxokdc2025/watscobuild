@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
-import { Pencil, Plus, Tag, Trash2, X } from "lucide-react";
+import { GripVertical, Pencil, Plus, Tag, Trash2, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { AccountTableToolbar, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
@@ -283,6 +283,7 @@ export default function ShoppingListsPage() {
             <table className={`${accountTable.table} min-w-[860px]`}>
               <thead>
                 <tr className={accountTable.headRow}>
+                  <th className={`${accountTable.headCell} w-8`} aria-label="Reorder" />
                   <th className={accountTable.headCell}>Name</th>
                   <th className={accountTable.headCell}>Label</th>
                   <th className={accountTable.headCell}>Products</th>
@@ -302,7 +303,7 @@ export default function ShoppingListsPage() {
                       {showGroup && (
                         <tr className="border-b bg-muted/20">
                           <td
-                            colSpan={7}
+                            colSpan={8}
                             className="px-5 py-2 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
                           >
                             {groupName}
@@ -310,6 +311,15 @@ export default function ShoppingListsPage() {
                         </tr>
                       )}
                       <tr className={accountTable.row}>
+                        <td className={`${accountTable.cell} pr-0`}>
+                          <button
+                            type="button"
+                            aria-label={`Reorder ${l.name}`}
+                            className="grid cursor-grab place-items-center text-muted-foreground transition-colors hover:text-foreground active:cursor-grabbing"
+                          >
+                            <GripVertical className="size-4" />
+                          </button>
+                        </td>
                         <td className={accountTable.cell}>
                           <Link
                             href={`/dashboard/shopping-lists/${l.id}`}

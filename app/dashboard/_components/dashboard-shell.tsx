@@ -106,12 +106,8 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
   return (
     <main className="min-h-svh bg-muted/30 text-foreground">
       <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-3 md:px-6 md:py-4">
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            {breadcrumb ?? <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to shopping</Link>}
-            <h1 className="mt-1 text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
-          </div>
-          {actions ? <div className="shrink-0">{actions}</div> : null}
+        <div className="mb-3">
+          {breadcrumb ?? <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to shopping</Link>}
         </div>
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
           <nav aria-label="Account dashboard" className="h-fit rounded-md border border-border bg-background p-2 shadow-sm">
@@ -139,7 +135,13 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
               );
             })}
           </nav>
-          <section className="min-w-0">{children}</section>
+          <section className="min-w-0">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+              <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
+              {actions ? <div className="shrink-0">{actions}</div> : null}
+            </div>
+            {children}
+          </section>
         </div>
       </div>
     </main>

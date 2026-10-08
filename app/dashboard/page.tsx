@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
-import { ArrowUpRight, Pencil, Search, Truck } from "lucide-react";
+import { ArrowUpRight, Pencil, Search } from "lucide-react";
 import { DashboardShell } from "./_components/dashboard-shell";
 import { AccountSearchInput } from "./_components/account-table";
 import { Badge } from "@/components/ui/badge";
@@ -24,14 +24,23 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type Order = { number: string; date: string; total: string };
+type Order = {
+  number: string;
+  date: string;
+  po: string;
+  orderedBy: string;
+  total: string;
+  source: string;
+  status: string;
+  account: string;
+};
 
 const ORDERS: Order[] = [
-  { number: "10004", date: "Aug 15, 2026", total: "$605.00" },
-  { number: "10003", date: "Aug 13, 2026", total: "$345.00" },
-  { number: "10002", date: "Aug 13, 2026", total: "$345.00" },
-  { number: "10001", date: "Aug 12, 2026", total: "$0.60" },
-  { number: "10000", date: "Aug 12, 2026", total: "$102.90" },
+  { number: "10004", date: "Aug 15, 2026", po: "N/A", orderedBy: "David Whiteside", total: "$605.00", source: "Web", status: "OPEN", account: "cash 1248" },
+  { number: "10003", date: "Aug 13, 2026", po: "N/A", orderedBy: "David Whiteside", total: "$345.00", source: "Web", status: "OPEN", account: "cash 1248" },
+  { number: "10002", date: "Aug 13, 2026", po: "N/A", orderedBy: "David Whiteside", total: "$345.00", source: "Branch", status: "OPEN", account: "cash 1248" },
+  { number: "10001", date: "Aug 12, 2026", po: "N/A", orderedBy: "David Whiteside", total: "$0.60", source: "Web", status: "OPEN", account: "cash 1248" },
+  { number: "10000", date: "Aug 12, 2026", po: "N/A", orderedBy: "David Whiteside", total: "$102.90", source: "Web", status: "OPEN", account: "cash 1248" },
 ];
 
 type AccountInfo = {
@@ -321,17 +330,20 @@ export default function DashboardPage() {
           </div>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[680px] border-collapse text-[13px]">
-              <thead><tr className="border-b text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Order</th><th className="px-2 py-3">Date</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Fulfillment</th><th className="px-2 py-3 text-right">Total</th></tr></thead>
+              <thead><tr className="border-b text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Order #</th><th className="px-2 py-3">Order Date</th><th className="px-2 py-3">PO #</th><th className="px-2 py-3">Ordered By</th><th className="px-2 py-3 text-right">Order Total</th><th className="px-2 py-3">Source</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Account</th></tr></thead>
               <tbody>
                 {visibleOrders.length ? visibleOrders.map((order) => (
                   <tr key={order.number} className="border-b last:border-0">
                     <td className="px-2 py-3"><Link href="/dashboard/orders" className="font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{order.number}</Link></td>
                     <td className="px-2 py-3 whitespace-nowrap">{order.date}</td>
-                    <td className="px-2 py-3"><Badge variant="secondary">open</Badge></td>
-                    <td className="px-2 py-3"><Badge variant="outline"><Truck aria-hidden="true" className="size-4" /> Standard</Badge></td>
-                    <td className="px-2 py-3 text-right font-semibold whitespace-nowrap">{order.total}</td>
+                    <td className="px-2 py-3 text-muted-foreground">{order.po}</td>
+                    <td className="px-2 py-3 whitespace-nowrap">{order.orderedBy}</td>
+                    <td className="px-2 py-3 text-right font-semibold whitespace-nowrap tabular-nums">{order.total}</td>
+                    <td className="px-2 py-3 text-muted-foreground">{order.source}</td>
+                    <td className="px-2 py-3"><Badge variant="secondary">{order.status}</Badge></td>
+                    <td className="px-2 py-3 whitespace-nowrap">{order.account}</td>
                   </tr>
-                )) : <tr><td colSpan={5} className="px-2 py-8 text-center text-sm text-muted-foreground">No orders found.</td></tr>}
+                )) : <tr><td colSpan={8} className="px-2 py-8 text-center text-sm text-muted-foreground">No orders found.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -353,8 +365,8 @@ export default function DashboardPage() {
         <section aria-labelledby="recent-quotes-heading" className="rounded-lg border bg-background px-4 py-3 shadow-sm sm:px-6 sm:py-4">
           <SectionHeading id="recent-quotes-heading" title="Recent Quotes (1)" href="/dashboard/quotes" />
           <div className="mt-4 overflow-x-auto">
-            <table className="w-full min-w-[900px] border-collapse text-[13px]"><thead><tr className="border-b text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Quote #</th><th className="px-2 py-3">PO #</th><th className="px-2 py-3">Created</th><th className="px-2 py-3">Expires</th><th className="px-2 py-3">Last Updated</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Buyer</th><th className="px-2 py-3">Buyer Email</th><th className="px-2 py-3">Subtotal</th></tr></thead>
-              <tbody><tr className="border-b"><td className="px-2 py-3 font-semibold text-primary">Q-2026-0184</td><td className="px-2 py-3">—</td><td className="px-2 py-3">Aug 20, 2026</td><td className="px-2 py-3">Sep 20, 2026</td><td className="px-2 py-3">Today</td><td className="px-2 py-3"><Badge variant="soft" color="green">Active</Badge></td><td className="px-2 py-3">David Whiteside</td><td className="px-2 py-3">—</td><td className="px-2 py-3 text-right font-semibold">$1,248.00</td></tr></tbody>
+            <table className="w-full min-w-[900px] border-collapse text-[13px]"><thead><tr className="border-b text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Quote #</th><th className="px-2 py-3">Name</th><th className="px-2 py-3">Job Account</th><th className="px-2 py-3">Job Name</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Created</th><th className="px-2 py-3">Expires</th><th className="px-2 py-3">Updated</th><th className="px-2 py-3 text-right">Subtotal</th></tr></thead>
+              <tbody><tr className="border-b"><td className="px-2 py-3 font-semibold text-primary">Q-2026-0184</td><td className="px-2 py-3">Spring maintenance quote</td><td className="px-2 py-3">Acct 1248</td><td className="px-2 py-3">Rooftop RTU swap</td><td className="px-2 py-3"><Badge variant="soft" color="green">Active</Badge></td><td className="px-2 py-3 whitespace-nowrap">Aug 20, 2026</td><td className="px-2 py-3 whitespace-nowrap">Sep 20, 2026</td><td className="px-2 py-3 whitespace-nowrap">Today</td><td className="px-2 py-3 text-right font-semibold tabular-nums">$1,248.00</td></tr></tbody>
             </table>
           </div>
         </section>
