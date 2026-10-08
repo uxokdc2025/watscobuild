@@ -37,7 +37,7 @@ export function AddressCard(props: Props) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {addr.isDefault ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-100 px-2.5 py-1 text-[11px] font-semibold text-green-800 dark:border-green-900 dark:bg-green-950 dark:text-green-200">
               <Check aria-hidden="true" className="size-3.5" />
               Default
               <span className="sr-only"> — default shipping address</span>
@@ -84,26 +84,6 @@ export function AddressCard(props: Props) {
           <span>{addr.phone}</span>
         </p>
       </div>
-
-      {/* Secondary: operational note */}
-      {addr.note ? (
-        <p className="pt-3 text-[11px] leading-relaxed text-muted-foreground">{addr.note}</p>
-      ) : null}
-
-      {/* Secondary: account ID — muted, below primary content */}
-      {isAccount && addr.accountId ? (
-        <p className="pt-2 font-mono text-[10px] tracking-tight text-muted-foreground/80">
-          {addr.accountId} · homans
-        </p>
-      ) : null}
-
-      {/* Read-only guidance for account cards */}
-      {isAccount ? (
-        <p className="mt-3 rounded bg-muted/50 px-3 py-2 text-[11px] leading-relaxed text-muted-foreground">
-          Managed by your Homans account. To update billing or ship-to details, contact your
-          branch.
-        </p>
-      ) : null}
 
       {/* Actions — account vs user distinction */}
       <div className="mt-auto flex min-h-11 flex-wrap items-center gap-2 border-t pt-3">

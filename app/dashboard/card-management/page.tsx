@@ -1,9 +1,10 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Star, Trash2 } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardMark } from "../../checkout/_components/card-mark";
@@ -32,6 +33,7 @@ type PaymentCard = {
   company: string;
   address: string;
   phone: string;
+  default?: boolean;
 };
 
 const INITIAL_CARDS: PaymentCard[] = [
@@ -45,6 +47,7 @@ const INITIAL_CARDS: PaymentCard[] = [
     company: "Springfield Nuclear Power Plant",
     address: "742 Evergreen Terrace\nSpringfield, IL 49007",
     phone: "555–636–7663",
+    default: true,
   },
   {
     id: 2,
@@ -105,6 +108,9 @@ export default function CardManagementPage() {
     setEditing(card);
     setOpen(true);
   }
+  function setDefaultCard(id: number) {
+    setCards((current) => current.map((c) => ({ ...c, default: c.id === id })));
+  }
   function saveCard(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!editing) {
@@ -145,17 +151,32 @@ export default function CardManagementPage() {
               className="flex min-h-[280px] flex-col rounded-lg border bg-background shadow-sm"
             >
               <div className="flex-1 p-4">
-                <div className="flex items-start gap-3">
-                  <CardMark brand={card.brand} />
-                  <div>
-                    <h2 className="text-[15px] font-semibold">{card.name}</h2>
-                    <p className="text-[13px] text-muted-foreground">
-                      XXXX–XXXX–XXXX–{card.last4}
-                    </p>
-                    <p className="text-[13px] text-muted-foreground">
-                      Expires: {card.expires}
-                    </p>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <CardMark brand={card.brand} />
+                    <div>
+                      <h2 className="text-[15px] font-semibold">{card.name}</h2>
+                      <p className="text-[13px] text-muted-foreground">
+                        XXXX–XXXX–XXXX–{card.last4}
+                      </p>
+                      <p className="text-[13px] text-muted-foreground">
+                        Expires: {card.expires}
+                      </p>
+                    </div>
                   </div>
+                  {card.default ? (
+                    <Badge variant="soft" color="green" className="shrink-0">Default</Badge>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDefaultCard(card.id)}
+                      className="h-8 shrink-0 px-2 text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      <Star aria-hidden="true" className="size-3.5" /> Set as default
+                    </Button>
+                  )}
                 </div>
                 <div className="mt-4 whitespace-pre-line text-[13px] leading-5">
                   <p>{card.holder}</p>
@@ -169,12 +190,14 @@ export default function CardManagementPage() {
                   type="button"
                   variant="ghost"
                   size="sm"
+                  disabled={card.default}
+                  title={card.default ? "Set another card as default before deleting this one" : undefined}
                   onClick={() =>
                     setCards((current) =>
                       current.filter((item) => item.id !== card.id),
                     )
                   }
-                  className="min-h-10 text-[13px] text-destructive hover:text-destructive/80"
+                  className="min-h-10 text-[13px] text-destructive hover:text-destructive/80 disabled:text-muted-foreground disabled:hover:text-muted-foreground"
                 >
                   <Trash2 aria-hidden="true" className="size-4" /> Delete
                 </Button>

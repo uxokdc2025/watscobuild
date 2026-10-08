@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, Link2, MoreHorizontal, Plus, Repeat, Unlink, X } from "lucide-react";
+import { Eye, Link2, Plus, Repeat, Unlink, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
@@ -22,12 +22,14 @@ import {
 } from "@/components/ui/dialog";
 
 /* ─────────────────────────── Linked account data ───────────────────────────
- * Columns: Account Name · Account # · Role · Status · Actions. */
+ * Reference columns, in order: # · Account · Address · Phone · Actions. */
 type AccountRole = "Administrator" | "Buyer" | "Approver" | "Viewer";
 type AccountStatus = "Active" | "Pending";
 type LinkedAccount = {
-  name: string;
   number: string;
+  account: string;
+  address: string;
+  phone: string;
   role: AccountRole;
   status: AccountStatus;
 };
@@ -35,8 +37,22 @@ type LinkedAccount = {
 const ROLES: AccountRole[] = ["Administrator", "Buyer", "Approver", "Viewer"];
 
 const INITIAL_ACCOUNTS: LinkedAccount[] = [
-  { name: "Homans Associates — Manchester, NH", number: "cash 1248", role: "Administrator", status: "Active" },
-  { name: "Homans Associates — Wilmington, MA", number: "cash 2093", role: "Buyer", status: "Pending" },
+  {
+    number: "509973",
+    account: "Homans Associates — Manchester, NH",
+    address: "613 Main Street, Wilmington, MA 01887",
+    phone: "+1 978 657 8990",
+    role: "Administrator",
+    status: "Active",
+  },
+  {
+    number: "2093",
+    account: "Homans Associates — Wilmington, MA",
+    address: "1248 Daniel Webster Hwy, Nashua, NH 03060",
+    phone: "+1 603 555 0187",
+    role: "Buyer",
+    status: "Pending",
+  },
 ];
 
 const STATUS_BADGE: Record<AccountStatus, "secondary" | "outline"> = {
@@ -73,7 +89,7 @@ function LinkAccountDrawer({
   };
   const submit = () => {
     if (!valid) return;
-    onLink({ name: name.trim(), number: number.trim(), role, status: "Pending" });
+    onLink({ number: number.trim(), account: name.trim(), address: "", phone: "", role, status: "Pending" });
     reset();
   };
 
@@ -177,7 +193,7 @@ function AccountDetailDrawer({
             <DialogHeader className="sticky top-0 z-10 flex-row items-center justify-between gap-3 border-b bg-background px-5 py-4 sm:px-6">
               <div className="min-w-0">
                 <DialogTitle className="flex flex-wrap items-center gap-2">
-                  {account.name}
+                  {account.account}
                   <Badge variant={STATUS_BADGE[account.status]}>{account.status}</Badge>
                 </DialogTitle>
                 <p className="mt-0.5 text-xs text-muted-foreground">Account {account.number}</p>
@@ -194,11 +210,17 @@ function AccountDetailDrawer({
 
             <div className="space-y-6 px-5 py-5 sm:px-6">
               <div className="grid gap-5 sm:grid-cols-2">
-                <DetailBlock title="Account name">
-                  <p>{account.name}</p>
-                </DetailBlock>
                 <DetailBlock title="Account #">
                   <p>{account.number}</p>
+                </DetailBlock>
+                <DetailBlock title="Account">
+                  <p>{account.account}</p>
+                </DetailBlock>
+                <DetailBlock title="Address">
+                  <p>{account.address || "—"}</p>
+                </DetailBlock>
+                <DetailBlock title="Phone">
+                  <p>{account.phone || "—"}</p>
                 </DetailBlock>
                 <DetailBlock title="Role">
                   <p>{account.role}</p>
@@ -293,34 +315,40 @@ export default function LinkedAccountsPage() {
           <table className={`${accountTable.table} min-w-[720px]`}>
             <thead>
               <tr className={accountTable.headRow}>
-                <th className={accountTable.headCell}>Account Name</th>
-                <th className={accountTable.headCell}>Account #</th>
-                <th className={accountTable.headCell}>Role</th>
-                <th className={accountTable.headCell}>Status</th>
+                <th className={accountTable.headCell}>#</th>
+                <th className={accountTable.headCell}>Account</th>
+                <th className={accountTable.headCell}>Address</th>
+                <th className={accountTable.headCell}>Phone</th>
                 <th className={`${accountTable.headCell} text-right`}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {visible.map((a) => (
                 <tr key={a.number} className={accountTable.row}>
-                  <td className={accountTable.cell}>
+                  <td className={`${accountTable.cell} whitespace-nowrap`}>
                     <button
                       type="button"
                       onClick={() => setSelectedNumber(a.number)}
-                      className="text-left font-semibold text-primary hover:underline"
+                      className="font-semibold text-primary hover:underline"
                     >
-                      {a.name}
+                      {a.number}
                     </button>
+                  </td>
+                  <td className={accountTable.cell}>
+                    {a.account}
                     {a.number === currentNumber ? (
-                      <Badge variant="outline" className="ml-2">
-                        Current
-                      </Badge>
+                      <span className="ml-2 text-xs text-muted-foreground">(Current)</span>
                     ) : null}
                   </td>
-                  <td className={`${accountTable.cell} whitespace-nowrap`}>{a.number}</td>
-                  <td className={`${accountTable.cell} whitespace-nowrap`}>{a.role}</td>
-                  <td className={accountTable.cell}>
-                    <Badge variant={STATUS_BADGE[a.status]}>{a.status}</Badge>
+                  <td className={accountTable.cell}>{a.address || "—"}</td>
+                  <td className={`${accountTable.cell} whitespace-nowrap`}>
+                    {a.phone ? (
+                      <a href={`tel:${a.phone.replace(/[^\d+]/g, "")}`} className="text-primary hover:underline">
+                        {a.phone}
+                      </a>
+                    ) : (
+                      "—"
+                    )}
                   </td>
                   <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
                     <Button
@@ -330,14 +358,6 @@ export default function LinkedAccountsPage() {
                       onClick={() => setSelectedNumber(a.number)}
                     >
                       <Eye size={18} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={`More actions for ${a.number}`}
-                      className="ml-1"
-                    >
-                      <MoreHorizontal size={18} />
                     </Button>
                   </td>
                 </tr>

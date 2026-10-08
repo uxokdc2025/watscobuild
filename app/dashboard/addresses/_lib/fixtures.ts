@@ -16,7 +16,6 @@ export const ACCOUNT_ADDRESSES: Address[] = [
     phone: "+1 978 657 8990",
     isDefault: true,
     accountId: ACCOUNT_ID,
-    note: "All cash sales are final. Will-call pickup only.",
   },
   {
     id: "acct-2",
@@ -32,7 +31,6 @@ export const ACCOUNT_ADDRESSES: Address[] = [
     phone: "+1 978 657 8990",
     isDefault: false,
     accountId: ACCOUNT_ID,
-    note: "All cash sales are final. Dock hours 6am–3pm.",
   },
   {
     id: "acct-3",

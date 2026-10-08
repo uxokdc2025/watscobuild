@@ -51,6 +51,12 @@ export default function AddressesPage() {
     toast.success(`Default updated — ${target?.label ?? "address"} is now your default.`);
   }
 
+  function handleSetSavedDefault(id: string) {
+    setSaved((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
+    const target = saved.find((a) => a.id === id);
+    toast.success(`Default updated — ${target?.label ?? "address"} is now your default.`);
+  }
+
   function openAdd() {
     setEditingId(null);
     setForm({ ...EMPTY_FORM, isDefault: saved.length === 0 });
@@ -133,6 +139,7 @@ export default function AddressesPage() {
                   addr={addr}
                   onEdit={() => openEdit(addr)}
                   onRemove={() => setRemoving(addr)}
+                  onSetDefault={() => handleSetSavedDefault(addr.id)}
                 />
               ))}
             </div>

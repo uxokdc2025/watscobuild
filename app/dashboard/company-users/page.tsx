@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Eye, Pencil, Plus, Send, UserX, X } from "lucide-react";
+import { Pencil, Plus, Send, UserX, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { AccountSearchInput, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -53,11 +54,30 @@ const ROLE_COLOR = {
   Viewer: "slate",
 } as const satisfies Record<UserRole, "violet" | "blue" | "teal" | "slate">;
 
-const STATUS_BADGE: Record<UserStatus, "secondary" | "outline"> = {
-  Active: "secondary",
-  Invited: "outline",
-  Disabled: "outline",
+const STATUS_COLOR: Record<UserStatus, "green" | "amber" | "slate"> = {
+  Active: "green",
+  Invited: "amber",
+  Disabled: "slate",
 };
+
+const STATUSES: UserStatus[] = ["Active", "Invited", "Disabled"];
+
+/* Reference tabs: Active users · Inactive users · All approved users · Pending users. */
+type UserTab = "Active" | "Inactive" | "Approved" | "Pending";
+const USER_TABS: { key: UserTab; label: string }[] = [
+  { key: "Active", label: "Active users" },
+  { key: "Inactive", label: "Inactive users" },
+  { key: "Approved", label: "All approved users" },
+  { key: "Pending", label: "Pending users" },
+];
+const matchesUserTab = (u: CompanyUser, tab: UserTab): boolean =>
+  tab === "Active"
+    ? u.status === "Active"
+    : tab === "Inactive"
+      ? u.status === "Disabled"
+      : tab === "Pending"
+        ? u.status === "Invited"
+        : u.status !== "Invited";
 
 const PAGE_SIZES = [18, 36, 54] as const;
 
@@ -71,6 +91,7 @@ type FormValues = {
   lastName: string;
   email: string;
   role: UserRole;
+  status: UserStatus;
 };
 
 function RoleChip({ role }: { role: UserRole }) {
@@ -133,8 +154,9 @@ function UserDrawerBody({
           lastName: state.user.lastName,
           email: state.user.email,
           role: state.user.role,
+          status: state.user.status,
         }
-      : { firstName: "", lastName: "", email: "", role: "Buyer" },
+      : { firstName: "", lastName: "", email: "", role: "Buyer", status: "Invited" },
   );
   const patch = (p: Partial<FormValues>) => setForm((f) => ({ ...f, ...p }));
   const valid =
@@ -149,7 +171,7 @@ function UserDrawerBody({
           <DialogTitle className="flex flex-wrap items-center gap-2">
             {editing ? `${state.user.firstName} ${state.user.lastName}` : "Invite User"}
             {editing ? (
-              <Badge variant={STATUS_BADGE[state.user.status]}>{state.user.status}</Badge>
+              <Badge variant="soft" color={STATUS_COLOR[state.user.status]}>{state.user.status}</Badge>
             ) : null}
           </DialogTitle>
           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -206,24 +228,42 @@ function UserDrawerBody({
             aria-label="Email"
           />
         </Field>
-        <Field label="Role">
-          <Select value={form.role} onValueChange={(v) => patch({ role: v as UserRole })}>
-            <SelectTrigger className="!h-11 w-full" aria-label="Role">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {ROLES.map((r) => (
-                <SelectItem key={r} value={r}>
-                  {r}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Role">
+            <Select value={form.role} onValueChange={(v) => patch({ role: v as UserRole })}>
+              <SelectTrigger className="!h-11 w-full" aria-label="Role">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ROLES.map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {r}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+          {editing ? (
+            <Field label="Status">
+              <Select value={form.status} onValueChange={(v) => patch({ status: v as UserStatus })}>
+                <SelectTrigger className="!h-11 w-full" aria-label="Status">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUSES.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          ) : null}
+        </div>
       </form>
 
-      {/* Sticky action bar */}
-      <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t bg-background px-5 py-3 sm:px-6">
+      {/* Sticky action bar — destructive (Deactivate) kept on the left, away from the primary. */}
+      <div className={`sticky bottom-0 flex items-center gap-2 border-t bg-background px-5 py-3 sm:px-6 ${editing ? "justify-between" : "justify-end"}`}>
         {editing ? (
           <>
             <Button
@@ -256,17 +296,27 @@ function UserDrawerBody({
 export default function CompanyUsersPage() {
   const [query, setQuery] = useState("");
   const [perPage, setPerPage] = useState<number>(18);
+  const [tab, setTab] = useState<UserTab>("Approved");
   const [drawer, setDrawer] = useState<DrawerState>({ mode: "closed" });
 
+  const tabCounts = useMemo(
+    () =>
+      USER_TABS.reduce(
+        (acc, t) => ({ ...acc, [t.key]: USERS.filter((u) => matchesUserTab(u, t.key)).length }),
+        {} as Record<UserTab, number>,
+      ),
+    [],
+  );
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return USERS.filter(
       (u) =>
-        q === "" ||
-        `${u.firstName} ${u.lastName}`.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q),
+        matchesUserTab(u, tab) &&
+        (q === "" ||
+          `${u.firstName} ${u.lastName}`.toLowerCase().includes(q) ||
+          u.email.toLowerCase().includes(q)),
     ).slice(0, perPage);
-  }, [query, perPage]);
+  }, [query, perPage, tab]);
 
   return (
     <DashboardShell
@@ -278,6 +328,22 @@ export default function CompanyUsersPage() {
         </Button>
       }
     >
+      <div className="space-y-4">
+      <Tabs value={tab} onValueChange={(v) => setTab(v as UserTab)}>
+        <TabsList className="h-11 w-fit items-center gap-0 divide-x divide-border overflow-hidden rounded-md border border-border bg-white p-0">
+          {USER_TABS.map((t) => (
+            <TabsTrigger
+              key={t.key}
+              value={t.key}
+              className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--blue-100)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--blue-800)]! data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+            >
+              {t.label}
+              <span className="ml-1.5 tabular-nums text-xs text-muted-foreground">{tabCounts[t.key]}</span>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
+
       <section className={accountTable.card}>
         <div className="border-b p-4">
           <AccountSearchInput
@@ -317,22 +383,13 @@ export default function CompanyUsersPage() {
                       <RoleChip role={u.role} />
                     </td>
                     <td className={accountTable.cell}>
-                      <Badge variant={STATUS_BADGE[u.status]}>{u.status}</Badge>
+                      <Badge variant="soft" color={STATUS_COLOR[u.status]}>{u.status}</Badge>
                     </td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`View ${fullName}`}
-                        onClick={() => setDrawer({ mode: "edit", user: u })}
-                      >
-                        <Eye size={18} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
                         aria-label={`Edit ${fullName}`}
-                        className="ml-1"
                         onClick={() => setDrawer({ mode: "edit", user: u })}
                       >
                         <Pencil size={17} />
@@ -372,6 +429,7 @@ export default function CompanyUsersPage() {
           </div>
         </div>
       </section>
+      </div>
 
       <UserDrawer state={drawer} onClose={() => setDrawer({ mode: "closed" })} />
     </DashboardShell>
