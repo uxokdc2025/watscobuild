@@ -103,10 +103,10 @@ const ORDERS: Order[] = [
 const usd = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
-const STATUS_COLOR: Record<OrderStatus, "blue" | "green" | "slate"> = {
+const STATUS_COLOR: Record<OrderStatus, "blue" | "green" | "red"> = {
   OPEN: "blue",
   INVOICED: "green",
-  VOID: "slate",
+  VOID: "red",
 };
 
 /* ── Find an Order — the reference filter bar (Order# / PO# / Item# / Branch /

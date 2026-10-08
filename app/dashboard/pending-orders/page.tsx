@@ -130,7 +130,7 @@ function StatusTabs({
           <TabsTrigger
             key={t}
             value={t}
-            className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--blue-100)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--blue-800)]! data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+            className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--tab-active-bg)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--tab-active-fg)]! data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
           >
             {t}
             <span className="ml-1.5 tabular-nums text-xs text-muted-foreground">{counts[t]}</span>

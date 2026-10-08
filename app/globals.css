@@ -202,6 +202,10 @@
   --blue-800: oklch(0.424 0.199 265.638);
   --blue-900: oklch(0.379 0.146 265.522);
   --blue-950: oklch(0.282 0.091 267.935);
+  /* Style-2 tab active state — our link blue, darkened ~20% for the label,
+     on a lighter blue tint so there's a clear step from the background. */
+  --tab-active-fg: oklch(0.47 0.17 253.1);
+  --tab-active-bg: oklch(0.955 0.02 253.1);
   /* Zinc (neutrals) */
   --zinc-50:  oklch(0.985 0 0);
   --zinc-100: oklch(0.967 0.001 286.375);

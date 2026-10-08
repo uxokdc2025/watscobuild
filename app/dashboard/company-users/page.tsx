@@ -51,8 +51,8 @@ const ROLE_COLOR = {
   Admin: "violet",
   Buyer: "blue",
   Manager: "teal",
-  Viewer: "slate",
-} as const satisfies Record<UserRole, "violet" | "blue" | "teal" | "slate">;
+  Viewer: "orange",
+} as const satisfies Record<UserRole, "violet" | "blue" | "teal" | "orange">;
 
 const STATUS_COLOR: Record<UserStatus, "green" | "amber" | "slate"> = {
   Active: "green",
@@ -335,7 +335,7 @@ export default function CompanyUsersPage() {
             <TabsTrigger
               key={t.key}
               value={t.key}
-              className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--blue-100)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--blue-800)]! data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+              className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--tab-active-bg)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--tab-active-fg)]! data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
             >
               {t.label}
               <span className="ml-1.5 tabular-nums text-xs text-muted-foreground">{tabCounts[t.key]}</span>

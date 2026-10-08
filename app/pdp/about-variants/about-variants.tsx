@@ -136,7 +136,7 @@ export function AboutVariants({ product }: { product: PdpProduct }) {
               <TabsTrigger
                 key={s.id}
                 value={s.id}
-                className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--blue-100)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--blue-800)]! data-[state=active]:[&_svg]:text-[var(--blue-800)]! data-[state=active]:hover:bg-[var(--blue-100)] data-[state=active]:hover:text-[var(--blue-800)] data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+                className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--tab-active-bg)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--tab-active-fg)]! data-[state=active]:[&_svg]:text-[var(--tab-active-fg)]! data-[state=active]:hover:bg-[var(--tab-active-bg)] data-[state=active]:hover:text-[var(--tab-active-fg)] data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
               >
                 <s.Icon className="size-4" />
                 {s.label}
