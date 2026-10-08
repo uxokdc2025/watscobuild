@@ -198,25 +198,24 @@ const CHANGE_LOGS: ChangeLog[] = [
     items: [
       {
         title: "Account Dashboard — full reimagine + grouped nav",
-        desc: "Every dashboard section rebuilt on one pattern — a shared table + Find-an-Order filter, right-side drawers for detail and edit, primary CTAs in a consistent place, and real pagination. The sidebar is now grouped (Buying Tools · Orders · Account · Company) to match the storefront.",
+        desc: "Every dashboard section rebuilt on one pattern — a shared table + Find-an-Order filter, right-side drawers for detail and edit, primary CTAs on the right, colored status pills, and real pagination. The sidebar is now grouped (Buying Tools · Orders · Account · Company) to match the storefront. Review links to every page below.",
         links: [
           { label: "Dashboard", href: "/dashboard?signedin=1" },
           { label: "Orders", href: "/dashboard/orders?signedin=1" },
-        ],
-      },
-      {
-        title: "Order & record detail in drawers",
-        desc: "Opening an order, quote, cart, user, or role now slides its full detail into a right-side drawer instead of a separate page; add/edit uses the same drawer pattern (e.g. Card Management edit).",
-        links: [
-          { label: "Orders", href: "/dashboard/orders?signedin=1" },
+          { label: "Shopping Lists", href: "/dashboard/shopping-lists?signedin=1" },
+          { label: "Saved Carts", href: "/dashboard/saved-carts?signedin=1" },
+          { label: "Quotes", href: "/dashboard/quotes?signedin=1" },
+          { label: "Address Book", href: "/dashboard/addresses?signedin=1" },
           { label: "Card Management", href: "/dashboard/card-management?signedin=1" },
         ],
       },
       {
         title: "New sections — Order Approval, Proposals & Company",
-        desc: "Added the sections the reference has but we didn't: Order Approval (status tabs + approval rules), Proposals, and the whole Company group — Linked Accounts, Company Users, and Roles & Permissions (with a permission-matrix drawer).",
+        desc: "Added the sections the reference has but we didn't: Order Approval (status tabs + approval rules), Proposals, and the whole Company group — Linked Accounts, Company Users, and Roles & Permissions (permission matrix matched to the reference).",
         links: [
           { label: "Order Approval", href: "/dashboard/pending-orders?signedin=1" },
+          { label: "Proposals", href: "/dashboard/proposals?signedin=1" },
+          { label: "Linked Accounts", href: "/dashboard/linked-accounts?signedin=1" },
           { label: "Company Users", href: "/dashboard/company-users?signedin=1" },
           { label: "Roles & Permissions", href: "/dashboard/roles?signedin=1" },
         ],
