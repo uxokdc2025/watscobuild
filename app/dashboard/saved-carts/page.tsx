@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Eye, ShoppingCart, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { Eye, Share2, ShoppingCart, Trash2, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { AccountTableToolbar, accountTable } from "../_components/account-table";
+import { accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -95,7 +95,7 @@ function CartDetailDrawer({ cart, onClose }: { cart: SavedCart | null; onClose: 
               <div className="min-w-0">
                 <DialogTitle className="flex flex-wrap items-center gap-2">
                   {cart.name}
-                  <Badge variant={cart.shared ? "secondary" : "outline"}>
+                  <Badge variant={cart.shared ? "default" : "secondary"}>
                     {cart.shared ? "Shared" : "Not shared"}
                   </Badge>
                 </DialogTitle>
@@ -164,17 +164,14 @@ function CartDetailDrawer({ cart, onClose }: { cart: SavedCart | null; onClose: 
 
 export default function SavedCartsPage() {
   const [carts, setCarts] = useState<SavedCart[]>(INITIAL_CARTS);
-  const [q, setQ] = useState("");
   const [perPage, setPerPage] = useState(18);
   const [selected, setSelected] = useState<SavedCart | null>(null);
 
-  const filtered = useMemo(() => {
-    const term = q.trim().toLowerCase();
-    if (!term) return carts;
-    return carts.filter((c) => c.name.toLowerCase().includes(term));
-  }, [carts, q]);
+  const visible = carts.slice(0, perPage);
 
-  const visible = filtered.slice(0, perPage);
+  function toggleShare(id: string) {
+    setCarts((prev) => prev.map((x) => (x.id === id ? { ...x, shared: !x.shared } : x)));
+  }
 
   return (
     <DashboardShell
@@ -183,11 +180,6 @@ export default function SavedCartsPage() {
     >
       <div className="space-y-4">
         <section className={accountTable.card}>
-          <AccountTableToolbar
-            value={q}
-            onChange={setQ}
-            placeholder="Search saved carts by name…"
-          />
           <div className={accountTable.scroll}>
             <table className={`${accountTable.table} min-w-[760px]`}>
               <thead>
@@ -214,7 +206,7 @@ export default function SavedCartsPage() {
                     <td className={`${accountTable.cell} tabular-nums`}>{c.itemCount}</td>
                     <td className={`${accountTable.cell} whitespace-nowrap`}>{c.expires}</td>
                     <td className={accountTable.cell}>
-                      <Badge variant={c.shared ? "secondary" : "outline"}>
+                      <Badge variant={c.shared ? "default" : "secondary"}>
                         {c.shared ? "Shared" : "Not shared"}
                       </Badge>
                     </td>
@@ -226,6 +218,15 @@ export default function SavedCartsPage() {
                         onClick={() => setSelected(c)}
                       >
                         <Eye size={18} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={c.shared ? `Stop sharing ${c.name}` : `Share ${c.name}`}
+                        className="ml-1"
+                        onClick={() => toggleShare(c.id)}
+                      >
+                        <Share2 size={17} />
                       </Button>
                       <Button
                         variant="ghost"
@@ -242,13 +243,13 @@ export default function SavedCartsPage() {
               </tbody>
             </table>
           </div>
-          {!filtered.length && (
+          {!carts.length && (
             <div className="p-12 text-center text-muted-foreground">No saved carts found.</div>
           )}
           {/* Pagination — matches the reference "Show 18 / 36 / 54 Per page" */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-t p-4 text-sm text-muted-foreground">
             <span>
-              {filtered.length} cart{filtered.length === 1 ? "" : "s"}
+              {carts.length} cart{carts.length === 1 ? "" : "s"}
             </span>
             <div className="flex items-center gap-2">
               <span>Show</span>
