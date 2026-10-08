@@ -160,7 +160,7 @@ function ListDrawer({
               value={draft.label || NO_LABEL}
               onValueChange={(v) => setDraft({ ...draft, label: v === NO_LABEL ? "" : v })}
             >
-              <SelectTrigger className="h-11 w-full" aria-label="Label">
+              <SelectTrigger className="!h-11 w-full" aria-label="Label">
                 <SelectValue placeholder="No label" />
               </SelectTrigger>
               <SelectContent>

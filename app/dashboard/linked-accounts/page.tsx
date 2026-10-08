@@ -127,7 +127,7 @@ function LinkAccountDrawer({
           </Field>
           <Field label="Role">
             <Select value={role} onValueChange={(v) => setRole(v as AccountRole)}>
-              <SelectTrigger className="h-11 w-full" aria-label="Role">
+              <SelectTrigger className="!h-11 w-full" aria-label="Role">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

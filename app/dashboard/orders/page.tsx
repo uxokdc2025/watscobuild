@@ -147,7 +147,7 @@ function FindAnOrder({
         </Field>
         <Field label="Order Status">
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="h-11 w-full" aria-label="Order status">
+            <SelectTrigger className="!h-11 w-full" aria-label="Order status">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

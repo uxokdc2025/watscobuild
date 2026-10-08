@@ -216,7 +216,7 @@ export default function CardManagementPage() {
                     Exp Month *
                   </Label>
                   <Select defaultValue="01">
-                    <SelectTrigger className="mt-2 h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectTrigger className="mt-2 !h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent><SelectItem value="01">01</SelectItem><SelectItem value="02">02</SelectItem><SelectItem value="03">03</SelectItem></SelectContent>
                   </Select>
                 </div>
@@ -225,7 +225,7 @@ export default function CardManagementPage() {
                     Exp Year *
                   </Label>
                   <Select defaultValue="2029">
-                    <SelectTrigger className="mt-2 h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectTrigger className="mt-2 !h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent><SelectItem value="2028">2028</SelectItem><SelectItem value="2029">2029</SelectItem><SelectItem value="2030">2030</SelectItem></SelectContent>
                   </Select>
                 </div>
@@ -323,7 +323,7 @@ export default function CardManagementPage() {
                     State *
                   </Label>
                   <Select defaultValue="NH">
-                    <SelectTrigger className="mt-2 h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectTrigger className="mt-2 !h-11 w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent><SelectItem value="NH">NH</SelectItem><SelectItem value="MA">MA</SelectItem><SelectItem value="VT">VT</SelectItem></SelectContent>
                   </Select>
                 </div>
@@ -344,7 +344,7 @@ export default function CardManagementPage() {
                     Country *
                   </Label>
                   <Select defaultValue="United States of America">
-                    <SelectTrigger className="mt-2 h-11 w-full"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2 !h-11 w-full"><SelectValue /></SelectTrigger>
                     <SelectContent><SelectItem value="United States of America">United States of America</SelectItem></SelectContent>
                   </Select>
                 </div>

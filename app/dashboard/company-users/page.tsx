@@ -208,7 +208,7 @@ function UserDrawerBody({
         </Field>
         <Field label="Role">
           <Select value={form.role} onValueChange={(v) => patch({ role: v as UserRole })}>
-            <SelectTrigger className="h-11 w-full" aria-label="Role">
+            <SelectTrigger className="!h-11 w-full" aria-label="Role">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

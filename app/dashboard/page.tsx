@@ -172,7 +172,7 @@ function AccountInformationCard({
                 value={draft.preferredLocation}
                 onValueChange={(v) => setDraft({ ...draft, preferredLocation: v })}
               >
-                <SelectTrigger id="acct-location" className="mt-2 h-11 w-full">
+                <SelectTrigger id="acct-location" className="mt-2 !h-11 w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -251,7 +251,7 @@ function FindAnOrder({
         </Field>
         <Field label="Order Status">
           <Select value={filters.status} onValueChange={(v) => set({ status: v })}>
-            <SelectTrigger className="h-11 w-full" aria-label="Order status">
+            <SelectTrigger className="!!h-11 w-full" aria-label="Order status">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
