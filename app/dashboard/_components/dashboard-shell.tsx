@@ -105,11 +105,11 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
   const isActive = (href: string) => pathname === href.split("?")[0];
   return (
     <main className="min-h-svh bg-muted/30 text-foreground">
-      <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-4 md:px-6 md:py-8">
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+      <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-3 md:px-6 md:py-4">
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-4">
           <div>
             {breadcrumb ?? <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to shopping</Link>}
-            <h1 className="mt-3 text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
           </div>
           {actions ? <div className="shrink-0">{actions}</div> : null}
         </div>

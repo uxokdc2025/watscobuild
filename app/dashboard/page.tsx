@@ -263,12 +263,12 @@ function FindAnOrder({
           </Select>
         </Field>
         <div className="flex items-end gap-2">
+          <Button type="button" variant="outline" className="min-h-11" onClick={onReset}>
+            Reset
+          </Button>
           <Button type="button" className="min-h-11 flex-1">
             <Search size={16} />
             Filter
-          </Button>
-          <Button type="button" variant="outline" className="min-h-11" onClick={onReset}>
-            Reset
           </Button>
         </div>
       </div>
