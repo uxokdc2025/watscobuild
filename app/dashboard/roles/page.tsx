@@ -1,19 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Lock, MoreHorizontal, Pencil, Plus, ShieldCheck, Trash2, X } from "lucide-react";
+import { Eye, Lock, Plus, ShieldCheck, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -24,63 +17,75 @@ import {
 /* ─────────────────────────── Permission model ───────────────────────────
  * Capabilities are grouped; each role stores the set of granted permission ids.
  * The Create / Edit drawer renders the groups as a matrix of checkbox rows. */
-type PermissionId =
-  | "orders.view"
-  | "orders.place"
-  | "orders.approve"
-  | "orders.reorder"
-  | "pricing.view"
-  | "pricing.hide"
-  | "lists.view"
-  | "lists.edit"
-  | "lists.share"
-  | "company.users"
-  | "company.roles"
-  | "company.accounts"
-  | "quotes.view"
-  | "quotes.request";
+type PermissionId = string;
 
-type PermissionItem = { id: PermissionId; label: string; hint: string };
+type PermissionItem = { id: PermissionId; label: string; hint?: string };
 type PermissionGroup = { title: string; items: PermissionItem[] };
 
+/* Permission tree mirrors the reference role editor exactly. */
 const PERMISSION_GROUPS: PermissionGroup[] = [
+  {
+    title: "Employee management",
+    items: [
+      { id: "emp.view", label: "View employees" },
+      { id: "emp.edit", label: "Edit employees" },
+      { id: "emp.create", label: "Create employees" },
+      { id: "emp.delete", label: "Delete employees" },
+    ],
+  },
+  {
+    title: "Role management",
+    items: [
+      { id: "role.view", label: "View roles" },
+      { id: "role.edit", label: "Edit roles" },
+      { id: "role.create", label: "Create roles" },
+      { id: "role.delete", label: "Delete roles" },
+    ],
+  },
   {
     title: "Orders",
     items: [
-      { id: "orders.view", label: "View orders", hint: "See order history and details" },
-      { id: "orders.place", label: "Place orders", hint: "Check out and submit orders" },
-      { id: "orders.approve", label: "Approve orders", hint: "Approve orders over the spend limit" },
-      { id: "orders.reorder", label: "Reorder", hint: "Reorder from past orders" },
+      { id: "orders.viewOwn", label: "View own orders" },
+      { id: "orders.viewOrg", label: "View all orders from assigned organisation unit" },
+      { id: "orders.viewAll", label: "View all orders" },
+    ],
+  },
+  {
+    title: "Approval Rule Management",
+    items: [
+      { id: "approvalRules.create", label: "Create approval rules" },
+      { id: "approvalRules.edit", label: "Edit approval rules" },
+      { id: "approvalRules.delete", label: "Delete approval rules" },
+      { id: "approvalRules.view", label: "View approval rules" },
+    ],
+  },
+  {
+    title: "Pending Order Management",
+    items: [
+      { id: "pending.approveAssigned", label: "Approve and decline assigned pending orders" },
+      { id: "pending.viewAll", label: "View all pending orders" },
+      { id: "pending.approveAny", label: "Approve and decline any pending orders" },
     ],
   },
   {
     title: "Pricing",
+    items: [{ id: "pricing.see", label: "See pricing" }],
+  },
+  {
+    title: "Company accounts",
     items: [
-      { id: "pricing.view", label: "View pricing", hint: "Show account pricing across the site" },
-      { id: "pricing.hide", label: "Hide prices", hint: "Mask prices from this role" },
+      { id: "accounts.view", label: "View linked accounts" },
+      { id: "accounts.creditRead", label: "credit.read" },
+      { id: "accounts.link", label: "Link and unlink accounts" },
     ],
   },
   {
-    title: "Lists & Carts",
+    title: "Features",
     items: [
-      { id: "lists.view", label: "View lists", hint: "See shopping lists and saved carts" },
-      { id: "lists.edit", label: "Create/edit lists", hint: "Add, rename and remove list items" },
-      { id: "lists.share", label: "Share lists", hint: "Share lists with other users" },
-    ],
-  },
-  {
-    title: "Company",
-    items: [
-      { id: "company.users", label: "Manage users", hint: "Invite, edit and deactivate users" },
-      { id: "company.roles", label: "Manage roles", hint: "Create and edit roles and permissions" },
-      { id: "company.accounts", label: "Manage linked accounts", hint: "Link and unlink branch accounts" },
-    ],
-  },
-  {
-    title: "Quotes",
-    items: [
-      { id: "quotes.view", label: "View quotes", hint: "See quotes and their status" },
-      { id: "quotes.request", label: "Request quotes", hint: "Ask a branch for a quote" },
+      { id: "features.rewards", label: "View rewards" },
+      { id: "features.invoices", label: "View invoices and statements" },
+      { id: "features.lists", label: "View lists" },
+      { id: "features.manageLists", label: "Create and manage lists" },
     ],
   },
 ];
@@ -94,36 +99,27 @@ type Role = {
   permissions: PermissionId[];
 };
 
+const BUYER_PERMS = [
+  "emp.view", "orders.viewOrg", "orders.viewAll", "pricing.see",
+  "accounts.view", "features.lists", "features.manageLists",
+];
+
 const INITIAL_ROLES: Role[] = [
-  { id: "r1", name: "Admin", users: 1, permissions: ALL_PERMISSIONS.filter((p) => p !== "pricing.hide") },
-  {
-    id: "r2",
-    name: "Buyer",
-    users: 2,
-    permissions: [
-      "orders.view", "orders.place", "orders.reorder", "pricing.view",
-      "lists.view", "lists.edit", "lists.share", "quotes.view", "quotes.request",
-    ],
-  },
-  {
-    id: "r3",
-    name: "Buyer (hide prices)",
-    users: 0,
-    permissions: [
-      "orders.view", "orders.place", "orders.reorder", "pricing.hide",
-      "lists.view", "lists.edit", "quotes.view", "quotes.request",
-    ],
-  },
+  { id: "r1", name: "Admin", users: 1, permissions: ALL_PERMISSIONS },
+  { id: "r2", name: "Buyer", users: 2, permissions: BUYER_PERMS },
+  { id: "r3", name: "Buyer (hide prices)", users: 0, permissions: BUYER_PERMS.filter((p) => p !== "pricing.see") },
   {
     id: "r4",
     name: "Manager",
     users: 8,
     permissions: [
-      "orders.view", "orders.place", "orders.approve", "orders.reorder", "pricing.view",
-      "lists.view", "lists.edit", "lists.share", "company.users", "quotes.view", "quotes.request",
+      "emp.view", "emp.edit", "role.view",
+      "orders.viewOwn", "orders.viewOrg", "orders.viewAll",
+      "approvalRules.view", "pending.viewAll", "pending.approveAssigned",
+      "pricing.see", "accounts.view", "features.lists", "features.manageLists", "features.invoices",
     ],
   },
-  { id: "r5", name: "Viewer", users: 0, permissions: ["orders.view", "pricing.view", "lists.view", "quotes.view"] },
+  { id: "r5", name: "Viewer", users: 0, permissions: ["emp.view", "orders.viewOwn", "pricing.see", "features.lists"] },
 ];
 
 const PAGE_SIZES = [18, 36, 54] as const;
@@ -260,7 +256,9 @@ function RoleDrawerBody({
                       <label className="flex min-h-11 cursor-pointer items-center justify-between gap-4 px-4 py-3 hover:bg-muted/40">
                         <span className="min-w-0">
                           <span className="block text-sm font-medium">{item.label}</span>
-                          <span className="block text-xs text-muted-foreground">{item.hint}</span>
+                          {item.hint ? (
+                            <span className="block text-xs text-muted-foreground">{item.hint}</span>
+                          ) : null}
                         </span>
                         <Checkbox
                           checked={granted.has(item.id)}
@@ -306,14 +304,6 @@ export default function RolesPage() {
     setDrawer({ mode: "closed" });
   };
 
-  const duplicate = (role: Role) =>
-    setRoles((prev) => [
-      ...prev,
-      { ...role, id: `r${Date.now()}`, name: `${role.name} (copy)`, users: 0 },
-    ]);
-
-  const remove = (role: Role) => setRoles((prev) => prev.filter((r) => r.id !== role.id));
-
   return (
     <DashboardShell
       title="Roles & Permissions"
@@ -351,31 +341,14 @@ export default function RolesPage() {
                     </td>
                     <td className={`${accountTable.cell} tabular-nums`}>{r.users}</td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" aria-label={`Actions for ${r.name}`}>
-                            <MoreHorizontal size={18} />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            className="min-h-11"
-                            onSelect={() => setDrawer({ mode: "edit", role: r })}
-                          >
-                            <Pencil size={15} /> Edit permissions
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="min-h-11" onSelect={() => duplicate(r)}>
-                            <Copy size={15} /> Duplicate
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="min-h-11 text-destructive focus:text-destructive"
-                            onSelect={() => remove(r)}
-                          >
-                            <Trash2 size={15} /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`View ${r.name}`}
+                        onClick={() => setDrawer({ mode: "edit", role: r })}
+                      >
+                        <Eye size={18} />
+                      </Button>
                     </td>
                   </tr>
                 );
