@@ -5,8 +5,10 @@ import Link from "next/link";
 import {
   ChevronDown,
   Copy,
+  Download,
   FolderInput,
   Minus,
+  Pencil,
   Plus,
   Replace,
   Settings2,
@@ -14,6 +16,7 @@ import {
   ShoppingCart,
   Tag,
   Trash2,
+  Users,
 } from "lucide-react";
 
 import { DashboardShell } from "../../_components/dashboard-shell";
@@ -453,7 +456,6 @@ function DetailRow({
   onQty,
   onAdd,
   onRemove,
-  onViewSubstitutes,
 }: {
   product: Product;
   qty: number;
@@ -462,7 +464,6 @@ function DetailRow({
   onQty: (next: number) => void;
   onAdd: () => void;
   onRemove: () => void;
-  onViewSubstitutes: () => void;
 }) {
   const [showComment, setShowComment] = React.useState(false);
   const [comment, setComment] = React.useState("");
@@ -630,18 +631,6 @@ function DetailRow({
               <Trash2 className="size-4" />
             </Button>
           </div>
-          {product.replacement ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="w-full text-xs"
-              onClick={onViewSubstitutes}
-            >
-              <Replace className="size-4" />
-              View substitutes
-            </Button>
-          ) : null}
         </div>
       </div>
 
@@ -700,18 +689,6 @@ function DetailRow({
             </Button>
           </div>
         </div>
-        {product.replacement ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-2 min-h-11 w-full"
-            onClick={onViewSubstitutes}
-          >
-            <Replace className="size-4" />
-            View substitutes
-          </Button>
-        ) : null}
       </div>
     </div>
   );
@@ -735,24 +712,31 @@ export function ListDetail({ id }: { id: string }) {
   );
   const [drawerFor, setDrawerFor] = React.useState<Product | null>(null);
 
+  // Rows shown in the list table — items whose replacement is surfaced in the
+  // review banner are removed from the table so they are never called out twice.
+  const listRows = React.useMemo(
+    () => rows.filter((p) => !banner.includes(p.id)),
+    [rows, banner],
+  );
+
   const filtered = React.useMemo(() => {
     const needle = q.trim().toLowerCase();
-    if (!needle) return rows;
-    return rows.filter(
+    if (!needle) return listRows;
+    return listRows.filter(
       (p) =>
         p.title.toLowerCase().includes(needle) ||
         p.item.toLowerCase().includes(needle) ||
         p.mfg.toLowerCase().includes(needle),
     );
-  }, [rows, q]);
+  }, [listRows, q]);
 
   const total = React.useMemo(
-    () => rows.reduce((sum, p) => sum + p.price * (qtys[p.id] ?? 1), 0),
-    [rows, qtys],
+    () => listRows.reduce((sum, p) => sum + p.price * (qtys[p.id] ?? 1), 0),
+    [listRows, qtys],
   );
 
-  const selectedIds = rows.filter((p) => selected[p.id]).map((p) => p.id);
-  const allSelected = rows.length > 0 && selectedIds.length === rows.length;
+  const selectedIds = listRows.filter((p) => selected[p.id]).map((p) => p.id);
+  const allSelected = listRows.length > 0 && selectedIds.length === listRows.length;
 
   const toCartItem = (p: Product | AltProduct) => ({
     id: p.id,
@@ -834,30 +818,40 @@ export function ListDetail({ id }: { id: string }) {
           </BreadcrumbList>
         </Breadcrumb>
       }
+      actions={
+        <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" variant="ghost" size="icon" aria-label={`Edit ${meta.name}`}>
+            <Pencil className="size-4" />
+          </Button>
+          <Button type="button" variant="outline" className="min-h-10">
+            <Users className="size-4" />
+            Manage permissions
+          </Button>
+          <Button className="min-h-10" onClick={addAll}>
+            <ShoppingCart className="size-4" />
+            Add all to cart
+          </Button>
+        </div>
+      }
     >
       <div className="space-y-3">
-        {/* Meta row — one line: created · type · count on the left; list total +
-            primary action (total to the left of the button) on the right. */}
+        {/* Meta row — created · type · updated · count on the left; list total on the right. */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
             <span>Created {meta.created}</span>
             <span aria-hidden="true">·</span>
-            <Badge variant="outline">{meta.type}</Badge>
+            <span className="inline-flex items-center gap-1.5">
+              Type <Badge variant="outline">{meta.type}</Badge>
+            </span>
             <span aria-hidden="true">·</span>
             <span>
-              {rows.length} product{rows.length === 1 ? "" : "s"}
+              {listRows.length} item{listRows.length === 1 ? "" : "s"} · Updated {meta.updated}
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              List total{" "}
-              <span className="font-semibold text-foreground">{formatUSD(total)}</span>
-            </span>
-            <Button className="min-h-11" onClick={addAll}>
-              <ShoppingCart className="size-4" />
-              Add all to cart
-            </Button>
-          </div>
+          <span className="text-sm text-muted-foreground">
+            Total{" "}
+            <span className="font-semibold text-in-stock">{formatUSD(total)}</span>
+          </span>
         </div>
 
         {/* Replacements review banner (yellow warning tone). */}
@@ -948,7 +942,7 @@ export function ListDetail({ id }: { id: string }) {
                 onCheckedChange={(v) =>
                   setSelected(
                     v === true
-                      ? Object.fromEntries(rows.map((p) => [p.id, true]))
+                      ? Object.fromEntries(listRows.map((p) => [p.id, true]))
                       : {},
                   )
                 }
@@ -959,7 +953,8 @@ export function ListDetail({ id }: { id: string }) {
             <span className="text-sm text-muted-foreground">
               {selectedIds.length} selected
             </span>
-            <div className="ml-auto flex flex-wrap items-center gap-1">
+            {/* Bulk actions — grouped next to Select all. */}
+            <div className="flex flex-wrap items-center gap-1">
               <Button
                 size="sm"
                 className="min-h-9"
@@ -988,6 +983,11 @@ export function ListDetail({ id }: { id: string }) {
                 Remove
               </Button>
             </div>
+            {/* Export — far right, list-level (not tied to selection). */}
+            <Button variant="outline" size="sm" className="ml-auto min-h-9">
+              <Download className="size-4" />
+              Export CSV
+            </Button>
           </div>
 
           {/* Product rows */}
@@ -1022,7 +1022,6 @@ export function ListDetail({ id }: { id: string }) {
                 onQty={(next) => setQtys((prev) => ({ ...prev, [p.id]: next }))}
                 onAdd={() => addOne(p)}
                 onRemove={() => removeRow(p.id)}
-                onViewSubstitutes={() => setDrawerFor(p)}
               />
             ))}
           </div>

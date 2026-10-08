@@ -9,15 +9,20 @@ import { Input } from "@/components/ui/input";
  * (Shopping Lists, Orders, Quotes, …) renders identically. Mirrors the
  * Shopping Lists reference exactly.
  */
-/** Deterministic color for a shopping-list label chip, so each label reads
- *  as its own category instead of a flat grey. */
-export function labelColor(label: string): "blue" | "amber" | "violet" | "teal" | "slate" {
+/** Deterministic color for a shopping-list label chip, so EVERY label reads as
+ *  its own category instead of a flat grey — known labels get a fixed color,
+ *  anything else is hashed to a palette color (never grey). */
+type LabelColor = "blue" | "amber" | "violet" | "teal" | "green" | "orange";
+const LABEL_PALETTE: LabelColor[] = ["blue", "violet", "green", "amber", "orange", "teal"];
+export function labelColor(label: string): LabelColor {
   const key = label.toLowerCase();
   if (key.includes("prevent")) return "blue";
   if (key.includes("job")) return "amber";
   if (key.includes("project")) return "violet";
   if (key.includes("consum") || key.includes("supply") || key.includes("supplies")) return "teal";
-  return "slate";
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  return LABEL_PALETTE[h % LABEL_PALETTE.length];
 }
 
 export const accountTable = {

@@ -5,7 +5,7 @@
  */
 export type ListType = "Personal" | "Shared";
 
-export type ListMeta = { name: string; type: ListType; created: string };
+export type ListMeta = { name: string; type: ListType; created: string; updated: string };
 
 /** URL-safe slug from a list name. Used as the [id] route segment. */
 export function slugifyList(name: string): string {
@@ -20,16 +20,19 @@ export const LIST_META: Record<string, ListMeta> = {
     name: "HVAC maintenance kit",
     type: "Personal",
     created: "August 12, 2026",
+    updated: "August 31, 2026",
   },
   "blower-motor-replacements": {
     name: "Blower motor replacements",
     type: "Personal",
     created: "August 28, 2026",
+    updated: "September 18, 2026",
   },
   "frequently-ordered-parts": {
     name: "Frequently ordered parts",
     type: "Shared",
     created: "July 30, 2026",
+    updated: "August 22, 2026",
   },
 };
 
@@ -40,6 +43,7 @@ export function getListMeta(id: string): ListMeta {
       name: id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
       type: "Personal",
       created: "August 2026",
+      updated: "August 2026",
     }
   );
 }

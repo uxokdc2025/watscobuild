@@ -108,7 +108,10 @@ export function SpecPill({
   );
 }
 
-/** Inventory line: branch-on-hand (green when stocked) + all-branches rollup. */
+/** Inventory line — the canonical two-line stock block shared by product cards
+ *  and every list view: green "N in {branch}" on-hand line + a primary-blue
+ *  "N Nearby Branch" link. Mirrors <ProductCard> exactly so stock reads
+ *  identically across the storefront. */
 export function InventoryLine({
   branchQty,
   branchName,
@@ -122,28 +125,18 @@ export function InventoryLine({
 }) {
   const inStock = branchQty > 0;
   return (
-    <div className={cn("flex flex-col gap-0.5 text-xs", className)}>
-      <span
-        className={cn(
-          "inline-flex items-center gap-1.5 font-semibold",
-          inStock
-            ? "text-emerald-700 dark:text-emerald-400"
-            : "text-amber-700 dark:text-amber-400",
-        )}
+    <div className={cn("flex flex-col gap-0.5 text-xs font-medium leading-4", className)}>
+      <span className={cn("truncate", inStock ? "text-in-stock" : "text-low-stock")}>
+        {inStock
+          ? `${branchQty.toLocaleString()} in ${branchName}`
+          : `Available to order · ${branchName}`}
+      </span>
+      <a
+        href="/store-locator/inventory/in-plp?v=c"
+        className="truncate text-primary underline-offset-2 transition-colors hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
       >
-        <span
-          className={cn(
-            "size-1.5 rounded-full",
-            inStock ? "bg-emerald-500" : "bg-amber-500",
-          )}
-          aria-hidden
-        />
-        {inStock ? `${branchQty} in stock` : "Available to order"}
-        <span className="font-normal text-muted-foreground">· {branchName}</span>
-      </span>
-      <span className="text-muted-foreground">
-        {allBranchesQty} across all branches
-      </span>
+        {allBranchesQty.toLocaleString()} Nearby Branch
+      </a>
     </div>
   );
 }
