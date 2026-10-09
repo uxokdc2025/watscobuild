@@ -6,7 +6,7 @@ import { DashboardShell } from "../_components/dashboard-shell";
 import { AccountSearchInput, RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -342,6 +342,11 @@ export default function CompanyUsersPage() {
             </TabsTrigger>
           ))}
         </TabsList>
+        {/* Force-mount empty panels so each trigger's aria-controls resolves
+            (this Tabs acts as a filter; the table below is the shared panel). */}
+        {USER_TABS.map((t) => (
+          <TabsContent key={t.key} value={t.key} forceMount className="hidden" />
+        ))}
       </Tabs>
 
       <section className={accountTable.card}>

@@ -6,7 +6,7 @@ import { DashboardShell } from "../_components/dashboard-shell";
 import { RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -137,6 +137,11 @@ function StatusTabs({
           </TabsTrigger>
         ))}
       </TabsList>
+      {/* Force-mount empty panels so each trigger's aria-controls resolves
+          (filter tabs; the list below is the shared panel). */}
+      {TABS.map((t) => (
+        <TabsContent key={t} value={t} forceMount className="hidden" />
+      ))}
     </Tabs>
   );
 }
