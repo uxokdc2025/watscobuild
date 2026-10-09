@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { Pencil, Plus, Star, Trash2 } from "lucide-react";
+import { RowAction } from "../_components/account-table";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -186,24 +187,30 @@ export default function CardManagementPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between border-t p-3">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  disabled={card.default}
-                  title={card.default ? "Set another card as default before deleting this one" : undefined}
-                  onClick={() =>
-                    setCards((current) =>
-                      current.filter((item) => item.id !== card.id),
-                    )
-                  }
-                  className="min-h-10 text-[13px] text-destructive hover:text-destructive/80 disabled:text-muted-foreground disabled:hover:text-muted-foreground"
-                >
-                  <Trash2 aria-hidden="true" className="size-4" /> Delete
-                </Button>
-                <Button type="button" onClick={() => openEdit(card)} className="h-10 w-[90px] text-[13px]">
-                  <Pencil aria-hidden="true" className="size-3.5" /> Edit
-                </Button>
+                {card.default ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled
+                    title="Set another card as default before deleting this one"
+                    className="min-h-9 gap-1.5 text-muted-foreground"
+                  >
+                    <Trash2 aria-hidden="true" className="size-4" /> Delete
+                  </Button>
+                ) : (
+                  <RowAction
+                    icon={Trash2}
+                    label="Delete"
+                    remove
+                    onClick={() =>
+                      setCards((current) =>
+                        current.filter((item) => item.id !== card.id),
+                      )
+                    }
+                  />
+                )}
+                <RowAction icon={Pencil} label="Edit" onClick={() => openEdit(card)} />
               </div>
             </article>
           ))}

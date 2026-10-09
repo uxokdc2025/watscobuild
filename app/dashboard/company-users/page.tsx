@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Pencil, Plus, Send, UserX, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { AccountSearchInput, accountTable } from "../_components/account-table";
+import { AccountSearchInput, RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -386,14 +386,12 @@ export default function CompanyUsersPage() {
                       <Badge variant="soft" color={STATUS_COLOR[u.status]}>{u.status}</Badge>
                     </td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      <RowAction
+                        icon={Pencil}
+                        label="Edit"
                         aria-label={`Edit ${fullName}`}
                         onClick={() => setDrawer({ mode: "edit", user: u })}
-                      >
-                        <Pencil size={17} />
-                      </Button>
+                      />
                     </td>
                   </tr>
                 );

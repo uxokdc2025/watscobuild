@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Check, Eye, X, XCircle } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { accountTable } from "../_components/account-table";
+import { RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -331,14 +331,12 @@ export default function PendingOrdersPage() {
                       <Badge variant="soft" color={STATUS_COLOR[r.status]}>{r.status}</Badge>
                     </td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      <RowAction
+                        icon={Eye}
+                        label="View"
                         aria-label={`View approval ${r.number}`}
                         onClick={() => setSelectedNumber(r.number)}
-                      >
-                        <Eye size={18} />
-                      </Button>
+                      />
                     </td>
                   </tr>
                 ))}

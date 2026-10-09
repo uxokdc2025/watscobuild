@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Eye, Link2, Plus, Repeat, Unlink, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { accountTable } from "../_components/account-table";
+import { RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -351,14 +351,12 @@ export default function LinkedAccountsPage() {
                     )}
                   </td>
                   <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                    <Button
-                      variant="ghost"
-                      size="icon"
+                    <RowAction
+                      icon={Eye}
+                      label="View"
                       aria-label={`View account ${a.number}`}
                       onClick={() => setSelectedNumber(a.number)}
-                    >
-                      <Eye size={18} />
-                    </Button>
+                    />
                   </td>
                 </tr>
               ))}

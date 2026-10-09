@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Eye, Share2, ShoppingCart, Trash2, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { accountTable } from "../_components/account-table";
+import { RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -211,32 +211,27 @@ export default function SavedCartsPage() {
                       </Badge>
                     </td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      <RowAction
+                        icon={Eye}
+                        label="View"
                         aria-label={`View cart ${c.name}`}
                         onClick={() => setSelected(c)}
-                      >
-                        <Eye size={18} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      />
+                      <RowAction
+                        icon={Share2}
+                        label="Share"
                         aria-label={c.shared ? `Stop sharing ${c.name}` : `Share ${c.name}`}
                         className="ml-1"
                         onClick={() => toggleShare(c.id)}
-                      >
-                        <Share2 size={17} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      />
+                      <RowAction
+                        icon={Trash2}
+                        label="Delete"
+                        remove
                         aria-label={`Delete cart ${c.name}`}
                         className="ml-1"
                         onClick={() => setCarts((prev) => prev.filter((x) => x.id !== c.id))}
-                      >
-                        <Trash2 size={17} />
-                      </Button>
+                      />
                     </td>
                   </tr>
                 ))}

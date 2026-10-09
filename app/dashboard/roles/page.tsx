@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Eye, Lock, Plus, ShieldCheck, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { accountTable } from "../_components/account-table";
+import { RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -341,14 +341,12 @@ export default function RolesPage() {
                     </td>
                     <td className={`${accountTable.cell} tabular-nums`}>{r.users}</td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      <RowAction
+                        icon={Eye}
+                        label="View"
                         aria-label={`View ${r.name}`}
                         onClick={() => setDrawer({ mode: "edit", role: r })}
-                      >
-                        <Eye size={18} />
-                      </Button>
+                      />
                     </td>
                   </tr>
                 );

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Eye, Printer, RotateCcw, Search, ShoppingCart, Truck, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { accountTable } from "../_components/account-table";
+import { RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -371,12 +371,8 @@ export default function OrdersPage() {
                     </td>
                     <td className={`${accountTable.cell} whitespace-nowrap`}>{o.account}</td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <Button variant="ghost" size="icon" aria-label={`View order ${o.number}`} onClick={() => setSelected(o)}>
-                        <Eye size={18} />
-                      </Button>
-                      <Button variant="ghost" size="icon" aria-label={`Reorder ${o.number}`} className="ml-1">
-                        <RotateCcw size={17} />
-                      </Button>
+                      <RowAction icon={Eye} label="View" aria-label={`View order ${o.number}`} onClick={() => setSelected(o)} />
+                      <RowAction icon={RotateCcw} label="Reorder" aria-label={`Reorder ${o.number}`} className="ml-1" />
                     </td>
                   </tr>
                 ))}

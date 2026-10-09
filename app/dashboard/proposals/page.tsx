@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Download, Eye, FilePlus2, Plus, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { AccountTableToolbar, accountTable } from "../_components/account-table";
+import { AccountTableToolbar, RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -357,14 +357,12 @@ export default function ProposalsPage() {
                       {usd(totalOf(p))}
                     </td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      <RowAction
+                        icon={Eye}
+                        label="View"
                         aria-label={`View proposal ${p.number}`}
                         onClick={() => setSelected(p)}
-                      >
-                        <Eye size={18} />
-                      </Button>
+                      />
                     </td>
                   </tr>
                 ))}

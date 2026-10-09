@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Download, Eye, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { AccountTableToolbar, accountTable } from "../_components/account-table";
+import { AccountTableToolbar, RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -269,22 +269,18 @@ export default function QuotesPage() {
                       {usd(quoteSubtotal(item))}
                     </td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      <RowAction
+                        icon={Eye}
+                        label="View"
                         aria-label={`View quote ${item.number}`}
                         onClick={() => setSelected(item)}
-                      >
-                        <Eye size={18} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      />
+                      <RowAction
+                        icon={Download}
+                        label="Download"
                         aria-label={`Download quote ${item.number}`}
                         className="ml-1"
-                      >
-                        <Download size={17} />
-                      </Button>
+                      />
                     </td>
                   </tr>
                 ))}
