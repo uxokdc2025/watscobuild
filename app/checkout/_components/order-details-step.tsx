@@ -168,7 +168,7 @@ function JobAccountField() {
     <div className="space-y-2">
       <Label htmlFor="job-account">Job account</Label>
       <Select value={jobAccount} onValueChange={setJobAccount}>
-        <SelectTrigger id="job-account" className="h-10 w-full">
+        <SelectTrigger id="job-account" aria-label="Job account" className="h-10 w-full">
           <SelectValue placeholder="Select job account" />
         </SelectTrigger>
         <SelectContent>
@@ -190,7 +190,7 @@ function NotifySalespersonBlock() {
   return (
     <div className="space-y-2">
       <Label className="flex items-start gap-3 text-sm font-normal">
-        <Checkbox checked={notifyRep} onCheckedChange={(v) => setNotifyRep(v === true)} className="mt-0.5" />
+        <Checkbox checked={notifyRep} onCheckedChange={(v) => setNotifyRep(v === true)} aria-label="Notify your salesperson (Dana Whitfield)" className="mt-0.5" />
         <span className="block font-semibold text-foreground">Notify your salesperson (Dana Whitfield)</span>
       </Label>
 
@@ -223,7 +223,7 @@ function SendConfirmationBlock() {
   return (
     <div className="space-y-2 border-t pt-5">
       <Label className="flex items-start gap-3 text-sm font-normal">
-        <Checkbox checked={sendEmail} onCheckedChange={(v) => setSendEmail(v === true)} className="mt-0.5" />
+        <Checkbox checked={sendEmail} onCheckedChange={(v) => setSendEmail(v === true)} aria-label="Send order confirmation email" className="mt-0.5" />
         <span>
           <span className="block font-semibold text-foreground">Send order confirmation email</span>
           <span className="block text-xs text-muted-foreground">A copy of this order goes to your account email.</span>
