@@ -922,7 +922,7 @@ export function ListDetail({ id }: { id: string }) {
   const [drawerFor, setDrawerFor] = React.useState<Product | null>(null);
   const [transfer, setTransfer] = React.useState<"move" | "copy" | null>(null);
   const [permsOpen, setPermsOpen] = React.useState(false);
-  const [bannerOpen, setBannerOpen] = React.useState(true);
+  const [bannerOpen, setBannerOpen] = React.useState(false);
 
   // Rows shown in the list table — items whose replacement is surfaced in the
   // review banner are removed from the table so they are never called out twice.
