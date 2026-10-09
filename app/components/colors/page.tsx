@@ -34,7 +34,7 @@ const SEMANTIC: Token[] = [
   { cls: "bg-card", varName: "--card", label: "Card", usage: "Raised surfaces, panels.", on: "text-card-foreground", bordered: true },
   { cls: "bg-muted", varName: "--muted", label: "Muted", usage: "Subtle fills, table stripes.", on: "text-foreground", bordered: true },
   { cls: "bg-muted-foreground", varName: "--muted-foreground", label: "Muted foreground", usage: "Secondary / helper text.", on: "text-background" },
-  { cls: "bg-primary", varName: "--primary", label: "Primary", usage: "Main actions, links, focus ring.", on: "text-primary-foreground" },
+  { cls: "bg-primary", varName: "--primary", label: "Primary", usage: "Main actions, links, focus ring. Links AA 4.6:1 on white.", on: "text-primary-foreground" },
   { cls: "bg-secondary", varName: "--secondary", label: "Secondary", usage: "Secondary fills.", on: "text-secondary-foreground", bordered: true },
   { cls: "bg-accent", varName: "--accent", label: "Accent", usage: "Hover surfaces, active nav.", on: "text-accent-foreground" },
   { cls: "bg-destructive", varName: "--destructive", label: "Destructive", usage: "Errors, delete, danger.", on: "text-white" },
@@ -44,7 +44,7 @@ const SEMANTIC: Token[] = [
 
 const STATUS: Token[] = [
   { cls: "bg-price", varName: "--price", label: "Price", usage: "Bold price text (text-price).", on: "text-white" },
-  { cls: "bg-in-stock", varName: "--in-stock", label: "In stock", usage: "Available / success.", on: "text-white" },
+  { cls: "bg-in-stock", varName: "--in-stock", label: "In stock", usage: "Available / success. AA 4.6:1 on white.", on: "text-white" },
   { cls: "bg-low-stock", varName: "--low-stock", label: "Low stock", usage: "Limited qty. AA 4.55:1 on white.", on: "text-white" },
   { cls: "bg-out-of-stock", varName: "--out-of-stock", label: "Out of stock", usage: "Unavailable / muted status.", on: "text-white" },
 ];
