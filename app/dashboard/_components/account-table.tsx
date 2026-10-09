@@ -32,10 +32,11 @@ export const accountTable = {
   scroll: "overflow-x-auto",
   /** The <table> element. Append a `min-w-[…]` per page. */
   table: "w-full text-left text-[13px]",
-  /** Header <tr>. */
-  headRow: "border-b bg-muted/30 text-muted-foreground",
-  /** Header <th>. */
-  headCell: "px-5 py-3 font-medium text-[11px]",
+  /** Header <tr>. Grey fill + dark foreground text so headers read as a header
+   *  bar and clear WCAG AA (muted-grey text on near-white failed ~4.4:1). */
+  headRow: "border-b bg-secondary text-foreground",
+  /** Header <th>. 12px semibold (up from 11px medium) for legibility. */
+  headCell: "px-5 py-3 font-semibold text-xs",
   /** Body <tr>. */
   row: "border-b last:border-0",
   /** Body <td>. */

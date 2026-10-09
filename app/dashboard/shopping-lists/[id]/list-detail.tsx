@@ -998,7 +998,7 @@ export function ListDetail({ id }: { id: string }) {
                 className={cn(
                   "hidden sm:grid",
                   LIST_GRID_COLS,
-                  "items-center gap-x-4 border-b bg-muted/20 px-4 py-2.5 text-xs font-medium text-muted-foreground",
+                  "items-center gap-x-4 border-b bg-secondary px-4 py-2.5 text-xs font-semibold text-foreground",
                 )}
               >
                 <span aria-hidden="true" />
