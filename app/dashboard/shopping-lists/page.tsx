@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
-import { GripVertical, Pencil, Plus, Tag, Trash2, X } from "lucide-react";
+import { GripVertical, Pencil, Plus, Tag, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
-import { AccountTableToolbar, accountTable, labelColor } from "../_components/account-table";
+import { AccountTableToolbar, RowAction, accountTable, labelColor } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -248,7 +248,6 @@ export default function ShoppingListsPage() {
     }
     setDrawerOpen(false);
   };
-  const remove = (id: string) => setLists((xs) => xs.filter((l) => l.id !== id));
 
   return (
     <DashboardShell
@@ -346,23 +345,12 @@ export default function ShoppingListsPage() {
                         </td>
                         <td className={`${accountTable.cell} whitespace-nowrap`}>{l.createdBy}</td>
                         <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
+                          <RowAction
+                            icon={Pencil}
+                            label="Edit"
                             aria-label={`Edit ${l.name}`}
                             onClick={() => openEdit(l)}
-                          >
-                            <Pencil size={18} />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label={`Delete ${l.name}`}
-                            className="ml-1 text-destructive hover:text-destructive/80"
-                            onClick={() => remove(l.id)}
-                          >
-                            <Trash2 size={17} />
-                          </Button>
+                          />
                         </td>
                       </tr>
                     </Fragment>

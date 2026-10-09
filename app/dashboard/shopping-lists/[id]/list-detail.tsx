@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 import { DashboardShell } from "../../_components/dashboard-shell";
-import { AccountSearchInput, AccountTableToolbar, labelColor } from "../../_components/account-table";
+import { AccountSearchInput, AccountTableToolbar, RowAction, labelColor } from "../../_components/account-table";
 import { getListMeta } from "../_list-meta";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -1097,6 +1097,16 @@ export function ListDetail({ id }: { id: string }) {
               Total{" "}
               <span className="font-semibold text-in-stock">{formatUSD(total)}</span>
             </span>
+          </div>
+          {/* Destructive action lives here, bottom-left — away from the primary
+              Add to Cart in the top-right. */}
+          <div className="mt-4 flex items-center border-t pt-4">
+            <RowAction
+              icon={Trash2}
+              label="Delete List"
+              remove
+              onClick={() => toast.success(`“${meta.name}” deleted`)}
+            />
           </div>
         </section>
 

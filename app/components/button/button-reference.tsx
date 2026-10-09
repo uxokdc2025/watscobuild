@@ -234,6 +234,7 @@ export default function ButtonReference() {
           <Guidance
             dos={[
               <><strong>Title Case every button and link label</strong> — &quot;Add to Cart&quot;, &quot;Move&quot;, &quot;View Substitutes&quot; (small words like <em>to / of / and</em> stay lowercase). This is a global rule for every clickable control.</>,
+              <><strong>Table row actions use <code className="rounded bg-muted px-1 py-0.5 text-xs">RowAction</code></strong> — always icon + label. Normal actions (View, Edit, Share) are primary blue; <strong>Remove / Delete is the one exception, kept black</strong>, and sits away from primary CTAs. Change the rule once in <code className="rounded bg-muted px-1 py-0.5 text-xs">RowAction</code> and every table updates.</>,
               <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code> for secondary actions like &quot;View Product&quot;.</>,
               <>Wrap links in <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Button asChild&gt;</code> so they get the same hover/focus.</>,
               <>Give every icon-only button an <code className="rounded bg-muted px-1 py-0.5 text-xs">aria-label</code>.</>,

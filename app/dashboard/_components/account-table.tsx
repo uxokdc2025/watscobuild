@@ -1,8 +1,67 @@
 "use client";
 
-import { ChevronDown, Filter, Search, Settings2 } from "lucide-react";
+import Link from "next/link";
+import { ChevronDown, Filter, Search, Settings2, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+/**
+ * The one table-row / list action control. Every account table uses this so
+ * actions stay consistent: icon + label, ghost button. Color is the single
+ * rule — normal actions (View, Edit, Share, …) are primary blue; Remove /
+ * Delete is the one exception and renders in foreground black (`remove`).
+ * Change it here and every row action across the app changes with it.
+ */
+export function RowAction({
+  icon: Icon,
+  label,
+  href,
+  onClick,
+  remove,
+  className,
+  "aria-label": ariaLabel,
+}: {
+  icon: LucideIcon;
+  label: string;
+  href?: string;
+  onClick?: () => void;
+  /** Remove / Delete / trash — the one action kept black, not blue. */
+  remove?: boolean;
+  className?: string;
+  "aria-label"?: string;
+}) {
+  const tone = remove
+    ? "text-foreground hover:text-foreground"
+    : "text-primary hover:text-primary";
+  const body = (
+    <>
+      <Icon className="size-4" aria-hidden="true" />
+      {label}
+    </>
+  );
+  if (href) {
+    return (
+      <Button asChild variant="ghost" size="sm" className={cn("min-h-9 gap-1.5", tone, className)}>
+        <Link href={href} aria-label={ariaLabel ?? label}>
+          {body}
+        </Link>
+      </Button>
+    );
+  }
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      aria-label={ariaLabel ?? label}
+      className={cn("min-h-9 gap-1.5", tone, className)}
+      onClick={onClick}
+    >
+      {body}
+    </Button>
+  );
+}
 
 /**
  * Shared styling tokens for account dashboard tables so every table view
