@@ -193,14 +193,26 @@ type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[]
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
-    id: "oct-9-cycle",
-    badge: "This cycle",
-    title: "New since the Oct 9 review",
+    id: "this-week",
+    badge: "This week",
+    title: "New edits since the Oct 9 meeting",
     items: [
       {
-        title: "PDP About tabs — Specifications & Part List icons",
-        desc: "Restored the decided tab icons on the product's About This Product section: Specifications now uses a gauge and Part List a gear, so neither reads like Description.",
-        links: [{ label: "PDP (About Tabs)", href: "/pdp/uc-tabs-accordions?signedin=1" }],
+        title: "Shopping list detail — redesigned header card, drawers & collapsible replacements",
+        desc: "The top is now its own card — the list name with an inline edit pencil beside it, Manage Permissions + Add to Cart on the right, and the created / type / count / total meta below. The replacements banner collapses. Bulk actions read Add to Cart / Move / Copy / Remove; Move and Copy open a “Select Product List” drawer, Manage Permissions opens a Permissions drawer, and Add / Move / Copy / Remove each confirm with a toast. The search toolbar now matches the Shopping Lists index.",
+        links: [
+          { label: "Shopping List Detail", href: "/dashboard/shopping-lists/hvac-maintenance-kit?signedin=1" },
+        ],
+      },
+      {
+        title: "Title Case — every button & link, app-wide",
+        desc: "All clickable control labels are now Title Case (Add to Cart, Move, Copy, View Substitutes, …), swept across the whole app and documented as a rule on the Button component sheet so pages stay connected to the design system.",
+        links: [{ label: "Button (design system)", href: "/components/button" }],
+      },
+      {
+        title: "Accessibility — WCAG AA pass",
+        desc: "Darkened the link blue, in-stock green, muted text, and table-header text so they clear AA contrast on the real page background and on tinted fills; gave every search filter control an accessible name; fixed the page titles; and moved the colour-swatch labels off the saturated tiles. Audited with axe across the app.",
+        links: [{ label: "Color & Tokens", href: "/components/colors" }],
       },
     ],
   },
@@ -209,6 +221,11 @@ const CHANGE_LOGS: ChangeLog[] = [
     badge: "Reviewed Oct 9",
     title: "Reviewed at the Oct 9 meeting",
     items: [
+      {
+        title: "PDP About tabs — Specifications & Part List icons",
+        desc: "Restored the decided tab icons on the product's About This Product section: Specifications now uses a gauge and Part List a gear, so neither reads like Description.",
+        links: [{ label: "PDP (About Tabs)", href: "/pdp/uc-tabs-accordions?signedin=1" }],
+      },
       {
         title: "Account Dashboard — full reimagine + grouped nav",
         desc: "Every dashboard section rebuilt on one pattern — a shared table + Find-an-Order filter, right-side drawers for detail and edit, primary CTAs on the right, colored status pills, and real pagination. The sidebar is now grouped (Buying Tools · Orders · Account · Company) to match the storefront. Review links to every page below.",

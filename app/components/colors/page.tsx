@@ -61,14 +61,11 @@ const BRAND: Token[] = [
 function Swatch({ t }: { t: Token }) {
   return (
     <div className="overflow-hidden rounded-xl border bg-card">
-      <div
-        className={`flex h-20 items-end p-3 ${t.cls} ${t.on ?? "text-foreground"} ${
-          t.bordered ? "border-b" : ""
-        }`}
-      >
-        <span className="text-xs font-medium opacity-90">{t.label}</span>
-      </div>
+      {/* Pure color block — the label sits below as dark text on the card so
+          saturated swatches never fail contrast with an overlaid label. */}
+      <div className={`h-20 ${t.cls} ${t.bordered ? "border-b" : ""}`} aria-hidden="true" />
       <div className="flex flex-col gap-1 px-3 py-2.5">
+        <p className="text-sm font-semibold">{t.label}</p>
         <code className="font-mono text-xs font-medium">{t.cls}</code>
         <code className="font-mono text-[11px] text-muted-foreground">{t.varName}</code>
         <p className="mt-0.5 text-xs text-muted-foreground">{t.usage}</p>
