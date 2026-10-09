@@ -16,7 +16,7 @@ export default function InventoryGalleryPage() {
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"
           >
             <ArrowLeft className="size-3.5" />
-            Store locator
+            Store Locator
           </Link>
           <h1 className="text-lg font-semibold">
             Inventory drawer — right-side directions

@@ -20,15 +20,15 @@ import { OnThisPage } from "../_ds/sidebar";
 
 const TOC = [
   { id: "usage", label: "Usage" },
-  { id: "text-input", label: "Text input" },
-  { id: "states", label: "Input states" },
+  { id: "text-input", label: "Text Input" },
+  { id: "states", label: "Input States" },
   { id: "textarea", label: "Textarea" },
   { id: "checkbox", label: "Checkbox" },
-  { id: "radio", label: "Radio group" },
+  { id: "radio", label: "Radio Group" },
   { id: "select", label: "Select" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {

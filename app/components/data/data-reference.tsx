@@ -49,7 +49,7 @@ const TOC = [
   { id: "accordion", label: "Accordion" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 const ROWS = [
@@ -403,7 +403,7 @@ return (
               target="_blank"
               className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
-              In production — PDP: Frequently Bought Together
+              In Production — PDP: Frequently Bought Together
               <ExternalLink className="size-3.5" />
             </Link>
           </div>
@@ -617,7 +617,7 @@ const TRIGGER =
               target="_blank"
               className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
-              In production — PDP: About This Product
+              In Production — PDP: About This Product
               <ExternalLink className="size-3.5" />
             </Link>
           </div>
@@ -684,8 +684,8 @@ const TRIGGER =
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "PDP — detail tabs & specs", href: "/pdp/uc-replacement-products?signedin=1" },
-              { label: "PLP — Search results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PDP — Detail Tabs & Specs", href: "/pdp/uc-replacement-products?signedin=1" },
+              { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
               { label: "Checkout", href: "/checkout?demo=1" },
             ].map((l) => (
               <Link

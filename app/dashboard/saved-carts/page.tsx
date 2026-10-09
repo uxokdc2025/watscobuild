@@ -150,9 +150,9 @@ function CartDetailDrawer({ cart, onClose }: { cart: SavedCart | null; onClose: 
 
             {/* Sticky action bar */}
             <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t bg-background px-5 py-3 sm:px-6">
-              <Button variant="outline">Open cart</Button>
+              <Button variant="outline">Open Cart</Button>
               <Button>
-                <ShoppingCart size={16} /> Add all to cart
+                <ShoppingCart size={16} /> Add All to Cart
               </Button>
             </div>
           </>

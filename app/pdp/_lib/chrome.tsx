@@ -496,7 +496,7 @@ export function CheckoutFooter({ brand }: { brand: BrandChrome }) {
             Call us at <a href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="font-medium text-foreground underline-offset-4 hover:underline">{phone}</a>
             {" "}(Mon–Fri, 7am–6pm ET) or{" "}
             <a href="#" className="font-medium text-foreground underline-offset-4 hover:underline">
-              Chat with a specialist
+              Chat with a Specialist
             </a>
           </span>
         </div>

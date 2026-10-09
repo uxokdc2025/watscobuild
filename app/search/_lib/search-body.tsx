@@ -451,7 +451,7 @@ export function SearchBody({
                       .join("&")}`}
                     className="font-medium text-primary hover:underline"
                   >
-                    Sign in
+                    Sign In
                   </Link>{" "}
                   to see pricing and inventory in {displayName}.
                 </>

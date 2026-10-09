@@ -16,10 +16,10 @@ const TOC = [
   { id: "usage", label: "Usage" },
   { id: "variants", label: "Variants" },
   { id: "colors", label: "Colors" },
-  { id: "status", label: "Status & domain" },
+  { id: "status", label: "Status & Domain" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -363,7 +363,7 @@ export default function BadgeReference() {
           <div className="flex flex-wrap gap-2">
             {[
               { label: "PDP — Replacement Products", href: "/pdp/uc-replacement-products?signedin=1" },
-              { label: "PLP — Search results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
               { label: "Badges & Labels (full)", href: "/components/all#labels" },
             ].map((l) => (
               <Link

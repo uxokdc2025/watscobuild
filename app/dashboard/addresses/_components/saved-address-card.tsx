@@ -30,7 +30,7 @@ export function SavedAddressCard({ addr, onEdit, onRemove, onSetDefault }: Props
               onClick={onSetDefault}
               className="h-8 shrink-0 px-2 text-xs text-muted-foreground hover:text-foreground"
             >
-              <Star aria-hidden="true" className="size-3.5" /> Set as default
+              <Star aria-hidden="true" className="size-3.5" /> Set as Default
             </Button>
           )}
         </div>

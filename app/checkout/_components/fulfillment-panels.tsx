@@ -183,11 +183,11 @@ export function DeliveryPanel({
         <p className="text-sm font-semibold">Deliver to</p>
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => setBookOpen(true)} className="text-sm font-medium text-primary hover:underline">
-            See all ({addresses.length})
+            See All ({addresses.length})
           </button>
           <Button variant="outline" size="sm" onClick={() => setAddOpen(true)}>
             <Plus className="size-4" />
-            New address
+            New Address
           </Button>
         </div>
       </div>

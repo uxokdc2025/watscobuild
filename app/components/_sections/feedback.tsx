@@ -153,7 +153,7 @@ export function FeedbackSection() {
               })
             }
           >
-            With action
+            With Action
           </Button>
         </State>
       </Demo>
@@ -176,7 +176,7 @@ export function FeedbackSection() {
           <State label="Hover / Focus">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline">Hover me</Button>
+                <Button variant="outline">Hover Me</Button>
               </TooltipTrigger>
               <TooltipContent>Appears on hover or focus</TooltipContent>
             </Tooltip>

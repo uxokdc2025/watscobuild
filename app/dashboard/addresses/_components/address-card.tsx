@@ -96,7 +96,7 @@ export function AddressCard(props: Props) {
             aria-label={`Set ${addr.label} as default`}
           >
             <Star aria-hidden="true" className="size-4" />
-            Set as default
+            Set as Default
           </Button>
         ) : (
             <span className="inline-flex h-10 min-w-[132px] items-center justify-center gap-1.5 rounded-md border border-primary/20 bg-primary/5 px-3 text-[13px] font-medium text-primary">

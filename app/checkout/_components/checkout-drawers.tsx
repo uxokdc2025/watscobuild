@@ -326,7 +326,7 @@ export function AddAddressDrawer({ open, onClose }: { open: boolean; onClose: ()
             Cancel
           </Button>
           <Button type="submit" form={formId}>
-            Save address
+            Save Address
           </Button>
         </div>
       }
@@ -517,7 +517,7 @@ export function SwitchAccountDrawer({
                       className="min-h-11 px-0 text-xs font-medium"
                       onClick={() => onSetDefault(a.id)}
                     >
-                      Set as default
+                      Set as Default
                     </Button>
                   ) : (
                     <span aria-hidden="true" />
@@ -653,7 +653,7 @@ export function CreditCardDrawer({
             Cancel
           </Button>
           <Button type="submit" form={formId} disabled={tail.length < 4}>
-            Save card
+            Save Card
           </Button>
         </div>
       }

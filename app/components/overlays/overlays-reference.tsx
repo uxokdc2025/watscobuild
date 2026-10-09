@@ -57,10 +57,10 @@ const TOC = [
   { id: "drawer", label: "Drawer" },
   { id: "popover", label: "Popover" },
   { id: "tooltip", label: "Tooltip" },
-  { id: "dropdown-menu", label: "Dropdown menu" },
+  { id: "dropdown-menu", label: "Dropdown Menu" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -116,7 +116,7 @@ export default function OverlaysReference() {
             install="dialog"
             code={`<Dialog>
   <DialogTrigger asChild>
-    <Button variant="outline">Edit profile</Button>
+    <Button variant="outline">Edit Profile</Button>
   </DialogTrigger>
   <DialogContent className="sm:max-w-md">
     <DialogHeader>
@@ -129,14 +129,14 @@ export default function OverlaysReference() {
     </div>
     <DialogFooter>
       <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-      <DialogClose asChild><Button>Save changes</Button></DialogClose>
+      <DialogClose asChild><Button>Save Changes</Button></DialogClose>
     </DialogFooter>
   </DialogContent>
 </Dialog>`}
           >
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline">Edit profile</Button>
+                <Button variant="outline">Edit Profile</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
@@ -152,7 +152,7 @@ export default function OverlaysReference() {
                     <Button variant="outline">Cancel</Button>
                   </DialogClose>
                   <DialogClose asChild>
-                    <Button>Save changes</Button>
+                    <Button>Save Changes</Button>
                   </DialogClose>
                 </DialogFooter>
               </DialogContent>
@@ -171,7 +171,7 @@ export default function OverlaysReference() {
           <PreviewCode
             code={`<Dialog>
   <DialogTrigger asChild>
-    <Button variant="destructive">Delete order</Button>
+    <Button variant="destructive">Delete Order</Button>
   </DialogTrigger>
   <DialogContent className="sm:max-w-md">
     <DialogHeader>
@@ -187,7 +187,7 @@ export default function OverlaysReference() {
           >
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="destructive">Delete order</Button>
+                <Button variant="destructive">Delete Order</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
@@ -220,7 +220,7 @@ export default function OverlaysReference() {
             install="sheet"
             code={`<Sheet>
   <SheetTrigger asChild>
-    <Button variant="outline">Open filters</Button>
+    <Button variant="outline">Open Filters</Button>
   </SheetTrigger>
   <SheetContent side="right">
     <SheetHeader>
@@ -236,7 +236,7 @@ export default function OverlaysReference() {
           >
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline">Open filters</Button>
+                <Button variant="outline">Open Filters</Button>
               </SheetTrigger>
               <SheetContent side="right">
                 <SheetHeader>
@@ -269,7 +269,7 @@ export default function OverlaysReference() {
           <PreviewCode
             code={`const [open, setOpen] = React.useState(false);
 
-<Button variant="outline" onClick={() => setOpen(true)}>Open cart drawer</Button>
+<Button variant="outline" onClick={() => setOpen(true)}>Open Cart Drawer</Button>
 
 {open && (
   <DrawerBackdrop onClose={() => setOpen(false)}>
@@ -291,7 +291,7 @@ export default function OverlaysReference() {
 )}`}
           >
             <Button variant="outline" onClick={() => setDrawerOpen(true)}>
-              Open cart drawer
+              Open Cart Drawer
             </Button>
             {drawerOpen && (
               <DrawerBackdrop onClose={() => setDrawerOpen(false)}>
@@ -378,7 +378,7 @@ export default function OverlaysReference() {
             code={`<TooltipProvider>
   <Tooltip>
     <TooltipTrigger asChild>
-      <Button variant="outline">Hover me</Button>
+      <Button variant="outline">Hover Me</Button>
     </TooltipTrigger>
     <TooltipContent>Appears on hover or focus</TooltipContent>
   </Tooltip>
@@ -395,7 +395,7 @@ export default function OverlaysReference() {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline">Hover me</Button>
+                  <Button variant="outline">Hover Me</Button>
                 </TooltipTrigger>
                 <TooltipContent>Appears on hover or focus</TooltipContent>
               </Tooltip>
@@ -437,7 +437,7 @@ export default function OverlaysReference() {
     </DropdownMenuCheckboxItem>
     <DropdownMenuItem disabled>Team</DropdownMenuItem>
     <DropdownMenuSeparator />
-    <DropdownMenuItem variant="destructive">Delete account</DropdownMenuItem>
+    <DropdownMenuItem variant="destructive">Delete Account</DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>`}
           >
@@ -463,7 +463,7 @@ export default function OverlaysReference() {
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuItem disabled>Team</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">Delete account</DropdownMenuItem>
+                <DropdownMenuItem variant="destructive">Delete Account</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </PreviewCode>
@@ -522,8 +522,8 @@ export default function OverlaysReference() {
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "PDP — Add to cart drawer", href: "/pdp/uc-replacement-products?signedin=1" },
-              { label: "PLP — Filters sheet", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PDP — Add to Cart Drawer", href: "/pdp/uc-replacement-products?signedin=1" },
+              { label: "PLP — Filters Sheet", href: "/search?q=blower%20motor&signedin=1" },
               { label: "Store Locator", href: "/store-locator" },
             ].map((l) => (
               <Link

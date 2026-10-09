@@ -293,7 +293,7 @@ export default function CheckoutClient({
             <h1 className="mt-4 text-2xl font-bold">Your cart is empty</h1>
             <p className="mt-2 text-sm text-muted-foreground">Add products to your cart before starting checkout.</p>
             <Button asChild className="mt-6" size="sm">
-              <Link href="/search?q=blower%20motor&signedin=1">Continue shopping</Link>
+              <Link href="/search?q=blower%20motor&signedin=1">Continue Shopping</Link>
             </Button>
           </section>
         </div>
@@ -344,12 +344,12 @@ export default function CheckoutClient({
   // scrolls back to the top so the newly active step is in view.
   const stepCta =
     step === "details"
-      ? { label: "Continue to fulfillment", onClick: () => { goToFulfillment(); scrollToTopSmooth(); }, disabled: false }
+      ? { label: "Continue to Fulfillment", onClick: () => { goToFulfillment(); scrollToTopSmooth(); }, disabled: false }
       : step === "fulfillment"
-        ? { label: "Continue to payment", onClick: () => { setStep("payment"); scrollToTopSmooth(); }, disabled: fulfillmentContinueDisabled }
+        ? { label: "Continue to Payment", onClick: () => { setStep("payment"); scrollToTopSmooth(); }, disabled: fulfillmentContinueDisabled }
         : step === "payment"
-          ? { label: "Continue to review", onClick: () => { setStep("review"); scrollToTopSmooth(); }, disabled: paymentContinueDisabled }
-          : { label: "Place order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled };
+          ? { label: "Continue to Review", onClick: () => { setStep("review"); scrollToTopSmooth(); }, disabled: paymentContinueDisabled }
+          : { label: "Place Order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled };
 
   /* ── Accordion (v2) progressive layout — reuses the SAME state, handlers,
    *    and step components as v1. v1's return below is unchanged. ── */
@@ -419,7 +419,7 @@ export default function CheckoutClient({
         <div className="mx-auto max-w-[var(--layout-max-width)]">
           <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
             <ChevronLeft className="size-4" aria-hidden="true" />
-            Back to cart
+            Back to Cart
           </Link>
 
           <div className="mt-5">
@@ -461,7 +461,7 @@ export default function CheckoutClient({
                             if (po.trim()) scrollToTop();
                           }}
                         >
-                          Continue to fulfillment
+                          Continue to Fulfillment
                         </Button>
                       </div>
                     </motion.div>
@@ -511,7 +511,7 @@ export default function CheckoutClient({
                     />
                     <div className="flex justify-end border-t px-5 py-4">
                       <Button size="sm" disabled={fulfillmentContinueDisabled} onClick={() => goToStep("payment")}>
-                        Continue to payment
+                        Continue to Payment
                       </Button>
                     </div>
                     </motion.div>
@@ -553,7 +553,7 @@ export default function CheckoutClient({
                     />
                     <div className="flex justify-end border-t px-5 py-4">
                       <Button size="sm" disabled={paymentContinueDisabled} onClick={goToReview}>
-                        Continue to review
+                        Continue to Review
                       </Button>
                     </div>
                     </motion.div>
@@ -607,7 +607,7 @@ export default function CheckoutClient({
           disabled={false}
           total={total}
           shippingUnknown={shippingUnknown}
-          secondaryLabel="Save quote"
+          secondaryLabel="Save Quote"
           onSecondary={saveQuote}
         />
       </main>
@@ -630,7 +630,7 @@ export default function CheckoutClient({
         <div className="mx-auto max-w-[var(--layout-max-width)]">
           <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
             <ChevronLeft className="size-4" aria-hidden="true" />
-            Back to cart
+            Back to Cart
           </Link>
 
           <div className="mt-5">
@@ -739,7 +739,7 @@ export default function CheckoutClient({
           disabled={false}
           total={total}
           shippingUnknown={shippingUnknown}
-          secondaryLabel="Save quote"
+          secondaryLabel="Save Quote"
           onSecondary={saveQuote}
         />
       </main>
@@ -751,7 +751,7 @@ export default function CheckoutClient({
       <div className="mx-auto max-w-[var(--layout-max-width)]">
         <Link href={`/cart?brand=${brandKey}${demo ? "&demo=1" : ""}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ChevronLeft className="size-4" aria-hidden="true" />
-          Back to cart
+          Back to Cart
         </Link>
 
         <div className="mt-5">
@@ -817,7 +817,7 @@ export default function CheckoutClient({
                 <div className="flex justify-between border-t px-5 py-4 max-lg:hidden">
                   <span aria-hidden="true" />
                   <Button size="sm" onClick={goToFulfillment}>
-                    Continue to fulfillment
+                    Continue to Fulfillment
                   </Button>
                 </div>
               </>
@@ -850,7 +850,7 @@ export default function CheckoutClient({
                 <div className="flex justify-between border-t px-5 py-4 max-lg:hidden">
                   <Button variant="outline" size="sm" onClick={() => setStep("details")}>Back</Button>
                   <Button size="sm" onClick={() => setStep("payment")} disabled={fulfillmentContinueDisabled} className="max-lg:hidden">
-                    Continue to payment
+                    Continue to Payment
                   </Button>
                 </div>
               </>
@@ -875,7 +875,7 @@ export default function CheckoutClient({
                 <div className="flex justify-between border-t px-5 py-4 max-lg:hidden">
                   <Button variant="outline" size="sm" onClick={() => setStep("fulfillment")}>Back</Button>
                   <Button size="sm" onClick={() => setStep("review")} disabled={paymentContinueDisabled} className="max-lg:hidden">
-                    Continue to review
+                    Continue to Review
                   </Button>
                 </div>
               </>
@@ -925,7 +925,7 @@ export default function CheckoutClient({
             shipping={shipping}
             shippingUnknown={shippingUnknown}
             total={total}
-            primary={{ label: "Place order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled }}
+            primary={{ label: "Place Order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled }}
             coupon={coupon}
             setCoupon={setCoupon}
             appliedCoupon={appliedCoupon}
@@ -955,7 +955,7 @@ export default function CheckoutClient({
         disabled={stepCta.disabled}
         total={total}
         shippingUnknown={shippingUnknown}
-        secondaryLabel={step === "review" ? "Save quote" : undefined}
+        secondaryLabel={step === "review" ? "Save Quote" : undefined}
         onSecondary={saveQuote}
       />
     </main>
@@ -987,10 +987,10 @@ export function OrderConfirmation({ brand }: { brand: BrandCheckoutConfig }) {
           <div className="mx-auto mt-6 grid max-w-md grid-cols-2 gap-3">
             <Button variant="outline" size="sm" className="w-full" onClick={() => window.print()}>
               <Printer className="size-4" aria-hidden="true" />
-              Print confirmation
+              Print Confirmation
             </Button>
             <Button asChild size="sm" className="w-full">
-              <Link href="/dashboard/orders?status=open">View open orders</Link>
+              <Link href="/dashboard/orders?status=open">View Open Orders</Link>
             </Button>
           </div>
         </section>
@@ -1198,7 +1198,7 @@ function PaymentStep({
                   onClick={() => setCardDrawerOpen(true)}
                   className="shrink-0 whitespace-nowrap"
                 >
-                  Add new card
+                  Add New Card
                 </Button>
               ) : null}
             </span>
@@ -1269,7 +1269,7 @@ function PaymentStep({
                     onClick={() => setAllCardsOpen(true)}
                     className="rounded-sm text-center text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   >
-                    See all credit cards
+                    See All Credit Cards
                   </button>
                 </div>
               </RadioGroup>
@@ -1640,7 +1640,7 @@ export function OrderSummary({
                 saveQuoteDisabled ? "text-muted-foreground" : "text-primary hover:underline"
               )}
             >
-              Save quote
+              Save Quote
             </button>
           ) : null}
         </div>

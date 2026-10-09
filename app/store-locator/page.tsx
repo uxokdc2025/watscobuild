@@ -46,7 +46,7 @@ export default function StoreLocatorPage() {
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"
           >
             <ArrowLeft className="size-3.5" />
-            Back to templates
+            Back to Templates
           </Link>
           <h1 className="text-lg font-semibold">Store Locator and Inventory Drawer</h1>
           <span className="w-32" />

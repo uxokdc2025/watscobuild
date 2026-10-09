@@ -24,11 +24,11 @@ import { OnThisPage } from "../_ds/sidebar";
 
 const TOC = [
   { id: "avatar", label: "Avatar" },
-  { id: "aspect-ratio", label: "Aspect ratio" },
+  { id: "aspect-ratio", label: "Aspect Ratio" },
   { id: "carousel", label: "Carousel" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -303,7 +303,7 @@ export default function MediaReference() {
               href="/components/data#tabs"
               className="underline underline-offset-2 hover:text-foreground"
             >
-              Data display → Tabs — group multiple carousels
+              Data Display → Tabs — Group Multiple Carousels
             </Link>
             .
           </p>
@@ -371,8 +371,8 @@ export default function MediaReference() {
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "PDP — gallery & thumbnails", href: "/pdp/uc-replacement-products?signedin=1" },
-              { label: "PLP — Search results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PDP — Gallery & Thumbnails", href: "/pdp/uc-replacement-products?signedin=1" },
+              { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
             ].map((l) => (
               <Link
                 key={l.href}

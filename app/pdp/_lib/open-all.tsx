@@ -16,7 +16,7 @@ export function OpenAllButton({ slugs }: { slugs: string[] }) {
       }
     >
       <ExternalLink />
-      Open all brands
+      Open All Brands
     </Button>
   );
 }

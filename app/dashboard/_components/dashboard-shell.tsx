@@ -107,7 +107,7 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
     <main className="min-h-svh bg-muted/30 text-foreground">
       <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-3 md:px-6 md:py-4">
         <div className="mb-3">
-          {breadcrumb ?? <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to shopping</Link>}
+          {breadcrumb ?? <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to Shopping</Link>}
         </div>
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
           <nav aria-label="Account dashboard" className="h-fit rounded-md border border-border bg-background p-2 shadow-sm">

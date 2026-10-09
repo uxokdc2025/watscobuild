@@ -252,15 +252,15 @@ function OrderSummary({
             {saved ? (
               <>
                 <Check className="size-4" aria-hidden="true" />
-                Cart saved
+                Cart Saved
               </>
             ) : (
-              "Save cart"
+              "Save Cart"
             )}
           </Button>
           {/* Primary lives in the mobile sticky bar; shown here on desktop only. */}
           <Button asChild size="sm" className="hidden w-full lg:inline-flex">
-            <Link href={checkoutHref}>Proceed to checkout</Link>
+            <Link href={checkoutHref}>Proceed to Checkout</Link>
           </Button>
         </div>
       </div>
@@ -276,7 +276,7 @@ function EmptyCart() {
       <h1 className="mt-4 text-2xl font-bold">Your cart is empty</h1>
       <p className="mt-2 text-sm text-muted-foreground">Add products to your cart to start an order.</p>
       <Button asChild className="mt-6" size="sm">
-        <Link href={SHOP_HREF}>Continue shopping</Link>
+        <Link href={SHOP_HREF}>Continue Shopping</Link>
       </Button>
     </section>
   );
@@ -311,7 +311,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
       <div className="mx-auto max-w-[var(--layout-max-width)]">
         <Link href={SHOP_HREF} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ChevronLeft className="size-4" aria-hidden="true" />
-          Back to shopping
+          Back to Shopping
         </Link>
 
         <h1 className="mt-5 text-2xl font-bold tracking-tight">Cart</h1>
@@ -384,7 +384,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
                   <span className="text-lg font-bold">{formatUSD(total)}</span>
                 </div>
                 <Button asChild className="mt-2 w-full">
-                  <Link href={checkoutHref}>Proceed to checkout</Link>
+                  <Link href={checkoutHref}>Proceed to Checkout</Link>
                 </Button>
               </div>
             </div>

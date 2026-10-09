@@ -382,8 +382,8 @@ const usMotors9656Baker: PdpProduct = {
     { label: "Approvals", value: "UL Recognized" },
   ],
   documents: [
-    { label: "specification sheet", kind: "pdf", href: "#" },
-    { label: "wiring diagrams", kind: "pdf", href: "#" },
+    { label: "Specification Sheet", kind: "pdf", href: "#" },
+    { label: "Wiring Diagrams", kind: "pdf", href: "#" },
   ],
   commerce: {
     price: 101.22,
@@ -1009,9 +1009,9 @@ const ucPackSize: PdpProduct = {
     ],
   },
   documents: [
-    { label: "consumer literature", kind: "pdf", href: "#" },
-    { label: "consumer literature", kind: "pdf", href: "#" },
-    { label: "specification sheet", kind: "pdf", href: "#" },
+    { label: "Consumer Literature", kind: "pdf", href: "#" },
+    { label: "Consumer Literature", kind: "pdf", href: "#" },
+    { label: "Specification Sheet", kind: "pdf", href: "#" },
   ],
   docsInline: true,
   specTabLabel: "Features and Specification",

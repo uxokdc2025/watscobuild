@@ -37,7 +37,7 @@ function MilesDirections({ miles }: { miles: number }) {
       <span className="text-muted-foreground/40">·</span>
       <a href="#" className="inline-flex items-center gap-1 font-medium text-primary">
         <Navigation className="size-3.5" />
-        Get directions
+        Get Directions
       </a>
     </span>
   );
@@ -78,7 +78,7 @@ export function DirectionBDrawer() {
           className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
         >
           <Navigation className="size-4" />
-          Use my location
+          Use My Location
         </a>
       </div>
       <ul className="flex flex-1 flex-col divide-y overflow-y-auto">
@@ -110,7 +110,7 @@ export function DirectionBDrawer() {
                   className="inline-flex items-center gap-1 font-medium text-primary"
                 >
                   <Navigation className="size-3.5" />
-                  Get directions
+                  Get Directions
                 </a>
               </div>
             </div>
@@ -186,7 +186,7 @@ export function DirectionCDrawer() {
             className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
           >
             <Navigation className="size-4" />
-            Use my current location
+            Use My Current Location
           </a>
         </div>
         <ul className="flex flex-1 flex-col divide-y overflow-y-auto">

@@ -172,7 +172,7 @@ function QuoteDetailDrawer({ quote, onClose }: { quote: Quote | null; onClose: (
               <Button variant="outline">
                 <Download size={16} /> Download
               </Button>
-              <Button disabled={quote.status === "Expired"}>Convert to order</Button>
+              <Button disabled={quote.status === "Expired"}>Convert to Order</Button>
             </div>
           </>
         ) : null}

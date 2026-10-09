@@ -43,7 +43,7 @@ export const BRANDS: Record<string, BrandChrome> = {
       "Brands",
       "Specials",
       "Services",
-      "Find A Local Dealer",
+      "Find a Local Dealer",
       "Resources",
       "Training & Events",
     ],
@@ -85,7 +85,7 @@ export const BRANDS: Record<string, BrandChrome> = {
     defaultBranch: "Camp Hill, PA #144",
     nav: [
       "Specials",
-      "Find A Local Dealer",
+      "Find a Local Dealer",
       "Products",
       "Brands",
       "Services",
@@ -140,7 +140,7 @@ export const BRANDS: Record<string, BrandChrome> = {
       "Matched Systems",
     ],
     footerColumns: [
-      { title: "About", links: ["About Gemaire", "About Heating And Cooling Supply", "Branch Finder", "Careers"] },
+      { title: "About", links: ["About Gemaire", "About Heating and Cooling Supply", "Branch Finder", "Careers"] },
       { title: "External Resources", links: ["Apply for Gemaire Credit", "Apply for Gemaire COD Account", "GemPay"] },
       { title: "Support", links: ["Help", "Shipping", "Returns", "Sales Tax Disclosures", "Accessibility", "FAQ"] },
       { title: "Contact Us", links: ["support@gemaire.com", "(888) 601–0038"] },

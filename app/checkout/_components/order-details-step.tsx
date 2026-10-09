@@ -255,7 +255,7 @@ function SendConfirmationBlock() {
           ))}
           <Button type="button" variant="outline" size="sm" onClick={addRecipient}>
             <Plus className="size-4" />
-            {recipients.length ? "More" : "Add recipient"}
+            {recipients.length ? "More" : "Add Recipient"}
           </Button>
         </div>
       ) : null}

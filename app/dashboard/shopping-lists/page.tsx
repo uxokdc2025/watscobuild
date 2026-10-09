@@ -181,7 +181,7 @@ function ListDrawer({
             Cancel
           </Button>
           <Button className="min-h-11" disabled={!valid} onClick={onSave}>
-            {editing ? "Save changes" : "Create list"}
+            {editing ? "Save Changes" : "Create List"}
           </Button>
         </div>
       </DialogContent>

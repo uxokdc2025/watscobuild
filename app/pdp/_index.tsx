@@ -81,13 +81,13 @@ function PlpCard({ p }: { p: PlpEntry }) {
       <div className="mt-3 flex flex-wrap gap-2">
         <Button asChild variant="outline" size="sm">
           <Link href={signedOutHref} target="_blank" rel="noopener noreferrer">
-            Signed out
+            Signed Out
             <ArrowUpRight className="size-3.5" />
           </Link>
         </Button>
         <Button asChild size="sm">
           <Link href={signedInHref} target="_blank" rel="noopener noreferrer">
-            Signed in
+            Signed In
             <ArrowUpRight className="size-3.5" />
           </Link>
         </Button>
@@ -154,7 +154,7 @@ function TemplateCard({
               target="_blank"
               rel="noopener noreferrer"
             >
-              Signed out
+              Signed Out
               <ArrowUpRight className="size-3.5" />
             </Link>
           </Button>
@@ -165,7 +165,7 @@ function TemplateCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            {signedInOnly ? "Open (signed in)" : "Signed in"}
+            {signedInOnly ? "Open (Signed In)" : "Signed In"}
             <ArrowUpRight className="size-3.5" />
           </Link>
         </Button>
@@ -200,7 +200,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "PDP About tabs — Specifications & Part List icons",
         desc: "Restored the decided tab icons on the product's About This Product section: Specifications now uses a gauge and Part List a gear, so neither reads like Description.",
-        links: [{ label: "PDP (About tabs)", href: "/pdp/uc-tabs-accordions?signedin=1" }],
+        links: [{ label: "PDP (About Tabs)", href: "/pdp/uc-tabs-accordions?signedin=1" }],
       },
     ],
   },
@@ -242,8 +242,8 @@ const CHANGE_LOGS: ChangeLog[] = [
         title: "Shopping list detail — availability, replacements & bulk actions",
         desc: "Availability now matches the product card everywhere — green “N in {branch}” + a blue “N Nearby Branch” link (fixed in the shared InventoryLine, so every list view updates together). Items with a replacement show only in the yellow banner, not twice in the table. Bulk actions (Add selected · Move · Copy · Remove) are grouped next to Select all, with Export CSV on the far right. Header carries Edit · Manage permissions · Add all to cart, and the meta row shows the Updated date.",
         links: [
-          { label: "Shopping list (with replacements)", href: "/dashboard/shopping-lists/hvac-maintenance-kit?signedin=1" },
-          { label: "All shopping lists", href: "/dashboard/shopping-lists?signedin=1" },
+          { label: "Shopping List (with Replacements)", href: "/dashboard/shopping-lists/hvac-maintenance-kit?signedin=1" },
+          { label: "All Shopping Lists", href: "/dashboard/shopping-lists?signedin=1" },
         ],
       },
       {
@@ -251,7 +251,7 @@ const CHANGE_LOGS: ChangeLog[] = [
         desc: "List view is now a full-width horizontal list on the shared row pattern with DS Add-to-Cart buttons; a PLP v2 adds a checkbox “Shop By Availability” filter (Pick Up Today / All Stores) in our grey-box treatment.",
         links: [
           { label: "PLP (Grid/List)", href: "/search?q=blower%20motor&signedin=1" },
-          { label: "PLP v2 — availability checkboxes", href: "/search/plp-v2?signedin=1" },
+          { label: "PLP v2 — Availability Checkboxes", href: "/search/plp-v2?signedin=1" },
         ],
       },
     ],
@@ -289,7 +289,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Tab styles — Style 2 + icons",
         desc: "Style 2 active segment is now a soft, AA-accessible light blue; Specifications uses a gauge icon and Part List a gear icon so they no longer read like Description.",
-        links: [{ label: "Tab styles", href: "/pdp/about-variants" }],
+        links: [{ label: "Tab Styles", href: "/pdp/about-variants" }],
       },
       {
         title: "Search — “Change” store link",
@@ -349,7 +349,7 @@ export default function PdpMasterPage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Account section
+                Account Section
                 <ArrowUpRight className="size-3.5" />
               </Link>
             </Button>
@@ -490,7 +490,7 @@ export default function PdpMasterPage() {
                     Product Details Page
                   </Badge>
                   <span className="text-lg font-bold tracking-tight">
-                    Content patterns &amp; badges ({useCases.length})
+                    Content Patterns &amp; Badges ({useCases.length})
                   </span>
                 </span>
               </AccordionTrigger>
@@ -541,7 +541,7 @@ export default function PdpMasterPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      About This Product — Tab styles (client review)
+                      About This Product — Tab Styles (Client Review)
                       <ArrowUpRight className="size-3.5" />
                     </Link>
                   </Button>
@@ -551,7 +551,7 @@ export default function PdpMasterPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      About This Product — Accordion styles (client review)
+                      About This Product — Accordion Styles (Client Review)
                       <ArrowUpRight className="size-3.5" />
                     </Link>
                   </Button>
@@ -627,7 +627,7 @@ export default function PdpMasterPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View Account Menus comparison
+                    View Account Menus Comparison
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>
@@ -646,7 +646,7 @@ export default function PdpMasterPage() {
                   Product Listing Page
                 </Badge>
                 <span className="text-lg font-bold tracking-tight">
-                  Search results (PLP) ({PLP_ENTRIES.length})
+                  Search Results (PLP) ({PLP_ENTRIES.length})
                 </span>
               </span>
             </AccordionTrigger>
@@ -659,7 +659,7 @@ export default function PdpMasterPage() {
               <div className="pb-2">
                 <Button asChild size="sm">
                   <Link href="/search/plp-v2?signedin=1" target="_blank" rel="noopener noreferrer">
-                    PLP v2 — checkbox availability
+                    PLP v2 — Checkbox Availability
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>
@@ -698,7 +698,7 @@ export default function PdpMasterPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Open Homans PDP (signed in)
+                    Open Homans PDP (Signed In)
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>
@@ -708,7 +708,7 @@ export default function PdpMasterPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Open Homans PLP (signed in)
+                    Open Homans PLP (Signed In)
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>
@@ -718,7 +718,7 @@ export default function PdpMasterPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    PLP (multi-result example)
+                    PLP (Multi-Result Example)
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>
@@ -752,7 +752,7 @@ export default function PdpMasterPage() {
                 </Button>
                 <Button asChild variant="outline" size="sm">
                   <Link href="/checkout/v3?demo=1">
-                    Checkout v3 — everything open
+                    Checkout v3 — Everything Open
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </Button>
@@ -772,7 +772,7 @@ export default function PdpMasterPage() {
               className="rounded-xl border bg-card px-5"
             >
               <AccordionTrigger className="text-sm font-semibold tracking-wide text-muted-foreground uppercase hover:no-underline">
-                Descoped · building independently ({descoped.length})
+                Descoped · Building Independently ({descoped.length})
               </AccordionTrigger>
               <AccordionContent>
                 <ul className="flex flex-col gap-3 pb-2">

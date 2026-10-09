@@ -40,8 +40,8 @@ export function useAuth() {
 export function AuthToggle() {
   const { signedIn, setSignedIn } = useAuth();
   const opts = [
-    { v: false, label: "Signed out", Icon: Lock },
-    { v: true, label: "Signed in", Icon: LockOpen },
+    { v: false, label: "Signed Out", Icon: Lock },
+    { v: true, label: "Signed In", Icon: LockOpen },
   ] as const;
   return (
     <div

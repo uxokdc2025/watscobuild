@@ -99,7 +99,7 @@ export function AhriSystemDetail({ system }: { system: AhriSystem }) {
             <Button asChild variant="ghost" size="sm">
               <Link href="/pdp/uc-ahri-matched-system?signedin=1#ahri-lookup">
                 <ArrowLeft className="size-4" />
-                Back to results
+                Back to Results
               </Link>
             </Button>
           </div>

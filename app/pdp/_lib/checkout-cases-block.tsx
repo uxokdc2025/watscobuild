@@ -24,7 +24,7 @@ export function CheckoutCasesBlock({ cases }: { cases: readonly UseCase[] }) {
           </div>
           <Button asChild variant="outline" size="sm" className="shrink-0">
             <a href="/checkout?demo=1&case=delivery-pickup-routing" target="_blank" rel="noopener noreferrer">
-              Open baseline checkout
+              Open Baseline Checkout
               <ArrowUpRight />
             </a>
           </Button>
@@ -46,7 +46,7 @@ export function CheckoutCasesBlock({ cases }: { cases: readonly UseCase[] }) {
             <div className="mt-4">
               <Button asChild variant="outline" size="sm">
                 <a href={`/checkout?demo=1&case=${useCase.slug}`} target="_blank" rel="noopener noreferrer">
-                  Open checkout example
+                  Open Checkout Example
                   <ArrowUpRight />
                 </a>
               </Button>

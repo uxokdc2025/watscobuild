@@ -33,11 +33,11 @@ import { OnThisPage } from "../_ds/sidebar";
 const TOC = [
   { id: "breadcrumb", label: "Breadcrumb" },
   { id: "pagination", label: "Pagination" },
-  { id: "tabs-nav", label: "Tabs as nav" },
-  { id: "nav-indicator", label: "Nav indicator line" },
+  { id: "tabs-nav", label: "Tabs as Nav" },
+  { id: "nav-indicator", label: "Nav Indicator Line" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -201,7 +201,7 @@ export default function NavigationReference() {
             <code className="rounded bg-muted px-1 py-0.5 text-xs">segmented</code> variant (the
             Pack-Size selector style). For tabs that switch content panels, see{" "}
             <Link href="/components/data#tabs" className="underline underline-offset-2 hover:text-foreground">
-              Data display
+              Data Display
             </Link>
             .
           </p>
@@ -418,7 +418,7 @@ export default function NavigationReference() {
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "PLP — Search results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
               { label: "PDP — Replacement Products", href: "/pdp/uc-replacement-products?signedin=1" },
             ].map((l) => (
               <Link

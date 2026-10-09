@@ -67,7 +67,7 @@ function PartCard({ item }: { item: PartItem }) {
             href="#"
             className="text-sm font-medium text-primary underline-offset-4 hover:underline"
           >
-            Sign in to view pricing
+            Sign in to View Pricing
           </a>
         )}
       </div>

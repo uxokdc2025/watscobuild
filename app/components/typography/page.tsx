@@ -23,7 +23,7 @@ const HEADINGS: Spec[] = [
 ];
 
 const TOC = [
-  { id: "body", label: "Body & UI text" },
+  { id: "body", label: "Body & UI Text" },
   { id: "headings", label: "Headings & Display" },
 ];
 

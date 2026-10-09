@@ -27,10 +27,10 @@ const TOC = [
   { id: "skeleton", label: "Skeleton" },
   { id: "progress", label: "Progress" },
   { id: "toast", label: "Toast" },
-  { id: "empty-state", label: "Empty state" },
+  { id: "empty-state", label: "Empty State" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -314,7 +314,7 @@ toast("File deleted", {
                 })
               }
             >
-              With action
+              With Action
             </Button>
           </PreviewCode>
         </section>
@@ -338,7 +338,7 @@ toast("File deleted", {
       Try a different part number, or clear your filters.
     </p>
   </div>
-  <Button variant="outline" size="sm">Clear filters</Button>
+  <Button variant="outline" size="sm">Clear Filters</Button>
 </div>`}
           >
             <div className="flex w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-8 text-center">
@@ -350,7 +350,7 @@ toast("File deleted", {
                 </p>
               </div>
               <Button variant="outline" size="sm">
-                Clear filters
+                Clear Filters
               </Button>
             </div>
           </PreviewCode>
@@ -421,9 +421,9 @@ toast("File deleted", {
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "Checkout — confirmation", href: "/checkout?demo=1" },
-              { label: "PLP — Search results", href: "/search?q=blower%20motor&signedin=1" },
-              { label: "PDP — Add to cart", href: "/pdp/uc-replacement-products?signedin=1" },
+              { label: "Checkout — Confirmation", href: "/checkout?demo=1" },
+              { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PDP — Add to Cart", href: "/pdp/uc-replacement-products?signedin=1" },
             ].map((l) => (
               <Link
                 key={l.href}

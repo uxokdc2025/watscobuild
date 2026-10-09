@@ -36,7 +36,7 @@ export default function CartDrawerReference() {
         </p>
         <Button onClick={openWithDemo}>
           <ShoppingCart className="size-4" />
-          Open cart with sample items
+          Open Cart with Sample Items
         </Button>
         <p className="mt-4 text-sm text-muted-foreground">
           Adds two sample items and opens the drawer. Close it with the X or by clicking the overlay.

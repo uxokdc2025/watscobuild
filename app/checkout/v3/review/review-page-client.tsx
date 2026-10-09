@@ -102,7 +102,7 @@ export default function ReviewPageClient({
             <h1 className="mt-4 text-2xl font-bold">Your cart is empty</h1>
             <p className="mt-2 text-sm text-muted-foreground">Add products to your cart before reviewing your order.</p>
             <Button asChild className="mt-6" size="sm">
-              <Link href="/search?q=blower%20motor&signedin=1">Continue shopping</Link>
+              <Link href="/search?q=blower%20motor&signedin=1">Continue Shopping</Link>
             </Button>
           </section>
         </div>
@@ -166,7 +166,7 @@ export default function ReviewPageClient({
             shipping={shipping}
             shippingUnknown={shippingUnknown}
             total={total}
-            primary={{ label: "Place order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled }}
+            primary={{ label: "Place Order", onClick: () => setSubmitted(true), disabled: placeOrderDisabled }}
             coupon={coupon}
             setCoupon={setCoupon}
             appliedCoupon={appliedCoupon}
@@ -180,12 +180,12 @@ export default function ReviewPageClient({
       {/* Mobile sticky CTA — Place order + Save quote (OrderSummary's buttons are
           desktop-only). */}
       <MobileCtaBar
-        label="Place order"
+        label="Place Order"
         onClick={() => setSubmitted(true)}
         disabled={placeOrderDisabled}
         total={total}
         shippingUnknown={shippingUnknown}
-        secondaryLabel="Save quote"
+        secondaryLabel="Save Quote"
         onSecondary={saveQuote}
       />
     </main>

@@ -49,7 +49,7 @@ export function OverlaysSection() {
         <State label="Default (click)">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">Edit profile</Button>
+              <Button variant="outline">Edit Profile</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
@@ -68,7 +68,7 @@ export function OverlaysSection() {
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
                 <DialogClose asChild>
-                  <Button>Save changes</Button>
+                  <Button>Save Changes</Button>
                 </DialogClose>
               </DialogFooter>
             </DialogContent>
@@ -97,7 +97,7 @@ export function OverlaysSection() {
         <State label="Default (click)">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline">Open popover</Button>
+              <Button variant="outline">Open Popover</Button>
             </PopoverTrigger>
             <PopoverContent className="w-72">
               <div className="grid gap-2">
@@ -144,12 +144,12 @@ export function OverlaysSection() {
                 checked={notifications}
                 onCheckedChange={setNotifications}
               >
-                Notifications (selected)
+                Notifications (Selected)
               </DropdownMenuCheckboxItem>
-              <DropdownMenuItem disabled>Team (disabled)</DropdownMenuItem>
+              <DropdownMenuItem disabled>Team (Disabled)</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive">
-                Delete account
+                Delete Account
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

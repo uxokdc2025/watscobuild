@@ -166,7 +166,7 @@ function BrandSection({ guide }: { guide: BrandGuide }) {
         </div>
         <Button asChild size="sm" className="shrink-0">
           <Link href={checkoutHref(guide.key)} target="_blank" rel="noopener noreferrer">
-            Walk the {guide.label} checkout
+            Walk the {guide.label} Checkout
             <ArrowUpRight className="size-3.5" />
           </Link>
         </Button>
@@ -207,7 +207,7 @@ export default function CheckoutGuide() {
           </div>
           <Button asChild variant="outline" size="sm" className="shrink-0">
             <Link href={checkoutHref("baker")} target="_blank" rel="noopener noreferrer">
-              Open the unified checkout
+              Open the Unified Checkout
               <ArrowUpRight className="size-3.5" />
             </Link>
           </Button>

@@ -174,7 +174,7 @@ export default function CardManagementPage() {
                       onClick={() => setDefaultCard(card.id)}
                       className="h-8 shrink-0 px-2 text-xs text-muted-foreground hover:text-foreground"
                     >
-                      <Star aria-hidden="true" className="size-3.5" /> Set as default
+                      <Star aria-hidden="true" className="size-3.5" /> Set as Default
                     </Button>
                   )}
                 </div>
@@ -385,7 +385,7 @@ export default function CardManagementPage() {
               </div>
             </section>
             <Button type="submit" size="lg" className="sticky bottom-0 z-10 w-full">
-              {editing ? "Save changes" : "Save Card"}
+              {editing ? "Save Changes" : "Save Card"}
             </Button>
           </form>
         </DialogContent>

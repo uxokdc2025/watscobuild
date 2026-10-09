@@ -163,7 +163,7 @@ function LinkAccountDrawer({
             Cancel
           </Button>
           <Button type="submit" form="link-account-form" className="min-h-11" disabled={!valid}>
-            <Link2 size={16} /> Link account
+            <Link2 size={16} /> Link Account
           </Button>
         </div>
       </DialogContent>
@@ -250,7 +250,7 @@ function AccountDetailDrawer({
                 disabled={isCurrent || account.status !== "Active"}
                 onClick={() => onSwitch(account.number)}
               >
-                <Repeat size={16} /> Switch to this account
+                <Repeat size={16} /> Switch to This Account
               </Button>
             </div>
           </>

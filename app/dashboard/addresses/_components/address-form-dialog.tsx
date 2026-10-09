@@ -225,7 +225,7 @@ export function AddressFormDialog({
               onCheckedChange={(v) => onChange({ isDefault: v === true })}
             />
             <Label htmlFor="addr-default" className="cursor-pointer">
-              Set as default
+              Set as Default
             </Label>
           </div>
 
@@ -234,7 +234,7 @@ export function AddressFormDialog({
               Cancel
             </Button>
             <Button type="submit" className="min-h-11">
-              {editingId ? "Save changes" : "Save address"}
+              {editingId ? "Save Changes" : "Save Address"}
             </Button>
           </div>
         </form>

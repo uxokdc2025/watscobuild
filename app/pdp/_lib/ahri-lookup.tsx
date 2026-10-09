@@ -200,7 +200,7 @@ function WizardLookup() {
                   }}
                 >
                   <SlidersHorizontal className="size-4" />
-                  Add filter
+                  Add Filter
                 </Button>
               ) : null}
               {view === "table" ? <ColumnsMenu cols={cols} onChange={setCols} /> : null}
@@ -212,12 +212,12 @@ function WizardLookup() {
                 {view === "list" ? (
                   <>
                     <Table2 className="size-4" />
-                    View in table
+                    View in Table
                   </>
                 ) : (
                   <>
                     <LayoutList className="size-4" />
-                    View as list
+                    View as List
                   </>
                 )}
               </Button>
@@ -441,7 +441,7 @@ function ChipBar({
         onClick={onClearAll}
         className="ml-1 text-xs font-medium text-primary hover:underline"
       >
-        Clear all
+        Clear All
       </button>
     </div>
   );
@@ -507,12 +507,12 @@ function AllVisibleLookup() {
             {view === "list" ? (
               <>
                 <Table2 className="size-4" />
-                View in table
+                View in Table
               </>
             ) : (
               <>
                 <LayoutList className="size-4" />
-                View as list
+                View as List
               </>
             )}
           </Button>

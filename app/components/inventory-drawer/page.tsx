@@ -26,7 +26,7 @@ export default function InventoryDrawerBlock() {
           rel="noopener noreferrer"
           className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
-          Open full-screen in a PLP
+          Open Full-Screen in a PLP
           <ArrowUpRight className="size-3.5" />
         </Link>
       </header>

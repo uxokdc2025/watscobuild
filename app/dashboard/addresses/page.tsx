@@ -121,7 +121,7 @@ export default function AddressesPage() {
       description="Manage your saved addresses and review the locations on file with your Homans account."
       actions={
         <Button type="button" onClick={openAdd} className="min-h-10">
-          <Plus aria-hidden="true" className="size-4" /> Add address
+          <Plus aria-hidden="true" className="size-4" /> Add Address
         </Button>
       }
     >
@@ -145,7 +145,7 @@ export default function AddressesPage() {
             </div>
           ) : (
             <div className="rounded-md border border-dashed bg-background px-6 py-12 text-center text-sm text-muted-foreground shadow-sm">
-              No saved addresses yet. Use “Add address” to save a job site or shop.
+              No saved addresses yet. Use “Add Address” to save a job site or shop.
             </div>
           )}
         </section>

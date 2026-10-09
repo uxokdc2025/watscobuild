@@ -393,7 +393,7 @@ function PartRowSchema({ row }: { row: PartRow }) {
             className="h-9 w-14 rounded-md border bg-background px-2 text-center text-sm disabled:bg-muted/30 disabled:text-muted-foreground"
           />
           <Button type="button" disabled={gated || row.price == null}>
-            Add To Cart
+            Add to Cart
           </Button>
         </div>
       </td>
@@ -403,7 +403,7 @@ function PartRowSchema({ row }: { row: PartRow }) {
           variant="outline"
           disabled={gated || row.price == null}
         >
-          Save To List
+          Save to List
         </Button>
       </td>
     </tr>

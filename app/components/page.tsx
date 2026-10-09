@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const FOUNDATIONS = [
-  { label: "Color & tokens", href: "/components/colors", desc: "Semantic, status, and brand-chrome tokens." },
+  { label: "Color & Tokens", href: "/components/colors", desc: "Semantic, status, and brand-chrome tokens." },
   { label: "Typography", href: "/components/typography", desc: "Type scale, weights, and usage." },
 ];
 

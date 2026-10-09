@@ -347,7 +347,7 @@ export function ProductCard({
               href="#"
               className="inline-flex h-9 items-center text-sm font-medium text-primary underline-offset-4 hover:underline"
             >
-              Sign in to view pricing
+              Sign in to View Pricing
             </a>
           )}
         </div>

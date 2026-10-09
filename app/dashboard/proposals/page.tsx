@@ -174,7 +174,7 @@ function CreateProposalDrawer({
             Cancel
           </Button>
           <Button className="min-h-11" disabled={!valid} onClick={onSave}>
-            <FilePlus2 size={16} /> Create proposal
+            <FilePlus2 size={16} /> Create Proposal
           </Button>
         </div>
       </DialogContent>
@@ -251,7 +251,7 @@ function ProposalDetailDrawer({
               <Button variant="outline" className="min-h-11">
                 <Download size={16} /> Download PDF
               </Button>
-              <Button className="min-h-11">Convert to order</Button>
+              <Button className="min-h-11">Convert to Order</Button>
             </div>
           </>
         ) : null}

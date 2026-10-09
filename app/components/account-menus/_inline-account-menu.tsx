@@ -33,8 +33,8 @@ export function InlineAccountMenu({ nested = false }: { nested?: boolean }) {
           <span className="block">613 MAIN STREET · ALL CASH SALES ARE FINAL</span>
         </p>
         <div className="mt-4 flex gap-2">
-          <Button type="button" variant="outline" size="lg" className="flex-1 text-xs font-semibold">Change account</Button>
-          <Button type="button" size="lg" className="flex-1 gap-1 text-xs font-semibold">Change ship to <ChevronRight className="size-4" /></Button>
+          <Button type="button" variant="outline" size="lg" className="flex-1 text-xs font-semibold">Change Account</Button>
+          <Button type="button" size="lg" className="flex-1 gap-1 text-xs font-semibold">Change Ship To <ChevronRight className="size-4" /></Button>
         </div>
       </div>
       <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto">

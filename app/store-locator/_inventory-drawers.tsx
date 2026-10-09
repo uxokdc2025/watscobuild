@@ -336,7 +336,7 @@ export function InventoryDirection1() {
           className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
         >
           <Navigation className="size-4" />
-          Use my current location
+          Use My Current Location
         </a>
       </div>
       <BranchFilterSort
@@ -378,7 +378,7 @@ export function InventoryDirection2() {
           className="flex flex-1 items-center justify-center gap-1.5 border-b-2 border-primary py-3 text-sm font-semibold text-primary"
         >
           <Building2 className="size-4" />
-          Branch pickup
+          Branch Pickup
         </button>
         <button
           type="button"
@@ -498,8 +498,8 @@ export function InventoryDirection3() {
       <div className="shrink-0 border-t p-3">
         <Button disabled={!canCommit} className="w-full">
           {canCommit
-            ? `Set ${selectedBranch!.name} as my branch`
-            : "Select a branch"}
+            ? `Set ${selectedBranch!.name} as My Branch`
+            : "Select a Branch"}
         </Button>
       </div>
     </div>
@@ -675,7 +675,7 @@ export function InventoryStoreLocatorDrawer({
           className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
         >
           <Navigation className="size-4" />
-          Use my current location
+          Use My Current Location
         </a>
       </div>
       {showStock ? (

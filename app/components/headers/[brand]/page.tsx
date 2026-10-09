@@ -37,7 +37,7 @@ export default async function BrandHeaderPage({
           className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
         >
           <ChevronLeft className="size-4" />
-          All headers
+          All Headers
         </Link>
       </div>
 

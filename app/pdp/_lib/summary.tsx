@@ -413,13 +413,13 @@ export function PdpSummary({
           <Separator />
           <div className="rounded-lg border bg-muted/40 p-4 text-sm">
             <a href="#" className="font-semibold text-primary underline-offset-4 hover:underline">
-              Sign in
+              Sign In
             </a>
             <span className="text-muted-foreground"> to view pricing and inventory.</span>
           </div>
           <Button size="lg" className="h-12 w-full text-base">
             <LogIn />
-            Sign in to view pricing
+            Sign in to View Pricing
           </Button>
           <SecondaryActions showFindAhri={showFindAhri} />
         </>

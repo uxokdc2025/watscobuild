@@ -247,7 +247,7 @@ function RoleDrawerBody({
                     onClick={() => toggleGroup(group, !allOn)}
                     className="text-xs font-medium text-primary hover:underline"
                   >
-                    {allOn ? "Clear all" : "Select all"}
+                    {allOn ? "Clear All" : "Select All"}
                   </button>
                 </div>
                 <ul className="divide-y rounded-lg border">
@@ -281,7 +281,7 @@ function RoleDrawerBody({
           Cancel
         </Button>
         <Button type="submit" form="role-form" className="min-h-11" disabled={!valid}>
-          Save role
+          Save Role
         </Button>
       </div>
     </>

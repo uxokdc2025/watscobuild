@@ -26,7 +26,7 @@ export default function CheckoutBlock() {
           rel="noopener noreferrer"
           className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
-          Open full-screen with chrome
+          Open Full-Screen with Chrome
           <ArrowUpRight className="size-3.5" />
         </Link>
       </header>

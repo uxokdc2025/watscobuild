@@ -65,10 +65,10 @@ const STATUSES: UserStatus[] = ["Active", "Invited", "Disabled"];
 /* Reference tabs: Active users · Inactive users · All approved users · Pending users. */
 type UserTab = "Active" | "Inactive" | "Approved" | "Pending";
 const USER_TABS: { key: UserTab; label: string }[] = [
-  { key: "Active", label: "Active users" },
-  { key: "Inactive", label: "Inactive users" },
-  { key: "Approved", label: "All approved users" },
-  { key: "Pending", label: "Pending users" },
+  { key: "Active", label: "Active Users" },
+  { key: "Inactive", label: "Inactive Users" },
+  { key: "Approved", label: "All Approved Users" },
+  { key: "Pending", label: "Pending Users" },
 ];
 const matchesUserTab = (u: CompanyUser, tab: UserTab): boolean =>
   tab === "Active"
@@ -275,7 +275,7 @@ function UserDrawerBody({
               <UserX size={16} /> Deactivate
             </Button>
             <Button type="submit" form="user-form" className="min-h-11" disabled={!valid}>
-              Save changes
+              Save Changes
             </Button>
           </>
         ) : (
@@ -284,7 +284,7 @@ function UserDrawerBody({
               Cancel
             </Button>
             <Button type="submit" form="user-form" className="min-h-11" disabled={!valid}>
-              <Send size={16} /> Send invite
+              <Send size={16} /> Send Invite
             </Button>
           </>
         )}

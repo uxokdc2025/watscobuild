@@ -18,9 +18,9 @@ import { OnThisPage } from "../_ds/sidebar";
 
 const TOC = [
   { id: "usage", label: "Usage" },
-  { id: "sections", label: "Sections & icons" },
+  { id: "sections", label: "Sections & Icons" },
   { id: "guidance", label: "Guidance" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 /** Rich sample so every section renders — specs, documents, and a part list. */
@@ -138,7 +138,7 @@ export default function AboutReference() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted/60"
             >
-              Live PDP (About section)
+              Live PDP (About Section)
               <ExternalLink className="size-3.5" />
             </Link>
           </div>

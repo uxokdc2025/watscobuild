@@ -135,7 +135,7 @@ export function StockUnavailablePanel({
                       onClick={() => openForItem(item)}
                       className="text-sm font-medium text-primary underline underline-offset-2 hover:text-primary/80"
                     >
-                      Check nearby stores
+                      Check Nearby Stores
                     </button>
                   </TableCell>
                 </TableRow>
@@ -153,7 +153,7 @@ export function StockUnavailablePanel({
                 onClick={openForStore}
                 className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
               >
-                Change your selected store
+                Change Your Selected Store
               </button>
             </li>
             <li>Adjust quantities below.</li>

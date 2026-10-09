@@ -13,7 +13,7 @@ const TOC = [
   { id: "states", label: "States" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 /** The canonical worst-case card. Every slot is populated so the anatomy is
@@ -229,7 +229,7 @@ export default function ProductCardReference() {
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "PLP — Search results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
               { label: "PDP — Replacement Products", href: "/pdp/uc-replacement-products?signedin=1" },
             ].map((l) => (
               <Link

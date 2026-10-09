@@ -18,15 +18,15 @@ import { PreviewCode, Guidance } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
 
 const TOC = [
-  { id: "applied-filters", label: "Applied filters" },
-  { id: "branch-selector", label: "Branch selector" },
+  { id: "applied-filters", label: "Applied Filters" },
+  { id: "branch-selector", label: "Branch Selector" },
   { id: "radius", label: "Radius" },
-  { id: "facets", label: "Facet list" },
-  { id: "view-toggle", label: "View toggle" },
-  { id: "list-row", label: "Product list row" },
+  { id: "facets", label: "Facet List" },
+  { id: "view-toggle", label: "View Toggle" },
+  { id: "list-row", label: "Product List Row" },
   { id: "anatomy", label: "Anatomy" },
   { id: "guidance", label: "Guidance" },
-  { id: "in-production", label: "In production" },
+  { id: "in-production", label: "In Production" },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -316,7 +316,7 @@ export default function PlpReference() {
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "PLP — Search results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
               { label: "Store Locator", href: "/store-locator" },
             ].map((l) => (
               <Link

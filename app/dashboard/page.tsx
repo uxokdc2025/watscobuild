@@ -293,7 +293,7 @@ function SectionHeading({ id, title, href }: { id: string; title: string; href?:
       </h2>
       {href ? (
         <Link href={href} className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          View all <ArrowUpRight aria-hidden="true" className="size-4" />
+          View All <ArrowUpRight aria-hidden="true" className="size-4" />
         </Link>
       ) : null}
     </div>

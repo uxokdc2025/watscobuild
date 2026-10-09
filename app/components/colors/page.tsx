@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 };
 
 const TOC = [
-  { id: "rule", label: "The rule" },
+  { id: "rule", label: "The Rule" },
   { id: "semantic", label: "Semantic" },
-  { id: "status", label: "Ecommerce status" },
-  { id: "brand", label: "Brand chrome" },
+  { id: "status", label: "Ecommerce Status" },
+  { id: "brand", label: "Brand Chrome" },
 ];
 
 type Token = {
