@@ -11,7 +11,6 @@ import {
   Pencil,
   Plus,
   Replace,
-  Settings2,
   Shuffle,
   ShoppingCart,
   Tag,
@@ -20,7 +19,7 @@ import {
 } from "lucide-react";
 
 import { DashboardShell } from "../../_components/dashboard-shell";
-import { AccountSearchInput, labelColor } from "../../_components/account-table";
+import { AccountSearchInput, AccountTableToolbar, labelColor } from "../../_components/account-table";
 import { getListMeta } from "../_list-meta";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -509,7 +508,7 @@ function DetailRow({
         className="h-auto px-0"
         onClick={() => setShowComment((v) => !v)}
       >
-        {comment ? "Edit comment" : "Add comment"}
+        {comment ? "Edit Comment" : "Add Comment"}
       </Button>
       {showComment ? (
         <Textarea
@@ -694,6 +693,216 @@ function DetailRow({
   );
 }
 
+/* ─────────────────────────── Transfer drawer (Move / Copy) ─────────────────────────── */
+
+type DestList = { id: string; name: string; count: number; owner: string };
+const DEST_LISTS: DestList[] = [
+  { id: "blower-motor-replacements", name: "Blower motor replacements", count: 4, owner: "David Whiteside" },
+  { id: "frequently-ordered-parts", name: "Frequently ordered parts", count: 18, owner: "David Whiteside" },
+  { id: "rooftop-unit-startup", name: "Rooftop unit startup", count: 9, owner: "Maria Alvarez" },
+];
+
+/** Right drawer that lists the account's other product lists so selected rows
+ *  can be moved or copied into one. Mirrors the reference "Select Product List"
+ *  panel; the per-row CTA reads Move or Copy per `mode`. */
+function TransferDrawer({
+  mode,
+  count,
+  onClose,
+  onPick,
+}: {
+  mode: "move" | "copy" | null;
+  count: number;
+  onClose: () => void;
+  onPick: (list: DestList, mode: "move" | "copy") => void;
+}) {
+  const [closing, setClosing] = React.useState(false);
+  const [q, setQ] = React.useState("");
+
+  const requestClose = React.useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    window.setTimeout(() => {
+      setClosing(false);
+      onClose();
+    }, DRAWER_MOTION_MS);
+  }, [closing, onClose]);
+
+  if (!mode) return null;
+  const verb = mode === "move" ? "Move" : "Copy";
+  const needle = q.trim().toLowerCase();
+  const lists = needle
+    ? DEST_LISTS.filter((l) => l.name.toLowerCase().includes(needle))
+    : DEST_LISTS;
+
+  return (
+    <div
+      className={drawerOverlayClassName(closing)}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) requestClose();
+      }}
+    >
+      <DrawerPanel
+        open={!closing}
+        side="right"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Select product list"
+        className="absolute inset-y-0 right-0 flex w-full max-w-[440px] flex-col bg-background text-foreground shadow-2xl"
+      >
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-5 py-4">
+          <h1 className="text-lg font-bold">Select Product List</h1>
+          <DrawerCloseButton label="Close" onClick={requestClose} />
+        </header>
+        <div className="border-b px-5 py-3">
+          <p className="text-sm text-muted-foreground">
+            {verb} {count} item{count === 1 ? "" : "s"} to another list.
+          </p>
+          <AccountSearchInput
+            value={q}
+            onChange={setQ}
+            placeholder="Search lists…"
+            className="mt-3"
+          />
+        </div>
+        <div className="flex-1 divide-y overflow-y-auto">
+          {lists.map((l) => (
+            <div key={l.id} className="flex items-center justify-between gap-3 px-5 py-4">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold">{l.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {l.count} item{l.count === 1 ? "" : "s"} · {l.owner}
+                </p>
+              </div>
+              <Button size="sm" className="min-h-9 shrink-0" onClick={() => onPick(l, mode)}>
+                {verb}
+              </Button>
+            </div>
+          ))}
+          {lists.length === 0 ? (
+            <p className="px-5 py-10 text-center text-sm text-muted-foreground">
+              No lists match &ldquo;{q}&rdquo;.
+            </p>
+          ) : null}
+        </div>
+        <footer className="sticky bottom-0 flex items-center justify-between gap-3 border-t bg-background px-5 py-4">
+          <Button variant="ghost" className="min-h-10" onClick={requestClose}>
+            View All
+          </Button>
+          <Button className="min-h-10" onClick={requestClose}>
+            <Plus className="size-4" />
+            Create New List
+          </Button>
+        </footer>
+      </DrawerPanel>
+    </div>
+  );
+}
+
+/* ─────────────────────────── Permissions drawer ─────────────────────────── */
+
+type PermUser = { name: string; email: string };
+const PERM_USERS: PermUser[] = [
+  { name: "Adam Shuren", email: "ashuren@dascosupply.com" },
+  { name: "Eric Leslie", email: "eleslie+reqapproval@human-element.com" },
+  { name: "Eric Approver", email: "eleslie+approver@human-element.com" },
+  { name: "Adrian Pescar", email: "apescar@human-element.com" },
+  { name: "Rebecca Shaw Gebing", email: "rebecca.shawgebing@homans.com" },
+  { name: "Mike Lumia", email: "mlumia@homans.com" },
+  { name: "Dave Carette", email: "dcarette@homans.com" },
+  { name: "Ryan Dorschel", email: "rdorschel@watsco.com" },
+];
+
+/** Right drawer to share a list with company users — per-user Edit / View
+ *  checkboxes, Save in the footer. */
+function PermissionsDrawer({
+  open,
+  listName,
+  onClose,
+}: {
+  open: boolean;
+  listName: string;
+  onClose: () => void;
+}) {
+  const [closing, setClosing] = React.useState(false);
+  const [grants, setGrants] = React.useState<Record<string, { edit: boolean; view: boolean }>>({});
+
+  const requestClose = React.useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    window.setTimeout(() => {
+      setClosing(false);
+      onClose();
+    }, DRAWER_MOTION_MS);
+  }, [closing, onClose]);
+
+  if (!open) return null;
+
+  const toggle = (email: string, key: "edit" | "view") =>
+    setGrants((prev) => {
+      const cur = prev[email] ?? { edit: false, view: false };
+      return { ...prev, [email]: { ...cur, [key]: !cur[key] } };
+    });
+
+  return (
+    <div
+      className={drawerOverlayClassName(closing)}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) requestClose();
+      }}
+    >
+      <DrawerPanel
+        open={!closing}
+        side="right"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Permissions"
+        className="absolute inset-y-0 right-0 flex w-full max-w-[440px] flex-col bg-background text-foreground shadow-2xl"
+      >
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-5 py-4">
+          <h1 className="text-lg font-bold">Permissions</h1>
+          <DrawerCloseButton label="Close" onClick={requestClose} />
+        </header>
+        <div className="grid grid-cols-[1fr_auto_auto] items-center gap-x-4 border-b bg-secondary px-5 py-2.5 text-xs font-semibold text-foreground">
+          <span>Customer</span>
+          <span className="w-12 text-center">Edit</span>
+          <span className="w-12 text-center">View</span>
+        </div>
+        <div className="flex-1 divide-y overflow-y-auto">
+          {PERM_USERS.map((u) => {
+            const g = grants[u.email] ?? { edit: false, view: false };
+            return (
+              <div key={u.email} className="grid grid-cols-[1fr_auto_auto] items-center gap-x-4 px-5 py-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold">{u.name}</p>
+                  <p className="truncate text-xs text-muted-foreground">{u.email}</p>
+                </div>
+                <div className="flex w-12 justify-center">
+                  <Checkbox checked={g.edit} onCheckedChange={() => toggle(u.email, "edit")} aria-label={`Edit for ${u.name}`} />
+                </div>
+                <div className="flex w-12 justify-center">
+                  <Checkbox checked={g.view} onCheckedChange={() => toggle(u.email, "view")} aria-label={`View for ${u.name}`} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <footer className="sticky bottom-0 border-t bg-background px-5 py-4">
+          <Button
+            className="min-h-11 w-full"
+            onClick={() => {
+              toast.success(`Permissions saved for “${listName}”`);
+              requestClose();
+            }}
+          >
+            Save
+          </Button>
+        </footer>
+      </DrawerPanel>
+    </div>
+  );
+}
+
 /* ─────────────────────────── Detail view ─────────────────────────── */
 
 export function ListDetail({ id }: { id: string }) {
@@ -711,6 +920,9 @@ export function ListDetail({ id }: { id: string }) {
     () => PRODUCTS.filter((p) => p.replacement).map((p) => p.id),
   );
   const [drawerFor, setDrawerFor] = React.useState<Product | null>(null);
+  const [transfer, setTransfer] = React.useState<"move" | "copy" | null>(null);
+  const [permsOpen, setPermsOpen] = React.useState(false);
+  const [bannerOpen, setBannerOpen] = React.useState(true);
 
   // Rows shown in the list table — items whose replacement is surfaced in the
   // review banner are removed from the table so they are never called out twice.
@@ -771,14 +983,15 @@ export function ListDetail({ id }: { id: string }) {
     setDrawerFor(null);
   };
   const addAll = () => {
-    rows.forEach((p) => addItem(toCartItem(p), qtys[p.id] ?? 1));
+    listRows.forEach((p) => addItem(toCartItem(p), qtys[p.id] ?? 1));
     openCart();
+    toast.success(`Added ${listRows.length} item${listRows.length === 1 ? "" : "s"} to cart`);
   };
   const addSelected = () => {
-    rows
-      .filter((p) => selected[p.id])
-      .forEach((p) => addItem(toCartItem(p), qtys[p.id] ?? 1));
+    const picked = listRows.filter((p) => selected[p.id]);
+    picked.forEach((p) => addItem(toCartItem(p), qtys[p.id] ?? 1));
     openCart();
+    toast.success(`Added ${picked.length} item${picked.length === 1 ? "" : "s"} to cart`);
   };
 
   const removeRow = (rid: string) => {
@@ -791,12 +1004,26 @@ export function ListDetail({ id }: { id: string }) {
     setBanner((prev) => prev.filter((b) => b !== rid));
   };
 
+  const removeSelected = () => {
+    const n = selectedIds.length;
+    selectedIds.forEach(removeRow);
+    toast.success(`Removed ${n} item${n === 1 ? "" : "s"} from the list`);
+  };
+
+  const doTransfer = (list: DestList, mode: "move" | "copy") => {
+    const n = selectedIds.length;
+    if (mode === "move") selectedIds.forEach(removeRow);
+    setSelected({});
+    setTransfer(null);
+    toast.success(
+      `${mode === "move" ? "Moved" : "Copied"} ${n} item${n === 1 ? "" : "s"} to “${list.name}”`,
+    );
+  };
+
   const bannerProducts = rows.filter((p) => banner.includes(p.id));
 
   return (
     <DashboardShell
-      title={meta.name}
-      description="Review, restock, and reorder the products saved to this list."
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -818,41 +1045,60 @@ export function ListDetail({ id }: { id: string }) {
           </BreadcrumbList>
         </Breadcrumb>
       }
-      actions={
-        <div className="flex flex-wrap items-center gap-2">
-          <Button type="button" variant="ghost" size="icon" aria-label={`Edit ${meta.name}`}>
-            <Pencil className="size-4" />
-          </Button>
-          <Button type="button" variant="outline" className="min-h-10">
-            <Users className="size-4" />
-            Manage permissions
-          </Button>
-          <Button className="min-h-10" onClick={addAll}>
-            <ShoppingCart className="size-4" />
-            Add all to cart
-          </Button>
-        </div>
-      }
     >
-      <div className="space-y-3">
-        {/* Meta row — created · type · updated · count on the left; list total on the right. */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
-            <span>Created {meta.created}</span>
-            <span aria-hidden="true">·</span>
-            <span className="inline-flex items-center gap-1.5">
-              Type <Badge variant="outline">{meta.type}</Badge>
-            </span>
-            <span aria-hidden="true">·</span>
-            <span>
-              {listRows.length} item{listRows.length === 1 ? "" : "s"} · Updated {meta.updated}
+      <div className="space-y-4">
+        {/* Top card — list identity (with inline edit), list-level actions, and
+            the created / type / count / updated meta + total. */}
+        <section className="rounded-lg border bg-background p-5 shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex min-w-0 items-center gap-2">
+              <h1 className="truncate text-2xl font-bold tracking-tight md:text-3xl">
+                {meta.name}
+              </h1>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={`Edit ${meta.name}`}
+                className="shrink-0 text-muted-foreground"
+              >
+                <Pencil className="size-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-10"
+                onClick={() => setPermsOpen(true)}
+              >
+                <Users className="size-4" />
+                Manage Permissions
+              </Button>
+              <Button className="min-h-10" onClick={addAll}>
+                <ShoppingCart className="size-4" />
+                Add to Cart
+              </Button>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
+              <span>Created {meta.created}</span>
+              <span aria-hidden="true">·</span>
+              <span className="inline-flex items-center gap-1.5">
+                Type <Badge variant="outline">{meta.type}</Badge>
+              </span>
+              <span aria-hidden="true">·</span>
+              <span>
+                {listRows.length} item{listRows.length === 1 ? "" : "s"} · Updated {meta.updated}
+              </span>
+            </div>
+            <span className="text-sm text-muted-foreground">
+              Total{" "}
+              <span className="font-semibold text-in-stock">{formatUSD(total)}</span>
             </span>
           </div>
-          <span className="text-sm text-muted-foreground">
-            Total{" "}
-            <span className="font-semibold text-in-stock">{formatUSD(total)}</span>
-          </span>
-        </div>
+        </section>
 
         {/* Replacements review banner (yellow warning tone). */}
         {bannerProducts.length > 0 ? (
@@ -860,8 +1106,19 @@ export function ListDetail({ id }: { id: string }) {
             <Replace />
             <AlertTitle>Replacements available</AlertTitle>
             <AlertDescription>
-              <p>The following items have a replacement or substitute.</p>
-              <div className="mt-3 w-full space-y-3">
+              <div className="flex w-full items-center justify-between gap-3">
+                <p className="m-0">The following items have a replacement or substitute.</p>
+                <button
+                  type="button"
+                  onClick={() => setBannerOpen((o) => !o)}
+                  aria-expanded={bannerOpen}
+                  className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-foreground/80 hover:text-foreground"
+                >
+                  {bannerOpen ? "Hide" : `Show (${bannerProducts.length})`}
+                  <ChevronDown className={cn("size-4 transition-transform", bannerOpen && "rotate-180")} />
+                </button>
+              </div>
+              <div className={cn("mt-3 w-full space-y-3", !bannerOpen && "hidden")}>
                 {bannerProducts.map((p) => (
                   <div
                     key={p.id}
@@ -905,7 +1162,7 @@ export function ListDetail({ id }: { id: string }) {
                         onClick={() => setDrawerFor(p)}
                       >
                         <Replace className="size-4" />
-                        View substitutes
+                        View Substitutes
                       </Button>
                     </div>
                   </div>
@@ -917,19 +1174,17 @@ export function ListDetail({ id }: { id: string }) {
 
         {/* Card: toolbar + bulk actions + rows */}
         <section className="rounded-lg border bg-background shadow-sm">
-          {/* Toolbar — search + Sort. */}
-          <div className="flex flex-wrap items-center gap-3 border-b p-4">
-            <AccountSearchInput
-              value={q}
-              onChange={setQ}
-              placeholder="Search products by name or SKU"
-              className="min-w-[240px] flex-1"
-            />
+          {/* Toolbar — same search box + controls as the Shopping Lists index. */}
+          <AccountTableToolbar
+            value={q}
+            onChange={setQ}
+            placeholder="Search products by name or SKU"
+          >
             <Button variant="outline" className="min-h-11">
-              <Settings2 className="size-4" />
-              Sort
+              <Tag size={16} />
+              Group by Label
             </Button>
-          </div>
+          </AccountTableToolbar>
 
           {/* Selection row — Select all + count on the left, the bulk actions
               (visible now that the column header sits below) on the right. */}
@@ -948,7 +1203,7 @@ export function ListDetail({ id }: { id: string }) {
                 }
                 aria-label="Select all products"
               />
-              Select all
+              Select All
             </label>
             <span className="text-sm text-muted-foreground">
               {selectedIds.length} selected
@@ -962,22 +1217,34 @@ export function ListDetail({ id }: { id: string }) {
                 onClick={addSelected}
               >
                 <ShoppingCart className="size-4" />
-                Add selected to cart
+                Add to Cart
               </Button>
-              <Button variant="outline" size="sm" className="min-h-9" disabled={selectedIds.length === 0}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-h-9"
+                disabled={selectedIds.length === 0}
+                onClick={() => setTransfer("move")}
+              >
                 <FolderInput className="size-4" />
-                Move to
+                Move
               </Button>
-              <Button variant="outline" size="sm" className="min-h-9" disabled={selectedIds.length === 0}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-h-9"
+                disabled={selectedIds.length === 0}
+                onClick={() => setTransfer("copy")}
+              >
                 <Copy className="size-4" />
-                Copy to
+                Copy
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 className="min-h-9 text-destructive hover:text-destructive/80"
                 disabled={selectedIds.length === 0}
-                onClick={() => selectedIds.forEach(removeRow)}
+                onClick={removeSelected}
               >
                 <Trash2 className="size-4" />
                 Remove
@@ -1038,6 +1305,17 @@ export function ListDetail({ id }: { id: string }) {
         product={drawerFor}
         onClose={() => setDrawerFor(null)}
         onChoose={chooseAlt}
+      />
+      <TransferDrawer
+        mode={transfer}
+        count={selectedIds.length}
+        onClose={() => setTransfer(null)}
+        onPick={doTransfer}
+      />
+      <PermissionsDrawer
+        open={permsOpen}
+        listName={meta.name}
+        onClose={() => setPermsOpen(false)}
       />
     </DashboardShell>
   );

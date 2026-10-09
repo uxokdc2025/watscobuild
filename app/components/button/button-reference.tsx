@@ -233,16 +233,17 @@ export default function ButtonReference() {
           <H2 id="guidance">Guidance</H2>
           <Guidance
             dos={[
+              <><strong>Title Case every button and link label</strong> — &quot;Add to Cart&quot;, &quot;Move&quot;, &quot;View Substitutes&quot; (small words like <em>to / of / and</em> stay lowercase). This is a global rule for every clickable control.</>,
               <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code> for secondary actions like &quot;View Product&quot;.</>,
               <>Wrap links in <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Button asChild&gt;</code> so they get the same hover/focus.</>,
               <>Give every icon-only button an <code className="rounded bg-muted px-1 py-0.5 text-xs">aria-label</code>.</>,
               <>Keep one primary button per view; everything else is secondary/ghost.</>,
             ]}
             donts={[
+              <>Write labels in sentence case (&quot;Add to cart&quot;, &quot;Move to&quot;) — clickable controls are Title Case.</>,
               <>Hand-roll <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;a className=&quot;border px-3 py-1.5…&quot;&gt;</code> — it drifts from the library.</>,
               <>Re-declare hover/focus classes; they&apos;re already in the variant.</>,
               <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">size=&quot;icon&quot;</code> without an accessible label.</>,
-              <>Put two primary buttons side by side.</>,
             ]}
           />
         </section>

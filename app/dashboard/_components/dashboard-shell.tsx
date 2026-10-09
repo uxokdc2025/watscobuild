@@ -100,7 +100,7 @@ function NavRow({
   );
 }
 
-export function DashboardShell({ title, actions, breadcrumb, children }: { title: string; description?: string; actions?: React.ReactNode; breadcrumb?: React.ReactNode; children: React.ReactNode }) {
+export function DashboardShell({ title, actions, breadcrumb, children }: { title?: React.ReactNode; description?: string; actions?: React.ReactNode; breadcrumb?: React.ReactNode; children: React.ReactNode }) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href.split("?")[0];
   return (
@@ -136,10 +136,12 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
             })}
           </nav>
           <section className="min-w-0">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-              <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
-              {actions ? <div className="shrink-0">{actions}</div> : null}
-            </div>
+            {title ? (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+                <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
+                {actions ? <div className="shrink-0">{actions}</div> : null}
+              </div>
+            ) : null}
             {children}
           </section>
         </div>
