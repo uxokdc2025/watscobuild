@@ -208,6 +208,7 @@ export function SearchBody({
                 >
                   <Checkbox
                     id="avail-pickup-today"
+                    aria-label="Pick Up Today"
                     checked={pickUpToday}
                     onCheckedChange={(v) => setPickUpToday(v === true)}
                   />
@@ -222,6 +223,7 @@ export function SearchBody({
                     <span className="flex items-center gap-2">
                       <Checkbox
                         id="avail-branch"
+                        aria-label={displayName}
                         checked={branchAvailability}
                         onCheckedChange={(v) => setBranchAvailability(v === true)}
                       />
@@ -239,6 +241,7 @@ export function SearchBody({
                     <span className="flex items-center gap-2">
                       <Checkbox
                         id="avail-all-stores"
+                        aria-label="All Stores"
                         checked={allStoresAvailability}
                         onCheckedChange={(v) => setAllStoresAvailability(v === true)}
                       />
@@ -265,7 +268,7 @@ export function SearchBody({
                         )}
                       >
                         <span className="flex items-center gap-2">
-                          <RadioGroupItem value={location.value} id={`loc-${location.value}`} />
+                          <RadioGroupItem value={location.value} id={`loc-${location.value}`} aria-label={location.label} />
                           <span>{location.label}</span>
                         </span>
                         <span className="text-xs text-muted-foreground">({location.value === "all" ? totalResults : 0})</span>
@@ -327,6 +330,7 @@ export function SearchBody({
                         <label htmlFor={id} className="flex flex-1 items-center gap-2">
                           <Checkbox
                             id={id}
+                            aria-label={b}
                             checked={selectedBrands.has(b)}
                             onCheckedChange={() => toggleBrand(b)}
                           />
@@ -489,12 +493,13 @@ function FacetGroup({
         </summary>
         <ul className="mt-2 space-y-2">
           {spec.options.map((opt) => {
-            const id = `facet-${spec.key}-${opt}`;
+            const id = `facet-${spec.key}-${opt}`.replace(/\s+/g, "-");
             return (
               <li key={opt} className="flex items-center justify-between gap-2">
                 <label htmlFor={id} className="flex flex-1 items-center gap-2">
                   <Checkbox
                     id={id}
+                    aria-label={opt}
                     checked={selected.has(opt)}
                     onCheckedChange={() => onToggle(opt)}
                   />

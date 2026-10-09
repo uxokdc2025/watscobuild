@@ -330,7 +330,7 @@ export default function DashboardPage() {
           </div>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[680px] border-collapse text-[13px]">
-              <thead><tr className="border-b text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Order #</th><th className="px-2 py-3">Order Date</th><th className="px-2 py-3">PO #</th><th className="px-2 py-3">Ordered By</th><th className="px-2 py-3 text-right">Order Total</th><th className="px-2 py-3">Source</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Account</th></tr></thead>
+              <thead><tr className="border-b bg-secondary text-left text-xs font-semibold text-foreground"><th className="px-2 py-3">Order #</th><th className="px-2 py-3">Order Date</th><th className="px-2 py-3">PO #</th><th className="px-2 py-3">Ordered By</th><th className="px-2 py-3 text-right">Order Total</th><th className="px-2 py-3">Source</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Account</th></tr></thead>
               <tbody>
                 {visibleOrders.length ? visibleOrders.map((order) => (
                   <tr key={order.number} className="border-b last:border-0">
@@ -356,7 +356,7 @@ export default function DashboardPage() {
           </div>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[560px] border-collapse text-[13px]"><colgroup><col className="w-[28%]" /><col /><col /><col /></colgroup>
-              <thead><tr className="border-b text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Name</th><th className="px-2 py-3">Products</th><th className="px-2 py-3">Latest Activity</th><th className="px-2 py-3">Created By</th></tr></thead>
+              <thead><tr className="border-b bg-secondary text-left text-xs font-semibold text-foreground"><th className="px-2 py-3">Name</th><th className="px-2 py-3">Products</th><th className="px-2 py-3">Latest Activity</th><th className="px-2 py-3">Created By</th></tr></thead>
               <tbody>{showList ? <tr><td className="px-2 py-3 font-semibold text-primary">test</td><td className="px-2 py-3">4</td><td className="px-2 py-3 whitespace-nowrap">12/31/1969 at 6:00 PM</td><td className="px-2 py-3 whitespace-nowrap">David Whiteside</td></tr> : <tr><td colSpan={4} className="px-2 py-8 text-center text-muted-foreground">No shopping lists found.</td></tr>}</tbody>
             </table>
           </div>
@@ -365,7 +365,7 @@ export default function DashboardPage() {
         <section aria-labelledby="recent-quotes-heading" className="rounded-lg border bg-background px-4 py-3 shadow-sm sm:px-6 sm:py-4">
           <SectionHeading id="recent-quotes-heading" title="Recent Quotes (1)" href="/dashboard/quotes" />
           <div className="mt-4 overflow-x-auto">
-            <table className="w-full min-w-[900px] border-collapse text-[13px]"><thead><tr className="border-b text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"><th className="px-2 py-3">Quote #</th><th className="px-2 py-3">Name</th><th className="px-2 py-3">Job Account</th><th className="px-2 py-3">Job Name</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Created</th><th className="px-2 py-3">Expires</th><th className="px-2 py-3">Updated</th><th className="px-2 py-3 text-right">Subtotal</th></tr></thead>
+            <table className="w-full min-w-[900px] border-collapse text-[13px]"><thead><tr className="border-b bg-secondary text-left text-xs font-semibold text-foreground"><th className="px-2 py-3">Quote #</th><th className="px-2 py-3">Name</th><th className="px-2 py-3">Job Account</th><th className="px-2 py-3">Job Name</th><th className="px-2 py-3">Status</th><th className="px-2 py-3">Created</th><th className="px-2 py-3">Expires</th><th className="px-2 py-3">Updated</th><th className="px-2 py-3 text-right">Subtotal</th></tr></thead>
               <tbody><tr className="border-b"><td className="px-2 py-3 font-semibold text-primary">Q-2026-0184</td><td className="px-2 py-3">Spring maintenance quote</td><td className="px-2 py-3">Acct 1248</td><td className="px-2 py-3">Rooftop RTU swap</td><td className="px-2 py-3"><Badge variant="soft" color="green">Active</Badge></td><td className="px-2 py-3 whitespace-nowrap">Aug 20, 2026</td><td className="px-2 py-3 whitespace-nowrap">Sep 20, 2026</td><td className="px-2 py-3 whitespace-nowrap">Today</td><td className="px-2 py-3 text-right font-semibold tabular-nums">$1,248.00</td></tr></tbody>
             </table>
           </div>

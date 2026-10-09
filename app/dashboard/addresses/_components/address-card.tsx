@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, MapPin, Building2, Phone, Star, Pencil, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Address } from "../_lib/types";
 
@@ -37,15 +38,15 @@ export function AddressCard(props: Props) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {addr.isDefault ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-100 px-2.5 py-1 text-[11px] font-semibold text-green-800 dark:border-green-900 dark:bg-green-950 dark:text-green-200">
+            <Badge variant="soft" color="green">
               <Check aria-hidden="true" className="size-3.5" />
               Default
               <span className="sr-only"> — default shipping address</span>
-            </span>
+            </Badge>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+            <Badge variant="secondary">
               {isAccount ? "Account" : "Saved for checkout"}
-            </span>
+            </Badge>
           )}
         </div>
         {/* Keep top-right minimal; account ID is secondary and also shown at bottom */}
