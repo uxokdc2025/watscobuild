@@ -19,6 +19,8 @@ export function RowAction({
   href,
   onClick,
   remove,
+  disabled,
+  title,
   className,
   "aria-label": ariaLabel,
 }: {
@@ -28,6 +30,8 @@ export function RowAction({
   onClick?: () => void;
   /** Remove / Delete / trash — the one action kept black, not blue. */
   remove?: boolean;
+  disabled?: boolean;
+  title?: string;
   className?: string;
   "aria-label"?: string;
 }) {
@@ -40,10 +44,10 @@ export function RowAction({
       {label}
     </>
   );
-  if (href) {
+  if (href && !disabled) {
     return (
       <Button asChild variant="ghost" size="sm" className={cn("min-h-9 gap-1.5", tone, className)}>
-        <Link href={href} aria-label={ariaLabel ?? label}>
+        <Link href={href} aria-label={ariaLabel ?? label} title={title}>
           {body}
         </Link>
       </Button>
@@ -54,6 +58,8 @@ export function RowAction({
       type="button"
       variant="ghost"
       size="sm"
+      disabled={disabled}
+      title={title}
       aria-label={ariaLabel ?? label}
       className={cn("min-h-9 gap-1.5", tone, className)}
       onClick={onClick}
