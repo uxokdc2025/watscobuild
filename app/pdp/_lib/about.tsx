@@ -634,48 +634,33 @@ export function aboutSections(product: PdpProduct): AboutSection[] {
  * swaps the Part List panel for a Bundle Components panel.
  */
 export function AboutThisProduct({ product }: { product: PdpProduct }) {
-  const hasDocs = Boolean(product.documents?.length);
-  const hasSpecs = hasSpecData(product);
+  // Data-driven from the single source of truth (aboutSections) so the
+  // accordion and the tabbed variant can never drift on icons, labels, or
+  // gating. Bundle products append a Bundle Components panel (aboutSections
+  // already drops Part List for bundles).
+  const sections = aboutSections(product);
   const isBundle = Boolean(product.bundleItems?.length);
-  const hasCatalog = Boolean(product.partsCatalog?.groups?.length);
-  const hasParts = Boolean(product.parts?.length);
-  const showPartList = !isBundle && (hasCatalog || hasParts);
   return (
     <section aria-label="About this product" className="flex flex-col gap-4">
       <h2 className="text-xl font-bold tracking-tight">About This Product</h2>
       {/* Sections are top-level accordion panels — only one open at a time
           (collapsible), icon + title on each trigger, Description default-open. */}
-      <Accordion type="single" collapsible defaultValue="info" className="w-full">
-        <AccordionItem value="info">
-          <AccordionTrigger className={ACCORDION_TRIGGER}>
-            <AccordionHeader icon={FileText} title="Description" />
-          </AccordionTrigger>
-          <AccordionContent className="pt-4 pl-10">
-            <Description product={product} />
-          </AccordionContent>
-        </AccordionItem>
-
-        {hasSpecs ? (
-          <AccordionItem value="specs">
+      <Accordion
+        type="single"
+        collapsible
+        defaultValue={sections[0]?.id ?? "description"}
+        className="w-full"
+      >
+        {sections.map((s) => (
+          <AccordionItem key={s.id} value={s.id}>
             <AccordionTrigger className={ACCORDION_TRIGGER}>
-              <AccordionHeader icon={Gauge} title="Specifications" />
+              <AccordionHeader icon={s.Icon} title={s.label} />
             </AccordionTrigger>
             <AccordionContent className="pt-4 pl-10">
-              <Specifications product={product} />
+              <s.Body />
             </AccordionContent>
           </AccordionItem>
-        ) : null}
-
-        {hasDocs ? (
-          <AccordionItem value="docs">
-            <AccordionTrigger className={ACCORDION_TRIGGER}>
-              <AccordionHeader icon={BookOpen} title="Documents" />
-            </AccordionTrigger>
-            <AccordionContent className="pt-4 pl-10">
-              <Documents documents={product.documents!} />
-            </AccordionContent>
-          </AccordionItem>
-        ) : null}
+        ))}
 
         {isBundle ? (
           <AccordionItem value="bundle">
@@ -684,43 +669,28 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
             </AccordionTrigger>
             <AccordionContent className="pt-4 pl-10">
               <div className="overflow-hidden rounded-lg border">
-                {product.bundleItems!.map((s, i) => (
+                {product.bundleItems!.map((bi, i) => (
                   <div
-                    key={s.id}
+                    key={bi.id}
                     className={`grid grid-cols-[1.5rem_3.5rem_1fr] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
                   >
                     <span className="text-sm font-semibold text-muted-foreground">
                       1 &times;
                     </span>
                     <div className="size-14">
-                      <ProductThumb src={s.image} alt={s.title} />
+                      <ProductThumb src={bi.image} alt={bi.title} />
                     </div>
                     <div>
                       <a href="#" className="text-sm font-semibold text-primary hover:underline">
-                        {s.title}
+                        {bi.title}
                       </a>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Item: {s.item} &nbsp; MFG: {s.mfg}
+                        Item: {bi.item} &nbsp; MFG: {bi.mfg}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
-            </AccordionContent>
-          </AccordionItem>
-        ) : null}
-
-        {showPartList ? (
-          <AccordionItem value="parts">
-            <AccordionTrigger className={ACCORDION_TRIGGER}>
-              <AccordionHeader icon={Settings} title="Part List" />
-            </AccordionTrigger>
-            <AccordionContent className="pt-4 pl-10">
-              {hasCatalog ? (
-                <PartList catalog={product.partsCatalog!} />
-              ) : (
-                <PartsGrid parts={product.parts!} />
-              )}
             </AccordionContent>
           </AccordionItem>
         ) : null}

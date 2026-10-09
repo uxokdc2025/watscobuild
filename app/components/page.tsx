@@ -17,7 +17,7 @@ const COMPONENTS = [
   { label: "Button", href: "/components/button", desc: "Every variant, size, and state — with real code." },
   { label: "Badge", href: "/components/badge", desc: "Status labels, Pro Essentials, Best Value." },
   { label: "Product Card", href: "/components/product-card", desc: "The core PDP/PLP merchandising card." },
-  { label: "List Views", href: "/components/list-views", desc: "The one list-row pattern behind every list — PLP, cart, review, shopping list, AHRI." },
+  { label: "List Views", href: "/components/list-views", desc: "The one list-row pattern behind every list — PLP, cart, review, and shopping list." },
   { label: "PLP Patterns", href: "/components/plp", desc: "Search rows, filters, grid/list toggle." },
   { label: "Save + AHRI", href: "/components/save-ahri", desc: "Save, share, AHRI matched-system actions." },
   { label: "Forms", href: "/components/forms", desc: "Inputs, selects, checkboxes, quantity." },
@@ -31,6 +31,7 @@ const CHROME = [
 
 const BLOCKS = [
   { label: "Buy Box", href: "/components/buy-box", desc: "The PDP purchase panel — badges, price, availability, Add to Cart." },
+  { label: "About This Product", href: "/components/about", desc: "The one data-driven PDP accordion — Description, Specifications, Documents, Part List." },
   { label: "Branch Selector", href: "/components/branch-selector", desc: "Global branch finder — slides in from the left." },
   { label: "Inventory Drawer", href: "/components/inventory-drawer", desc: "Per-branch stock — slides in from the right." },
   { label: "Account Drawer", href: "/components/account-drawer", desc: "Global account panel — switch account, ship-to, nav." },

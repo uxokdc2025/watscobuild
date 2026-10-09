@@ -150,128 +150,7 @@ function StaticQty({ value }: { value: number }) {
   );
 }
 
-/* 2 — AHRI matched systems: same 4-zone grid, detail column carries AHRI# +
-   headline + component models + spec line; action is "View System". */
-type AhriItem = { ahri: string; headline: string; models: string; spec: string; branchQty: number; branch: string; allBranches: number; price: string };
-const AHRI_ROWS: AhriItem[] = [
-  { ahri: "215217523", headline: "80% AFUE Gas Furnace + 14.3 SEER2 AC — 3 Ton, Downflow", models: "CAPTA4230C3 · GD9S801005CN", spec: "14.3 SEER2 · 80% AFUE · 3 Ton · Single-stage · Downflow", branchQty: 4, branch: "Durham NC #1", allBranches: 12, price: "$7,332.39" },
-  { ahri: "215217524", headline: "96% AFUE Gas Furnace + 15.2 SEER2 AC — 3.5 Ton, Upflow", models: "CAPTA4230D3 · GD9S960805CN", spec: "15.2 SEER2 · 96% AFUE · 3.5 Ton · Two-stage · Upflow", branchQty: 0, branch: "Durham NC #1", allBranches: 7, price: "$8,104.57" },
-];
-function AhriMatchedRow({ s }: { s: AhriItem }) {
-  const detail = (
-    <div className="min-w-0">
-      <p className="truncate text-xs font-medium text-primary">AHRI #{s.ahri}</p>
-      <p className="line-clamp-2 text-sm font-semibold leading-snug">{s.headline}</p>
-      <p className="mt-1 truncate text-xs text-muted-foreground">{s.models}</p>
-      <p className="mt-1 text-xs font-medium text-foreground">{s.spec}</p>
-    </div>
-  );
-  const price = (
-    <p className="text-base font-semibold text-price">
-      {s.price}
-      <span className="ml-1 text-xs font-normal text-muted-foreground">/ system</span>
-    </p>
-  );
-  return (
-    <article className="p-4">
-      <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
-        <Thumb />
-        {detail}
-        <div className="flex justify-center">
-          <InventoryLine branchQty={s.branchQty} branchName={s.branch} allBranchesQty={s.allBranches} />
-        </div>
-        <div className="justify-self-end text-right">
-          {price}
-          <Button size="sm" className="mt-2">
-            View System
-            <ChevronRight className="size-4" />
-          </Button>
-        </div>
-      </div>
-      <div className="flex flex-col gap-3 sm:hidden">
-        <div className="flex items-start gap-3">
-          <Thumb className="size-20" />
-          <div className="min-w-0 flex-1">
-            {detail}
-            <div className="mt-1.5">
-              <InventoryLine branchQty={s.branchQty} branchName={s.branch} allBranchesQty={s.allBranches} />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          {price}
-          <Button size="sm">
-            View System
-            <ChevronRight className="size-4" />
-          </Button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-/* 3 — AHRI system detail components: Outdoor / Indoor / Furnace rows; a role
-   eyebrow, model as title, specs flow down; availability centered; Add. */
-type CompItem = { role: string; model: string; title: string; spec: string; branchQty: number; branch: string; allBranches: number; price: string };
-const COMP_ROWS: CompItem[] = [
-  { role: "Outdoor", model: "GSXH503610", title: "14.3 SEER2 Air Conditioner Condenser — 3 Ton, R-410A", spec: "14.3 SEER2 · 3 Ton · R-410A", branchQty: 9, branch: "Durham NC #1", allBranches: 46, price: "$2,119.84" },
-  { role: "Indoor coil", model: "CAPTA4230C3", title: "Cased Evaporator Coil — 2.5–3 Ton, Upflow/Downflow", spec: "3 Ton · TXV included", branchQty: 23, branch: "Durham NC #1", allBranches: 118, price: "$1,169.57" },
-  { role: "Furnace", model: "GD9S801005CN", title: "80% AFUE Single-Stage Gas Furnace — 100,000 BTU", spec: "80% AFUE · 100,000 BTU · Multi-position", branchQty: 0, branch: "Durham NC #1", allBranches: 15, price: "$2,042.98" },
-];
-function ComponentRow({ c }: { c: CompItem }) {
-  const detail = (
-    <div className="min-w-0">
-      <p className="truncate text-xs font-medium text-primary">{c.role}</p>
-      <p className="line-clamp-2 text-sm font-semibold leading-snug">{c.title}</p>
-      <p className="mt-1 truncate text-xs text-muted-foreground">MFG: {c.model}</p>
-      <p className="mt-1 text-xs font-medium text-foreground">{c.spec}</p>
-    </div>
-  );
-  const price = (
-    <p className="text-base font-semibold text-price">
-      {c.price}
-      <span className="ml-1 text-xs font-normal text-muted-foreground">/ EACH</span>
-    </p>
-  );
-  return (
-    <article className="p-4">
-      <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
-        <Thumb />
-        {detail}
-        <div className="flex justify-center">
-          <InventoryLine branchQty={c.branchQty} branchName={c.branch} allBranchesQty={c.allBranches} />
-        </div>
-        <div className="justify-self-end text-right">
-          {price}
-          <Button size="sm" className="mt-2">
-            <ShoppingCart className="size-4" />
-            Add
-          </Button>
-        </div>
-      </div>
-      <div className="flex flex-col gap-3 sm:hidden">
-        <div className="flex items-start gap-3">
-          <Thumb className="size-20" />
-          <div className="min-w-0 flex-1">
-            {detail}
-            <div className="mt-1.5">
-              <InventoryLine branchQty={c.branchQty} branchName={c.branch} allBranchesQty={c.allBranches} />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          {price}
-          <Button size="sm">
-            <ShoppingCart className="size-4" />
-            Add
-          </Button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-/* 4 — Cart line row: Qty stepper + line total + Remove in the actions zone. */
+/* 2 — Cart line row: Qty stepper + line total + Remove in the actions zone. */
 type CartItemEx = { brand: string; title: string; item: string; mfg: string; qty: number; each: string; total: string };
 const CART_ROWS: CartItemEx[] = [
   { brand: "TRADEPRO®", title: "TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230V, 1/2 HP", item: "54510A", mfg: "TP-EC13-50", qty: 2, each: "$168.42", total: "$336.84" },
@@ -458,20 +337,6 @@ const USAGES: { name: string; grid: string; desc: string; href: string; example:
     example: <Row item={SAMPLE_ROWS[0]} />,
   },
   {
-    name: "AHRI matched systems",
-    grid: "[96px · minmax(0,340px) · minmax(0,1fr) · auto]",
-    desc: "Same grid; the detail column shows AHRI# + headline + component models + a spec line.",
-    href: "/pdp/uc-ahri-matched-system?signedin=1#ahri-lookup",
-    example: <AhriMatchedRow s={AHRI_ROWS[0]} />,
-  },
-  {
-    name: "AHRI system detail — components",
-    grid: "[96px · minmax(0,340px) · minmax(0,1fr) · auto]",
-    desc: "Outdoor / Indoor / Furnace component rows; availability its own centered column, specs flow down.",
-    href: "/ahri/215217523",
-    example: <ComponentRow c={COMP_ROWS[0]} />,
-  },
-  {
     name: "Cart line rows",
     grid: "image · title · qty · price (stacked on mobile)",
     desc: "Same storefront row; Qty stepper + price in the actions zone.",
@@ -505,7 +370,7 @@ export default function ListViewsReference() {
           <h1 className="text-3xl font-bold tracking-tight">List Views</h1>
           <p className="max-w-2xl text-muted-foreground">
             One canonical storefront list row underlies every product list in the app —
-            search/PLP, cart, checkout review, the shopping list, and AHRI matched systems.
+            search/PLP, cart, checkout review, and the shopping list.
             Four zones: <strong>image</strong>, a <strong>capped description</strong> (so the
             title wraps instead of sprawling), <strong>availability as its own centered column</strong>,
             and <strong>price + action</strong>. Build new lists from this — never a one-off.
