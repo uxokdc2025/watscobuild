@@ -658,7 +658,7 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
         {hasSpecs ? (
           <AccordionItem value="specs">
             <AccordionTrigger className={ACCORDION_TRIGGER}>
-              <AccordionHeader icon={ClipboardList} title="Specifications" />
+              <AccordionHeader icon={Gauge} title="Specifications" />
             </AccordionTrigger>
             <AccordionContent className="pt-4 pl-10">
               <Specifications product={product} />
@@ -713,7 +713,7 @@ export function AboutThisProduct({ product }: { product: PdpProduct }) {
         {showPartList ? (
           <AccordionItem value="parts">
             <AccordionTrigger className={ACCORDION_TRIGGER}>
-              <AccordionHeader icon={Wrench} title="Part List" />
+              <AccordionHeader icon={Settings} title="Part List" />
             </AccordionTrigger>
             <AccordionContent className="pt-4 pl-10">
               {hasCatalog ? (

@@ -193,9 +193,21 @@ type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[]
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
-    id: "since-sep-29",
+    id: "oct-9-cycle",
     badge: "This cycle",
-    title: "From the Sep 29 meeting through today — for the Oct 9 review",
+    title: "New since the Oct 9 review",
+    items: [
+      {
+        title: "PDP About tabs — Specifications & Part List icons",
+        desc: "Restored the decided tab icons on the product's About This Product section: Specifications now uses a gauge and Part List a gear, so neither reads like Description.",
+        links: [{ label: "PDP (About tabs)", href: "/pdp/uc-tabs-accordions?signedin=1" }],
+      },
+    ],
+  },
+  {
+    id: "oct-9-reviewed",
+    badge: "Reviewed Oct 9",
+    title: "Reviewed at the Oct 9 meeting",
     items: [
       {
         title: "Account Dashboard — full reimagine + grouped nav",
@@ -383,10 +395,10 @@ export default function PdpMasterPage() {
           className="mt-8 rounded-xl border-2 border-primary/30 bg-primary/[0.04] p-5"
         >
           <h2 id="todays-changes" className="text-lg font-bold tracking-tight">
-            For the Oct 9 review
+            Change log
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Everything built this cycle — from the Sep 29 meeting through today — in one bucket for tomorrow&apos;s review. Click any link to open that change. Earlier baseline work is in the sections below.
+            Grouped by review cycle — the current cycle is open, past reviews collapsed. Click any link to open that change. Earlier baseline work is in the sections below.
           </p>
           <Accordion
             type="multiple"
