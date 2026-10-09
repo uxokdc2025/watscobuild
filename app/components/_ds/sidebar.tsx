@@ -49,6 +49,7 @@ const NAV: NavGroup[] = [
     title: "Blocks",
     items: [
       { label: "Buy Box", href: "/components/buy-box" },
+      { label: "About This Product", href: "/components/about" },
       { label: "Branch Selector", href: "/components/branch-selector" },
       { label: "Inventory Drawer", href: "/components/inventory-drawer" },
       { label: "Account Drawer", href: "/components/account-drawer" },
