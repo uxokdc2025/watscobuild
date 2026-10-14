@@ -137,12 +137,26 @@ function ColumnHeader({
 export function MegaMenu({
   label = "Products",
   className,
+  open: controlledOpen,
+  onOpenChange,
 }: {
   label?: string;
   className?: string;
+  /** Controlled open state — pass with onOpenChange to coordinate with other
+      nav menus so only one is open at a time. Omit for self-managed state. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const [mounted, setMounted] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [internalOpen, setInternalOpen] = React.useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = React.useCallback(
+    (next: boolean) => {
+      onOpenChange?.(next);
+      if (controlledOpen === undefined) setInternalOpen(next);
+    },
+    [controlledOpen, onOpenChange],
+  );
   const [category, setCategory] = React.useState<TaxonomyNode | null>(null);
   const [subcategory, setSubcategory] = React.useState<TaxonomyNode | null>(null);
   const [topOffset, setTopOffset] = React.useState(0);
@@ -152,7 +166,7 @@ export function MegaMenu({
     setOpen(false);
     setCategory(null);
     setSubcategory(null);
-  }, []);
+  }, [setOpen]);
 
   React.useEffect(() => setMounted(true), []);
 

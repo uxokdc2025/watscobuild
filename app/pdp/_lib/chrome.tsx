@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ChevronDown,
   ClipboardList,
@@ -6,8 +8,11 @@ import {
   Linkedin,
   Lock,
   Twitter,
+  Wrench,
   Youtube,
+  Zap,
 } from "lucide-react";
+import * as React from "react";
 import type { ComponentType } from "react";
 import Link from "next/link";
 import { AccountFlyout, CartTrigger, CheckoutCartTrigger } from "./account-flyout";
@@ -200,12 +205,13 @@ function BrandMark({ brand, theme }: { brand: BrandChrome; theme: BrandTheme }) 
    Utility bar links + nav caret rule (shared, brand-agnostic)
    ════════════════════════════════════════════════════════════════════════ */
 
-const UTILITY_LINKS = [
-  "AHRI Search",
-  "Part Finder",
-  "Warranty Center",
-  "Quick Order",
-  "Help & Support",
+/* The old skinny top strip is gone. Its tools now live in the "More Tools" nav
+   dropdown; Quick Order became a signed-in icon in the main bar. */
+const MORE_TOOLS_MENU: { label: string; href: string }[] = [
+  { label: "AHRI Search", href: "#" },
+  { label: "Part Finder", href: "#" },
+  { label: "Warranty Center", href: "#" },
+  { label: "Help & Support", href: "#" },
 ];
 
 /** Real Homans content for the nav items that DO open a dropdown. Any nav item
@@ -228,10 +234,21 @@ const RESOURCES_MENU: { label: string; href: string }[] = [
 const NAV_TRIGGER_CLASS =
   "group relative my-1.5 inline-flex min-h-9 items-center gap-1 px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 data-[state=open]:text-white";
 
-/** A top-level nav item that opens a real dropdown (DS DropdownMenu). */
-function NavDropdown({ label, children }: { label: string; children: React.ReactNode }) {
+/** A top-level nav item that opens a real dropdown (DS DropdownMenu). Open
+ *  state is controlled so only one nav menu is open at a time. */
+function NavDropdown({
+  label,
+  children,
+  open,
+  onOpenChange,
+}: {
+  label: string;
+  children: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}) {
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger className={NAV_TRIGGER_CLASS}>
         <span>{label}</span>
         <ChevronDown className="size-3.5 transition-transform group-data-[state=open]:rotate-180" aria-hidden />
@@ -256,28 +273,17 @@ function UnifiedHeader({
 }) {
   const theme = themeFor(brand);
   const branch = signedIn ? brand.defaultBranch : "Select your store";
+  // Which top-level nav menu is open — only one at a time (mega-menu + dropdowns).
+  const [openNav, setOpenNav] = React.useState<string | null>(null);
+  const navProps = (key: string) => ({
+    open: openNav === key,
+    onOpenChange: (o: boolean) => setOpenNav(o ? key : null),
+  });
 
   return (
     <header>
-      {/* Row 1 — utility bar (thin, neutral, NOT brand color) */}
-      <nav
-        aria-label="Quick links"
-        className="hidden border-b bg-background md:block"
-      >
-        <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center justify-end gap-1 px-4 py-1 text-xs text-muted-foreground md:px-6">
-          {UTILITY_LINKS.map((l) => (
-            <a
-              key={l}
-              href="#"
-              className="rounded-md px-2 py-1 whitespace-nowrap transition-colors hover:bg-muted hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              {l}
-            </a>
-          ))}
-        </div>
-      </nav>
-
-      {/* Row 2 — main bar (brand color) */}
+      {/* Row 2 — main bar (brand color). The old skinny utility strip is gone;
+          its tools moved into the "More Tools" nav dropdown and Quick Order. */}
       <div className={theme.barClass}>
         <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-3 px-4 py-3 md:gap-4 md:px-6">
           {/* LEFT: logo / brand mark */}
@@ -311,7 +317,16 @@ function UnifiedHeader({
           {/* CENTER: search — the front-and-center focal point (grows to fill). */}
           <SearchAutocomplete placeholder="Search item # or name" />
 
-          {/* RIGHT: Lists · Account · Cart */}
+          {/* RIGHT: Quick Order (signed-in) · Lists · Account · Cart */}
+          {signedIn ? (
+            <Link
+              href="/quick-order"
+              className="hidden flex-col items-center rounded-md px-2 py-1 text-[11px] transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
+            >
+              <Zap className="size-5" aria-hidden />
+              Quick Order
+            </Link>
+          ) : null}
           <Link
             href="/dashboard/shopping-lists"
             className="hidden flex-col items-center rounded-md px-2 py-1 text-[11px] transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
@@ -328,10 +343,10 @@ function UnifiedHeader({
       <nav aria-label="Primary" className={theme.navClass}>
         <div className="mx-auto flex max-w-[var(--layout-max-width)] gap-1 overflow-x-auto px-4 md:px-6">
           {brand.nav.map((n) => {
-            if (n === "Products") return <MegaMenu key={n} />;
+            if (n === "Products") return <MegaMenu key={n} {...navProps("Products")} />;
             if (n === "Brands")
               return (
-                <NavDropdown key={n} label="Brands">
+                <NavDropdown key={n} label="Brands" {...navProps("Brands")}>
                   {BRANDS_MENU.map((b) => (
                     <DropdownMenuItem key={b} asChild>
                       <Link href={`/search?q=${encodeURIComponent(b)}&signedin=1`}>{b}</Link>
@@ -341,10 +356,23 @@ function UnifiedHeader({
               );
             if (n === "Resources")
               return (
-                <NavDropdown key={n} label="Resources">
+                <NavDropdown key={n} label="Resources" {...navProps("Resources")}>
                   {RESOURCES_MENU.map((r) => (
                     <DropdownMenuItem key={r.label} asChild>
                       <Link href={r.href}>{r.label}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </NavDropdown>
+              );
+            if (n === "More Tools")
+              return (
+                <NavDropdown key={n} label="More Tools" {...navProps("More Tools")}>
+                  {MORE_TOOLS_MENU.map((r) => (
+                    <DropdownMenuItem key={r.label} asChild>
+                      <Link href={r.href}>
+                        <Wrench className="size-4 opacity-70" aria-hidden />
+                        {r.label}
+                      </Link>
                     </DropdownMenuItem>
                   ))}
                 </NavDropdown>

@@ -44,6 +44,7 @@ export const BRANDS: Record<string, BrandChrome> = {
       "Services",
       "Find a Local Dealer",
       "Resources",
+      "More Tools",
       "Training & Events",
       "Specials",
     ],
