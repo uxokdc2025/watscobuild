@@ -60,6 +60,15 @@ const LIST_GRID_COLS =
   // Qty (stepper) and Actions stay fixed. min-w-0 lets the flexible cells shrink.
   "grid-cols-[2.75rem_minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_7.5rem_9rem]";
 
+/** Soft-badge color for a list's Type chip (Personal · Shared · Company). */
+function typeBadgeColor(type: string): "blue" | "violet" | "teal" | "slate" {
+  const t = type.toLowerCase();
+  if (t.includes("personal")) return "blue";
+  if (t.includes("shared")) return "violet";
+  if (t.includes("company")) return "teal";
+  return "slate";
+}
+
 /* ─────────────────────────── Demo data ─────────────────────────── */
 
 type AltProduct = {
@@ -1069,13 +1078,13 @@ export function ListDetail({ id }: { id: string }) {
               <Button
                 type="button"
                 variant="outline"
-                className="min-h-10"
+                size="lg"
                 onClick={() => setPermsOpen(true)}
               >
                 <Users className="size-4" />
                 Manage Permissions
               </Button>
-              <Button className="min-h-10" onClick={addAll}>
+              <Button size="lg" onClick={addAll}>
                 <ShoppingCart className="size-4" />
                 Add to Cart
               </Button>
@@ -1086,7 +1095,7 @@ export function ListDetail({ id }: { id: string }) {
               <span>Created {meta.created}</span>
               <span aria-hidden="true">·</span>
               <span className="inline-flex items-center gap-1.5">
-                Type <Badge variant="outline">{meta.type}</Badge>
+                Type <Badge variant="soft" color={typeBadgeColor(meta.type)}>{meta.type}</Badge>
               </span>
               <span aria-hidden="true">·</span>
               <span>
