@@ -77,21 +77,29 @@ function NavRow({
   Icon,
   active,
   indented,
+  header,
 }: {
   label: string;
   href: string;
   Icon?: LucideIcon;
   active: boolean;
   indented?: boolean;
+  /** Top-level section header: bold label + foreground icon (matches the
+      non-link group headers). Children render without it. */
+  header?: boolean;
 }) {
+  // Idle colors: section headers read a tier above their children (bold label,
+  // foreground icon); child rows are regular weight with a muted icon.
+  const idleText = header ? "font-semibold text-foreground" : "";
+  const idleIcon = header ? "text-foreground" : "text-muted-foreground";
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`flex min-h-11 items-center gap-3 rounded-sm py-2 text-sm transition-colors hover:bg-muted hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${indented ? "pl-9 pr-3" : "px-3"} ${active ? "bg-primary/10 font-semibold text-primary" : ""}`}
+      className={`flex min-h-11 items-center gap-3 rounded-sm py-2 text-sm transition-colors hover:bg-muted hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${indented ? "pl-9 pr-3" : "px-3"} ${active ? "bg-primary/10 font-semibold text-primary" : idleText}`}
     >
       {Icon ? (
-        <Icon aria-hidden="true" className={`size-4 ${active ? "text-primary" : "text-muted-foreground"}`} />
+        <Icon aria-hidden="true" className={`size-4 ${active ? "text-primary" : idleIcon}`} />
       ) : (
         <span aria-hidden="true" className="size-4" />
       )}
@@ -113,7 +121,9 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
           <nav aria-label="Account dashboard" className="h-fit rounded-md border border-border bg-background p-2 shadow-sm">
             {NAV.map((entry) => {
               if (!isGroup(entry)) {
-                return <NavRow key={entry.href} {...entry} active={isActive(entry.href)} />;
+                // Top-level standalone links (Dashboard, Quotes) are section
+                // headers too — same bold treatment as the group headers.
+                return <NavRow key={entry.href} {...entry} active={isActive(entry.href)} header />;
               }
               const { group, Icon, href, children } = entry;
               const childActive = children.some((c) => isActive(c.href));
@@ -121,10 +131,10 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
               return (
                 <div key={group} className="mt-1 first:mt-0">
                   {href ? (
-                    <NavRow label={group} href={href} Icon={Icon} active={headerActive} />
+                    <NavRow label={group} href={href} Icon={Icon} active={headerActive} header />
                   ) : (
                     <p className={`flex min-h-11 items-center gap-3 rounded-sm px-3 py-2 text-sm font-semibold ${childActive ? "text-primary" : "text-foreground"}`}>
-                      <Icon aria-hidden="true" className={`size-4 ${childActive ? "text-primary" : "text-muted-foreground"}`} />
+                      <Icon aria-hidden="true" className={`size-4 ${childActive ? "text-primary" : "text-foreground"}`} />
                       <span>{group}</span>
                     </p>
                   )}
