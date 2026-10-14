@@ -193,10 +193,52 @@ type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[]
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
-    id: "this-week",
-    badge: "This week",
+    id: "oct-9",
+    badge: "Oct 9",
     title: "New edits since the Oct 9 meeting",
     items: [
+      {
+        title: "Homans header & nav — rebuilt on the new menu",
+        desc: "Reorganized the Homans top nav to its real structure (Products · Brands · Services · Find a Local Dealer · Resources · Training & Events · Specials). Products opens the new nested category menu driven by the real Homans taxonomy (10 categories + first sub); Brands and Resources use our point-dropdown menus; Specials is a highlighted link that sits right after Training & Events. Added a prominent bordered “Your Branch” selector and removed the mobile-app nav.",
+        links: [
+          { label: "Homans PDP (header)", href: "/pdp/homans-contact-us?signedin=1" },
+          { label: "Homans PLP (header)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
+        ],
+      },
+      {
+        title: "Category landing pages — Residential in our PLP",
+        desc: "Rebuilt the Homans Residential category in our PLP with the new header/menu and real data pulled from homans.com — real Armstrong Air + Bryant air conditioners (titles, item #, MFR, R-454B, real Scene7 product images), the real subcategory list with live counts fed into our Categories facet, the H1 on top of the grid, and the Grid/List toggle active state in blue. Stocked-At branch facet kept.",
+        links: [
+          { label: "Residential Category", href: "/search?brand=homans&category=residential&signedin=1" },
+        ],
+      },
+      {
+        title: "Account tables — one consistent action pattern",
+        desc: "Every account table now uses the shared RowAction pattern: an icon beside each label, primary actions in blue and Remove / Delete in black, View replaces the ⋮ overflow, and delete opens the detail drawer instead of destroying a row. Table headers sit on a darker, larger grey bar with tighter tab padding.",
+        links: [
+          { label: "Shopping Lists", href: "/dashboard/shopping-lists?signedin=1" },
+          { label: "Saved Carts", href: "/dashboard/saved-carts?signedin=1" },
+          { label: "Orders", href: "/dashboard/orders?signedin=1" },
+        ],
+      },
+      {
+        title: "Account search — Address Book & Card Management",
+        desc: "Added the shared search toolbar (AccountTableToolbar) to Address Book and Card Management so both filter in place like the rest of the account tables.",
+        links: [
+          { label: "Address Book", href: "/dashboard/addresses?signedin=1" },
+          { label: "Card Management", href: "/dashboard/card-management?signedin=1" },
+        ],
+      },
+      {
+        title: "Company Users — last login, devices & detail drawer",
+        desc: "Company Users now shows a Last Login column and each user’s authorized devices, with a read-only view drawer; the tab panels are force-mounted so the drawer’s controls stay reachable.",
+        links: [{ label: "Company Users", href: "/dashboard/company-users?signedin=1" }],
+      },
+      {
+        title: "Dashboard — simpler filter + focusable scroll regions",
+        desc: "Slimmed the Find-an-Order filter and reduced its depth on the dashboard, and made the scrollable regions keyboard-focusable so they’re reachable without a mouse.",
+        links: [{ label: "Dashboard", href: "/dashboard?signedin=1" }],
+      },
       {
         title: "Shopping list detail — redesigned header card, drawers & collapsible replacements",
         desc: "The top is now its own card — the list name with an inline edit pencil beside it, Manage Permissions + Add to Cart on the right, and the created / type / count / total meta below. The replacements banner collapses. Bulk actions read Add to Cart / Move / Copy / Remove; Move and Copy open a “Select Product List” drawer, Manage Permissions opens a Permissions drawer, and Add / Move / Copy / Remove each confirm with a toast. The search toolbar now matches the Shopping Lists index.",
@@ -217,9 +259,9 @@ const CHANGE_LOGS: ChangeLog[] = [
     ],
   },
   {
-    id: "oct-9-reviewed",
-    badge: "Reviewed Oct 9",
-    title: "Reviewed at the Oct 9 meeting",
+    id: "oct-2",
+    badge: "Oct 2",
+    title: "New edits (Oct 2 – Oct 8)",
     items: [
       {
         title: "PDP About tabs — Specifications & Part List icons",
@@ -274,9 +316,9 @@ const CHANGE_LOGS: ChangeLog[] = [
     ],
   },
   {
-    id: "previous",
-    badge: "Previous",
-    title: "Earlier passes — kept for reference",
+    id: "earlier",
+    badge: "Earlier",
+    title: "Before Oct 2 — baseline, kept for reference",
     items: [
       {
         title: "Checkout v3 — everything open",
@@ -415,7 +457,7 @@ export default function PdpMasterPage() {
             Change log
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Grouped by review cycle — the current cycle is open, past reviews collapsed. Click any link to open that change. Earlier baseline work is in the sections below.
+            Grouped by meeting — each card is dated to a meeting and holds the new edits made since it. The latest (Oct 9) is open; earlier meetings are collapsed. Click any link to open that change.
           </p>
           <Accordion
             type="multiple"
