@@ -264,3 +264,18 @@ export const PRODUCT_TAXONOMY: TaxonomyNode[] = [
 export function taxonomyHref(node: TaxonomyNode) {
   return `/search?category=${encodeURIComponent(node.slug)}`;
 }
+
+/** Resolve a category slug to its label (searches every level). */
+export function taxonomyLabel(slug: string): string | null {
+  const walk = (nodes: TaxonomyNode[]): string | null => {
+    for (const n of nodes) {
+      if (n.slug === slug) return n.label;
+      if (n.children) {
+        const found = walk(n.children);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+  return walk(PRODUCT_TAXONOMY);
+}

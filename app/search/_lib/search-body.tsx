@@ -73,6 +73,8 @@ const BRANDS_FACET = [
 
 type SearchBodyProps = {
   query: string;
+  /** When set, the page renders as a category listing (breadcrumb + H1). */
+  category?: string;
   results: SearchResult[];
   totalResults: number;
   pageSize: number;
@@ -95,6 +97,7 @@ type SearchBodyProps = {
 
 export function SearchBody({
   query,
+  category,
   results,
   totalResults,
   pageSize,
@@ -191,8 +194,14 @@ export function SearchBody({
           Home
         </Link>
         <ChevronRight className="size-3.5 opacity-60" />
-        <span>Search For &ldquo;{query}&rdquo;</span>
+        <span>{category ? category : <>Search For &ldquo;{query}&rdquo;</>}</span>
       </nav>
+
+      {category ? (
+        <div className="mx-auto max-w-6xl px-4 pt-3 md:px-6">
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{category}</h1>
+        </div>
+      ) : null}
 
       <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[256px_1fr]">

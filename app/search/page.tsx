@@ -6,10 +6,12 @@ import { SiteFooter, SiteHeader } from "../pdp/_lib/chrome";
 import { PdpAuthProvider } from "../pdp/_lib/auth";
 import { SearchBody } from "./_lib/search-body";
 import { MOCK_RESULTS, TOTAL_RESULT_COUNT } from "./_lib/mock-data";
+import { taxonomyLabel } from "@/components/ui/mega-taxonomy";
 
 type SearchParams = {
   q?: string;
   brand?: string;
+  category?: string;
   page_size?: string;
   signedin?: string;
 };
@@ -19,10 +21,13 @@ export async function generateMetadata({
 }: {
   searchParams: Promise<SearchParams>;
 }): Promise<Metadata> {
-  const { q = "" } = await searchParams;
-  const title = q
-    ? `Search Results for: "${q}" | Watsco`
-    : "Search | Watsco";
+  const { q = "", category } = await searchParams;
+  const categoryLabel = category ? taxonomyLabel(category) : null;
+  const title = categoryLabel
+    ? `${categoryLabel} | Homans Associates`
+    : q
+      ? `Search Results for: "${q}" | Watsco`
+      : "Search | Watsco";
   return { title };
 }
 
@@ -34,12 +39,15 @@ export default async function SearchPage({
   const {
     q = "",
     brand: brandKey = "homans",
+    category,
     page_size: pageSizeParam,
     signedin,
   } = await searchParams;
 
   const brand = getBrand(brandKey);
   if (!brand) notFound();
+
+  const categoryLabel = category ? taxonomyLabel(category) ?? undefined : undefined;
 
   const pageSize = Math.max(1, Math.min(48, Number.parseInt(pageSizeParam ?? "24", 10) || 24));
   const signedIn = signedin !== "0" && signedin !== "false";
@@ -57,6 +65,7 @@ export default async function SearchPage({
         <main>
           <SearchBody
             query={q}
+            category={categoryLabel}
             results={results}
             totalResults={TOTAL_RESULT_COUNT}
             pageSize={pageSize}
