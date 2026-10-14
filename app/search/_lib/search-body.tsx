@@ -116,8 +116,8 @@ const CATEGORY_TILES: CategoryTile[] = [
 
 function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string }) {
   return (
-    <section aria-label="Shop by category" className="border-b bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-5 md:px-6">
+    <section aria-label="Shop by category" className="mb-5 border-b pb-4">
+      <div>
         <ul className="flex snap-x gap-5 overflow-x-auto pb-3 [scrollbar-color:var(--border)_transparent] [scrollbar-width:thin]">
           {items.map((it) => (
             <li key={it.label} className="snap-start">
@@ -252,15 +252,6 @@ export function SearchBody({
         <ChevronRight className="size-3.5 opacity-60" />
         <span>{category ? category : <>Search For &ldquo;{query}&rdquo;</>}</span>
       </nav>
-
-      {/* Category impact design V1 — circular category scroller on top of the
-          standard PLP grid. Category pages only. */}
-      {category ? (
-        <CategoryScroller
-          items={CATEGORY_TILES}
-          href={`/search?brand=${brandKey}&category=residential&signedin=1`}
-        />
-      ) : null}
 
       <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
@@ -427,6 +418,15 @@ export function SearchBody({
 
           {/* Results grid or list */}
           <section aria-label="Search results" className="flex flex-col gap-4">
+            {/* Category impact design V1 — circular category scroller sits at the
+                top of the content column so it lines up with the category H1
+                (not over the sidebar). Category pages only. */}
+            {category ? (
+              <CategoryScroller
+                items={CATEGORY_TILES}
+                href={`/search?brand=${brandKey}&category=residential&signedin=1`}
+              />
+            ) : null}
             {/* Category H1 sits on top of the grid (not over the sidebar). */}
             {category ? (
               <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{category}</h1>
