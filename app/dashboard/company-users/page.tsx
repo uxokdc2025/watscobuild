@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Clock, Eye, Monitor, Pencil, Plus, Send, UserX, X } from "lucide-react";
+import { Clock, Monitor, Pencil, Plus, Send, UserX, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { AccountSearchInput, RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
@@ -90,8 +90,7 @@ const PAGE_SIZES = [18, 36, 54] as const;
 type DrawerState =
   | { mode: "closed" }
   | { mode: "invite" }
-  | { mode: "edit"; user: CompanyUser }
-  | { mode: "view"; user: CompanyUser };
+  | { mode: "edit"; user: CompanyUser };
 
 type FormValues = {
   firstName: string;
@@ -136,7 +135,7 @@ function UserDrawer({
         {state.mode !== "closed" ? (
           <UserDrawerBody
             // Remount per target so the form pre-fills fresh each time.
-            key={state.mode === "edit" || state.mode === "view" ? state.user.id : "invite"}
+            key={state.mode === "edit" ? state.user.id : "invite"}
             state={state}
             onClose={onClose}
           />
@@ -154,7 +153,7 @@ function UserDrawerBody({
   onClose: () => void;
 }) {
   const editing = state.mode === "edit";
-  const [form, setForm] = useState<FormValues>(
+  const initialForm: FormValues =
     state.mode === "edit"
       ? {
           firstName: state.user.firstName,
@@ -163,85 +162,20 @@ function UserDrawerBody({
           role: state.user.role,
           status: state.user.status,
         }
-      : { firstName: "", lastName: "", email: "", role: "Buyer", status: "Invited" },
-  );
+      : { firstName: "", lastName: "", email: "", role: "Buyer", status: "Invited" };
+  const [form, setForm] = useState<FormValues>(initialForm);
   const patch = (p: Partial<FormValues>) => setForm((f) => ({ ...f, ...p }));
   const valid =
     form.firstName.trim() !== "" &&
     form.lastName.trim() !== "" &&
     /^\S+@\S+\.\S+$/.test(form.email.trim());
-
-  // Read-only details view — profile, last login, authorized devices.
-  if (state.mode === "view") {
-    const u = state.user;
-    const fullName = `${u.firstName} ${u.lastName}`;
-    return (
-      <>
-        <DialogHeader className="sticky top-0 z-10 flex-row items-center justify-between gap-3 border-b bg-background px-5 py-4 sm:px-6">
-          <div className="min-w-0">
-            <DialogTitle className="flex flex-wrap items-center gap-2">
-              {fullName}
-              <Badge variant="soft" color={STATUS_COLOR[u.status]}>{u.status}</Badge>
-            </DialogTitle>
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">{u.email}</p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="grid size-8 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <X size={18} />
-          </button>
-        </DialogHeader>
-
-        <div className="space-y-6 px-5 py-5 sm:px-6">
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-            <div>
-              <dt className="text-xs font-medium text-muted-foreground">Role</dt>
-              <dd className="mt-1"><RoleChip role={u.role} /></dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-muted-foreground">Status</dt>
-              <dd className="mt-1"><Badge variant="soft" color={STATUS_COLOR[u.status]}>{u.status}</Badge></dd>
-            </div>
-          </dl>
-
-          <section className="rounded-lg border bg-muted/20 p-4">
-            <h3 className="flex items-center gap-2 text-sm font-semibold">
-              <Clock aria-hidden="true" className="size-4 text-muted-foreground" />
-              Last Login
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">{u.lastLogin}</p>
-          </section>
-
-          <section className="space-y-3">
-            <h3 className="flex items-center gap-2 text-sm font-semibold">
-              <Monitor aria-hidden="true" className="size-4 text-muted-foreground" />
-              Authorized Devices ({u.devices.length})
-            </h3>
-            {u.devices.length ? (
-              <ul className="divide-y rounded-lg border">
-                {u.devices.map((d, i) => (
-                  <li key={i} className="flex items-center justify-between gap-3 px-4 py-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{d.label}</p>
-                      <p className="truncate text-xs text-muted-foreground">{d.detail}</p>
-                    </div>
-                    <span className="shrink-0 text-xs text-muted-foreground">{d.lastUsed}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="rounded-lg border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
-                No devices on file — this user hasn&rsquo;t signed in yet.
-              </p>
-            )}
-          </section>
-        </div>
-      </>
-    );
-  }
+  // Save is only enabled once something actually changed.
+  const dirty =
+    form.firstName !== initialForm.firstName ||
+    form.lastName !== initialForm.lastName ||
+    form.email !== initialForm.email ||
+    form.role !== initialForm.role ||
+    form.status !== initialForm.status;
 
   return (
     <>
@@ -341,6 +275,44 @@ function UserDrawerBody({
         </div>
       </form>
 
+      {/* Read-only account activity — folded in from the old separate "View"
+          drawer so Edit is the single place to see and change a user. */}
+      {editing ? (
+        <div className="space-y-6 border-t px-5 py-5 sm:px-6">
+          <section className="rounded-lg border bg-muted/20 p-4">
+            <h3 className="flex items-center gap-2 text-sm font-semibold">
+              <Clock aria-hidden="true" className="size-4 text-muted-foreground" />
+              Last Login
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">{state.user.lastLogin}</p>
+          </section>
+
+          <section className="space-y-3">
+            <h3 className="flex items-center gap-2 text-sm font-semibold">
+              <Monitor aria-hidden="true" className="size-4 text-muted-foreground" />
+              Authorized Devices ({state.user.devices.length})
+            </h3>
+            {state.user.devices.length ? (
+              <ul className="divide-y rounded-lg border">
+                {state.user.devices.map((d, i) => (
+                  <li key={i} className="flex items-center justify-between gap-3 px-4 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{d.label}</p>
+                      <p className="truncate text-xs text-muted-foreground">{d.detail}</p>
+                    </div>
+                    <span className="shrink-0 text-xs text-muted-foreground">{d.lastUsed}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="rounded-lg border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
+                No devices on file — this user hasn&rsquo;t signed in yet.
+              </p>
+            )}
+          </section>
+        </div>
+      ) : null}
+
       {/* Sticky action bar — destructive (Deactivate) kept on the left, away from the primary. */}
       <div className={`sticky bottom-0 flex items-center gap-2 border-t bg-background px-5 py-3 sm:px-6 ${editing ? "justify-between" : "justify-end"}`}>
         {editing ? (
@@ -353,7 +325,7 @@ function UserDrawerBody({
             >
               <UserX size={16} /> Deactivate
             </Button>
-            <Button type="submit" form="user-form" className="min-h-11" disabled={!valid}>
+            <Button type="submit" form="user-form" className="min-h-11" disabled={!valid || !dirty}>
               Save Changes
             </Button>
           </>
@@ -457,7 +429,7 @@ export default function CompanyUsersPage() {
                     <td className={`${accountTable.cell} whitespace-nowrap`}>
                       <button
                         type="button"
-                        onClick={() => setDrawer({ mode: "view", user: u })}
+                        onClick={() => setDrawer({ mode: "edit", user: u })}
                         className="font-semibold text-primary hover:underline"
                       >
                         {fullName}
@@ -472,12 +444,6 @@ export default function CompanyUsersPage() {
                     </td>
                     <td className={`${accountTable.cell} whitespace-nowrap text-muted-foreground`}>{u.lastLogin}</td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
-                      <RowAction
-                        icon={Eye}
-                        label="View"
-                        aria-label={`View ${fullName}`}
-                        onClick={() => setDrawer({ mode: "view", user: u })}
-                      />
                       <RowAction
                         icon={Pencil}
                         label="Edit"
