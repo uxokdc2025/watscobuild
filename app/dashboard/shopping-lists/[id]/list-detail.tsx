@@ -3,9 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  ArrowUpDown,
   ChevronDown,
   Copy,
   Download,
+  Filter,
   FolderInput,
   Minus,
   Pencil,
@@ -32,6 +34,16 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductListRow } from "@/components/ui/product-list-row";
@@ -59,6 +71,26 @@ const LIST_GRID_COLS =
   // Product Details widest, then Label · Availability · Price spread evenly;
   // Qty (stepper) and Actions stay fixed. min-w-0 lets the flexible cells shrink.
   "grid-cols-[2.75rem_minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_7.5rem_9rem]";
+
+type SortKey =
+  | "default"
+  | "name-asc"
+  | "name-desc"
+  | "price-asc"
+  | "price-desc"
+  | "avail"
+  | "label";
+type AvailKey = "all" | "in" | "out";
+
+const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  { value: "default", label: "List Order" },
+  { value: "name-asc", label: "Name (A–Z)" },
+  { value: "name-desc", label: "Name (Z–A)" },
+  { value: "price-asc", label: "Price (Low–High)" },
+  { value: "price-desc", label: "Price (High–Low)" },
+  { value: "avail", label: "Availability (In Stock First)" },
+  { value: "label", label: "Label (A–Z)" },
+];
 
 /** Soft-badge color for a list's Type chip (Personal · Shared · Company). */
 function typeBadgeColor(type: string): "blue" | "violet" | "teal" | "slate" {
@@ -940,16 +972,99 @@ export function ListDetail({ id }: { id: string }) {
     [rows, banner],
   );
 
+  // Toolbar controls: Filter (by label + availability), Sort, Group by Label.
+  const [sort, setSort] = React.useState<SortKey>("default");
+  const [labelFilters, setLabelFilters] = React.useState<string[]>([]);
+  const [availFilter, setAvailFilter] = React.useState<AvailKey>("all");
+  const [grouped, setGrouped] = React.useState(false);
+
+  const distinctLabels = React.useMemo(
+    () => Array.from(new Set(listRows.map((p) => p.label).filter(Boolean) as string[])).sort(),
+    [listRows],
+  );
+  const activeFilterCount =
+    labelFilters.length + (availFilter === "all" ? 0 : 1);
+
   const filtered = React.useMemo(() => {
     const needle = q.trim().toLowerCase();
-    if (!needle) return listRows;
-    return listRows.filter(
-      (p) =>
-        p.title.toLowerCase().includes(needle) ||
-        p.item.toLowerCase().includes(needle) ||
-        p.mfg.toLowerCase().includes(needle),
-    );
-  }, [listRows, q]);
+    let out = listRows.filter((p) => {
+      if (
+        needle &&
+        !(
+          p.title.toLowerCase().includes(needle) ||
+          p.item.toLowerCase().includes(needle) ||
+          p.mfg.toLowerCase().includes(needle)
+        )
+      )
+        return false;
+      if (labelFilters.length > 0 && !(p.label && labelFilters.includes(p.label)))
+        return false;
+      const inStock = (p.inventory ?? 0) > 0;
+      if (availFilter === "in" && !inStock) return false;
+      if (availFilter === "out" && inStock) return false;
+      return true;
+    });
+
+    const byTitle = (a: Product, b: Product) => a.title.localeCompare(b.title);
+    switch (sort) {
+      case "name-asc":
+        out = [...out].sort(byTitle);
+        break;
+      case "name-desc":
+        out = [...out].sort((a, b) => byTitle(b, a));
+        break;
+      case "price-asc":
+        out = [...out].sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        out = [...out].sort((a, b) => b.price - a.price);
+        break;
+      case "avail":
+        out = [...out].sort(
+          (a, b) => Number((b.inventory ?? 0) > 0) - Number((a.inventory ?? 0) > 0) || byTitle(a, b),
+        );
+        break;
+      case "label":
+        out = [...out].sort(
+          (a, b) => (a.label ?? "").localeCompare(b.label ?? "") || byTitle(a, b),
+        );
+        break;
+      default:
+        break;
+    }
+    return out;
+  }, [listRows, q, labelFilters, availFilter, sort]);
+
+  // When grouping is on, bucket the visible rows under their label heading
+  // (unlabeled rows collect under "No label"), preserving the sorted order.
+  const groups = React.useMemo(() => {
+    if (!grouped) return null;
+    const map = new Map<string, Product[]>();
+    for (const p of filtered) {
+      const key = p.label ?? "No label";
+      const bucket = map.get(key);
+      if (bucket) bucket.push(p);
+      else map.set(key, [p]);
+    }
+    return Array.from(map.entries()).sort((a, b) => {
+      if (a[0] === "No label") return 1;
+      if (b[0] === "No label") return -1;
+      return a[0].localeCompare(b[0]);
+    });
+  }, [grouped, filtered]);
+
+  const renderRow = (p: Product) => (
+    <DetailRow
+      key={p.id}
+      product={p}
+      qty={qtys[p.id] ?? 1}
+      selected={!!selected[p.id]}
+      onToggle={(checked) => setSelected((prev) => ({ ...prev, [p.id]: checked }))}
+      onQty={(next) => setQtys((prev) => ({ ...prev, [p.id]: next }))}
+      onAdd={() => addOne(p)}
+      onRemove={() => removeRow(p.id)}
+    />
+  );
 
   const total = React.useMemo(
     () => listRows.reduce((sum, p) => sum + p.price * (qtys[p.id] ?? 1), 0),
@@ -1195,8 +1310,108 @@ export function ListDetail({ id }: { id: string }) {
             value={q}
             onChange={setQ}
             placeholder="Search products by name or SKU"
+            filterControl={
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="min-h-11">
+                    <Filter size={16} />
+                    Filter
+                    {activeFilterCount > 0 ? (
+                      <Badge variant="soft" color="blue" className="ml-1">
+                        {activeFilterCount}
+                      </Badge>
+                    ) : (
+                      <ChevronDown size={15} />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>Availability</DropdownMenuLabel>
+                  {(
+                    [
+                      { value: "all", label: "All Items" },
+                      { value: "in", label: "In Stock" },
+                      { value: "out", label: "Out of Stock" },
+                    ] as { value: AvailKey; label: string }[]
+                  ).map((o) => (
+                    <DropdownMenuCheckboxItem
+                      key={o.value}
+                      checked={availFilter === o.value}
+                      onCheckedChange={() => setAvailFilter(o.value)}
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      {o.label}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                  {distinctLabels.length > 0 ? (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Label</DropdownMenuLabel>
+                      {distinctLabels.map((lbl) => (
+                        <DropdownMenuCheckboxItem
+                          key={lbl}
+                          checked={labelFilters.includes(lbl)}
+                          onCheckedChange={(v) =>
+                            setLabelFilters((prev) =>
+                              v ? [...prev, lbl] : prev.filter((x) => x !== lbl),
+                            )
+                          }
+                          onSelect={(e) => e.preventDefault()}
+                        >
+                          {lbl}
+                        </DropdownMenuCheckboxItem>
+                      ))}
+                    </>
+                  ) : null}
+                  {activeFilterCount > 0 ? (
+                    <>
+                      <DropdownMenuSeparator />
+                      <button
+                        type="button"
+                        className="w-full rounded-sm px-2 py-1.5 text-left text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        onClick={() => {
+                          setLabelFilters([]);
+                          setAvailFilter("all");
+                        }}
+                      >
+                        Clear Filters
+                      </button>
+                    </>
+                  ) : null}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            }
+            sortControl={
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="min-h-11">
+                    <ArrowUpDown size={16} />
+                    Sort
+                    <ChevronDown size={15} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup
+                    value={sort}
+                    onValueChange={(v) => setSort(v as SortKey)}
+                  >
+                    {SORT_OPTIONS.map((o) => (
+                      <DropdownMenuRadioItem key={o.value} value={o.value}>
+                        {o.label}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            }
           >
-            <Button variant="outline" className="min-h-11">
+            <Button
+              variant={grouped ? "default" : "outline"}
+              className="min-h-11"
+              aria-pressed={grouped}
+              onClick={() => setGrouped((g) => !g)}
+            >
               <Tag size={16} />
               Group by Label
             </Button>
@@ -1293,25 +1508,32 @@ export function ListDetail({ id }: { id: string }) {
                 <span aria-hidden="true" />
               </div>
             ) : null}
-            {filtered.map((p) => (
-              <DetailRow
-                key={p.id}
-                product={p}
-                qty={qtys[p.id] ?? 1}
-                selected={!!selected[p.id]}
-                onToggle={(checked) =>
-                  setSelected((prev) => ({ ...prev, [p.id]: checked }))
-                }
-                onQty={(next) => setQtys((prev) => ({ ...prev, [p.id]: next }))}
-                onAdd={() => addOne(p)}
-                onRemove={() => removeRow(p.id)}
-              />
-            ))}
+            {grouped && groups
+              ? groups.map(([label, rowsInGroup]) => (
+                  <div key={label}>
+                    <div className="flex items-center gap-2 border-b bg-muted/40 px-4 py-2 text-sm font-semibold">
+                      {label === "No label" ? (
+                        <span className="text-muted-foreground">No Label</span>
+                      ) : (
+                        <Badge variant="soft" color={labelColor(label)} className="gap-1">
+                          {label}
+                        </Badge>
+                      )}
+                      <span className="text-xs font-normal text-muted-foreground">
+                        · {rowsInGroup.length} item{rowsInGroup.length === 1 ? "" : "s"}
+                      </span>
+                    </div>
+                    {rowsInGroup.map(renderRow)}
+                  </div>
+                ))
+              : filtered.map(renderRow)}
           </div>
 
           {filtered.length === 0 ? (
             <div className="p-12 text-center text-muted-foreground">
-              No products match &ldquo;{q}&rdquo;.
+              {q.trim() || activeFilterCount > 0
+                ? "No products match your search and filters."
+                : "This list has no products yet."}
             </div>
           ) : null}
         </section>

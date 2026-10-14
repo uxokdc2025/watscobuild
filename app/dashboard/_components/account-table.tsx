@@ -156,11 +156,17 @@ export function AccountTableToolbar({
   onChange,
   placeholder,
   children,
+  filterControl,
+  sortControl,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
   children?: React.ReactNode;
+  /** Functional Filter menu; falls back to the static button when omitted. */
+  filterControl?: React.ReactNode;
+  /** Functional Sort menu; falls back to the static button when omitted. */
+  sortControl?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-3 border-b p-4">
@@ -170,16 +176,20 @@ export function AccountTableToolbar({
         placeholder={placeholder}
         className="min-w-[240px] flex-1"
       />
-      <Button variant="outline" className="min-h-11">
-        <Filter size={16} />
-        Filter
-        <ChevronDown size={15} />
-      </Button>
+      {filterControl ?? (
+        <Button variant="outline" className="min-h-11">
+          <Filter size={16} />
+          Filter
+          <ChevronDown size={15} />
+        </Button>
+      )}
       {children}
-      <Button variant="outline" className="min-h-11">
-        <Settings2 size={16} />
-        Sort
-      </Button>
+      {sortControl ?? (
+        <Button variant="outline" className="min-h-11">
+          <Settings2 size={16} />
+          Sort
+        </Button>
+      )}
     </div>
   );
 }
