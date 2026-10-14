@@ -367,9 +367,15 @@ export function SearchBody({
             {/* Results toolbar — heading left-aligned with the first product
                 card; view toggle pinned right at the same baseline. */}
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <h1 className="text-lg font-semibold tracking-tight">
-                Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results for &ldquo;{query}&rdquo;
-              </h1>
+              {category ? (
+                <h2 className="text-lg font-semibold tracking-tight">
+                  Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results
+                </h2>
+              ) : (
+                <h1 className="text-lg font-semibold tracking-tight">
+                  Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results for &ldquo;{query}&rdquo;
+                </h1>
+              )}
               <div
                 role="group"
                 aria-label="Result view"
