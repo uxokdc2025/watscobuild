@@ -5,8 +5,11 @@ export type TaxonomyNode = {
 };
 
 /** Shared taxonomy source for category navigation, links, and future facets.
- *  HVAC-realistic and 3 levels deep for the flagship categories (Residential,
- *  Parts · Service · Electrical, Commercial Equipment); shallower elsewhere. */
+ *  Top-level categories and order mirror the live Homans storefront
+ *  (homans.com): Residential · Mitsubishi · Mechanical Insulation · Ductwork &
+ *  Air Distribution · IAQ Thermostats & Zoning · Parts Service & Electrical ·
+ *  Commercial Equipment · General & Shop Supplies · Tools · Specials. Depth is
+ *  3 levels for the flagship categories, first-sub elsewhere. */
 export const PRODUCT_TAXONOMY: TaxonomyNode[] = [
   {
     label: "Residential",
@@ -30,6 +33,14 @@ export const PRODUCT_TAXONOMY: TaxonomyNode[] = [
           { label: "Two-Stage Heat Pump", slug: "two-stage-heat-pump" },
           { label: "Variable-Speed Heat Pump", slug: "variable-speed-heat-pump" },
           { label: "Packaged Heat Pump", slug: "packaged-heat-pump" },
+        ],
+      },
+      {
+        label: "Fan Coils",
+        slug: "fan-coils",
+        children: [
+          { label: "Multi-Position Fan Coils", slug: "multi-position-fan-coils" },
+          { label: "Variable-Speed Fan Coils", slug: "variable-speed-fan-coils" },
         ],
       },
       {
@@ -60,15 +71,6 @@ export const PRODUCT_TAXONOMY: TaxonomyNode[] = [
         ],
       },
       {
-        label: "Ductless Mini-Splits",
-        slug: "ductless-mini-splits",
-        children: [
-          { label: "Single-Zone", slug: "single-zone-ductless" },
-          { label: "Multi-Zone", slug: "multi-zone-ductless" },
-          { label: "Ceiling Cassette", slug: "ceiling-cassette" },
-        ],
-      },
-      {
         label: "Boilers",
         slug: "boilers",
         children: [
@@ -77,10 +79,54 @@ export const PRODUCT_TAXONOMY: TaxonomyNode[] = [
           { label: "Combi Boilers", slug: "combi-boilers" },
         ],
       },
+      { label: "Residential Accessories", slug: "residential-accessories" },
     ],
   },
   {
-    label: "Parts · Service · Electrical",
+    label: "Mitsubishi",
+    slug: "mitsubishi",
+    children: [
+      { label: "Indoor Units", slug: "indoor-units" },
+      { label: "Outdoor Units", slug: "outdoor-units" },
+      { label: "Ductless: Residential", slug: "ductless-residential" },
+      { label: "Ductless: Residential Accessories", slug: "ductless-residential-accessories" },
+      { label: "Controls", slug: "mitsubishi-controls" },
+    ],
+  },
+  {
+    label: "Mechanical Insulation",
+    slug: "mechanical-insulation",
+    children: [
+      { label: "Pipe Insulation", slug: "pipe-insulation" },
+      { label: "Fitting Covers", slug: "fitting-covers" },
+      { label: "Duct Wrap & Board", slug: "duct-wrap-board" },
+      { label: "Tapes & Sealants", slug: "insulation-tapes-sealants" },
+      { label: "Jacketing", slug: "jacketing" },
+    ],
+  },
+  {
+    label: "Ductwork & Air Distribution",
+    slug: "ductwork-air-distribution",
+    children: [
+      { label: "Air Distribution", slug: "air-distribution" },
+      { label: "Flex Duct", slug: "flex-duct" },
+      { label: "Ductwork", slug: "ductwork" },
+      { label: "Grilles & Registers", slug: "grilles-registers" },
+      { label: "Dampers", slug: "dampers" },
+    ],
+  },
+  {
+    label: "IAQ Thermostats & Zoning",
+    slug: "iaq-thermostats-zoning",
+    children: [
+      { label: "Air Quality", slug: "air-quality" },
+      { label: "Thermostats", slug: "thermostats" },
+      { label: "Smart Thermostats", slug: "smart-thermostats" },
+      { label: "Zoning", slug: "zoning" },
+    ],
+  },
+  {
+    label: "Parts Service & Electrical",
     slug: "parts-service-electrical",
     children: [
       {
@@ -91,6 +137,14 @@ export const PRODUCT_TAXONOMY: TaxonomyNode[] = [
           { label: "Condenser Fan Motors", slug: "condenser-fan-motors" },
           { label: "ECM Motors", slug: "ecm-motors" },
           { label: "Inducer Motors", slug: "inducer-motors" },
+        ],
+      },
+      {
+        label: "Blowers, Fan Blades & Components",
+        slug: "blowers-fan-blades",
+        children: [
+          { label: "Blower Wheels", slug: "blower-wheels" },
+          { label: "Fan Blades", slug: "fan-blades" },
         ],
       },
       {
@@ -118,6 +172,15 @@ export const PRODUCT_TAXONOMY: TaxonomyNode[] = [
           { label: "Hot Surface Igniters", slug: "hot-surface-igniters" },
           { label: "Flame Sensors", slug: "flame-sensors" },
           { label: "Pressure Switches", slug: "pressure-switches" },
+        ],
+      },
+      {
+        label: "Electrical",
+        slug: "electrical",
+        children: [
+          { label: "Wire & Whips", slug: "wire-whips" },
+          { label: "Disconnects", slug: "disconnects" },
+          { label: "Transformers", slug: "transformers" },
         ],
       },
       {
@@ -168,33 +231,6 @@ export const PRODUCT_TAXONOMY: TaxonomyNode[] = [
           { label: "Economizers", slug: "economizers" },
         ],
       },
-    ],
-  },
-  {
-    label: "Mitsubishi",
-    slug: "mitsubishi",
-    children: [
-      { label: "Indoor Units", slug: "indoor-units" },
-      { label: "Outdoor Units", slug: "outdoor-units" },
-      { label: "Controls", slug: "mitsubishi-controls" },
-    ],
-  },
-  {
-    label: "IAQ, Thermostats & Zoning",
-    slug: "iaq-thermostats-zoning",
-    children: [
-      { label: "Air Quality", slug: "air-quality" },
-      { label: "Thermostats", slug: "thermostats" },
-      { label: "Zoning", slug: "zoning" },
-    ],
-  },
-  {
-    label: "Ductwork & Air Distribution",
-    slug: "ductwork-air-distribution",
-    children: [
-      { label: "Ductwork", slug: "ductwork" },
-      { label: "Grilles & Registers", slug: "grilles-registers" },
-      { label: "Dampers", slug: "dampers" },
     ],
   },
   {

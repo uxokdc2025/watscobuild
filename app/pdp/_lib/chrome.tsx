@@ -252,24 +252,26 @@ function UnifiedHeader({
             <BrandMark brand={brand} theme={theme} />
           </Link>
 
-          {/* LEFT: store / branch selector — immediately after the logo on EVERY brand */}
+          {/* LEFT: branch selector — a prominent, bordered control immediately
+              after the logo on EVERY brand. Reads as the "Your Branch" picker. */}
           <a
             href="/store-locator/in-plp?v=c"
-            className="hidden items-center gap-2 rounded-md px-2 py-1 text-xs leading-tight transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
+            className="hidden items-center gap-2.5 rounded-lg border border-white/25 bg-white/10 px-3 py-1.5 leading-tight transition-colors hover:bg-white/20 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:flex"
           >
             <Home className="size-5 shrink-0" aria-hidden />
-            <span>
-              <span className="block opacity-90">Your store</span>
-              <span className="block font-bold whitespace-nowrap">{branch}</span>
+            <span className="text-left">
+              <span className="block text-[11px] uppercase tracking-wide opacity-80">Your Branch</span>
+              <span className="flex items-center gap-1.5 text-sm font-bold whitespace-nowrap">
+                {branch}
+                <ChevronDown className="size-3.5 opacity-80" aria-hidden />
+              </span>
               {signedIn ? (
-                <span className="block text-[11px] font-semibold text-green-300">
-                  Open now
-                </span>
+                <span className="block text-[11px] font-semibold text-green-300">Open now</span>
               ) : null}
             </span>
           </a>
 
-          {/* CENTER: search (grows) */}
+          {/* CENTER: search — the front-and-center focal point (grows to fill). */}
           <SearchAutocomplete placeholder="Search item # or name" />
 
           {/* RIGHT: Lists · Account · Cart */}
