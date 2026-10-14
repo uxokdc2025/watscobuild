@@ -41,11 +41,11 @@ export const BRANDS: Record<string, BrandChrome> = {
     nav: [
       "Products",
       "Brands",
-      "Specials",
       "Services",
       "Find a Local Dealer",
       "Resources",
       "Training & Events",
+      "Specials",
     ],
     footerColumns: [
       { title: "Company", links: ["About", "Branches", "Careers", "Mobile Apps"] },

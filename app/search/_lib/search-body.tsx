@@ -95,89 +95,20 @@ type SearchBodyProps = {
   availabilityVariant?: "radio" | "checkbox";
 };
 
-/* Real Residential facet set, grabbed from homans.com's Residential category.
-   Category is expanded with live counts; every other facet is collapsed. */
+/* Real Residential subcategories + live counts, grabbed from homans.com — fed
+   into our existing Categories facet (our pattern, real data). */
 const CATEGORY_SUBCATS: { label: string; count: number }[] = [
-  { label: "80% + AFUE Gas Furnace", count: 44 },
-  { label: "90% + AFUE Gas Furnace", count: 39 },
-  { label: "Accessories", count: 72 },
-  { label: "Air Conditioner", count: 41 },
-  { label: "Air Handler", count: 76 },
-  { label: "Ductless", count: 58 },
-  { label: "Evaporator Coil", count: 68 },
-  { label: "Heat Pump", count: 40 },
-  { label: "Oil Furnace", count: 8 },
-  { label: "Small Packaged Products", count: 26 },
+  { label: "80% + AFUE Gas Furnace", count: 58 },
+  { label: "90% + AFUE Gas Furnace", count: 95 },
+  { label: "Accessories", count: 78 },
+  { label: "Air Conditioner", count: 95 },
+  { label: "Air Handler", count: 102 },
+  { label: "Ductless", count: 134 },
+  { label: "Evaporator Coil", count: 160 },
+  { label: "Heat Pump", count: 73 },
+  { label: "Oil Furnace", count: 20 },
+  { label: "Small Packaged Products", count: 31 },
 ];
-const CATEGORY_FACETS: string[] = [
-  "Brand", "A2L Compatible", "AFUE", "Air Flow Direction", "Amps", "BTU Input",
-  "BTU Output", "Built-In Wi-Fi", "CFM", "Color", "Composition",
-  "Cooling Rated Capacity (Btu/h)", "COP", "Diameter", "EER", "EER2",
-  "Fer Compliant", "Fitting Type", "Fuel Type", "HSPF", "HSPF2", "Kilowatt (KW)",
-  "Liquid Line Size (OD)", "Mounting Type", "Multi Zone", "Number of HVAC Zones",
-  "Phase", "Product Family", "R-Value", "Refrigerant", "SEER", "SEER2", "Size",
-  "Stage", "Suction Line Size Od", "Tonnage", "Type", "Voltage",
-];
-
-/** The category-page filter rail — mirrors the live Homans category page:
- *  List/Grid toggle, Category expanded with counts, all other facets collapsed. */
-function CategoryFacets({
-  view,
-  setView,
-}: {
-  view: "grid" | "list";
-  setView: (v: "grid" | "list") => void;
-}) {
-  const toggle = (active: boolean) =>
-    cn(
-      "rounded-sm",
-      active
-        ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
-        : "text-muted-foreground",
-    );
-  return (
-    <aside aria-label="Filters" className="text-sm">
-      {/* List / Grid toggle — top of the rail, like the live site. */}
-      <div role="group" aria-label="Result view" className="mb-4 grid grid-cols-2 gap-0.5 rounded-md border bg-background p-0.5">
-        <Button type="button" variant="ghost" size="sm" aria-pressed={view === "list"} onClick={() => setView("list")} className={toggle(view === "list")}>
-          <ListIcon /> List
-        </Button>
-        <Button type="button" variant="ghost" size="sm" aria-pressed={view === "grid"} onClick={() => setView("grid")} className={toggle(view === "grid")}>
-          <LayoutGrid /> Grid
-        </Button>
-      </div>
-
-      {/* Category — expanded with live counts. */}
-      <details open className="group border-t">
-        <summary className="flex cursor-pointer list-none items-center justify-between py-3 font-bold text-foreground">
-          Category
-          <ChevronDown className="size-4 text-muted-foreground" />
-        </summary>
-        <ul className="pb-3">
-          {CATEGORY_SUBCATS.map((s) => (
-            <li key={s.label}>
-              <button type="button" className="flex w-full items-center justify-between gap-2 rounded-md px-1 py-2 text-left hover:bg-accent hover:text-foreground">
-                <span>{s.label}</span>
-                <span className="shrink-0 text-xs text-muted-foreground">({s.count})</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </details>
-
-      {/* All other facets — collapsed, chevron points right until expanded. */}
-      {CATEGORY_FACETS.map((f) => (
-        <details key={f} className="group border-t">
-          <summary className="flex cursor-pointer list-none items-center justify-between py-3 font-bold text-foreground">
-            {f}
-            <ChevronRight className="size-4 text-primary transition-transform group-open:rotate-90" />
-          </summary>
-          <p className="px-1 pb-3 text-xs text-muted-foreground">Options appear when expanded.</p>
-        </details>
-      ))}
-    </aside>
-  );
-}
 
 export function SearchBody({
   query,
@@ -283,10 +214,7 @@ export function SearchBody({
 
       <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
-          {/* Facet sidebar — category pages use the live-site facet rail. */}
-          {category ? (
-            <CategoryFacets view={view} setView={setView} />
-          ) : (
+          {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-5 text-sm">
             {availabilityVariant === "checkbox" ? (
               <section aria-labelledby="availability-heading" className="space-y-1 rounded-md bg-muted/50 p-4">
@@ -380,12 +308,21 @@ export function SearchBody({
                 Categories
               </h2>
               <ul className="space-y-2">
-                <li className="flex items-center justify-between gap-2 text-sm">
-                  <span className="text-primary hover:underline cursor-pointer">
-                    Parts Service &amp; Electrical
-                  </span>
-                  <span className="text-xs text-muted-foreground">({totalResults})</span>
-                </li>
+                {category ? (
+                  CATEGORY_SUBCATS.map((s) => (
+                    <li key={s.label} className="flex items-center justify-between gap-2 text-sm">
+                      <span className="cursor-pointer text-primary hover:underline">{s.label}</span>
+                      <span className="text-xs text-muted-foreground">({s.count})</span>
+                    </li>
+                  ))
+                ) : (
+                  <li className="flex items-center justify-between gap-2 text-sm">
+                    <span className="cursor-pointer text-primary hover:underline">
+                      Parts Service &amp; Electrical
+                    </span>
+                    <span className="text-xs text-muted-foreground">({totalResults})</span>
+                  </li>
+                )}
               </ul>
             </section>
 
@@ -442,7 +379,6 @@ export function SearchBody({
               </details>
             </section>
           </aside>
-          )}
 
           {/* Results grid or list */}
           <section aria-label="Search results" className="flex flex-col gap-4">
@@ -465,10 +401,7 @@ export function SearchBody({
               <div
                 role="group"
                 aria-label="Result view"
-                className={cn(
-                  "inline-flex items-center gap-0.5 self-start rounded-md border bg-background p-0.5 md:self-auto",
-                  category && "hidden",
-                )}
+                className="inline-flex items-center gap-0.5 self-start rounded-md border bg-background p-0.5 md:self-auto"
               >
                 <Button
                   type="button"

@@ -13,6 +13,12 @@ import Link from "next/link";
 import { AccountFlyout, CartTrigger, CheckoutCartTrigger } from "./account-flyout";
 import { SearchAutocomplete } from "@/components/ui/search-autocomplete";
 import { MegaMenu } from "@/components/ui/mega-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { cn } from "@/lib/utils";
 
@@ -202,9 +208,40 @@ const UTILITY_LINKS = [
   "Help & Support",
 ];
 
-/** Nav labels that read as expandable categories get a caret affordance. */
-const NAV_CARET =
-  /^(Products|Brands|Resources|Categories|Services|Shop for Products|Training & Events|About Us|PRO Guides|Find A Local Dealer)$/i;
+/** Real Homans content for the nav items that DO open a dropdown. Any nav item
+ *  without an entry here (and that isn't the Products mega-menu) renders as a
+ *  plain link with no caret — no empty dropdowns. */
+const BRANDS_MENU: string[] = [
+  "Armstrong Air", "Bryant", "Carrier", "DiversiTech", "Ductmate", "Duro Dyne",
+  "Goodman", "Honeywell", "Mitsubishi Electric", "Rheem", "Fieldpiece", "White-Rodgers",
+];
+const RESOURCES_MENU: { label: string; href: string }[] = [
+  { label: "Credit Application", href: "#" },
+  { label: "Homans Pay", href: "#" },
+  { label: "Simple Proposal", href: "#" },
+  { label: "Line Cards", href: "#" },
+  { label: "Documents", href: "#" },
+  { label: "Rebates", href: "#" },
+  { label: "Watsco Tools", href: "#" },
+];
+
+const NAV_TRIGGER_CLASS =
+  "group relative my-1.5 inline-flex min-h-9 items-center gap-1 px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 data-[state=open]:text-white";
+
+/** A top-level nav item that opens a real dropdown (DS DropdownMenu). */
+function NavDropdown({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className={NAV_TRIGGER_CLASS}>
+        <span>{label}</span>
+        <ChevronDown className="size-3.5 transition-transform group-data-[state=open]:rotate-180" aria-hidden />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="max-h-[70vh] w-56 overflow-y-auto">
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 /* ════════════════════════════════════════════════════════════════════════
    UnifiedHeader — three rows: utility · main · nav
@@ -290,34 +327,54 @@ function UnifiedHeader({
       {/* Row 3 — category nav (brand nav shade) */}
       <nav aria-label="Primary" className={theme.navClass}>
         <div className="mx-auto flex max-w-[var(--layout-max-width)] gap-1 overflow-x-auto px-4 md:px-6">
-          {brand.nav.map((n) =>
-            n === "Products" ? (
-              <MegaMenu key={n} />
-            ) : (
-              <button
+          {brand.nav.map((n) => {
+            if (n === "Products") return <MegaMenu key={n} />;
+            if (n === "Brands")
+              return (
+                <NavDropdown key={n} label="Brands">
+                  {BRANDS_MENU.map((b) => (
+                    <DropdownMenuItem key={b} asChild>
+                      <Link href={`/search?q=${encodeURIComponent(b)}&signedin=1`}>{b}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </NavDropdown>
+              );
+            if (n === "Resources")
+              return (
+                <NavDropdown key={n} label="Resources">
+                  {RESOURCES_MENU.map((r) => (
+                    <DropdownMenuItem key={r.label} asChild>
+                      <Link href={r.href}>{r.label}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </NavDropdown>
+              );
+            if (n === "Specials")
+              // Promo item — stands out in brand yellow, pushed to the end.
+              return (
+                <Link
+                  key={n}
+                  href="/search?q=specials&signedin=1"
+                  className="my-1.5 ml-auto inline-flex min-h-9 items-center rounded-md bg-yellow-400 px-3 py-1.5 text-sm font-bold whitespace-nowrap text-blue-950 transition-colors hover:bg-yellow-300 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                >
+                  {n}
+                </Link>
+              );
+            // Everything else is a plain link — no caret, no empty dropdown.
+            return (
+              <Link
                 key={n}
-                type="button"
-                className="group relative my-1.5 inline-flex min-h-9 items-center gap-1 px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                href="#"
+                className="group relative my-1.5 inline-flex min-h-9 items-center px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:text-white hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 <span>{n}</span>
-                {/* Indicator line (Ulta pattern): a short bar below the item on
-                    hover — NOT a text underline, and no bg-fill. Matches the
-                    Products MegaMenu trigger. */}
                 <span
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-x-3 -bottom-2 h-[2px] rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
                 />
-                {NAV_CARET.test(n) ? (
-                  // Caret nudges UP on hover — matches the Products trigger; no
-                  // rotation. Wrapped in an inline-flex span because CSS
-                  // transforms don't move the <svg> root itself reliably.
-                  <span className="inline-flex transition-transform duration-200 group-hover:[transform:translateY(-2px)]">
-                    <ChevronDown className="size-3.5" aria-hidden />
-                  </span>
-                ) : null}
-              </button>
-            )
-          )}
+              </Link>
+            );
+          })}
         </div>
       </nav>
     </header>

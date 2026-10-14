@@ -6,6 +6,7 @@ import { SiteFooter, SiteHeader } from "../pdp/_lib/chrome";
 import { PdpAuthProvider } from "../pdp/_lib/auth";
 import { SearchBody } from "./_lib/search-body";
 import { MOCK_RESULTS, TOTAL_RESULT_COUNT } from "./_lib/mock-data";
+import { CATEGORY_RESULTS } from "./_lib/category-data";
 import { taxonomyLabel } from "@/components/ui/mega-taxonomy";
 
 type SearchParams = {
@@ -52,8 +53,11 @@ export default async function SearchPage({
   const pageSize = Math.max(1, Math.min(48, Number.parseInt(pageSizeParam ?? "24", 10) || 24));
   const signedIn = signedin !== "0" && signedin !== "false";
 
-  // Slice the mock set to page_size so the grid respects the URL.
-  const results = MOCK_RESULTS.slice(0, pageSize);
+  // Category pages show their real product set; search shows the mock set.
+  const categoryResults = category ? CATEGORY_RESULTS[category] : undefined;
+  const sourceResults = categoryResults ?? MOCK_RESULTS;
+  const results = sourceResults.slice(0, pageSize);
+  const totalResults = categoryResults ? categoryResults.length : TOTAL_RESULT_COUNT;
 
   const hiddenSearchFields = [{ name: "brand", value: brandKey }];
   const storeName = brandStoreName(brandKey);
@@ -67,7 +71,7 @@ export default async function SearchPage({
             query={q}
             category={categoryLabel}
             results={results}
-            totalResults={TOTAL_RESULT_COUNT}
+            totalResults={totalResults}
             pageSize={pageSize}
             signedIn={signedIn}
             hiddenSearchFields={hiddenSearchFields}
