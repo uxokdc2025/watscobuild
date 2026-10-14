@@ -30,6 +30,7 @@ export default function NavCharcoalPreview() {
   return (
     <DashboardShell
       navVariant="charcoal"
+      activeHref="/dashboard"
       title="Dashboard"
       actions={
         <Button asChild variant="outline">

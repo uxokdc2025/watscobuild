@@ -135,9 +135,10 @@ function NavRow({
   );
 }
 
-export function DashboardShell({ title, actions, breadcrumb, children, navVariant = "default" }: { title?: React.ReactNode; description?: string; actions?: React.ReactNode; breadcrumb?: React.ReactNode; children: React.ReactNode; navVariant?: "default" | "charcoal" }) {
+export function DashboardShell({ title, actions, breadcrumb, children, navVariant = "default", activeHref }: { title?: React.ReactNode; description?: string; actions?: React.ReactNode; breadcrumb?: React.ReactNode; children: React.ReactNode; navVariant?: "default" | "charcoal"; activeHref?: string }) {
   const pathname = usePathname();
-  const isActive = (href: string) => pathname === href.split("?")[0];
+  const current = activeHref ?? pathname;
+  const isActive = (href: string) => current === href.split("?")[0];
   const dark = navVariant === "charcoal";
   const navClass = dark
     ? "h-fit rounded-lg bg-slate-900 p-2.5 shadow-md ring-1 ring-white/10"
