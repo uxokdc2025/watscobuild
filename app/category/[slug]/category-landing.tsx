@@ -111,7 +111,7 @@ function PromoCarousel() {
           <div className="hidden justify-self-center sm:block">
             <span className="grid size-44 place-items-center rounded-full bg-white/95 shadow-lg md:size-52">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.image} alt="" className="size-full object-contain p-4" />
+              <img src={s.image} alt="" className="max-h-full max-w-full object-contain p-4" />
             </span>
           </div>
         </div>
@@ -229,7 +229,7 @@ function BundleFeature() {
               <div key={p.label} className="flex flex-col items-center gap-2 rounded-lg border bg-background p-3 text-center">
                 <span className="grid aspect-square w-full place-items-center rounded-md bg-white">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={p.image} alt="" className="size-full object-contain p-2" loading="lazy" />
+                  <img src={p.image} alt="" className="max-h-full max-w-full object-contain p-2" loading="lazy" />
                 </span>
                 <span className="text-xs font-medium leading-snug">{p.label}</span>
               </div>
