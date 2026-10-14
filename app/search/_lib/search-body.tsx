@@ -103,15 +103,15 @@ type SearchBodyProps = {
    circle + category icon as a placeholder until the full image set is built. */
 type CategoryTile = { label: string; Icon: LucideIcon; image?: string; href?: string };
 const CATEGORY_TILES: CategoryTile[] = [
-  { label: "Air Conditioner", Icon: Snowflake, image: "/category-tiles/air-conditioner.png", href: "/category/air-conditioners?signedin=1" },
-  { label: "Heat Pump", Icon: Thermometer, image: "/category-tiles/heat-pump.png" },
-  { label: "Gas Furnace", Icon: Flame, image: "/category-tiles/gas-furnace.png" },
-  { label: "Air Handler", Icon: Fan, image: "/category-tiles/air-handler.png" },
-  { label: "Evaporator Coil", Icon: Snowflake, image: "/category-tiles/evaporator-coil.png" },
-  { label: "Ductless", Icon: Wind, image: "/category-tiles/ductless.png" },
-  { label: "Oil Furnace", Icon: Flame, image: "/category-tiles/oil-furnace.png" },
-  { label: "Small Packaged", Icon: Package, image: "/category-tiles/small-packaged.png" },
-  { label: "Accessories", Icon: Wrench, image: "/category-tiles/accessories.png" },
+  { label: "Air Conditioner", Icon: Snowflake, image: "/category-tiles/air-conditioner.webp", href: "/category/air-conditioners?signedin=1" },
+  { label: "Heat Pump", Icon: Thermometer, image: "/category-tiles/heat-pump.webp" },
+  { label: "Gas Furnace", Icon: Flame, image: "/category-tiles/gas-furnace.webp" },
+  { label: "Air Handler", Icon: Fan, image: "/category-tiles/air-handler.webp" },
+  { label: "Evaporator Coil", Icon: Snowflake, image: "/category-tiles/evaporator-coil.webp" },
+  { label: "Ductless", Icon: Wind, image: "/category-tiles/ductless.webp" },
+  { label: "Oil Furnace", Icon: Flame, image: "/category-tiles/oil-furnace.webp" },
+  { label: "Small Packaged", Icon: Package, image: "/category-tiles/small-packaged.webp" },
+  { label: "Accessories", Icon: Wrench, image: "/category-tiles/accessories.webp" },
 ];
 
 function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string }) {

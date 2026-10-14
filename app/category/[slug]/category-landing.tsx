@@ -53,7 +53,7 @@ const SLIDES: Slide[] = [
     copy: "Instant rebates on select R-454B air conditioners — in stock and ready to install.",
     cta: "Shop Air Conditioners",
     href: "#top-rated",
-    image: "/category-tiles/air-conditioner.png",
+    image: "/category-tiles/air-conditioner.webp",
     from: "#003874",
     to: "#0a63b8",
   },
@@ -63,7 +63,7 @@ const SLIDES: Slide[] = [
     copy: "Next-generation, low-GWP refrigerant systems from Armstrong Air and Bryant.",
     cta: "See What's New",
     href: "#new-lineup",
-    image: "/category-tiles/heat-pump.png",
+    image: "/category-tiles/heat-pump.webp",
     from: "#0f766e",
     to: "#0ea5a0",
   },
@@ -73,7 +73,7 @@ const SLIDES: Slide[] = [
     copy: "Match a condenser, coil, and air handler — bundled, priced, and in stock together.",
     cta: "Build a System",
     href: "#bundle",
-    image: "/category-tiles/air-handler.png",
+    image: "/category-tiles/air-handler.webp",
     from: "#1e293b",
     to: "#334155",
   },
@@ -192,9 +192,9 @@ function ProductRow({
 /* ── System bundle feature ── */
 function BundleFeature() {
   const parts = [
-    { label: "Condenser", image: "/category-tiles/air-conditioner.png" },
-    { label: "Evaporator Coil", image: "/category-tiles/evaporator-coil.png" },
-    { label: "Air Handler", image: "/category-tiles/air-handler.png" },
+    { label: "Condenser", image: "/category-tiles/air-conditioner.webp" },
+    { label: "Evaporator Coil", image: "/category-tiles/evaporator-coil.webp" },
+    { label: "Air Handler", image: "/category-tiles/air-handler.webp" },
   ];
   const bundle = 4299;
   const was = 4730;
