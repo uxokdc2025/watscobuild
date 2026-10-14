@@ -62,7 +62,7 @@ import {
   SubstituteBadge,
 } from "@/components/ui/label-badges";
 import { cn } from "@/lib/utils";
-import { formatUSD, type PdpBadge } from "./types";
+import { formatUSD, formatUom, type PdpBadge } from "./types";
 import { useCart } from "@/components/cart/cart-context";
 
 export type ProductCardData = {
@@ -327,7 +327,7 @@ export function ProductCard({
                 {formatUSD(data.price!)}
               </span>
               <span className="text-xs leading-4 text-muted-foreground">
-                / {data.uom ?? "EACH"}
+                / {formatUom(data.uom ?? "EACH")}
               </span>
               {data.wasPrice != null ? (
                 <span className="text-xs leading-4 text-muted-foreground line-through">

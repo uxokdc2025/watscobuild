@@ -534,7 +534,7 @@ function DetailRow({
   );
 
   // Label: a compact dropdown-style badge ("Preventative ⌄"); falls back to the
-  // ghost "Add label" affordance when the row has no label yet.
+  // ghost "Add Label" affordance when the row has no label yet.
   const labelNode = product.label ? (
     <Badge variant="soft" color={labelColor(product.label)} className="max-w-full cursor-pointer gap-1">
       <span className="truncate">{product.label}</span>
@@ -548,7 +548,7 @@ function DetailRow({
       className="h-8 text-muted-foreground"
     >
       <Tag className="size-3.5" />
-      Add label
+      Add Label
     </Button>
   );
 
@@ -1101,21 +1101,18 @@ export function ListDetail({ id }: { id: string }) {
               <span>
                 {listRows.length} item{listRows.length === 1 ? "" : "s"} · Updated {meta.updated}
               </span>
+              <span aria-hidden="true" className="ml-1">·</span>
+              <RowAction
+                icon={Trash2}
+                label="Delete List"
+                remove
+                onClick={() => toast.success(`“${meta.name}” deleted`)}
+              />
             </div>
             <span className="text-sm text-muted-foreground">
               Total{" "}
               <span className="font-semibold text-in-stock">{formatUSD(total)}</span>
             </span>
-          </div>
-          {/* Destructive action lives here, bottom-left — away from the primary
-              Add to Cart in the top-right. */}
-          <div className="mt-4 flex items-center border-t pt-4">
-            <RowAction
-              icon={Trash2}
-              label="Delete List"
-              remove
-              onClick={() => toast.success(`“${meta.name}” deleted`)}
-            />
           </div>
         </section>
 

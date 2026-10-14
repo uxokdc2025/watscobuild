@@ -184,6 +184,9 @@ export default function ProductCardReference() {
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Badge&gt;</code> through the{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">badges</code> data.</>,
               <>Reuse this one component for PLP, FBT, and Customers-Also-Purchased alike.</>,
+              <><strong>Unit of measure is always ALL-CAPS</strong> — render it through{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">formatUom()</code> as{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">/ EACH</code> (leading slash + space, &quot;EA&quot;/&quot;Each&quot; → &quot;EACH&quot;). Never print a lowercase &quot;each&quot;.</>,
             ]}
             donts={[
               <>Hand-roll a second &ldquo;product card&rdquo; with copied classes — it drifts immediately.</>,
