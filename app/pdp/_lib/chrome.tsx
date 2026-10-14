@@ -355,7 +355,7 @@ function UnifiedHeader({
                 <Link
                   key={n}
                   href="/search?q=specials&signedin=1"
-                  className="my-1.5 ml-auto inline-flex min-h-9 items-center rounded-md bg-yellow-400 px-3 py-1.5 text-sm font-bold whitespace-nowrap text-blue-950 transition-colors hover:bg-yellow-300 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  className="my-1.5 inline-flex min-h-9 items-center rounded-md bg-yellow-400 px-3 py-1.5 text-sm font-bold whitespace-nowrap text-blue-950 transition-colors hover:bg-yellow-300 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                 >
                   {n}
                 </Link>
