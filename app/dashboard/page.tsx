@@ -223,7 +223,8 @@ const EMPTY_FILTERS: OrderFilters = {
   status: "all",
 };
 
-/* Find an Order — same fields/layout as the Orders page filter bar. */
+/* Find an Order — a slim dashboard filter (Order # · PO # · Status). The full
+   multi-field filter (Item #, Branch, date range) lives on the Orders page. */
 function FindAnOrder({
   filters,
   setFilters,
@@ -237,30 +238,18 @@ function FindAnOrder({
   return (
     <section
       aria-label="Find an order"
-      className="rounded-lg border bg-background p-4 shadow-sm sm:p-5"
+      className="rounded-xl border bg-background p-4 shadow-md ring-1 ring-black/[0.02] sm:p-5"
     >
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
         <Field label="Order #">
-          <Input value={filters.orderNo} onChange={(e) => set({ orderNo: e.target.value })} className="h-11" aria-label="Order number" />
+          <Input value={filters.orderNo} onChange={(e) => set({ orderNo: e.target.value })} className="h-11 border-input/80" aria-label="Order number" placeholder="e.g. SO-100482" />
         </Field>
         <Field label="PO #">
-          <Input value={filters.po} onChange={(e) => set({ po: e.target.value })} className="h-11" aria-label="Purchase order number" />
-        </Field>
-        <Field label="Item #">
-          <Input value={filters.item} onChange={(e) => set({ item: e.target.value })} className="h-11" aria-label="Item number" />
-        </Field>
-        <Field label="Branch name or branch #">
-          <Input value={filters.branch} onChange={(e) => set({ branch: e.target.value })} className="h-11" aria-label="Branch name or branch number" />
-        </Field>
-        <Field label="Start">
-          <Input type="date" value={filters.start} onChange={(e) => set({ start: e.target.value })} className="h-11" aria-label="Start date" />
-        </Field>
-        <Field label="End">
-          <Input type="date" value={filters.end} onChange={(e) => set({ end: e.target.value })} className="h-11" aria-label="End date" />
+          <Input value={filters.po} onChange={(e) => set({ po: e.target.value })} className="h-11 border-input/80" aria-label="Purchase order number" placeholder="Your PO number" />
         </Field>
         <Field label="Order Status">
           <Select value={filters.status} onValueChange={(v) => set({ status: v })}>
-            <SelectTrigger className="!!h-11 w-full" aria-label="Order status">
+            <SelectTrigger className="!h-11 w-full border-input/80" aria-label="Order status">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
