@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Pencil, Plus, Send, UserX, X } from "lucide-react";
+import { Clock, Eye, Monitor, Pencil, Plus, Send, UserX, X } from "lucide-react";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { AccountSearchInput, RowAction, accountTable } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,8 @@ import {
  * share one right-side drawer (same shell as the Orders detail drawer). */
 type UserRole = "Admin" | "Buyer" | "Manager" | "Viewer";
 type UserStatus = "Active" | "Invited" | "Disabled";
+type AuthorizedDevice = { label: string; detail: string; lastUsed: string };
+
 type CompanyUser = {
   id: string;
   firstName: string;
@@ -34,17 +36,21 @@ type CompanyUser = {
   email: string;
   role: UserRole;
   status: UserStatus;
+  /** Last successful sign-in (— when the user has never logged in). */
+  lastLogin: string;
+  /** Devices currently trusted / signed in for this user. */
+  devices: AuthorizedDevice[];
 };
 
 const ROLES: UserRole[] = ["Admin", "Buyer", "Manager", "Viewer"];
 
 const USERS: CompanyUser[] = [
-  { id: "u1", firstName: "David", lastName: "Whiteside", email: "dwhiteside@watsco.com", role: "Admin", status: "Active" },
-  { id: "u2", firstName: "Maria", lastName: "Alvarez", email: "malvarez@northstarhvac.com", role: "Buyer", status: "Active" },
-  { id: "u3", firstName: "Tom", lastName: "Keegan", email: "tkeegan@northstarhvac.com", role: "Manager", status: "Active" },
-  { id: "u4", firstName: "Priya", lastName: "Natarajan", email: "pnatarajan@northstarhvac.com", role: "Buyer", status: "Invited" },
-  { id: "u5", firstName: "Luis", lastName: "Ortega", email: "lortega@northstarhvac.com", role: "Viewer", status: "Disabled" },
-  { id: "u6", firstName: "Jenna", lastName: "Caldwell", email: "jcaldwell@northstarhvac.com", role: "Manager", status: "Active" },
+  { id: "u1", firstName: "David", lastName: "Whiteside", email: "dwhiteside@watsco.com", role: "Admin", status: "Active", lastLogin: "Oct 13, 2026 · 8:42 AM", devices: [{ label: "MacBook Pro", detail: "Chrome · Wilmington, MA", lastUsed: "Today" }, { label: "iPhone 15", detail: "Safari · iOS app", lastUsed: "Yesterday" }] },
+  { id: "u2", firstName: "Maria", lastName: "Alvarez", email: "malvarez@northstarhvac.com", role: "Buyer", status: "Active", lastLogin: "Oct 12, 2026 · 4:15 PM", devices: [{ label: "Windows PC", detail: "Edge · Manchester, NH", lastUsed: "Oct 12" }] },
+  { id: "u3", firstName: "Tom", lastName: "Keegan", email: "tkeegan@northstarhvac.com", role: "Manager", status: "Active", lastLogin: "Oct 10, 2026 · 9:03 AM", devices: [{ label: "iPad Air", detail: "Safari · field", lastUsed: "Oct 10" }] },
+  { id: "u4", firstName: "Priya", lastName: "Natarajan", email: "pnatarajan@northstarhvac.com", role: "Buyer", status: "Invited", lastLogin: "—", devices: [] },
+  { id: "u5", firstName: "Luis", lastName: "Ortega", email: "lortega@northstarhvac.com", role: "Viewer", status: "Disabled", lastLogin: "Sep 2, 2026 · 11:20 AM", devices: [] },
+  { id: "u6", firstName: "Jenna", lastName: "Caldwell", email: "jcaldwell@northstarhvac.com", role: "Manager", status: "Active", lastLogin: "Oct 13, 2026 · 7:51 AM", devices: [{ label: "Pixel 8", detail: "Chrome · Android app", lastUsed: "Today" }, { label: "Office desktop", detail: "Chrome · Woburn, MA", lastUsed: "Oct 11" }] },
 ];
 
 const ROLE_COLOR = {
@@ -84,7 +90,8 @@ const PAGE_SIZES = [18, 36, 54] as const;
 type DrawerState =
   | { mode: "closed" }
   | { mode: "invite" }
-  | { mode: "edit"; user: CompanyUser };
+  | { mode: "edit"; user: CompanyUser }
+  | { mode: "view"; user: CompanyUser };
 
 type FormValues = {
   firstName: string;
@@ -129,7 +136,7 @@ function UserDrawer({
         {state.mode !== "closed" ? (
           <UserDrawerBody
             // Remount per target so the form pre-fills fresh each time.
-            key={state.mode === "edit" ? state.user.id : "invite"}
+            key={state.mode === "edit" || state.mode === "view" ? state.user.id : "invite"}
             state={state}
             onClose={onClose}
           />
@@ -163,6 +170,78 @@ function UserDrawerBody({
     form.firstName.trim() !== "" &&
     form.lastName.trim() !== "" &&
     /^\S+@\S+\.\S+$/.test(form.email.trim());
+
+  // Read-only details view — profile, last login, authorized devices.
+  if (state.mode === "view") {
+    const u = state.user;
+    const fullName = `${u.firstName} ${u.lastName}`;
+    return (
+      <>
+        <DialogHeader className="sticky top-0 z-10 flex-row items-center justify-between gap-3 border-b bg-background px-5 py-4 sm:px-6">
+          <div className="min-w-0">
+            <DialogTitle className="flex flex-wrap items-center gap-2">
+              {fullName}
+              <Badge variant="soft" color={STATUS_COLOR[u.status]}>{u.status}</Badge>
+            </DialogTitle>
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">{u.email}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="grid size-8 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <X size={18} />
+          </button>
+        </DialogHeader>
+
+        <div className="space-y-6 px-5 py-5 sm:px-6">
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+            <div>
+              <dt className="text-xs font-medium text-muted-foreground">Role</dt>
+              <dd className="mt-1"><RoleChip role={u.role} /></dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-muted-foreground">Status</dt>
+              <dd className="mt-1"><Badge variant="soft" color={STATUS_COLOR[u.status]}>{u.status}</Badge></dd>
+            </div>
+          </dl>
+
+          <section className="rounded-lg border bg-muted/20 p-4">
+            <h3 className="flex items-center gap-2 text-sm font-semibold">
+              <Clock aria-hidden="true" className="size-4 text-muted-foreground" />
+              Last Login
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">{u.lastLogin}</p>
+          </section>
+
+          <section className="space-y-3">
+            <h3 className="flex items-center gap-2 text-sm font-semibold">
+              <Monitor aria-hidden="true" className="size-4 text-muted-foreground" />
+              Authorized Devices ({u.devices.length})
+            </h3>
+            {u.devices.length ? (
+              <ul className="divide-y rounded-lg border">
+                {u.devices.map((d, i) => (
+                  <li key={i} className="flex items-center justify-between gap-3 px-4 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{d.label}</p>
+                      <p className="truncate text-xs text-muted-foreground">{d.detail}</p>
+                    </div>
+                    <span className="shrink-0 text-xs text-muted-foreground">{d.lastUsed}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="rounded-lg border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
+                No devices on file — this user hasn&rsquo;t signed in yet.
+              </p>
+            )}
+          </section>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -366,6 +445,7 @@ export default function CompanyUsersPage() {
                 <th className={accountTable.headCell}>Email</th>
                 <th className={accountTable.headCell}>Role</th>
                 <th className={accountTable.headCell}>Status</th>
+                <th className={accountTable.headCell}>Last Login</th>
                 <th className={`${accountTable.headCell} text-right`}>Actions</th>
               </tr>
             </thead>
@@ -377,7 +457,7 @@ export default function CompanyUsersPage() {
                     <td className={`${accountTable.cell} whitespace-nowrap`}>
                       <button
                         type="button"
-                        onClick={() => setDrawer({ mode: "edit", user: u })}
+                        onClick={() => setDrawer({ mode: "view", user: u })}
                         className="font-semibold text-primary hover:underline"
                       >
                         {fullName}
@@ -390,7 +470,14 @@ export default function CompanyUsersPage() {
                     <td className={accountTable.cell}>
                       <Badge variant="soft" color={STATUS_COLOR[u.status]}>{u.status}</Badge>
                     </td>
+                    <td className={`${accountTable.cell} whitespace-nowrap text-muted-foreground`}>{u.lastLogin}</td>
                     <td className={`${accountTable.cell} text-right whitespace-nowrap`}>
+                      <RowAction
+                        icon={Eye}
+                        label="View"
+                        aria-label={`View ${fullName}`}
+                        onClick={() => setDrawer({ mode: "view", user: u })}
+                      />
                       <RowAction
                         icon={Pencil}
                         label="Edit"

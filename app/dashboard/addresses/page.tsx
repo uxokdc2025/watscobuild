@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { DashboardShell } from "../_components/dashboard-shell";
+import { AccountTableToolbar } from "../_components/account-table";
 import { Button } from "@/components/ui/button";
 import type { Address, AddressFormData, AddressFormErrors } from "./_lib/types";
 import {
@@ -44,6 +45,17 @@ export default function AddressesPage() {
   const [form, setForm] = useState<AddressFormData>(EMPTY_FORM);
   const [errors, setErrors] = useState<AddressFormErrors>({});
   const [removing, setRemoving] = useState<Address | null>(null);
+  const [query, setQuery] = useState("");
+
+  const matches = (a: Address) => {
+    const n = query.trim().toLowerCase();
+    if (!n) return true;
+    return [a.label, a.name, a.company, a.street1, a.city, a.state, a.zip]
+      .filter(Boolean)
+      .some((s) => (s as string).toLowerCase().includes(n));
+  };
+  const savedShown = saved.filter(matches);
+  const accountShown = accountAddresses.filter(matches);
 
   function handleSetDefault(id: string) {
     setAccountAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
@@ -126,14 +138,23 @@ export default function AddressesPage() {
       }
     >
       <div className="space-y-8">
+        {/* Search + filter the whole book — same toolbar as the list pages. */}
+        <div className="overflow-hidden rounded-lg border bg-background shadow-sm">
+          <AccountTableToolbar
+            value={query}
+            onChange={setQuery}
+            placeholder="Search addresses by label, city, or ZIP"
+          />
+        </div>
+
         {/* Saved addresses — user-managed card grid */}
         <section aria-labelledby="saved-addresses-heading" className="space-y-3">
           <h2 id="saved-addresses-heading" className="text-base font-semibold">
             Saved addresses
           </h2>
-          {saved.length ? (
+          {savedShown.length ? (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-              {saved.map((addr) => (
+              {savedShown.map((addr) => (
                 <SavedAddressCard
                   key={addr.id}
                   addr={addr}
@@ -145,7 +166,9 @@ export default function AddressesPage() {
             </div>
           ) : (
             <div className="rounded-md border border-dashed bg-background px-6 py-12 text-center text-sm text-muted-foreground shadow-sm">
-              No saved addresses yet. Use “Add Address” to save a job site or shop.
+              {query.trim()
+                ? `No saved addresses match “${query}”.`
+                : "No saved addresses yet. Use “Add Address” to save a job site or shop."}
             </div>
           )}
         </section>
@@ -163,10 +186,13 @@ export default function AddressesPage() {
 
           <div>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-              {accountAddresses.map((addr) => (
+              {accountShown.map((addr) => (
                 <AddressCard key={addr.id} addr={addr} onSetDefault={() => handleSetDefault(addr.id)} />
               ))}
             </div>
+            {accountShown.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No account addresses match “{query}”.</p>
+            ) : null}
             <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
               Account addresses are managed by your distributor. Setting a default here updates your
               checkout preference; billing changes require branch approval.

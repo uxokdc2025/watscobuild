@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { Pencil, Plus, Star, Trash2 } from "lucide-react";
-import { RowAction } from "../_components/account-table";
+import { AccountTableToolbar, RowAction } from "../_components/account-table";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -98,6 +98,12 @@ const INITIAL_CARDS: PaymentCard[] = [
 
 export default function CardManagementPage() {
   const [cards, setCards] = useState(INITIAL_CARDS);
+  const [query, setQuery] = useState("");
+  const cardsShown = cards.filter((c) => {
+    const n = query.trim().toLowerCase();
+    if (!n) return true;
+    return [c.name, c.brand, c.last4, c.holder].some((s) => s.toLowerCase().includes(n));
+  });
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PaymentCard | null>(null);
 
@@ -144,9 +150,16 @@ export default function CardManagementPage() {
         </Button>
       }
     >
-      <div className="space-y-2">
+      <div className="space-y-3">
+        <div className="overflow-hidden rounded-lg border bg-background shadow-sm">
+          <AccountTableToolbar
+            value={query}
+            onChange={setQuery}
+            placeholder="Search cards by name, brand, or last 4"
+          />
+        </div>
         <div className="grid gap-3 text-[13px] md:grid-cols-3">
-          {cards.map((card) => (
+          {cardsShown.map((card) => (
             <article
               key={card.id}
               className="flex min-h-[280px] flex-col rounded-lg border bg-background shadow-sm"
@@ -205,6 +218,11 @@ export default function CardManagementPage() {
             </article>
           ))}
         </div>
+        {cardsShown.length === 0 ? (
+          <div className="rounded-md border border-dashed bg-background px-6 py-12 text-center text-sm text-muted-foreground shadow-sm">
+            No cards match “{query}”.
+          </div>
+        ) : null}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent drawerSide="right" className="top-0 right-0 left-auto h-svh max-h-none w-full max-w-none translate-x-0 translate-y-0 content-start overflow-y-auto rounded-none p-5 sm:max-w-[480px] sm:p-6">
