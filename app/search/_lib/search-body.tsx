@@ -95,6 +95,90 @@ type SearchBodyProps = {
   availabilityVariant?: "radio" | "checkbox";
 };
 
+/* Real Residential facet set, grabbed from homans.com's Residential category.
+   Category is expanded with live counts; every other facet is collapsed. */
+const CATEGORY_SUBCATS: { label: string; count: number }[] = [
+  { label: "80% + AFUE Gas Furnace", count: 44 },
+  { label: "90% + AFUE Gas Furnace", count: 39 },
+  { label: "Accessories", count: 72 },
+  { label: "Air Conditioner", count: 41 },
+  { label: "Air Handler", count: 76 },
+  { label: "Ductless", count: 58 },
+  { label: "Evaporator Coil", count: 68 },
+  { label: "Heat Pump", count: 40 },
+  { label: "Oil Furnace", count: 8 },
+  { label: "Small Packaged Products", count: 26 },
+];
+const CATEGORY_FACETS: string[] = [
+  "Brand", "A2L Compatible", "AFUE", "Air Flow Direction", "Amps", "BTU Input",
+  "BTU Output", "Built-In Wi-Fi", "CFM", "Color", "Composition",
+  "Cooling Rated Capacity (Btu/h)", "COP", "Diameter", "EER", "EER2",
+  "Fer Compliant", "Fitting Type", "Fuel Type", "HSPF", "HSPF2", "Kilowatt (KW)",
+  "Liquid Line Size (OD)", "Mounting Type", "Multi Zone", "Number of HVAC Zones",
+  "Phase", "Product Family", "R-Value", "Refrigerant", "SEER", "SEER2", "Size",
+  "Stage", "Suction Line Size Od", "Tonnage", "Type", "Voltage",
+];
+
+/** The category-page filter rail — mirrors the live Homans category page:
+ *  List/Grid toggle, Category expanded with counts, all other facets collapsed. */
+function CategoryFacets({
+  view,
+  setView,
+}: {
+  view: "grid" | "list";
+  setView: (v: "grid" | "list") => void;
+}) {
+  const toggle = (active: boolean) =>
+    cn(
+      "rounded-sm",
+      active
+        ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
+        : "text-muted-foreground",
+    );
+  return (
+    <aside aria-label="Filters" className="text-sm">
+      {/* List / Grid toggle — top of the rail, like the live site. */}
+      <div role="group" aria-label="Result view" className="mb-4 grid grid-cols-2 gap-0.5 rounded-md border bg-background p-0.5">
+        <Button type="button" variant="ghost" size="sm" aria-pressed={view === "list"} onClick={() => setView("list")} className={toggle(view === "list")}>
+          <ListIcon /> List
+        </Button>
+        <Button type="button" variant="ghost" size="sm" aria-pressed={view === "grid"} onClick={() => setView("grid")} className={toggle(view === "grid")}>
+          <LayoutGrid /> Grid
+        </Button>
+      </div>
+
+      {/* Category — expanded with live counts. */}
+      <details open className="group border-t">
+        <summary className="flex cursor-pointer list-none items-center justify-between py-3 font-bold text-foreground">
+          Category
+          <ChevronDown className="size-4 text-muted-foreground" />
+        </summary>
+        <ul className="pb-3">
+          {CATEGORY_SUBCATS.map((s) => (
+            <li key={s.label}>
+              <button type="button" className="flex w-full items-center justify-between gap-2 rounded-md px-1 py-2 text-left hover:bg-accent hover:text-foreground">
+                <span>{s.label}</span>
+                <span className="shrink-0 text-xs text-muted-foreground">({s.count})</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      {/* All other facets — collapsed, chevron points right until expanded. */}
+      {CATEGORY_FACETS.map((f) => (
+        <details key={f} className="group border-t">
+          <summary className="flex cursor-pointer list-none items-center justify-between py-3 font-bold text-foreground">
+            {f}
+            <ChevronRight className="size-4 text-primary transition-transform group-open:rotate-90" />
+          </summary>
+          <p className="px-1 pb-3 text-xs text-muted-foreground">Options appear when expanded.</p>
+        </details>
+      ))}
+    </aside>
+  );
+}
+
 export function SearchBody({
   query,
   category,
@@ -197,15 +281,12 @@ export function SearchBody({
         <span>{category ? category : <>Search For &ldquo;{query}&rdquo;</>}</span>
       </nav>
 
-      {category ? (
-        <div className="mx-auto max-w-6xl px-4 pt-3 md:px-6">
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{category}</h1>
-        </div>
-      ) : null}
-
       <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
-          {/* Facet sidebar */}
+          {/* Facet sidebar — category pages use the live-site facet rail. */}
+          {category ? (
+            <CategoryFacets view={view} setView={setView} />
+          ) : (
           <aside aria-label="Filters" className="space-y-5 text-sm">
             {availabilityVariant === "checkbox" ? (
               <section aria-labelledby="availability-heading" className="space-y-1 rounded-md bg-muted/50 p-4">
@@ -361,11 +442,16 @@ export function SearchBody({
               </details>
             </section>
           </aside>
+          )}
 
           {/* Results grid or list */}
           <section aria-label="Search results" className="flex flex-col gap-4">
-            {/* Results toolbar — heading left-aligned with the first product
-                card; view toggle pinned right at the same baseline. */}
+            {/* Category H1 sits on top of the grid (not over the sidebar). */}
+            {category ? (
+              <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{category}</h1>
+            ) : null}
+            {/* Results toolbar — heading + view toggle (the toggle moves into
+                the sidebar on category pages). */}
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               {category ? (
                 <h2 className="text-lg font-semibold tracking-tight">
@@ -379,7 +465,10 @@ export function SearchBody({
               <div
                 role="group"
                 aria-label="Result view"
-                className="inline-flex items-center gap-0.5 self-start rounded-md border bg-background p-0.5 md:self-auto"
+                className={cn(
+                  "inline-flex items-center gap-0.5 self-start rounded-md border bg-background p-0.5 md:self-auto",
+                  category && "hidden",
+                )}
               >
                 <Button
                   type="button"
@@ -390,7 +479,7 @@ export function SearchBody({
                   className={cn(
                     "rounded-sm",
                     view === "grid"
-                      ? "bg-background text-foreground shadow-sm hover:bg-background"
+                      ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
                       : "text-muted-foreground"
                   )}
                 >
@@ -405,7 +494,7 @@ export function SearchBody({
                   className={cn(
                     "rounded-sm",
                     view === "list"
-                      ? "bg-background text-foreground shadow-sm hover:bg-background"
+                      ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
                       : "text-muted-foreground"
                   )}
                 >
