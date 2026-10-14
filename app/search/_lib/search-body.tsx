@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, ImageOff, Info, LayoutGrid, List as ListIcon, ListPlus, ShoppingCart } from "lucide-react";
+import { ChevronDown, ChevronRight, Fan, Flame, ImageOff, Info, LayoutGrid, List as ListIcon, ListPlus, Package, ShoppingCart, Snowflake, Thermometer, Wind, Wrench, type LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -110,6 +110,57 @@ const CATEGORY_SUBCATS: { label: string; count: number }[] = [
   { label: "Small Packaged Products", count: 31 },
 ];
 
+/* Category impact design — V1: a horizontally-scrolling row of circular
+   category tiles above the PLP grid (reference: Atwoods "Farm and Ranch").
+   Each tile carries a real product image when we have one, else a tinted
+   circle + category icon as a placeholder until the full image set is built. */
+const AC_IMG =
+  "https://resource.carrierenterprise.com/is/image/Watscocom/armstrong_13-14-18-19-ac-hp_en_normal?defaultImage=homans_image-coming-soon&fmt=png-alpha&wid=220&hei=220&fit=fit,1";
+type CategoryTile = { label: string; Icon: LucideIcon; image?: string };
+const CATEGORY_TILES: CategoryTile[] = [
+  { label: "Air Conditioner", Icon: Snowflake, image: AC_IMG },
+  { label: "Heat Pump", Icon: Thermometer },
+  { label: "Gas Furnace", Icon: Flame },
+  { label: "Air Handler", Icon: Fan },
+  { label: "Evaporator Coil", Icon: Snowflake },
+  { label: "Ductless", Icon: Wind },
+  { label: "Oil Furnace", Icon: Flame },
+  { label: "Small Packaged", Icon: Package },
+  { label: "Accessories", Icon: Wrench },
+];
+
+function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string }) {
+  return (
+    <section aria-label="Shop by category" className="border-b bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-5 md:px-6">
+        <ul className="flex snap-x gap-5 overflow-x-auto pb-3 [scrollbar-color:var(--border)_transparent] [scrollbar-width:thin]">
+          {items.map((it) => (
+            <li key={it.label} className="snap-start">
+              <Link
+                href={href}
+                aria-label={`Shop ${it.label}`}
+                className="group flex w-28 shrink-0 flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+              >
+                <span className="grid size-24 place-items-center overflow-hidden rounded-full bg-muted ring-1 ring-border transition group-hover:ring-2 group-hover:ring-primary">
+                  {it.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={it.image} alt="" className="size-full object-contain p-2" loading="lazy" />
+                  ) : (
+                    <it.Icon className="size-9 text-muted-foreground transition group-hover:text-primary" aria-hidden="true" />
+                  )}
+                </span>
+                <span className="text-xs font-medium leading-snug text-foreground group-hover:text-primary">
+                  {it.label}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 export function SearchBody({
   query,
   category,
@@ -211,6 +262,15 @@ export function SearchBody({
         <ChevronRight className="size-3.5 opacity-60" />
         <span>{category ? category : <>Search For &ldquo;{query}&rdquo;</>}</span>
       </nav>
+
+      {/* Category impact design V1 — circular category scroller on top of the
+          standard PLP grid. Category pages only. */}
+      {category ? (
+        <CategoryScroller
+          items={CATEGORY_TILES}
+          href={`/search?brand=${brandKey}&category=residential&signedin=1`}
+        />
+      ) : null}
 
       <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[256px_1fr]">

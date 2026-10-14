@@ -199,17 +199,24 @@ const CHANGE_LOGS: ChangeLog[] = [
     items: [
       {
         title: "Homans header & nav — rebuilt on the new menu",
-        desc: "Reorganized the Homans top nav to its real structure (Products · Brands · Services · Find a Local Dealer · Resources · Training & Events · Specials). Products opens the new nested category menu driven by the real Homans taxonomy (10 categories + first sub); Brands and Resources use our point-dropdown menus; Specials is a highlighted link that sits right after Training & Events. Added a prominent bordered “Your Branch” selector and removed the mobile-app nav.",
+        desc: "Reorganized the Homans top nav to its real structure (Products · Brands · Services · Find a Local Dealer · Resources · Training & Events · Specials). Products opens the new nested category menu driven by the real Homans taxonomy (10 categories + first sub); Brands and Resources use our point-dropdown menus; Specials is a highlighted link that sits right after Training & Events. Added a prominent bordered “Your Branch” selector and removed the mobile-app nav. Shown on the Residential PDP.",
         links: [
-          { label: "Homans PDP (header)", href: "/pdp/homans-contact-us?signedin=1" },
-          { label: "Homans PLP (header)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
+          { label: "Homans Residential PDP (header)", href: "/pdp/tradepro-tp-ec13-50?signedin=1" },
         ],
       },
       {
-        title: "Category landing pages — Residential in our PLP",
-        desc: "Rebuilt the Homans Residential category in our PLP with the new header/menu and real data pulled from homans.com — real Armstrong Air + Bryant air conditioners (titles, item #, MFR, R-454B, real Scene7 product images), the real subcategory list with live counts fed into our Categories facet, the H1 on top of the grid, and the Grid/List toggle active state in blue. Stocked-At branch facet kept.",
+        title: "Dashboard sidebar nav — consistent headers + charcoal variant",
+        desc: "Every top-level section header (Dashboard · Buying Tools · Quotes · Orders · Account · Company) now shares one bold treatment for a clear hierarchy. Added a second navigation style — the side nav reversed out on a charcoal panel (white text + icons, AA-compliant) — to make the nav stand out.",
         links: [
-          { label: "Residential Category", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "Default Nav", href: "/dashboard?signedin=1" },
+          { label: "Charcoal Nav (V2)", href: "/dashboard/nav-charcoal?signedin=1" },
+        ],
+      },
+      {
+        title: "Category impact designs — V1 (category scroller)",
+        desc: "A category view that reuses exactly the PLP we have for the product grid, but adds a different top: a horizontally-scrolling row of circular category tiles (image + label) above the results — the V1 treatment. Residential is the first; image tiles for every category section are being built out.",
+        links: [
+          { label: "Residential Category (V1)", href: "/search?brand=homans&category=residential&signedin=1" },
         ],
       },
       {

@@ -78,6 +78,7 @@ function NavRow({
   active,
   indented,
   header,
+  dark,
 }: {
   label: string;
   href: string;
@@ -87,19 +88,39 @@ function NavRow({
   /** Top-level section header: bold label + foreground icon (matches the
       non-link group headers). Children render without it. */
   header?: boolean;
+  /** Charcoal theme — reversed-out white text/icons on a dark panel. */
+  dark?: boolean;
 }) {
   // Idle colors: section headers read a tier above their children (bold label,
   // foreground icon); child rows are regular weight with a muted icon.
-  const idleText = header ? "font-semibold text-foreground" : "";
-  const idleIcon = header ? "text-foreground" : "text-muted-foreground";
+  // Charcoal theme reverses both out to white / light-slate (all AA on #1e293b).
+  const idleText = header
+    ? dark
+      ? "font-semibold text-white"
+      : "font-semibold text-foreground"
+    : dark
+      ? "text-slate-200"
+      : "";
+  const idleIcon = header
+    ? dark
+      ? "text-white"
+      : "text-foreground"
+    : dark
+      ? "text-slate-300"
+      : "text-muted-foreground";
+  const activeCls = dark
+    ? "bg-white/15 font-semibold text-white"
+    : "bg-primary/10 font-semibold text-primary";
+  const hoverCls = dark ? "hover:bg-white/10" : "hover:bg-muted";
+  const ringCls = dark ? "focus-visible:ring-white/70" : "focus-visible:ring-ring";
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`flex min-h-11 items-center gap-3 rounded-sm py-2 text-sm transition-colors hover:bg-muted hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${indented ? "pl-9 pr-3" : "px-3"} ${active ? "bg-primary/10 font-semibold text-primary" : idleText}`}
+      className={`flex min-h-11 items-center gap-3 rounded-sm py-2 text-sm transition-colors ${hoverCls} hover:no-underline focus-visible:outline-none focus-visible:ring-2 ${ringCls} ${indented ? "pl-9 pr-3" : "px-3"} ${active ? activeCls : idleText}`}
     >
       {Icon ? (
-        <Icon aria-hidden="true" className={`size-4 ${active ? "text-primary" : idleIcon}`} />
+        <Icon aria-hidden="true" className={`size-4 ${active ? (dark ? "text-white" : "text-primary") : idleIcon}`} />
       ) : (
         <span aria-hidden="true" className="size-4" />
       )}
@@ -108,9 +129,13 @@ function NavRow({
   );
 }
 
-export function DashboardShell({ title, actions, breadcrumb, children }: { title?: React.ReactNode; description?: string; actions?: React.ReactNode; breadcrumb?: React.ReactNode; children: React.ReactNode }) {
+export function DashboardShell({ title, actions, breadcrumb, children, navVariant = "default" }: { title?: React.ReactNode; description?: string; actions?: React.ReactNode; breadcrumb?: React.ReactNode; children: React.ReactNode; navVariant?: "default" | "charcoal" }) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href.split("?")[0];
+  const dark = navVariant === "charcoal";
+  const navClass = dark
+    ? "h-fit rounded-md border border-slate-900 bg-slate-800 p-2 shadow-sm"
+    : "h-fit rounded-md border border-border bg-background p-2 shadow-sm";
   return (
     <main className="min-h-svh bg-muted/30 text-foreground">
       <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-3 md:px-6 md:py-4">
@@ -118,12 +143,12 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
           {breadcrumb ?? <Link href="/search?q=blower%20motor&signedin=1" className="text-sm text-primary hover:underline">← Back to Shopping</Link>}
         </div>
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-          <nav aria-label="Account dashboard" className="h-fit rounded-md border border-border bg-background p-2 shadow-sm">
+          <nav aria-label="Account dashboard" className={navClass}>
             {NAV.map((entry) => {
               if (!isGroup(entry)) {
                 // Top-level standalone links (Dashboard, Quotes) are section
                 // headers too — same bold treatment as the group headers.
-                return <NavRow key={entry.href} {...entry} active={isActive(entry.href)} header />;
+                return <NavRow key={entry.href} {...entry} active={isActive(entry.href)} header dark={dark} />;
               }
               const { group, Icon, href, children } = entry;
               const childActive = children.some((c) => isActive(c.href));
@@ -131,10 +156,10 @@ export function DashboardShell({ title, actions, breadcrumb, children }: { title
               return (
                 <div key={group} className="mt-1 first:mt-0">
                   {href ? (
-                    <NavRow label={group} href={href} Icon={Icon} active={headerActive} header />
+                    <NavRow label={group} href={href} Icon={Icon} active={headerActive} header dark={dark} />
                   ) : (
-                    <p className={`flex min-h-11 items-center gap-3 rounded-sm px-3 py-2 text-sm font-semibold ${childActive ? "text-primary" : "text-foreground"}`}>
-                      <Icon aria-hidden="true" className={`size-4 ${childActive ? "text-primary" : "text-foreground"}`} />
+                    <p className={`flex min-h-11 items-center gap-3 rounded-sm px-3 py-2 text-sm font-semibold ${childActive ? (dark ? "text-white" : "text-primary") : (dark ? "text-white" : "text-foreground")}`}>
+                      <Icon aria-hidden="true" className={`size-4 ${childActive ? (dark ? "text-white" : "text-primary") : (dark ? "text-white" : "text-foreground")}`} />
                       <span>{group}</span>
                     </p>
                   )}
