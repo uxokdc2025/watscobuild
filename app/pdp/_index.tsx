@@ -198,10 +198,18 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Oct 9 meeting",
     items: [
       {
-        title: "Homans header & nav — rebuilt on the new menu",
-        desc: "Reorganized the Homans top nav to its real structure (Products · Brands · Services · Find a Local Dealer · Resources · Training & Events · Specials). Products opens the new nested category menu driven by the real Homans taxonomy (10 categories + first sub); Brands and Resources use our point-dropdown menus; Specials is a highlighted link that sits right after Training & Events. Added a prominent bordered “Your Branch” selector and removed the mobile-app nav. Shown on the Residential PDP.",
+        title: "Category impact designs — V1",
+        desc: "A category experience in two parts. First, the category view reuses exactly the PLP we have for the product grid but adds a different top — a horizontally-scrolling row of circular category tiles (image + label). Second, clicking a tile opens a fully merchandised category landing page (promo carousel, product rows, a system bundle, and promo banners) — shown here for Air Conditioners. Image tiles for every category section are being built out.",
         links: [
-          { label: "Homans Residential PDP (header)", href: "/pdp/tradepro-tp-ec13-50?signedin=1" },
+          { label: "Category Scroller (Residential)", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "Category Landing (Air Conditioners)", href: "/category/air-conditioners?signedin=1" },
+        ],
+      },
+      {
+        title: "Homans header & nav — rebuilt on the new menu",
+        desc: "Reorganized the Homans top nav to its real structure (Products · Brands · Services · Find a Local Dealer · Resources · More Tools · Training & Events · Specials). Products opens the new nested category menu driven by the real Homans taxonomy (10 categories + first sub); Brands, Resources and More Tools use our point-dropdown menus and only one opens at a time; Specials is a highlighted link that sits right after Training & Events. Added a prominent bordered “Your Branch” selector, moved Quick Order to a signed-in icon, dropped the skinny utility strip, and removed the mobile-app nav. Shown on the PLP where the menus live.",
+        links: [
+          { label: "Homans PLP (header & menus)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
         ],
       },
       {
@@ -210,13 +218,6 @@ const CHANGE_LOGS: ChangeLog[] = [
         links: [
           { label: "Default Nav", href: "/dashboard?signedin=1" },
           { label: "Charcoal Nav (V2)", href: "/dashboard/nav-charcoal?signedin=1" },
-        ],
-      },
-      {
-        title: "Category impact designs — V1 (category scroller)",
-        desc: "A category view that reuses exactly the PLP we have for the product grid, but adds a different top: a horizontally-scrolling row of circular category tiles (image + label) above the results — the V1 treatment. Residential is the first; image tiles for every category section are being built out.",
-        links: [
-          { label: "Residential Category (V1)", href: "/search?brand=homans&category=residential&signedin=1" },
         ],
       },
       {

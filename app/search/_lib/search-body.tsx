@@ -97,36 +97,21 @@ type SearchBodyProps = {
 
 /* Real Residential subcategories + live counts, grabbed from homans.com — fed
    into our existing Categories facet (our pattern, real data). */
-const CATEGORY_SUBCATS: { label: string; count: number }[] = [
-  { label: "80% + AFUE Gas Furnace", count: 58 },
-  { label: "90% + AFUE Gas Furnace", count: 95 },
-  { label: "Accessories", count: 78 },
-  { label: "Air Conditioner", count: 95 },
-  { label: "Air Handler", count: 102 },
-  { label: "Ductless", count: 134 },
-  { label: "Evaporator Coil", count: 160 },
-  { label: "Heat Pump", count: 73 },
-  { label: "Oil Furnace", count: 20 },
-  { label: "Small Packaged Products", count: 31 },
-];
-
 /* Category impact design — V1: a horizontally-scrolling row of circular
    category tiles above the PLP grid (reference: Atwoods "Farm and Ranch").
    Each tile carries a real product image when we have one, else a tinted
    circle + category icon as a placeholder until the full image set is built. */
-const AC_IMG =
-  "https://resource.carrierenterprise.com/is/image/Watscocom/armstrong_13-14-18-19-ac-hp_en_normal?defaultImage=homans_image-coming-soon&fmt=png-alpha&wid=220&hei=220&fit=fit,1";
-type CategoryTile = { label: string; Icon: LucideIcon; image?: string };
+type CategoryTile = { label: string; Icon: LucideIcon; image?: string; href?: string };
 const CATEGORY_TILES: CategoryTile[] = [
-  { label: "Air Conditioner", Icon: Snowflake, image: AC_IMG },
-  { label: "Heat Pump", Icon: Thermometer },
-  { label: "Gas Furnace", Icon: Flame },
-  { label: "Air Handler", Icon: Fan },
-  { label: "Evaporator Coil", Icon: Snowflake },
-  { label: "Ductless", Icon: Wind },
-  { label: "Oil Furnace", Icon: Flame },
-  { label: "Small Packaged", Icon: Package },
-  { label: "Accessories", Icon: Wrench },
+  { label: "Air Conditioner", Icon: Snowflake, image: "/category-tiles/air-conditioner.png", href: "/category/air-conditioners?signedin=1" },
+  { label: "Heat Pump", Icon: Thermometer, image: "/category-tiles/heat-pump.png" },
+  { label: "Gas Furnace", Icon: Flame, image: "/category-tiles/gas-furnace.png" },
+  { label: "Air Handler", Icon: Fan, image: "/category-tiles/air-handler.png" },
+  { label: "Evaporator Coil", Icon: Snowflake, image: "/category-tiles/evaporator-coil.png" },
+  { label: "Ductless", Icon: Wind, image: "/category-tiles/ductless.png" },
+  { label: "Oil Furnace", Icon: Flame, image: "/category-tiles/oil-furnace.png" },
+  { label: "Small Packaged", Icon: Package, image: "/category-tiles/small-packaged.png" },
+  { label: "Accessories", Icon: Wrench, image: "/category-tiles/accessories.png" },
 ];
 
 function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string }) {
@@ -137,14 +122,19 @@ function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string
           {items.map((it) => (
             <li key={it.label} className="snap-start">
               <Link
-                href={href}
+                href={it.href ?? href}
                 aria-label={`Shop ${it.label}`}
                 className="group flex w-28 shrink-0 flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
               >
-                <span className="grid size-24 place-items-center overflow-hidden rounded-full bg-muted ring-1 ring-border transition group-hover:ring-2 group-hover:ring-primary">
+                <span
+                  className={cn(
+                    "grid size-24 place-items-center overflow-hidden rounded-full ring-1 ring-border transition group-hover:ring-2 group-hover:ring-primary",
+                    it.image ? "bg-white" : "bg-muted",
+                  )}
+                >
                   {it.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={it.image} alt="" className="size-full object-contain p-2" loading="lazy" />
+                    <img src={it.image} alt="" className="size-full object-contain p-1.5" loading="lazy" />
                   ) : (
                     <it.Icon className="size-9 text-muted-foreground transition group-hover:text-primary" aria-hidden="true" />
                   )}
@@ -363,28 +353,23 @@ export function SearchBody({
               </section>
             )}
 
-            <section aria-labelledby="categories-heading" className="space-y-2 pt-4">
-              <h2 id="categories-heading" className="border-b border-border/70 pb-3 font-semibold">
-                Categories
-              </h2>
-              <ul className="space-y-2">
-                {category ? (
-                  CATEGORY_SUBCATS.map((s) => (
-                    <li key={s.label} className="flex items-center justify-between gap-2 text-sm">
-                      <span className="cursor-pointer text-primary hover:underline">{s.label}</span>
-                      <span className="text-xs text-muted-foreground">({s.count})</span>
-                    </li>
-                  ))
-                ) : (
+            {/* Categories facet — hidden on category pages, where the circular
+                category scroller on top already presents the categories. */}
+            {!category ? (
+              <section aria-labelledby="categories-heading" className="space-y-2 pt-4">
+                <h2 id="categories-heading" className="border-b border-border/70 pb-3 font-semibold">
+                  Categories
+                </h2>
+                <ul className="space-y-2">
                   <li className="flex items-center justify-between gap-2 text-sm">
                     <span className="cursor-pointer text-primary hover:underline">
                       Parts Service &amp; Electrical
                     </span>
                     <span className="text-xs text-muted-foreground">({totalResults})</span>
                   </li>
-                )}
-              </ul>
-            </section>
+                </ul>
+              </section>
+            ) : null}
 
             <section aria-labelledby="narrow-heading" className="mb-2 rounded-sm bg-neutral-500 px-3 py-2 text-white">
               <h2 id="narrow-heading" className="text-xs font-bold tracking-wide text-white uppercase">

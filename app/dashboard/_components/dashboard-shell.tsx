@@ -91,36 +91,42 @@ function NavRow({
   /** Charcoal theme — reversed-out white text/icons on a dark panel. */
   dark?: boolean;
 }) {
-  // Idle colors: section headers read a tier above their children (bold label,
-  // foreground icon); child rows are regular weight with a muted icon.
-  // Charcoal theme reverses both out to white / light-slate (all AA on #1e293b).
+  // Three distinct text tiers, each AA-compliant on the charcoal panel (#0f172a):
+  //   · section header — bright white, bold   (white 17.4:1)
+  //   · child row      — light slate, regular (slate-300 11.6:1)
+  //   · active row     — white pill, dark text (slate-900 on white 17:1)
   const idleText = header
     ? dark
       ? "font-semibold text-white"
       : "font-semibold text-foreground"
     : dark
-      ? "text-slate-200"
+      ? "text-slate-300"
       : "";
   const idleIcon = header
     ? dark
       ? "text-white"
       : "text-foreground"
     : dark
-      ? "text-slate-300"
+      ? "text-slate-400"
       : "text-muted-foreground";
+  // Active: charcoal uses a solid white pill with dark text — a clearly
+  // different, high-contrast selected state from the light theme's blue tint.
   const activeCls = dark
-    ? "bg-white/15 font-semibold text-white"
+    ? "bg-white font-semibold text-slate-900 shadow-sm"
     : "bg-primary/10 font-semibold text-primary";
-  const hoverCls = dark ? "hover:bg-white/10" : "hover:bg-muted";
-  const ringCls = dark ? "focus-visible:ring-white/70" : "focus-visible:ring-ring";
+  const hoverCls = dark ? "hover:bg-white/10 hover:text-white" : "hover:bg-muted";
+  const ringCls = dark
+    ? "focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+    : "focus-visible:ring-ring";
+  const activeIcon = active ? (dark ? "text-slate-900" : "text-primary") : idleIcon;
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`flex min-h-11 items-center gap-3 rounded-sm py-2 text-sm transition-colors ${hoverCls} hover:no-underline focus-visible:outline-none focus-visible:ring-2 ${ringCls} ${indented ? "pl-9 pr-3" : "px-3"} ${active ? activeCls : idleText}`}
+      className={`flex min-h-11 items-center gap-3 rounded-md py-2 text-sm transition-colors ${hoverCls} hover:no-underline focus-visible:outline-none focus-visible:ring-2 ${ringCls} ${indented ? "pl-9 pr-3" : "px-3"} ${active ? activeCls : idleText}`}
     >
       {Icon ? (
-        <Icon aria-hidden="true" className={`size-4 ${active ? (dark ? "text-white" : "text-primary") : idleIcon}`} />
+        <Icon aria-hidden="true" className={`size-4 ${activeIcon}`} />
       ) : (
         <span aria-hidden="true" className="size-4" />
       )}
@@ -134,8 +140,13 @@ export function DashboardShell({ title, actions, breadcrumb, children, navVarian
   const isActive = (href: string) => pathname === href.split("?")[0];
   const dark = navVariant === "charcoal";
   const navClass = dark
-    ? "h-fit rounded-md border border-slate-900 bg-slate-800 p-2 shadow-sm"
+    ? "h-fit rounded-lg bg-slate-900 p-2.5 shadow-md ring-1 ring-white/10"
     : "h-fit rounded-md border border-border bg-background p-2 shadow-sm";
+  // Each top-level section is divided from the next with a hairline in the
+  // charcoal theme, which gives the reversed-out nav clearer structure.
+  const sectionWrap = dark
+    ? "border-t border-white/10 pt-1.5 mt-1.5 first:border-t-0 first:pt-0 first:mt-0"
+    : "mt-1 first:mt-0";
   return (
     <main className="min-h-svh bg-muted/30 text-foreground">
       <div className="mx-auto max-w-[var(--layout-max-width)] px-4 py-3 md:px-6 md:py-4">
@@ -148,23 +159,27 @@ export function DashboardShell({ title, actions, breadcrumb, children, navVarian
               if (!isGroup(entry)) {
                 // Top-level standalone links (Dashboard, Quotes) are section
                 // headers too — same bold treatment as the group headers.
-                return <NavRow key={entry.href} {...entry} active={isActive(entry.href)} header dark={dark} />;
+                return (
+                  <div key={entry.href} className={sectionWrap}>
+                    <NavRow {...entry} active={isActive(entry.href)} header dark={dark} />
+                  </div>
+                );
               }
               const { group, Icon, href, children } = entry;
               const childActive = children.some((c) => isActive(c.href));
               const headerActive = href ? isActive(href) : false;
               return (
-                <div key={group} className="mt-1 first:mt-0">
+                <div key={group} className={sectionWrap}>
                   {href ? (
                     <NavRow label={group} href={href} Icon={Icon} active={headerActive} header dark={dark} />
                   ) : (
-                    <p className={`flex min-h-11 items-center gap-3 rounded-sm px-3 py-2 text-sm font-semibold ${childActive ? (dark ? "text-white" : "text-primary") : (dark ? "text-white" : "text-foreground")}`}>
-                      <Icon aria-hidden="true" className={`size-4 ${childActive ? (dark ? "text-white" : "text-primary") : (dark ? "text-white" : "text-foreground")}`} />
+                    <p className={`flex min-h-11 items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold ${dark ? "text-white" : childActive ? "text-primary" : "text-foreground"}`}>
+                      <Icon aria-hidden="true" className={`size-4 ${dark ? "text-white" : childActive ? "text-primary" : "text-foreground"}`} />
                       <span>{group}</span>
                     </p>
                   )}
                   {children.map((c) => (
-                    <NavRow key={c.href} {...c} active={isActive(c.href)} indented />
+                    <NavRow key={c.href} {...c} active={isActive(c.href)} indented dark={dark} />
                   ))}
                 </div>
               );
