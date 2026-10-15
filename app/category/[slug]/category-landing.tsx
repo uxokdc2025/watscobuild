@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ArrowRight, Truck, BadgePercent, PlusCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Truck, BadgePercent, PlusCircle, Leaf, Snowflake, Layers, Gauge, Wind, Zap, Wrench, PackageCheck, type LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -294,6 +294,206 @@ export function CategoryLanding({ title = "Air Conditioners" }: { title?: string
         <ProductRow title="Armstrong Air" subtitle="Built to last, built for pros" products={p.filter((x) => x.brand.includes("Armstrong")).slice(0, 5)} />
         <ProductRow title="Bryant Legacy" subtitle="Dependable comfort, every season" products={p.filter((x) => x.brand.includes("Bryant")).slice(0, 5)} />
         <ProductRow title="Shop All Air Conditioners" subtitle={`${p.length} products`} products={p.slice(0, 5)} />
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   V2 — Autumn merchandised layout
+   Hero → subcategories → Top-Rated → promo → carousel → promo → 2 carousels
+   → promo → big end banner. Warm fall palette instead of all-blue.
+   ════════════════════════════════════════════════════════════════════════ */
+
+const AUTUMN_SLIDES: Slide[] = [
+  {
+    eyebrow: "Fall savings event",
+    title: "Fall Into Savings",
+    copy: "Up to $500 back on R-454B air conditioners — stack manufacturer and utility rebates through October.",
+    cta: "Shop the Event",
+    href: "#v2-top-rated",
+    image: "/category-tiles/air-conditioner.webp",
+    from: "#b45309",
+    to: "#c2410c",
+  },
+  {
+    eyebrow: "Beat the first freeze",
+    title: "Cool Now, Save for Winter",
+    copy: "Lock in this season's lowest pricing on high-efficiency systems before the cold sets in.",
+    cta: "See What's Hot",
+    href: "#v2-new",
+    image: "/category-tiles/heat-pump.webp",
+    from: "#9a3412",
+    to: "#7c2d12",
+  },
+  {
+    eyebrow: "Harvest the rebates",
+    title: "Build a System, Reap the Rewards",
+    copy: "Match a condenser, coil, and air handler — bundle pricing plus bonus Homans Rewards points.",
+    cta: "Build & Save",
+    href: "#v2-bundle",
+    image: "/category-tiles/air-handler.webp",
+    from: "#a16207",
+    to: "#854d0e",
+  },
+];
+
+function AutumnCarousel() {
+  const [i, setI] = React.useState(0);
+  const n = AUTUMN_SLIDES.length;
+  const go = (d: number) => setI((p) => (p + d + n) % n);
+  React.useEffect(() => {
+    const t = setInterval(() => setI((p) => (p + 1) % n), 7000);
+    return () => clearInterval(t);
+  }, [n]);
+  const s = AUTUMN_SLIDES[i];
+  return (
+    <section aria-label="Featured promotions" aria-roledescription="carousel" className="relative">
+      <div className="relative overflow-hidden rounded-xl text-white shadow-sm" style={{ backgroundImage: `linear-gradient(110deg, ${s.from}, ${s.to})` }}>
+        <div className="grid items-center gap-6 py-6 pr-6 pl-10 sm:grid-cols-[1.3fr_1fr] sm:py-6 sm:pr-8 sm:pl-20 md:py-7 md:pr-10 md:pl-28">
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide uppercase">
+              <Leaf className="size-3.5" aria-hidden /> {s.eyebrow}
+            </span>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">{s.title}</h2>
+            <p className="mt-3 max-w-md text-sm text-white/90 sm:text-base">{s.copy}</p>
+            <Button asChild size="lg" className="mt-6 bg-white text-slate-900 hover:bg-white/90">
+              <Link href={s.href}>{s.cta}<ArrowRight className="size-4" /></Link>
+            </Button>
+          </div>
+          <div className="hidden items-center justify-center justify-self-center sm:flex">
+            <span className="grid size-56 place-items-center overflow-hidden rounded-full bg-white shadow-2xl ring-4 ring-white/25 md:size-72 lg:size-80">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={s.image} alt="" className="max-h-[70%] max-w-[70%] object-contain" />
+            </span>
+          </div>
+        </div>
+        <button type="button" onClick={() => go(-1)} aria-label="Previous slide" className="absolute top-1/2 left-2 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-black/25 text-white transition hover:bg-black/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><ChevronLeft className="size-5" /></button>
+        <button type="button" onClick={() => go(1)} aria-label="Next slide" className="absolute top-1/2 right-2 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-black/25 text-white transition hover:bg-black/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><ChevronRight className="size-5" /></button>
+      </div>
+      <div className="mt-3 flex justify-center gap-2">
+        {AUTUMN_SLIDES.map((_, idx) => (
+          <button key={idx} type="button" onClick={() => setI(idx)} aria-label={`Go to slide ${idx + 1}`} aria-current={idx === i} className={cn("h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", idx === i ? "w-6 bg-orange-600" : "w-2 bg-border hover:bg-muted-foreground/50")} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* Subcategory chips — scrollable row directly under the hero. */
+type SubCat = { label: string; count: number; Icon: LucideIcon };
+const AC_SUBCATS: SubCat[] = [
+  { label: "Single-Stage", count: 214, Icon: Snowflake },
+  { label: "Two-Stage", count: 58, Icon: Layers },
+  { label: "Variable-Speed", count: 31, Icon: Gauge },
+  { label: "Packaged AC", count: 31, Icon: PackageCheck },
+  { label: "High-Efficiency 16+ SEER2", count: 51, Icon: Zap },
+  { label: "Ductless-Ready", count: 134, Icon: Wind },
+  { label: "R-454B", count: 268, Icon: Leaf },
+  { label: "Parts & Accessories", count: 78, Icon: Wrench },
+];
+
+function SubcategoryRow() {
+  return (
+    <section aria-label="Shop air conditioners by type">
+      <h2 className="mb-3 text-xl font-bold tracking-tight">Shop by Type</h2>
+      <ul className="flex snap-x gap-3 overflow-x-auto pt-1 pb-3 [scrollbar-width:thin]">
+        {AC_SUBCATS.map((s) => (
+          <li key={s.label} className="snap-start">
+            <Link href="#v2-top-rated" className="group flex h-full w-44 shrink-0 items-center gap-3 rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-3 transition hover:border-orange-300 hover:shadow-sm dark:border-amber-900/50 dark:from-amber-950/30 dark:to-orange-950/20">
+              <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-orange-600/10 text-orange-700 dark:text-orange-300">
+                <s.Icon className="size-5" aria-hidden />
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold leading-tight text-foreground group-hover:text-orange-700 dark:group-hover:text-orange-300">{s.label}</span>
+                <span className="text-xs text-muted-foreground">{s.count} products</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/* A full-width autumn promo band between product rows. */
+function PromoBanner({ eyebrow, title, copy, cta, href, from, to, image }: { eyebrow: string; title: string; copy: string; cta: string; href: string; from: string; to: string; image?: string }) {
+  return (
+    <section aria-label={title} className="overflow-hidden rounded-xl text-white shadow-sm" style={{ backgroundImage: `linear-gradient(110deg, ${from}, ${to})` }}>
+      <div className="flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+        <div className="flex items-center gap-5">
+          {image ? (
+            <span className="hidden size-20 shrink-0 place-items-center overflow-hidden rounded-full bg-white/95 shadow-md sm:grid">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={image} alt="" className="max-h-[70%] max-w-[70%] object-contain" />
+            </span>
+          ) : null}
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide uppercase">
+              <Leaf className="size-3.5" aria-hidden /> {eyebrow}
+            </span>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
+            <p className="mt-1 max-w-xl text-sm text-white/90">{copy}</p>
+          </div>
+        </div>
+        <Button asChild size="lg" className="shrink-0 bg-white text-slate-900 hover:bg-white/90">
+          <Link href={href}>{cta}<ArrowRight className="size-4" /></Link>
+        </Button>
+      </div>
+    </section>
+  );
+}
+
+function BigEndBanner() {
+  return (
+    <section aria-label="Gear up for winter" className="relative overflow-hidden rounded-2xl text-white shadow-md" style={{ backgroundImage: "linear-gradient(120deg, #7c2d12, #9a3412 45%, #b45309)" }}>
+      <div className="grid items-center gap-6 p-8 sm:grid-cols-[1.4fr_1fr] sm:p-12">
+        <div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide uppercase">
+            <Leaf className="size-3.5" aria-hidden /> Season&rsquo;s best
+          </span>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Gear Up for Winter</h2>
+          <p className="mt-3 max-w-lg text-sm text-white/90 sm:text-base">Beat the rush. Build a complete matched system, lock in fall pricing, and have it install-ready before the first cold snap — with free freight over $2,500.</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button asChild size="lg" className="bg-white text-orange-900 hover:bg-white/90"><Link href="#v2-bundle">Build My System<ArrowRight className="size-4" /></Link></Button>
+            <Button asChild size="lg" variant="outline" className="border-white/50 bg-white/10 text-white hover:bg-white/20"><Link href="/dashboard?signedin=1">View My Rewards</Link></Button>
+          </div>
+        </div>
+        <div className="hidden items-center justify-center justify-self-center sm:flex">
+          <span className="grid size-56 place-items-center overflow-hidden rounded-full bg-white shadow-2xl ring-4 ring-white/25 md:size-64">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/category-tiles/air-conditioner.webp" alt="" className="max-h-[70%] max-w-[70%] object-contain" />
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function CategoryLandingV2({ title = "Air Conditioners" }: { title?: string }) {
+  const p = PRODUCTS;
+  return (
+    <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 pb-4 text-sm text-muted-foreground">
+        <Link href="/" className="text-primary hover:underline">Home</Link>
+        <ChevronRight className="size-3.5 opacity-60" />
+        <Link href="/search?brand=homans&category=residential&signedin=1" className="text-primary hover:underline">Residential</Link>
+        <ChevronRight className="size-3.5 opacity-60" />
+        <span>{title}</span>
+      </nav>
+      <h1 className="mb-4 text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
+
+      <div className="space-y-10">
+        <AutumnCarousel />
+        <SubcategoryRow />
+        <ProductRow id="v2-top-rated" title="Top-Rated Air Conditioners" subtitle="Highest-reviewed R-454B condensers in stock" products={p.slice(0, 5)} />
+        <PromoBanner eyebrow="Limited-time" title="Fall Rebate Roundup" copy="Up to $500 in instant savings on qualifying high-efficiency systems — this month only." cta="Shop Rebates" href="#v2-new" from="#b45309" to="#c2410c" image="/category-tiles/heat-pump.webp" />
+        <ProductRow id="v2-new" title="New R-454B Lineup" subtitle="The next-generation refrigerant, just landed" products={p.slice(10, 15)} />
+        <PromoBanner eyebrow="Pro install" title="Harvest the Bundle Savings" copy="Condenser + coil + air handler, matched and priced together. One cart, one install-ready kit." cta="Build a System" href="#v2-bundle" from="#9a3412" to="#7c2d12" image="/category-tiles/air-handler.webp" />
+        <ProductRow id="v2-bundle" title="Single-Stage Value" subtitle="Reliable, efficient, budget-friendly" products={p.slice(5, 10)} />
+        <ProductRow title="High-Efficiency Picks" subtitle="15 SEER2 and up" products={p.slice(2, 7)} />
+        <PromoBanner eyebrow="Stock up" title="Beat the First Freeze" copy="Cold's coming. Get ahead of the rush with in-stock systems ready at your branch today." cta="Shop In-Stock" href="#v2-top-rated" from="#a16207" to="#854d0e" image="/category-tiles/small-packaged.webp" />
+        <BigEndBanner />
       </div>
     </div>
   );

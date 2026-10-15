@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { getBrand } from "../../pdp/_lib/brands";
 import { SiteFooter, SiteHeader } from "../../pdp/_lib/chrome";
 import { PdpAuthProvider } from "../../pdp/_lib/auth";
-import { CategoryLanding } from "./category-landing";
+import { CategoryLanding, CategoryLandingV2 } from "./category-landing";
 
-type SearchParams = { signedin?: string };
+type SearchParams = { signedin?: string; v?: string };
 type Params = { slug: string };
 
 /* Human title per known category slug (extend as more landings are built). */
@@ -37,7 +37,7 @@ export default async function CategoryLandingPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { slug } = await params;
-  const { signedin } = await searchParams;
+  const { signedin, v } = await searchParams;
   const signedIn = signedin !== "0" && signedin !== "false";
   const brand = getBrand("homans")!;
 
@@ -46,7 +46,11 @@ export default async function CategoryLandingPage({
       <div className="min-h-svh bg-background">
         <SiteHeader brand={brand} signedIn={signedIn} />
         <main>
-          <CategoryLanding title={titleFor(slug)} />
+          {v === "2" ? (
+            <CategoryLandingV2 title={titleFor(slug)} />
+          ) : (
+            <CategoryLanding title={titleFor(slug)} />
+          )}
         </main>
         <SiteFooter brand={brand} />
       </div>
