@@ -373,7 +373,9 @@ function HeroCarousel() {
         className={cn("relative overflow-hidden rounded-xl", s.theme === "white" && "border border-border")}
         style={{ backgroundColor: bg }}
       >
-        <div className={cn("relative grid min-h-[300px] items-center gap-6 py-8 pr-6 pl-8 sm:grid-cols-[1.25fr_1fr] sm:py-10 sm:pr-0 sm:pl-16 md:min-h-[340px] md:pl-20", textCls)}>
+        {/* Content is held in a centered max-width band so the copy and the
+            product sit close together (generous padding on wide screens). */}
+        <div className={cn("relative mx-auto grid min-h-[300px] max-w-4xl items-center gap-6 px-6 py-8 sm:grid-cols-[1.2fr_1fr] sm:px-8 sm:py-10 md:min-h-[340px]", textCls)}>
           <div className="relative z-10 min-w-0">
             <span className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase", dark ? "bg-white/15 text-white" : "bg-[#003874]/10 text-[#003874]")}>
               <Leaf className="size-3.5 text-orange-500" aria-hidden /> {s.eyebrow}
@@ -386,10 +388,10 @@ function HeroCarousel() {
               <Link href={s.href}>{s.cta}<ArrowRight className="size-4" /></Link>
             </Button>
           </div>
-          {/* Large product bleeding off the right edge — never in a circle. */}
+          {/* Large product bleeds off the right of the content band. Never a circle. */}
           <div className="pointer-events-none absolute right-0 bottom-0 hidden h-full w-1/2 items-center justify-end sm:flex">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.image} alt="" className="h-[108%] max-w-none translate-x-[8%] object-contain object-right" />
+            <img src={s.image} alt="" className="h-[106%] max-w-none translate-x-[24%] object-contain object-right" />
           </div>
         </div>
         <button type="button" onClick={() => go(-1)} aria-label="Previous slide" className={cn("absolute top-1/2 left-2 z-20 grid size-9 -translate-y-1/2 place-items-center rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current", ctrl)}><ChevronLeft className="size-5" /></button>
@@ -445,7 +447,7 @@ function SubcategoryRow() {
 function RebateBanner() {
   return (
     <section aria-label="Fall rebate roundup" className="overflow-hidden rounded-xl border border-border bg-[#FAFAF7]">
-      <div className="flex flex-col items-center gap-6 p-6 sm:flex-row sm:gap-10 sm:p-8">
+      <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 py-6 sm:flex-row sm:gap-10 sm:px-8 sm:py-8">
         <div className="flex shrink-0 items-start gap-1 leading-none text-orange-600">
           <span className="mt-2 text-3xl font-bold sm:text-4xl">$</span>
           <span className="text-6xl font-extrabold tracking-tight sm:text-8xl">500</span>
@@ -477,16 +479,14 @@ function BundleSplit() {
   return (
     <section id="v2-bundle" aria-label="Harvest the bundle savings" className="overflow-hidden rounded-xl border border-border">
       <div className="grid md:grid-cols-2">
-        {/* Left: 3-product lineup with + separators */}
-        <div className="flex items-center justify-center gap-2 bg-white p-6 sm:gap-4 sm:p-8">
+        {/* Left: 3-product lineup with + separators — images centered in equal
+            boxes, no labels (the right-side copy names the components). */}
+        <div className="flex items-center justify-center gap-3 bg-white p-6 sm:gap-5 sm:p-8">
           {parts.map((part, idx) => (
             <React.Fragment key={part.label}>
-              <div className="flex min-w-0 flex-col items-center gap-2 text-center">
-                <div className="grid h-24 w-full place-items-center sm:h-28">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={part.image} alt="" className="max-h-full max-w-full object-contain" loading="lazy" />
-                </div>
-                <span className="text-xs font-medium leading-tight text-muted-foreground">{part.label}</span>
+              <div className="grid h-28 flex-1 place-items-center sm:h-32">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={part.image} alt={part.label} className="max-h-full max-w-full object-contain" loading="lazy" />
               </div>
               {idx < parts.length - 1 ? (
                 <span aria-hidden className="shrink-0 text-2xl font-light text-[#003874]/40">+</span>
@@ -541,7 +541,7 @@ function FreezeStrip() {
 function RewardsBuilder() {
   return (
     <section aria-label="Gear up for winter" className="overflow-hidden rounded-2xl bg-[#121417] text-white">
-      <div className="grid items-center gap-6 p-8 sm:grid-cols-[1.5fr_1fr] sm:p-12">
+      <div className="mx-auto grid max-w-4xl items-center gap-8 px-6 py-8 sm:grid-cols-[1.5fr_1fr] sm:px-8 sm:py-12">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400/15 px-3 py-1 text-xs font-semibold tracking-wide text-yellow-300 uppercase">
             Homans Rewards
