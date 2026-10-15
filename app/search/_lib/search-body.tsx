@@ -134,7 +134,7 @@ function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string
                 >
                   {it.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={it.image} alt="" className="max-h-full max-w-full object-contain p-1" loading="lazy" />
+                    <img src={it.image} alt="" className="max-h-[70%] max-w-[70%] object-contain" loading="lazy" />
                   ) : (
                     <it.Icon className="size-9 text-muted-foreground transition group-hover:text-primary" aria-hidden="true" />
                   )}
@@ -368,7 +368,9 @@ export function SearchBody({
               </h2>
             </section>
 
-            {FACET_GROUPS.map((group) => (
+            {/* On category pages only the first facet group is expanded; the
+                rest start collapsed (categories moved to the top scroller). */}
+            {FACET_GROUPS.map((group, i) => (
               <FacetGroup
                 key={group.key}
                 spec={group}
@@ -376,11 +378,12 @@ export function SearchBody({
                 selected={selectedFacets[group.key] ?? new Set()}
                 onToggle={(opt) => toggleFacet(group.key, opt)}
                 count={facetCount}
+                open={category ? i === 0 : true}
               />
             ))}
 
             <section aria-labelledby="brand-facet-heading" className="space-y-2 pt-4">
-              <details open>
+              <details {...(category ? {} : { open: true })}>
                 <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
                   <span id="brand-facet-heading">Brand</span>
                   <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
@@ -559,16 +562,20 @@ function FacetGroup({
   selected,
   onToggle,
   count,
+  open = true,
 }: {
   spec: FacetGroupSpec;
   results: SearchResult[];
   selected: Set<string>;
   onToggle: (option: string) => void;
   count: (key: FacetGroupSpec["key"], option: string) => number;
+  /** Initial expanded state. Omitting `open` leaves the group collapsed and
+      user-toggleable; passing it keeps the group expanded. */
+  open?: boolean;
 }) {
   return (
     <section aria-labelledby={`facet-${spec.key}-heading`} className="space-y-2 pt-4">
-      <details open className="group">
+      <details {...(open ? { open: true } : {})} className="group">
         <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
           <span id={`facet-${spec.key}-heading`}>{spec.label}</span>
           <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
