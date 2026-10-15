@@ -112,7 +112,7 @@ function PromoCarousel() {
           <div className="hidden items-center justify-center justify-self-center sm:flex">
             <span className="grid size-56 place-items-center overflow-hidden rounded-full bg-white shadow-2xl ring-4 ring-white/20 md:size-72 lg:size-80">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.image} alt="" className="max-h-[78%] max-w-[78%] object-contain" />
+              <img src={s.image} alt="" className="max-h-[70%] max-w-[70%] object-contain" />
             </span>
           </div>
         </div>
