@@ -375,7 +375,7 @@ function HeroCarousel() {
       >
         {/* Content is held in a centered max-width band so the copy and the
             product sit close together (generous padding on wide screens). */}
-        <div className={cn("relative mx-auto grid min-h-[300px] max-w-5xl items-center gap-6 px-6 py-8 sm:grid-cols-[1.2fr_1fr] sm:px-8 sm:py-10 md:min-h-[340px]", textCls)}>
+        <div className={cn("relative mx-auto grid min-h-[300px] max-w-[68rem] items-center gap-6 px-6 py-8 sm:grid-cols-[1.2fr_1fr] sm:px-8 sm:py-10 md:min-h-[340px]", textCls)}>
           <div className="relative z-10 min-w-0">
             <span className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase", dark ? "bg-white/15 text-white" : "bg-[#003874]/10 text-[#003874]")}>
               <Leaf className="size-3.5 text-orange-500" aria-hidden /> {s.eyebrow}
@@ -447,7 +447,7 @@ function SubcategoryRow() {
 function RebateBanner() {
   return (
     <section aria-label="Fall rebate roundup" className="overflow-hidden rounded-xl border border-border bg-[#FAFAF7]">
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 px-6 py-6 sm:flex-row sm:gap-10 sm:px-8 sm:py-8">
+      <div className="mx-auto flex max-w-[68rem] flex-col items-center gap-6 px-6 py-6 sm:flex-row sm:gap-10 sm:px-8 sm:py-8">
         <div className="flex shrink-0 items-start gap-1 leading-none text-orange-600">
           <span className="mt-2 text-3xl font-bold sm:text-4xl">$</span>
           <span className="text-6xl font-extrabold tracking-tight sm:text-8xl">500</span>
@@ -541,7 +541,7 @@ function FreezeStrip() {
 function RewardsBuilder() {
   return (
     <section aria-label="Gear up for winter" className="overflow-hidden rounded-2xl bg-[#121417] text-white">
-      <div className="mx-auto grid max-w-5xl items-center gap-8 px-6 py-8 sm:grid-cols-[1.5fr_1fr] sm:px-8 sm:py-12">
+      <div className="mx-auto grid max-w-[68rem] items-center gap-8 px-6 py-8 sm:grid-cols-[1.5fr_1fr] sm:px-8 sm:py-12">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-400/15 px-3 py-1 text-xs font-semibold tracking-wide text-yellow-300 uppercase">
             Homans Rewards
