@@ -22,6 +22,10 @@ const buttonVariants = cva(
         tertiary:
           "text-foreground hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         ahri: "border border-violet-500 bg-transparent font-semibold text-violet-700 hover:bg-violet-50 hover:text-violet-800 dark:border-violet-400 dark:text-violet-300 dark:hover:bg-violet-950/40",
+        // Homans brand CTAs — the Specials-pill yellow (navy text) and solid navy.
+        "brand-yellow": "bg-yellow-400 font-semibold text-blue-950 hover:bg-yellow-300",
+        "brand-navy": "bg-[#003874] font-semibold text-white hover:bg-[#003874]/90",
+        "brand-navy-outline": "border-2 border-[#003874] bg-transparent font-semibold text-[#003874] hover:bg-[#003874]/5",
         // The ONLY variant that underlines — reserved for blue inline links.
         link: "text-primary underline-offset-4 hover:underline",
       },
