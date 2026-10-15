@@ -84,7 +84,7 @@ function PromoCarousel() {
   const n = SLIDES.length;
   const go = (d: number) => setI((p) => (p + d + n) % n);
   React.useEffect(() => {
-    const t = setInterval(() => setI((p) => (p + 1) % n), 6000);
+    const t = setInterval(() => setI((p) => (p + 1) % n), 7000);
     return () => clearInterval(t);
   }, [n]);
   const s = SLIDES[i];
@@ -94,25 +94,32 @@ function PromoCarousel() {
         className="relative overflow-hidden rounded-xl text-white shadow-sm"
         style={{ backgroundImage: `linear-gradient(110deg, ${s.from}, ${s.to})` }}
       >
-        <div className="grid items-center gap-4 p-6 sm:grid-cols-[1.4fr_1fr] sm:p-8 md:p-10">
+        <div className="grid items-center gap-6 py-10 pr-6 pl-10 sm:grid-cols-[1.3fr_1fr] sm:py-12 sm:pr-8 sm:pl-20 md:py-14 md:pr-10 md:pl-28">
           <div className="min-w-0">
             <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide uppercase">
               {s.eyebrow}
             </span>
-            <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">{s.title}</h2>
-            <p className="mt-2 max-w-md text-sm text-white/85 sm:text-base">{s.copy}</p>
-            <Button asChild size="lg" className="mt-5 bg-white text-slate-900 hover:bg-white/90">
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">{s.title}</h2>
+            <p className="mt-3 max-w-md text-sm text-white/85 sm:text-base">{s.copy}</p>
+            <Button asChild size="lg" className="mt-6 bg-white text-slate-900 hover:bg-white/90">
               <Link href={s.href}>
                 {s.cta}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
           </div>
-          <div className="hidden justify-self-center sm:block">
-            <span className="grid size-44 place-items-center rounded-full bg-white/95 shadow-lg md:size-52">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.image} alt="" className="max-h-full max-w-full object-contain p-4" />
-            </span>
+          {/* Transparent product floats large with a soft spotlight — no disc. */}
+          <div className="relative hidden items-center justify-center justify-self-center sm:flex">
+            <span
+              aria-hidden
+              className="absolute size-64 rounded-full bg-white/20 blur-3xl md:size-80"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={s.image}
+              alt=""
+              className="relative size-60 object-contain drop-shadow-2xl md:size-72 lg:size-80"
+            />
           </div>
         </div>
 
