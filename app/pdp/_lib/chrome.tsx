@@ -5,12 +5,16 @@ import {
   ClipboardList,
   Facebook,
   Home,
+  LifeBuoy,
   Linkedin,
   Lock,
+  PackageSearch,
+  Search,
+  ShieldCheck,
   Twitter,
-  Wrench,
   Youtube,
   Zap,
+  type LucideIcon,
 } from "lucide-react";
 import * as React from "react";
 import type { ComponentType } from "react";
@@ -206,12 +210,13 @@ function BrandMark({ brand, theme }: { brand: BrandChrome; theme: BrandTheme }) 
    ════════════════════════════════════════════════════════════════════════ */
 
 /* The old skinny top strip is gone. Its tools now live in the "More Tools" nav
-   dropdown; Quick Order became a signed-in icon in the main bar. */
-const MORE_TOOLS_MENU: { label: string; href: string }[] = [
-  { label: "AHRI Search", href: "#" },
-  { label: "Part Finder", href: "#" },
-  { label: "Warranty Center", href: "#" },
-  { label: "Help & Support", href: "#" },
+   dropdown; Quick Order became a signed-in icon in the main bar. Each item
+   carries an icon that reflects its label. */
+const MORE_TOOLS_MENU: { label: string; href: string; Icon: LucideIcon }[] = [
+  { label: "AHRI Search", href: "#", Icon: Search },
+  { label: "Part Finder", href: "#", Icon: PackageSearch },
+  { label: "Warranty Center", href: "#", Icon: ShieldCheck },
+  { label: "Help & Support", href: "#", Icon: LifeBuoy },
 ];
 
 /** Real Homans content for the nav items that DO open a dropdown. Any nav item
@@ -370,7 +375,7 @@ function UnifiedHeader({
                   {MORE_TOOLS_MENU.map((r) => (
                     <DropdownMenuItem key={r.label} asChild>
                       <Link href={r.href}>
-                        <Wrench className="size-4 opacity-70" aria-hidden />
+                        <r.Icon className="size-4 opacity-70" aria-hidden />
                         {r.label}
                       </Link>
                     </DropdownMenuItem>

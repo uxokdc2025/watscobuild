@@ -94,7 +94,7 @@ function PromoCarousel() {
         className="relative overflow-hidden rounded-xl text-white shadow-sm"
         style={{ backgroundImage: `linear-gradient(110deg, ${s.from}, ${s.to})` }}
       >
-        <div className="grid items-center gap-6 py-10 pr-6 pl-10 sm:grid-cols-[1.3fr_1fr] sm:py-12 sm:pr-8 sm:pl-20 md:py-14 md:pr-10 md:pl-28">
+        <div className="grid items-center gap-6 py-6 pr-6 pl-10 sm:grid-cols-[1.3fr_1fr] sm:py-6 sm:pr-8 sm:pl-20 md:py-7 md:pr-10 md:pl-28">
           <div className="min-w-0">
             <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide uppercase">
               {s.eyebrow}
@@ -112,13 +112,13 @@ function PromoCarousel() {
           <div className="relative hidden items-center justify-center justify-self-center sm:flex">
             <span
               aria-hidden
-              className="absolute size-64 rounded-full bg-white/20 blur-3xl md:size-80"
+              className="absolute size-72 rounded-full bg-white/20 blur-3xl md:size-96"
             />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={s.image}
               alt=""
-              className="relative size-60 object-contain drop-shadow-2xl md:size-72 lg:size-80"
+              className="relative size-72 object-contain drop-shadow-2xl md:size-80 lg:size-96"
             />
           </div>
         </div>
