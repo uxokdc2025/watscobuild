@@ -108,18 +108,12 @@ function PromoCarousel() {
               </Link>
             </Button>
           </div>
-          {/* Transparent product floats large with a soft spotlight — no disc. */}
-          <div className="relative hidden items-center justify-center justify-self-center sm:flex">
-            <span
-              aria-hidden
-              className="absolute size-72 rounded-full bg-white/20 blur-3xl md:size-96"
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={s.image}
-              alt=""
-              className="relative size-72 object-contain drop-shadow-2xl md:size-80 lg:size-96"
-            />
+          {/* Product sits in a large white circle — clean on the dark gradient. */}
+          <div className="hidden items-center justify-center justify-self-center sm:flex">
+            <span className="grid size-56 place-items-center overflow-hidden rounded-full bg-white shadow-2xl ring-4 ring-white/20 md:size-72 lg:size-80">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={s.image} alt="" className="max-h-[78%] max-w-[78%] object-contain" />
+            </span>
           </div>
         </div>
 

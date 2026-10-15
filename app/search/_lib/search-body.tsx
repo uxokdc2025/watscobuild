@@ -134,7 +134,7 @@ function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string
                 >
                   {it.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={it.image} alt="" className="max-h-[70%] max-w-[70%] object-contain" loading="lazy" />
+                    <img src={it.image} alt="" className="max-h-[82%] max-w-[82%] object-contain" loading="lazy" />
                   ) : (
                     <it.Icon className="size-9 text-muted-foreground transition group-hover:text-primary" aria-hidden="true" />
                   )}
