@@ -227,7 +227,8 @@ function StaticFacetGroup({ facet, open = false }: { facet: StaticFacet; open?: 
                     onCheckedChange={() =>
                       setChecked((prev) => {
                         const next = new Set(prev);
-                        next.has(opt.name) ? next.delete(opt.name) : next.add(opt.name);
+                        if (next.has(opt.name)) next.delete(opt.name);
+                        else next.add(opt.name);
                         return next;
                       })
                     }
