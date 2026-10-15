@@ -253,19 +253,19 @@ function PromoStrip() {
   return (
     <section
       aria-label="Shipping and rewards"
-      className="flex flex-col items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/[0.05] px-6 py-4 sm:flex-row"
+      className="flex flex-col items-center justify-between gap-3 rounded-xl bg-[#003874] px-6 py-5 text-white shadow-sm sm:flex-row"
     >
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
-        <span className="inline-flex items-center gap-2 font-medium">
-          <Truck className="size-5 text-primary" aria-hidden />
+        <span className="inline-flex items-center gap-2 font-semibold">
+          <Truck className="size-5 text-white" aria-hidden />
           Free freight on equipment orders over {formatUSD(2500)}
         </span>
-        <span className="inline-flex items-center gap-2 font-medium">
-          <BadgePercent className="size-5 text-primary" aria-hidden />
+        <span className="inline-flex items-center gap-2 font-semibold">
+          <BadgePercent className="size-5 text-white" aria-hidden />
           Earn Homans Rewards points on every order
         </span>
       </div>
-      <Button asChild variant="outline" size="sm" className="shrink-0">
+      <Button asChild size="sm" className="shrink-0 bg-white text-[#003874] hover:bg-white/90">
         <Link href="/dashboard?signedin=1">View My Rewards</Link>
       </Button>
     </section>
