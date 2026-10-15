@@ -202,7 +202,8 @@ const CHANGE_LOGS: ChangeLog[] = [
         desc: "A category experience in two parts. First, the category view reuses exactly the PLP we have for the product grid but adds a different top — a horizontally-scrolling row of circular category tiles (image + label). Second, clicking a tile opens a fully merchandised category landing page (promo carousel, product rows, a system bundle, and promo banners) — shown here for Air Conditioners. Image tiles for every category section are being built out.",
         links: [
           { label: "Category Scroller (Residential)", href: "/search?brand=homans&category=residential&signedin=1" },
-          { label: "Category Landing (Air Conditioners)", href: "/category/air-conditioners?signedin=1" },
+          { label: "Category Landing V1 (Air Conditioners)", href: "/category/air-conditioners?signedin=1" },
+          { label: "Category Landing V2 — Autumn (Air Conditioners)", href: "/category/air-conditioners?v=2&signedin=1" },
         ],
       },
       {
