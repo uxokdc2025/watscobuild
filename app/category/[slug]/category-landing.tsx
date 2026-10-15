@@ -207,7 +207,7 @@ function BundleFeature() {
   const was = 4730;
   return (
     <section id="bundle" aria-label="Complete comfort system bundle" className="scroll-mt-24">
-      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-primary/15 bg-gradient-to-br from-primary/[0.08] to-primary/[0.02] shadow-sm">
         <div className="grid gap-6 p-6 md:grid-cols-[1.1fr_1fr] md:p-8">
           <div className="flex flex-col justify-center">
             <Badge variant="soft" color="green" className="w-fit">Save {formatUSD(was - bundle)}</Badge>
