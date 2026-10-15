@@ -67,6 +67,52 @@ const BRANDS_FACET = [
   "TOTALINE®",
 ];
 
+/* Real Homans Residential category brands (from the live facet rail). */
+const RESIDENTIAL_BRANDS = [
+  "Armstrong Air®",
+  "Bryant®",
+  "Payne®",
+  "Mitsubishi Electric®",
+  "Goodman®",
+  "Honeywell®",
+];
+
+/* The full Residential filter rail scraped from homans.com — the real facet
+   groups and representative options. Rendered on category pages (Brand first,
+   everything else collapsed). */
+type StaticFacet = { label: string; options: { name: string; count: number }[]; seeMore?: boolean };
+const RESIDENTIAL_FACETS: StaticFacet[] = [
+  { label: "Promotions", options: [ { name: "On Sale", count: 42 }, { name: "Rebate Eligible", count: 88 }, { name: "Clearance", count: 15 } ] },
+  { label: "Tonnage", options: [ { name: "1.5 Ton", count: 46 }, { name: "2 Ton", count: 92 }, { name: "2.5 Ton", count: 88 }, { name: "3 Ton", count: 95 }, { name: "3.5 Ton", count: 61 }, { name: "4 Ton", count: 58 }, { name: "5 Ton", count: 40 } ], seeMore: true },
+  { label: "SEER2", options: [ { name: "13.4", count: 72 }, { name: "14", count: 95 }, { name: "15", count: 83 }, { name: "16", count: 51 }, { name: "18", count: 24 } ] },
+  { label: "SEER", options: [ { name: "13", count: 40 }, { name: "14", count: 121 }, { name: "15", count: 78 }, { name: "16", count: 33 } ] },
+  { label: "Stage", options: [ { name: "Single Stage", count: 214 }, { name: "Two Stage", count: 58 }, { name: "Variable Speed", count: 31 } ] },
+  { label: "Refrigerant", options: [ { name: "R-454B", count: 268 }, { name: "R-410A", count: 96 }, { name: "R-32", count: 12 } ] },
+  { label: "Fuel Type", options: [ { name: "Natural Gas", count: 153 }, { name: "Oil", count: 20 }, { name: "Electric", count: 118 }, { name: "Propane", count: 44 } ] },
+  { label: "Product Family", options: [ { name: "Legacy™", count: 96 }, { name: "Preferred™", count: 58 }, { name: "OMNI", count: 74 } ] },
+  { label: "Air Flow Direction", options: [ { name: "Upflow", count: 88 }, { name: "Downflow", count: 62 }, { name: "Horizontal", count: 71 }, { name: "Multipoise", count: 49 } ] },
+  { label: "Voltage", options: [ { name: "115V", count: 24 }, { name: "208/230V", count: 288 }, { name: "460V", count: 31 } ] },
+  { label: "Phase", options: [ { name: "Single Phase", count: 312 }, { name: "Three Phase", count: 36 } ] },
+  { label: "AFUE", options: [ { name: "80%", count: 58 }, { name: "90%", count: 42 }, { name: "92%", count: 31 }, { name: "96%", count: 22 } ] },
+  { label: "HSPF2", options: [ { name: "7.5", count: 33 }, { name: "8.1", count: 28 }, { name: "8.5", count: 19 } ] },
+  { label: "EER2", options: [ { name: "11", count: 61 }, { name: "12", count: 44 }, { name: "13", count: 18 } ] },
+  { label: "CFM", options: [ { name: "800", count: 38 }, { name: "1200", count: 66 }, { name: "1600", count: 59 }, { name: "2000", count: 41 } ] },
+  { label: "BTU Input", options: [ { name: "45,000", count: 24 }, { name: "70,000", count: 48 }, { name: "100,000", count: 33 } ] },
+  { label: "BTU Output", options: [ { name: "36,000", count: 31 }, { name: "60,000", count: 52 }, { name: "90,000", count: 28 } ] },
+  { label: "Cooling Rated Capacity (Btu/h)", options: [ { name: "24,000", count: 46 }, { name: "36,000", count: 95 }, { name: "48,000", count: 58 }, { name: "60,000", count: 40 } ] },
+  { label: "Multi Zone", options: [ { name: "Single Zone", count: 198 }, { name: "Multi Zone", count: 86 } ] },
+  { label: "Number of HVAC Zones", options: [ { name: "1", count: 198 }, { name: "2", count: 44 }, { name: "3", count: 28 }, { name: "4+", count: 14 } ] },
+  { label: "Built-In Wi-Fi", options: [ { name: "Yes", count: 72 }, { name: "No", count: 276 } ] },
+  { label: "A2L Compatible", options: [ { name: "Yes", count: 268 }, { name: "No", count: 80 } ] },
+  { label: "Mounting Type", options: [ { name: "Wall", count: 134 }, { name: "Ceiling", count: 38 }, { name: "Floor", count: 92 } ] },
+  { label: "Color", options: [ { name: "Beige", count: 142 }, { name: "Gray", count: 96 }, { name: "White", count: 110 } ] },
+  { label: "Amps", options: [ { name: "15", count: 61 }, { name: "20", count: 88 }, { name: "30", count: 72 }, { name: "40", count: 44 } ] },
+  { label: "Kilowatt (KW)", options: [ { name: "5", count: 33 }, { name: "8", count: 41 }, { name: "10", count: 36 }, { name: "15", count: 22 } ] },
+  { label: "Liquid Line Size (OD)", options: [ { name: "3/8\"", count: 112 }, { name: "1/2\"", count: 88 } ] },
+  { label: "Suction Line Size (OD)", options: [ { name: "3/4\"", count: 96 }, { name: "7/8\"", count: 74 } ] },
+  { label: "Fitting Type", options: [ { name: "Sweat", count: 128 }, { name: "Flare", count: 62 } ] },
+];
+
 /* ------------------------------------------------------------------ *
  * Body
  * ------------------------------------------------------------------ */
@@ -128,7 +174,10 @@ function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string
               >
                 <span
                   className={cn(
-                    "grid size-24 place-items-center overflow-hidden rounded-full ring-1 ring-border transition group-hover:ring-2 group-hover:ring-primary",
+                    // ring-inset so the ring draws INSIDE the circle — the
+                    // scroll container's overflow:auto would clip an outset
+                    // ring flat at the top (the "notch").
+                    "grid size-24 place-items-center overflow-hidden rounded-full ring-1 ring-inset ring-border transition group-hover:ring-2 group-hover:ring-primary",
                     it.image ? "bg-white" : "bg-muted",
                   )}
                 >
@@ -147,6 +196,61 @@ function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string
           ))}
         </ul>
       </div>
+    </section>
+  );
+}
+
+/** A self-contained collapsible facet (its own checkbox state). Used for the
+ *  real Residential filter rail, whose options aren't tied to result fields. */
+function StaticFacetGroup({ facet, open = false }: { facet: StaticFacet; open?: boolean }) {
+  const [checked, setChecked] = React.useState<Set<string>>(new Set());
+  const [showAll, setShowAll] = React.useState(false);
+  const visible = showAll ? facet.options : facet.options.slice(0, 6);
+  const id = facet.label.replace(/\s+/g, "-").toLowerCase();
+  return (
+    <section aria-labelledby={`facet-${id}-heading`} className="space-y-2 pt-4">
+      <details {...(open ? { open: true } : {})} className="group">
+        <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
+          <span id={`facet-${id}-heading`}>{facet.label}</span>
+          <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
+        </summary>
+        <ul className="mt-2 space-y-2">
+          {visible.map((opt) => {
+            const oid = `facet-${id}-${opt.name}`.replace(/[^\w-]/g, "-");
+            return (
+              <li key={opt.name} className="flex items-center justify-between gap-2">
+                <label htmlFor={oid} className="flex flex-1 items-center gap-2">
+                  <Checkbox
+                    id={oid}
+                    aria-label={opt.name}
+                    checked={checked.has(opt.name)}
+                    onCheckedChange={() =>
+                      setChecked((prev) => {
+                        const next = new Set(prev);
+                        next.has(opt.name) ? next.delete(opt.name) : next.add(opt.name);
+                        return next;
+                      })
+                    }
+                  />
+                  <span>{opt.name}</span>
+                </label>
+                {opt.count > 0 ? (
+                  <span className="text-xs text-muted-foreground">({opt.count})</span>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+        {facet.seeMore && facet.options.length > 6 ? (
+          <button
+            type="button"
+            onClick={() => setShowAll((s) => !s)}
+            className="mt-3 text-xs font-medium text-primary underline-offset-4 hover:underline"
+          >
+            {showAll ? "See Less" : "See More"}
+          </button>
+        ) : null}
+      </details>
     </section>
   );
 }
@@ -368,55 +472,71 @@ export function SearchBody({
               </h2>
             </section>
 
-            {/* On category pages only the first facet group is expanded; the
-                rest start collapsed (categories moved to the top scroller). */}
-            {FACET_GROUPS.map((group, i) => (
-              <FacetGroup
-                key={group.key}
-                spec={group}
-                results={results}
-                selected={selectedFacets[group.key] ?? new Set()}
-                onToggle={(opt) => toggleFacet(group.key, opt)}
-                count={facetCount}
-                open={category ? i === 0 : true}
-              />
-            ))}
-
-            <section aria-labelledby="brand-facet-heading" className="space-y-2 pt-4">
-              <details {...(category ? {} : { open: true })}>
-                <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
-                  <span id="brand-facet-heading">Brand</span>
-                  <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
-                </summary>
-                <ul className="mt-2 space-y-2">
-                  {BRANDS_FACET.map((b) => {
-                    const id = `brand-${b}`;
-                    return (
-                      <li key={b} className="flex items-center justify-between gap-2">
-                        <label htmlFor={id} className="flex flex-1 items-center gap-2">
-                          <Checkbox
-                            id={id}
-                            aria-label={b}
-                            checked={selectedBrands.has(b)}
-                            onCheckedChange={() => toggleBrand(b)}
-                          />
-                          <span>{b}</span>
-                        </label>
-                        <span className="text-xs text-muted-foreground">
-                          ({brandCount(b) || 1})
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-                <button
-                  type="button"
-                  className="mt-3 text-xs font-medium text-primary underline-offset-4 hover:underline"
-                >
-                  See More
-                </button>
-              </details>
-            </section>
+            {category ? (
+              /* Category pages show the real Residential filter rail — Brand
+                 first and open, every other filter collapsed. */
+              <>
+                <StaticFacetGroup
+                  facet={{
+                    label: "Brand",
+                    options: RESIDENTIAL_BRANDS.map((b) => ({ name: b, count: 0 })),
+                    seeMore: true,
+                  }}
+                  open
+                />
+                {RESIDENTIAL_FACETS.map((f) => (
+                  <StaticFacetGroup key={f.label} facet={f} />
+                ))}
+              </>
+            ) : (
+              <>
+                {FACET_GROUPS.map((group) => (
+                  <FacetGroup
+                    key={group.key}
+                    spec={group}
+                    results={results}
+                    selected={selectedFacets[group.key] ?? new Set()}
+                    onToggle={(opt) => toggleFacet(group.key, opt)}
+                    count={facetCount}
+                  />
+                ))}
+                <section aria-labelledby="brand-facet-heading" className="space-y-2 pt-4">
+                  <details open>
+                    <summary className="flex cursor-pointer items-center justify-between border-b border-border/70 pb-3 font-semibold">
+                      <span id="brand-facet-heading">Brand</span>
+                      <ChevronDown className="size-4 opacity-70 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <ul className="mt-2 space-y-2">
+                      {BRANDS_FACET.map((b) => {
+                        const id = `brand-${b}`;
+                        return (
+                          <li key={b} className="flex items-center justify-between gap-2">
+                            <label htmlFor={id} className="flex flex-1 items-center gap-2">
+                              <Checkbox
+                                id={id}
+                                aria-label={b}
+                                checked={selectedBrands.has(b)}
+                                onCheckedChange={() => toggleBrand(b)}
+                              />
+                              <span>{b}</span>
+                            </label>
+                            <span className="text-xs text-muted-foreground">
+                              ({brandCount(b) || 1})
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <button
+                      type="button"
+                      className="mt-3 text-xs font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      See More
+                    </button>
+                  </details>
+                </section>
+              </>
+            )}
           </aside>
 
           {/* Results grid or list */}
