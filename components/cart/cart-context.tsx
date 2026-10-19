@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Check, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Bookmark, Check, FilePlus2, Minus, Plus, Share2, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DRAWER_MOTION_MS, DrawerCloseButton, DrawerPanel, drawerOverlayClassName } from "@/components/ui/drawer";
 import { formatUSD } from "@/app/pdp/_lib/types";
@@ -100,11 +100,19 @@ function CartDrawer() {
             </div>
           </section> : null}
         </div>
-        <footer className="mt-auto border-t bg-background p-5">
-          <div className="mb-3 flex items-center justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span className="font-semibold">{formatUSD(totalPrice)}</span></div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={requestClose}>Keep shopping</Button>
-            <Button asChild className="flex-1"><Link href="/checkout" onClick={requestClose}>View Cart</Link></Button>
+        {/* Sticky footer — actions ranked to the funnel: Checkout → View Cart →
+            Create Proposal → quiet Save / Share. */}
+        <footer className="sticky bottom-0 mt-auto border-t bg-background p-5">
+          <div className="mb-4 flex items-center justify-between"><span className="text-sm text-muted-foreground">Subtotal</span><span className="text-lg font-bold">{formatUSD(totalPrice)}</span></div>
+          <div className="flex flex-col gap-2.5">
+            <Button asChild size="lg" className="w-full"><Link href="/checkout" onClick={requestClose}>Checkout</Link></Button>
+            <Button asChild size="lg" variant="outline" className="w-full"><Link href="/cart" onClick={requestClose}>View Cart</Link></Button>
+            <Button asChild size="lg" variant="tertiary" className="w-full"><Link href="/dashboard/proposals?signedin=1" onClick={requestClose}><FilePlus2 className="size-4" /> Create Proposal</Link></Button>
+          </div>
+          <div className="mt-3 flex items-center justify-center gap-6 border-t pt-3">
+            <button type="button" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"><Bookmark className="size-4" /> Save Cart</button>
+            <span aria-hidden className="h-4 w-px bg-border" />
+            <button type="button" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"><Share2 className="size-4" /> Share Cart</button>
           </div>
         </footer>
       </DrawerPanel>
@@ -129,6 +137,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((current) => current.map((item) => item.id === id ? { ...item, quantity: Math.min(99, quantity) } : item));
   }, [removeItem]);
   const closeCart = React.useCallback(() => setOpen(false), []);
+  // Demo deep-link: `?cart=demo` seeds one item and pulls the drawer out, so a
+  // PDP link can show the mini-cart in context for review.
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (new URLSearchParams(window.location.search).get("cart") !== "demo") return;
+    setItems((current) => current.length ? current : [{
+      id: "demo-air-handler",
+      title: "Bryant® - 5K BTU/H - Air Handler Unit Heater - R-454B",
+      brand: "Factory Authorized Parts",
+      price: 267,
+      image: "/category-tiles/air-handler.webp",
+      quantity: 1,
+    }]);
+    setOpen(true);
+  }, []);
   const value = React.useMemo(() => ({ items, totalCount: items.reduce((sum, item) => sum + item.quantity, 0), totalPrice: items.reduce((sum, item) => sum + item.price * item.quantity, 0), addItem, removeItem, setQuantity, open, openCart: () => setOpen(true), closeCart }), [items, addItem, removeItem, setQuantity, open, closeCart]);
   return <CartContext.Provider value={value}><>{children}</><CartDrawer /></CartContext.Provider>;
 }
