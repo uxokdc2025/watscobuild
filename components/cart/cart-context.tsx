@@ -11,10 +11,9 @@ import { cn } from "@/lib/utils";
 /* Quiet Save / Share pair — reused across the drawer layout variants. */
 function SaveShareRow({ className }: { className?: string }) {
   return (
-    <div className={cn("flex items-center justify-center gap-6", className)}>
-      <button type="button" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"><Bookmark className="size-4" /> Save Cart</button>
-      <span aria-hidden className="h-4 w-px bg-border" />
-      <button type="button" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"><Share2 className="size-4" /> Share Cart</button>
+    <div className={cn("flex items-center justify-center gap-2", className)}>
+      <Button type="button" variant="ghost" size="sm" className="text-muted-foreground"><Bookmark className="size-4" /> Save Cart</Button>
+      <Button type="button" variant="ghost" size="sm" className="text-muted-foreground"><Share2 className="size-4" /> Share Cart</Button>
     </div>
   );
 }
@@ -84,8 +83,8 @@ function CartDrawer() {
             {/* V2: Save / Share move into the header, left of the close button. */}
             {variant === "v2" ? (
               <>
-                <button type="button" className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"><Bookmark className="size-4" /> Save</button>
-                <button type="button" className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"><Share2 className="size-4" /> Share</button>
+                <Button type="button" variant="ghost" size="sm" className="text-muted-foreground"><Bookmark className="size-4" /> Save</Button>
+                <Button type="button" variant="ghost" size="sm" className="text-muted-foreground"><Share2 className="size-4" /> Share</Button>
               </>
             ) : null}
             <DrawerCloseButton label="Close cart" onClick={requestClose} />
