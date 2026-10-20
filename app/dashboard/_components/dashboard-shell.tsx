@@ -91,32 +91,31 @@ function NavRow({
   /** Charcoal theme — reversed-out white text/icons on a dark panel. */
   dark?: boolean;
 }) {
-  // Three distinct text tiers, each AA-compliant on the charcoal panel (#0f172a):
-  //   · section header — bright white, bold   (white 17.4:1)
-  //   · child row      — light slate, regular (slate-300 11.6:1)
-  //   · active row     — white pill, dark text (slate-900 on white 17:1)
+  // The grey panel (#6e6e6e) is the lightest neutral grey that still clears
+  // WCAG AA with white text (~4.8:1), so ALL nav text is white — section
+  // headers bold, child rows regular; the active row is a white pill.
   const idleText = header
     ? dark
       ? "font-semibold text-white"
       : "font-semibold text-foreground"
     : dark
-      ? "text-slate-300"
+      ? "text-white"
       : "";
   const idleIcon = header
     ? dark
       ? "text-white"
       : "text-foreground"
     : dark
-      ? "text-slate-400"
+      ? "text-white/85"
       : "text-muted-foreground";
-  // Active: charcoal uses a solid white pill with dark text — a clearly
-  // different, high-contrast selected state from the light theme's blue tint.
+  // Active: a solid white pill with dark text — a clearly different,
+  // high-contrast selected state from the light theme's blue tint.
   const activeCls = dark
     ? "bg-white font-semibold text-slate-900 shadow-sm"
     : "bg-primary/10 font-semibold text-primary";
-  const hoverCls = dark ? "hover:bg-white/10 hover:text-white" : "hover:bg-muted";
+  const hoverCls = dark ? "hover:bg-white/15 hover:text-white" : "hover:bg-muted";
   const ringCls = dark
-    ? "focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+    ? "focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#6e6e6e]"
     : "focus-visible:ring-ring";
   const activeIcon = active ? (dark ? "text-slate-900" : "text-primary") : idleIcon;
   return (
@@ -141,12 +140,12 @@ export function DashboardShell({ title, actions, breadcrumb, children, navVarian
   const isActive = (href: string) => current === href.split("?")[0];
   const dark = navVariant === "charcoal";
   const navClass = dark
-    ? "h-fit rounded-lg bg-slate-900 p-2.5 shadow-md ring-1 ring-white/10"
+    ? "h-fit rounded-lg bg-[#6e6e6e] p-2.5 shadow-md ring-1 ring-black/10"
     : "h-fit rounded-md border border-border bg-background p-2 shadow-sm";
   // Each top-level section is divided from the next with a hairline in the
   // charcoal theme, which gives the reversed-out nav clearer structure.
   const sectionWrap = dark
-    ? "border-t border-white/10 pt-1.5 mt-1.5 first:border-t-0 first:pt-0 first:mt-0"
+    ? "border-t border-white/20 pt-1.5 mt-1.5 first:border-t-0 first:pt-0 first:mt-0"
     : "mt-1 first:mt-0";
   return (
     <main className="min-h-svh bg-muted/30 text-foreground">

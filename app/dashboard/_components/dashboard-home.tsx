@@ -237,7 +237,7 @@ function FindAnOrder({
   return (
     <section
       aria-label="Find an order"
-      className="rounded-xl border bg-background p-4 shadow-md ring-1 ring-black/[0.02] sm:p-5"
+      className="rounded-lg border bg-background p-4 shadow-sm sm:p-5"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
         <Field label="Order #">
