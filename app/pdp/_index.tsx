@@ -198,6 +198,14 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Oct 20 meeting",
     items: [
       {
+        title: "Mini cart — layout variants V1 / V2",
+        desc: "Two more mini-cart layouts off the base. V1: View Cart + Checkout side by side (Checkout right), with Save Cart | Share Cart moved to the top of the cart, right under the header. V2: same side-by-side buttons, with Save / Share moved into the header, left of the close button. Open the PDP and the drawer pulls out.",
+        links: [
+          { label: "Mini Cart V1 (on a PDP)", href: "/pdp/tradepro-tp-ec13-50?cart=demo&cartv=1&signedin=1" },
+          { label: "Mini Cart V2 (on a PDP)", href: "/pdp/tradepro-tp-ec13-50?cart=demo&cartv=2&signedin=1" },
+        ],
+      },
+      {
         title: "Checkout — fulfillment messages (global + secondary)",
         desc: "Two message slots on the Checkout v2 fulfillment step: a global message above the Pickup / Delivery toggle (e.g. a backordered-item warning) and a secondary message directly under the toggle (e.g. CSR-handled shipping / availability notice). Sample screens for each.",
         links: [

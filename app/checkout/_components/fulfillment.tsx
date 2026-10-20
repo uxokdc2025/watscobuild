@@ -113,8 +113,9 @@ export function FulfillmentSection({
   }, []);
   const showGlobal = fmsg === "global" || fmsg === "both";
   const showSecondary = fmsg === "secondary" || fmsg === "both";
+  // Messages match the form content width (the "change box"), not full width.
   const globalBanner = showGlobal ? (
-    <Alert variant="warning" className="mb-4">
+    <Alert variant="warning" className="mb-4 max-w-[440px]">
       <AlertTriangle className="size-4" />
       <AlertDescription>
         Some products in your cart are backordered. We&rsquo;ll contact you with an estimated delivery date.
@@ -122,7 +123,7 @@ export function FulfillmentSection({
     </Alert>
   ) : null;
   const secondaryBanner = showSecondary ? (
-    <Alert variant="info" className="mt-4">
+    <Alert variant="info" className="mt-4 max-w-[440px]">
       <Info className="size-4" />
       <AlertDescription>
         Shipping charges will be handled by your CSR. Availability, prices and delivery rates are subject to change.
