@@ -193,6 +193,18 @@ type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[]
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
+    id: "oct-20",
+    badge: "Oct 20",
+    title: "New edits since the Oct 20 meeting",
+    items: [
+      {
+        title: "This cycle is open",
+        desc: "New edits from today’s Oct 20 meeting collect here until the next meeting. Everything reviewed today is in the Oct 9 card below.",
+        links: [],
+      },
+    ],
+  },
+  {
     id: "oct-9",
     badge: "Oct 9",
     title: "New edits since the Oct 9 meeting",
