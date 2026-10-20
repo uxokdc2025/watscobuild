@@ -12,8 +12,8 @@ import { cn } from "@/lib/utils";
 function SaveShareRow({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center justify-center gap-2", className)}>
-      <Button type="button" variant="ghost" size="sm" className="text-muted-foreground"><Bookmark className="size-4" /> Save Cart</Button>
-      <Button type="button" variant="ghost" size="sm" className="text-muted-foreground"><Share2 className="size-4" /> Share Cart</Button>
+      <Button type="button" variant="ghost" size="sm"><Bookmark className="size-4" /> Save Cart</Button>
+      <Button type="button" variant="ghost" size="sm"><Share2 className="size-4" /> Share Cart</Button>
     </div>
   );
 }
@@ -83,8 +83,8 @@ function CartDrawer() {
             {/* V2: Save / Share move into the header, left of the close button. */}
             {variant === "v2" ? (
               <>
-                <Button type="button" variant="ghost" size="sm" className="text-muted-foreground"><Bookmark className="size-4" /> Save</Button>
-                <Button type="button" variant="ghost" size="sm" className="text-muted-foreground"><Share2 className="size-4" /> Share</Button>
+                <Button type="button" variant="ghost" size="sm"><Bookmark className="size-4" /> Save</Button>
+                <Button type="button" variant="ghost" size="sm"><Share2 className="size-4" /> Share</Button>
               </>
             ) : null}
             <DrawerCloseButton label="Close cart" onClick={requestClose} />
@@ -92,7 +92,7 @@ function CartDrawer() {
         </header>
         {/* V1: Save Cart | Share Cart as a full-width band directly under the header. */}
         {variant === "v1" ? (
-          <div className="border-b px-5 py-3"><SaveShareRow /></div>
+          <div className="border-b px-5 py-1.5"><SaveShareRow /></div>
         ) : null}
         <div className="flex-1 overflow-y-auto px-5 py-5">
           {items.length ? <div className="mb-5 flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-sm font-medium"><Check className="size-4 text-emerald-600" /> Added to cart</div> : <p className="py-8 text-center text-sm text-muted-foreground">Your cart is empty.</p>}
