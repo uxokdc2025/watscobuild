@@ -207,6 +207,14 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
+        title: "Dashboard — lighter charcoal nav + Find-an-Order shadow",
+        desc: "The V2 side nav is now a medium grey (#6e6e6e) — the lightest neutral grey that still clears WCAG AA with white text — instead of the near-black panel; all nav text is white, active row is a white pill. Also matched the Find-an-Order filter card’s shadow to the other dashboard cards (it was heavier than the rest).",
+        links: [
+          { label: "Default Nav", href: "/dashboard?signedin=1" },
+          { label: "Grey Nav (V2)", href: "/dashboard/nav-charcoal?signedin=1" },
+        ],
+      },
+      {
         title: "Checkout — fulfillment messages (global + secondary)",
         desc: "Two message slots on the Checkout v2 fulfillment step: a global message above the Pickup / Delivery toggle (e.g. a backordered-item warning) and a secondary message directly under the toggle (e.g. CSR-handled shipping / availability notice). Sample screens for each.",
         links: [
