@@ -80,21 +80,22 @@ function CartDrawer() {
       <DrawerPanel open={!closing} side="right" role="dialog" aria-modal="true" aria-label="Shopping cart" className="absolute inset-y-0 right-0 flex w-full max-w-[430px] flex-col border-l bg-background shadow-2xl">
         <header className="flex items-center justify-between border-b px-5 py-4">
           <div className="flex items-center gap-2 text-lg font-semibold"><ShoppingCart className="size-5" /> Cart ({totalCount})</div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             {/* V2: Save / Share move into the header, left of the close button. */}
             {variant === "v2" ? (
               <>
                 <button type="button" className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"><Bookmark className="size-4" /> Save</button>
                 <button type="button" className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"><Share2 className="size-4" /> Share</button>
-                <span aria-hidden className="mx-1 h-5 w-px bg-border" />
               </>
             ) : null}
             <DrawerCloseButton label="Close cart" onClick={requestClose} />
           </div>
         </header>
+        {/* V1: Save Cart | Share Cart as a full-width band directly under the header. */}
+        {variant === "v1" ? (
+          <div className="border-b px-5 py-3"><SaveShareRow /></div>
+        ) : null}
         <div className="flex-1 overflow-y-auto px-5 py-5">
-          {/* V1: Save Cart | Share Cart sit at the top of the body, above "Added to cart". */}
-          {variant === "v1" ? <SaveShareRow className="mb-5 border-b pb-4" /> : null}
           {items.length ? <div className="mb-5 flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-sm font-medium"><Check className="size-4 text-emerald-600" /> Added to cart</div> : <p className="py-8 text-center text-sm text-muted-foreground">Your cart is empty.</p>}
           <div className="flex flex-col gap-5">
             {items.map((item) => (
@@ -118,7 +119,7 @@ function CartDrawer() {
               </div>
             ))}
           </div>
-          {items.length ? <section className="pt-6">
+          {items.length && variant === "base" ? <section className="pt-6">
             <h2 className="text-lg font-semibold">You may also need</h2>
             <div className="mt-3 flex flex-col gap-3">
               {recommendations.map((item) => (
@@ -133,9 +134,9 @@ function CartDrawer() {
         </div>
         {/* Sticky footer — actions ranked to the funnel: Checkout → View Cart →
             Create Proposal → quiet Save / Share. */}
-        <footer className="sticky bottom-0 mt-auto border-t bg-background p-5">
-          <div className="mb-4 flex items-center justify-between"><span className="text-sm text-muted-foreground">Subtotal</span><span className="text-lg font-bold">{formatUSD(totalPrice)}</span></div>
-          <div className="flex flex-col gap-2.5">
+        <footer className="sticky bottom-0 mt-auto border-t bg-background px-5 py-3.5">
+          <div className="mb-3 flex items-center justify-between"><span className="text-sm text-muted-foreground">Subtotal</span><span className="text-lg font-bold">{formatUSD(totalPrice)}</span></div>
+          <div className="flex flex-col gap-2">
             {variant === "base" ? (
               <>
                 <Button asChild size="lg" className="w-full"><Link href="/checkout" onClick={requestClose}>Checkout</Link></Button>
