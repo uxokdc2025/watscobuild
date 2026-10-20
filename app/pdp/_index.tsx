@@ -207,6 +207,13 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
+        title: "Homans header — reorg pass",
+        desc: "Flattened the “Your Branch” selector (no filled box) to two lines — “Your Branch · Open now” over the branch name. Narrowed the search and opened up the spacing across the top bar. Moved Quick Order into the More Tools dropdown, removed Services and Find a Local Dealer from the nav, and pinned Warranty Center + Help & Support (with icons) to the right of the dark nav bar.",
+        links: [
+          { label: "Homans header (on the PLP)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
+        ],
+      },
+      {
         title: "Dashboard — lighter charcoal nav + Find-an-Order shadow",
         desc: "The V2 side nav is now a medium grey (#6e6e6e) — the lightest neutral grey that still clears WCAG AA with white text — instead of the near-black panel; all nav text is white, active row is a white pill. Also matched the Find-an-Order filter card’s shadow to the other dashboard cards (it was heavier than the rest).",
         links: [
