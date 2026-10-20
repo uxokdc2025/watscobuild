@@ -198,6 +198,14 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Oct 9 meeting",
     items: [
       {
+        title: "Mini cart — V2 (re-ranked actions)",
+        desc: "Re-ranked the mini-cart actions to the purchase funnel Watsco called out: Checkout is the one solid primary, View Cart is secondary, Create Proposal sits a tier down, and Save Cart / Share Cart become quiet links. The footer stays sticky while the items scroll. Shown pulled out on a live PDP, plus a standalone panel view.",
+        links: [
+          { label: "Mini Cart V2 (on a PDP)", href: "/pdp/tradepro-tp-ec13-50?cart=demo&signedin=1" },
+          { label: "Mini Cart V2 (panel)", href: "/cart/mini-cart-v2" },
+        ],
+      },
+      {
         title: "Category impact designs — V1",
         desc: "A category experience in two parts. First, the category view reuses exactly the PLP we have for the product grid but adds a different top — a horizontally-scrolling row of circular category tiles (image + label). Second, clicking a tile opens a fully merchandised category landing page (promo carousel, product rows, a system bundle, and promo banners) — shown here for Air Conditioners. Image tiles for every category section are being built out.",
         links: [
