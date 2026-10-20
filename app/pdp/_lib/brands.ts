@@ -41,8 +41,6 @@ export const BRANDS: Record<string, BrandChrome> = {
     nav: [
       "Products",
       "Brands",
-      "Services",
-      "Find a Local Dealer",
       "Resources",
       "More Tools",
       "Training & Events",

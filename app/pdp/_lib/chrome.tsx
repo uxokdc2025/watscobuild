@@ -215,6 +215,11 @@ function BrandMark({ brand, theme }: { brand: BrandChrome; theme: BrandTheme }) 
 const MORE_TOOLS_MENU: { label: string; href: string; Icon: LucideIcon }[] = [
   { label: "AHRI Search", href: "#", Icon: Search },
   { label: "Part Finder", href: "#", Icon: PackageSearch },
+  { label: "Quick Order", href: "/quick-order", Icon: Zap },
+];
+
+/* Warranty + Help are pinned to the right of the nav bar (with icons). */
+const NAV_RIGHT_LINKS: { label: string; href: string; Icon: LucideIcon }[] = [
   { label: "Warranty Center", href: "#", Icon: ShieldCheck },
   { label: "Help & Support", href: "#", Icon: LifeBuoy },
 ];
@@ -290,7 +295,7 @@ function UnifiedHeader({
       {/* Row 2 — main bar (brand color). The old skinny utility strip is gone;
           its tools moved into the "More Tools" nav dropdown and Quick Order. */}
       <div className={theme.barClass}>
-        <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-3 px-4 py-3 md:gap-4 md:px-6">
+        <div className="mx-auto flex max-w-[var(--layout-max-width)] items-center gap-4 px-4 py-3 md:gap-6 md:px-6 lg:gap-8">
           {/* LEFT: logo / brand mark */}
           <Link
             href="/"
@@ -300,38 +305,31 @@ function UnifiedHeader({
             <BrandMark brand={brand} theme={theme} />
           </Link>
 
-          {/* LEFT: branch selector — a prominent, bordered control immediately
-              after the logo on EVERY brand. Reads as the "Your Branch" picker. */}
+          {/* LEFT: branch selector — no filled box; two lines only
+              ("Your Branch · Open now" over the branch name). */}
           <a
             href="/store-locator/in-plp?v=c"
-            className="hidden items-center gap-2.5 rounded-lg border border-white/25 bg-white/10 px-3 py-1.5 leading-tight transition-colors hover:bg-white/20 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:flex"
+            className="hidden items-center gap-2.5 rounded-md px-2 py-1 leading-tight transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:flex"
           >
             <Home className="size-5 shrink-0" aria-hidden />
             <span className="text-left">
-              <span className="block text-[11px] uppercase tracking-wide opacity-80">Your Branch</span>
+              <span className="flex items-center gap-2 text-[11px] font-medium tracking-wide uppercase opacity-80">
+                Your Branch
+                {signedIn ? (
+                  <span className="font-semibold tracking-normal text-green-300 normal-case">· Open now</span>
+                ) : null}
+              </span>
               <span className="flex items-center gap-1.5 text-sm font-bold whitespace-nowrap">
                 {branch}
                 <ChevronDown className="size-3.5 opacity-80" aria-hidden />
               </span>
-              {signedIn ? (
-                <span className="block text-[11px] font-semibold text-green-300">Open now</span>
-              ) : null}
             </span>
           </a>
 
-          {/* CENTER: search — the front-and-center focal point (grows to fill). */}
-          <SearchAutocomplete placeholder="Search item # or name" />
+          {/* CENTER: search — narrower, with more breathing room around it. */}
+          <SearchAutocomplete placeholder="Search item # or name" className="lg:max-w-[600px]" />
 
-          {/* RIGHT: Quick Order (signed-in) · Lists · Account · Cart */}
-          {signedIn ? (
-            <Link
-              href="/quick-order"
-              className="hidden flex-col items-center rounded-md px-2 py-1 text-[11px] transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
-            >
-              <Zap className="size-5" aria-hidden />
-              Quick Order
-            </Link>
-          ) : null}
+          {/* RIGHT: Lists · Account · Cart */}
           <Link
             href="/dashboard/shopping-lists"
             className="hidden flex-col items-center rounded-md px-2 py-1 text-[11px] transition-colors hover:bg-white/10 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:flex"
@@ -408,6 +406,19 @@ function UnifiedHeader({
               </Link>
             );
           })}
+          {/* Pinned to the right of the dark nav bar — Warranty + Help, with icons. */}
+          <div className="ml-auto flex shrink-0 items-center gap-1">
+            {NAV_RIGHT_LINKS.map((r) => (
+              <Link
+                key={r.label}
+                href={r.href}
+                className="my-1.5 inline-flex min-h-9 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-white/90 transition-colors hover:bg-white/10 hover:text-white hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              >
+                <r.Icon className="size-4" aria-hidden />
+                {r.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </nav>
     </header>
