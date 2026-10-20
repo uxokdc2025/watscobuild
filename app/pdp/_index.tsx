@@ -198,9 +198,12 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Oct 20 meeting",
     items: [
       {
-        title: "This cycle is open",
-        desc: "New edits from today’s Oct 20 meeting collect here until the next meeting. Everything reviewed today is in the Oct 9 card below.",
-        links: [],
+        title: "Checkout — fulfillment messages (global + secondary)",
+        desc: "Two message slots on the Checkout v2 fulfillment step: a global message above the Pickup / Delivery toggle (e.g. a backordered-item warning) and a secondary message directly under the toggle (e.g. CSR-handled shipping / availability notice). Sample screens for each.",
+        links: [
+          { label: "Global message (above toggle)", href: "/checkout/v2?demo=1&fmsg=global" },
+          { label: "Secondary message (under toggle)", href: "/checkout/v2?demo=1&fmsg=secondary" },
+        ],
       },
     ],
   },

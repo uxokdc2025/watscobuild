@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Store, Truck } from "lucide-react";
+import { AlertTriangle, Info, Store, Truck } from "lucide-react";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { BrandBranch, BrandCheckoutConfig } from "../_lib/brand-checkout";
 import {
@@ -104,6 +105,31 @@ export function FulfillmentSection({
   const activeTab: "pickup" | "delivery" = isDeliveryMethod(method) ? "delivery" : "pickup";
   const onTabChange = (tab: string) => setMethod(tab === "pickup" ? "pickup" : lastDelivery);
 
+  // Demo use-case messages: `?fmsg=global` shows a banner ABOVE the toggle,
+  // `?fmsg=secondary` shows one UNDER the toggle, `?fmsg=both` shows both.
+  const [fmsg, setFmsg] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    setFmsg(new URLSearchParams(window.location.search).get("fmsg"));
+  }, []);
+  const showGlobal = fmsg === "global" || fmsg === "both";
+  const showSecondary = fmsg === "secondary" || fmsg === "both";
+  const globalBanner = showGlobal ? (
+    <Alert variant="warning" className="mb-4">
+      <AlertTriangle className="size-4" />
+      <AlertDescription>
+        Some products in your cart are backordered. We&rsquo;ll contact you with an estimated delivery date.
+      </AlertDescription>
+    </Alert>
+  ) : null;
+  const secondaryBanner = showSecondary ? (
+    <Alert variant="info" className="mt-4">
+      <Info className="size-4" />
+      <AlertDescription>
+        Shipping charges will be handled by your CSR. Availability, prices and delivery rates are subject to change.
+      </AlertDescription>
+    </Alert>
+  ) : null;
+
   const selectedAddress = config.addresses.find((a) => a.id === addressId);
   const outOfRadius = config.radiusRule && !!selectedAddress?.outOfRadius;
 
@@ -166,11 +192,19 @@ export function FulfillmentSection({
 
   // Brands with only one side skip the toggle entirely — no empty tab.
   if (!hasPickup || !hasDelivery) {
-    return <div className="p-5">{hasPickup ? pickupPanel : deliveryPanel}</div>;
+    return (
+      <div className="p-5">
+        {globalBanner}
+        {secondaryBanner}
+        {hasPickup ? pickupPanel : deliveryPanel}
+      </div>
+    );
   }
 
   return (
     <div className="p-5">
+      {/* Global message — above the Pickup / Delivery toggle. */}
+      {globalBanner}
       <Tabs value={activeTab} onValueChange={onTabChange}>
         <TabsList variant="segmented" className="min-h-11 w-fit" aria-label="Fulfillment method">
           <TabsTrigger value="pickup" className="px-6">
@@ -182,6 +216,8 @@ export function FulfillmentSection({
             Delivery
           </TabsTrigger>
         </TabsList>
+        {/* Secondary message — directly under the toggle (shows for both tabs). */}
+        {secondaryBanner}
         <TabsContent value="pickup" className="pt-5">
           {pickupPanel}
         </TabsContent>
