@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 // The unified checkout renders in any distributor's chrome — only the
 // header/footer skin changes per brand; the flow underneath is identical.
-export default async function CheckoutV2Page({ searchParams }: { searchParams: Promise<{ case?: string; demo?: string; brand?: string; account?: string }> }) {
+export default async function CheckoutV2Page({ searchParams }: { searchParams: Promise<{ case?: string; demo?: string; brand?: string; account?: string; fmsg?: string }> }) {
   const params = await searchParams;
   const brand = getBrand(params.brand ?? "homans") ?? getBrand("homans");
   if (!brand) return null;
@@ -31,7 +31,7 @@ export default async function CheckoutV2Page({ searchParams }: { searchParams: P
 
   return <>
     <CheckoutHeader brand={brand} />
-    <CheckoutClient variant="accordion" scenario={scenario} demo={params.demo === "1"} brandKey={brand.key} initialAccountId={params.account} />
+    <CheckoutClient variant="accordion" scenario={scenario} demo={params.demo === "1"} brandKey={brand.key} initialAccountId={params.account} fmsg={params.fmsg} />
     <CheckoutFooter brand={brand} />
   </>;
 }

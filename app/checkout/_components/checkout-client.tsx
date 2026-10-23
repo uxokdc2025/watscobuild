@@ -167,10 +167,14 @@ export default function CheckoutClient({
   brandKey = "homans",
   initialAccountId,
   variant = "tabs",
+  fmsg,
 }: {
   scenario?: CheckoutCase;
   demo?: boolean;
   brandKey?: string;
+  /** Demo fulfillment-message mode (?fmsg=…). `all` lands on the open
+   *  Fulfillment step, Delivery tab, so every message is exposed at once. */
+  fmsg?: string;
   /** Account id handed off from the cart page (?account=…); falls back to the
    *  brand default when absent or unknown for this brand. */
   initialAccountId?: string;
@@ -199,8 +203,14 @@ export default function CheckoutClient({
   // 150-mile rule: an out-of-radius default address resolves straight to Freight.
   const initialOutOfRadius =
     brand.radiusRule && !!brand.addresses.find((a) => a.id === initialAddressId)?.outOfRadius;
-  const initialMethod =
-    initialOutOfRadius && brand.methods.includes("freight") ? "freight" : clampedMethod;
+  // `?fmsg=all`: expose every fulfillment message on arrival — open the
+  // Fulfillment step on the Delivery tab (where the date notice lives).
+  const showAllMsgs = fmsg === "all";
+  const initialMethod = showAllMsgs
+    ? firstDeliveryMethod
+    : initialOutOfRadius && brand.methods.includes("freight")
+      ? "freight"
+      : clampedMethod;
 
   // Account is seeded from the cart page's selection (?account=…), falling back
   // to the brand default when absent or not valid for this brand. The
@@ -224,7 +234,7 @@ export default function CheckoutClient({
     toast.success(`Now shopping ${b.name}`);
   };
 
-  const [step, setStep] = React.useState<Step>(cfg.initialStep);
+  const [step, setStep] = React.useState<Step>(showAllMsgs ? "fulfillment" : cfg.initialStep);
   const [submitted, setSubmitted] = React.useState(cfg.submitted);
   const [method, setMethod] = React.useState<FulfillmentMethod>(initialMethod);
 
