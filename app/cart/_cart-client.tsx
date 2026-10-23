@@ -252,7 +252,8 @@ function OrderSummary({
           <label htmlFor="promo-code" className="text-sm font-medium">Promo Code</label>
           <div className="flex gap-2">
             <Input id="promo-code" placeholder="Enter promo code" className="h-9" />
-            <Button type="button" variant="outline" size="sm" className="h-9 px-5">Apply</Button>
+            {/* Muted-blue "inactive" treatment, matching the reference. */}
+            <Button type="button" size="sm" className="h-9 bg-primary/55 px-5 font-medium text-white hover:bg-primary/70">Apply</Button>
           </div>
         </div>
 
