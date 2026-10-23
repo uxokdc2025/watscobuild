@@ -196,14 +196,10 @@ function AccountContextRow({
 function OrderSummary({
   count,
   subtotal,
-  tax,
-  total,
   checkoutHref,
 }: {
   count: number;
   subtotal: number;
-  tax: number;
-  total: number;
   checkoutHref: string;
 }) {
   // Save-for-later is local demo state — toggles the label to confirm the save.
@@ -235,22 +231,20 @@ function OrderSummary({
       <div className="space-y-4 p-5">
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
-            <span className="font-medium">Subtotal:</span>
+            <span className="font-semibold">Subtotal</span>
             <span>{formatUSD(subtotal)}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="font-medium">Estimated Tax:</span>
-            <span>{formatUSD(tax)}</span>
+          <div>
+            <div className="flex justify-between">
+              <span className="font-semibold">Tax (0%)</span>
+              <span>{formatUSD(0)}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">(Final tax will be calculated at checkout)</p>
           </div>
-          <div className="flex justify-between">
-            <span className="font-medium">Estimated Shipping:</span>
-            <span className="text-muted-foreground">Calculated at checkout</span>
+          <div className="flex justify-between border-t pt-3 text-base font-bold">
+            <span>Total</span>
+            <span>{formatUSD(subtotal)}</span>
           </div>
-          <div className="flex justify-between border-b pb-3 text-base font-bold">
-            <span>Total:</span>
-            <span>{formatUSD(total)}</span>
-          </div>
-          <p className="text-xs text-muted-foreground">Shipping and final tax are confirmed at checkout.</p>
         </div>
 
         {/* Promo code */}
@@ -309,8 +303,6 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
   const [accountId, setAccountId] = React.useState(brand.switchAccounts[0].id);
 
   const subtotal = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);
-  const tax = subtotal * brand.taxRate;
-  const total = subtotal + tax;
   const count = lines.reduce((sum, l) => sum + l.quantity, 0);
   const checkoutHref = `/checkout?brand=${brandKey}&demo=1&account=${accountId}`;
 
@@ -384,7 +376,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
                 </section>
               </div>
 
-              <OrderSummary count={count} subtotal={subtotal} tax={tax} total={total} checkoutHref={checkoutHref} />
+              <OrderSummary count={count} subtotal={subtotal} checkoutHref={checkoutHref} />
             </div>
 
             {/* Mobile-only sticky checkout bar — the primary action stays reachable
@@ -396,7 +388,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
               <div className="mx-auto max-w-[var(--layout-max-width)]">
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-muted-foreground">Total</span>
-                  <span className="text-lg font-bold">{formatUSD(total)}</span>
+                  <span className="text-lg font-bold">{formatUSD(subtotal)}</span>
                 </div>
                 <Button asChild className="mt-2 w-full">
                   <Link href={checkoutHref}>Proceed to Checkout</Link>
