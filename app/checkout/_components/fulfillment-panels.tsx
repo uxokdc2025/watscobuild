@@ -167,6 +167,13 @@ export function DeliveryPanel({
   const [addOpen, setAddOpen] = React.useState(false);
   const [bookOpen, setBookOpen] = React.useState(false);
   const [contactPhone, setContactPhone] = React.useState("");
+  // Demo use case `?fmsg=date`: the "subject to change" notice appears below the
+  // Requested delivery date only after the user interacts with the field.
+  const [dateMsgMode, setDateMsgMode] = React.useState(false);
+  const [dateTouched, setDateTouched] = React.useState(false);
+  React.useEffect(() => {
+    setDateMsgMode(new URLSearchParams(window.location.search).get("fmsg") === "date");
+  }, []);
   const defaultGroup = (addresses.find((a) => a.isDefault) ?? addresses[0])?.group ?? "job";
   const groupAddresses = addresses.filter((a) => a.group === defaultGroup).slice(0, 4);
   /* Date gate: methods + Ship complete stay hidden until a delivery date is
@@ -219,15 +226,25 @@ export function DeliveryPanel({
       {/* Requested date, always visible. Peirce's ship date is CSR-confirmed,
           not picked. */}
       {dateMode === "picker" ? (
-        <DateField
-          id="delivery-date"
-          label="Requested delivery date"
-          required
-          value={deliveryDate}
-          onSelect={setDeliveryDate}
-          earliest={earliest}
-          reason={dateReason}
-        />
+        <div onFocusCapture={() => setDateTouched(true)} onClickCapture={() => setDateTouched(true)}>
+          <DateField
+            id="delivery-date"
+            label="Requested delivery date"
+            required
+            value={deliveryDate}
+            onSelect={setDeliveryDate}
+            earliest={earliest}
+            reason={dateReason}
+          />
+          {dateMsgMode && dateTouched ? (
+            <Alert variant="info" className="mt-3 max-w-[560px]">
+              <Info className="size-4" />
+              <AlertDescription>
+                Availability, prices and delivery rates are subject to change.
+              </AlertDescription>
+            </Alert>
+          ) : null}
+        </div>
       ) : (
         <div className="space-y-2">
           <Label htmlFor="delivery-date-csr">Ship date</Label>

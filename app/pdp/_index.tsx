@@ -235,6 +235,7 @@ const CHANGE_LOGS: ChangeLog[] = [
         links: [
           { label: "Global message (above toggle)", href: "/checkout/v2?demo=1&fmsg=global" },
           { label: "Secondary message (under toggle)", href: "/checkout/v2?demo=1&fmsg=secondary" },
+          { label: "On delivery-date click (Delivery tab)", href: "/checkout/v2?demo=1&fmsg=date" },
         ],
       },
     ],
