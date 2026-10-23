@@ -106,13 +106,14 @@ export function FulfillmentSection({
   const onTabChange = (tab: string) => setMethod(tab === "pickup" ? "pickup" : lastDelivery);
 
   // Demo use-case messages: `?fmsg=global` shows a banner ABOVE the toggle,
-  // `?fmsg=secondary` shows one UNDER the toggle, `?fmsg=both` shows both.
+  // `?fmsg=secondary` shows one UNDER the toggle, `?fmsg=both` shows both,
+  // `?fmsg=all` shows all three (global + secondary + the date notice) at once.
   const [fmsg, setFmsg] = React.useState<string | null>(null);
   React.useEffect(() => {
     setFmsg(new URLSearchParams(window.location.search).get("fmsg"));
   }, []);
-  const showGlobal = fmsg === "global" || fmsg === "both";
-  const showSecondary = fmsg === "secondary" || fmsg === "both";
+  const showGlobal = fmsg === "global" || fmsg === "both" || fmsg === "all";
+  const showSecondary = fmsg === "secondary" || fmsg === "both" || fmsg === "all";
   // Messages match the form content width (the "change box"), not full width.
   const globalBanner = showGlobal ? (
     <Alert variant="warning" className="mb-4 max-w-[440px]">

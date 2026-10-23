@@ -231,8 +231,9 @@ const CHANGE_LOGS: ChangeLog[] = [
       },
       {
         title: "Checkout — fulfillment messages (global + secondary)",
-        desc: "Two message slots on the Checkout v2 fulfillment step: a global message above the Pickup / Delivery toggle (e.g. a backordered-item warning) and a secondary message directly under the toggle (e.g. CSR-handled shipping / availability notice). Sample screens for each.",
+        desc: "Two message slots on the Checkout v2 fulfillment step: a global message above the Pickup / Delivery toggle (e.g. a backordered-item warning) and a secondary message directly under the toggle (e.g. CSR-handled shipping / availability notice). Sample screens for each, plus an all-in-one view for dev handoff.",
         links: [
+          { label: "All 3 messages (dev handoff)", href: "/checkout/v2?demo=1&fmsg=all" },
           { label: "Global message (above toggle)", href: "/checkout/v2?demo=1&fmsg=global" },
           { label: "Secondary message (under toggle)", href: "/checkout/v2?demo=1&fmsg=secondary" },
           { label: "On delivery-date click (Delivery tab)", href: "/checkout/v2?demo=1&fmsg=date" },

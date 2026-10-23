@@ -169,10 +169,13 @@ export function DeliveryPanel({
   const [contactPhone, setContactPhone] = React.useState("");
   // Demo use case `?fmsg=date`: the "subject to change" notice appears below the
   // Requested delivery date only after the user interacts with the field.
+  // `?fmsg=all` shows it immediately (devs need all three messages visible at once).
   const [dateMsgMode, setDateMsgMode] = React.useState(false);
   const [dateTouched, setDateTouched] = React.useState(false);
   React.useEffect(() => {
-    setDateMsgMode(new URLSearchParams(window.location.search).get("fmsg") === "date");
+    const v = new URLSearchParams(window.location.search).get("fmsg");
+    setDateMsgMode(v === "date" || v === "all");
+    if (v === "all") setDateTouched(true);
   }, []);
   const defaultGroup = (addresses.find((a) => a.isDefault) ?? addresses[0])?.group ?? "job";
   const groupAddresses = addresses.filter((a) => a.group === defaultGroup).slice(0, 4);
