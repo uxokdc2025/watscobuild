@@ -204,30 +204,41 @@ function OrderSummary({
 }) {
   // Save-for-later is local demo state — toggles the label to confirm the save.
   const [saved, setSaved] = React.useState(false);
+  // ?summary=2 — Save / Share sit in a full-width band under the header
+  // (like the V1 mini-cart) instead of inline in the header row.
+  const [sumV2, setSumV2] = React.useState(false);
+  React.useEffect(() => {
+    setSumV2(new URLSearchParams(window.location.search).get("summary") === "2");
+  }, []);
+  const saveBtn = (full: boolean) => (
+    <Button type="button" variant="ghost" size="sm" aria-pressed={saved} onClick={() => setSaved(true)}>
+      {saved ? <Check className="size-4" aria-hidden="true" /> : <Bookmark className="size-4" aria-hidden="true" />}
+      {saved ? (full ? "Cart Saved" : "Saved") : full ? "Save Cart" : "Save"}
+    </Button>
+  );
+  const shareBtn = (full: boolean) => (
+    <Button type="button" variant="ghost" size="sm">
+      <Share2 className="size-4" aria-hidden="true" />
+      {full ? "Share Cart" : "Share"}
+    </Button>
+  );
   return (
     <aside className="h-fit overflow-hidden rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
-      {/* Header — Save / Share pinned to the right, matching the V2 mini-cart header. */}
+      {/* Header — V2 default: Save / Share inline, right of the title. */}
       <div className="flex items-center justify-between gap-2 border-b bg-muted/60 px-5 py-2.5">
         <h2 className="text-base font-semibold">
           Order Summary ({count} {count === 1 ? "Item" : "Items"})
         </h2>
-        <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            aria-pressed={saved}
-            onClick={() => setSaved(true)}
-          >
-            {saved ? <Check className="size-4" aria-hidden="true" /> : <Bookmark className="size-4" aria-hidden="true" />}
-            {saved ? "Saved" : "Save"}
-          </Button>
-          <Button type="button" variant="ghost" size="sm">
-            <Share2 className="size-4" aria-hidden="true" />
-            Share
-          </Button>
-        </div>
+        {!sumV2 ? <div className="flex items-center gap-1">{saveBtn(false)}{shareBtn(false)}</div> : null}
       </div>
+      {/* Alt version: Save Cart | Share Cart as a full-width band under the header. */}
+      {sumV2 ? (
+        <div className="flex items-center justify-center gap-2 border-b py-2">
+          {saveBtn(true)}
+          <span aria-hidden className="h-4 w-px bg-border" />
+          {shareBtn(true)}
+        </div>
+      ) : null}
       <div className="space-y-4 p-5">
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
