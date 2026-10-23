@@ -14,12 +14,12 @@ import {
   Package,
   Plus,
   Share2,
-  ShieldCheck,
   TriangleAlert,
   X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import { getBrandCheckout } from "../checkout/_lib/brand-checkout";
@@ -246,20 +246,23 @@ function OrderSummary({
             <span className="font-medium">Estimated Shipping:</span>
             <span className="text-muted-foreground">Calculated at checkout</span>
           </div>
-          <div className="flex justify-between pt-1 font-bold">
+          <div className="flex justify-between border-b pb-3 text-base font-bold">
             <span>Total:</span>
             <span>{formatUSD(total)}</span>
           </div>
           <p className="text-xs text-muted-foreground">Shipping and final tax are confirmed at checkout.</p>
         </div>
 
-        <div className="rounded-md bg-muted/50 p-3 text-xs leading-5 text-muted-foreground">
-          <ShieldCheck className="mr-1 inline size-4 text-in-stock" aria-hidden="true" />
-          Review fulfillment, payment, and delivery on the next step — nothing is charged yet.
+        {/* Promo code */}
+        <div className="space-y-2">
+          <label htmlFor="promo-code" className="text-sm font-medium">Promo Code</label>
+          <div className="flex gap-2">
+            <Input id="promo-code" placeholder="Enter promo code" className="h-9" />
+            <Button type="button" variant="outline" size="sm" className="h-9 px-5">Apply</Button>
+          </div>
         </div>
 
-        {/* Action stack — the same funnel order as the V2 mini-cart:
-            Checkout (primary) → Create Proposal → quiet Save / Share. */}
+        {/* Action stack — the same funnel order as the V2 mini-cart. */}
         <div className="flex flex-col gap-2.5">
           {/* Primary also lives in the mobile sticky bar; shown here on desktop. */}
           <Button asChild className="hidden w-full lg:inline-flex">
@@ -272,6 +275,9 @@ function OrderSummary({
             </Link>
           </Button>
         </div>
+        <p className="text-xs leading-5 text-muted-foreground">
+          Quickly create professional proposals for your customers using the products in your cart. Save time and close more deals with SimpleProposal.
+        </p>
       </div>
     </aside>
   );
