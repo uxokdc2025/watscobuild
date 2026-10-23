@@ -252,7 +252,7 @@ function OrderSummary({
             </div>
             <p className="text-xs text-muted-foreground">(Final tax will be calculated at checkout)</p>
           </div>
-          <div className="flex justify-between border-y py-3 text-base font-bold">
+          <div className="flex justify-between border-b pb-3 text-base font-bold">
             <span>Total</span>
             <span>{formatUSD(subtotal)}</span>
           </div>
