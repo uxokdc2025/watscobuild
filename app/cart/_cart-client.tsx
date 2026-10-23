@@ -3,14 +3,17 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  Bookmark,
   Check,
   ChevronLeft,
+  FilePlus2,
   House,
   ImageOff,
   MapPin,
   Minus,
   Package,
   Plus,
+  Share2,
   ShieldCheck,
   TriangleAlert,
   X,
@@ -238,14 +241,25 @@ function OrderSummary({
           Review fulfillment, payment, and delivery on the next step — nothing is charged yet.
         </div>
 
-        {/* Button pair — secondary LEFT (save for later), primary RIGHT, equal
-            width. Continue-shopping is covered by the "Back to shopping" crumb. */}
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        {/* Action stack — the same funnel order as the V2 mini-cart:
+            Checkout (primary) → Create Proposal → quiet Save / Share. */}
+        <div className="flex flex-col gap-2.5">
+          {/* Primary also lives in the mobile sticky bar; shown here on desktop. */}
+          <Button asChild className="hidden w-full lg:inline-flex">
+            <Link href={checkoutHref}>Proceed to Checkout</Link>
+          </Button>
+          <Button asChild variant="tertiary" className="w-full">
+            <Link href="/dashboard/proposals?signedin=1">
+              <FilePlus2 className="size-4" aria-hidden="true" />
+              Create Proposal
+            </Link>
+          </Button>
+        </div>
+        <div className="mt-2 flex items-center justify-center gap-2 border-t pt-2.5">
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="w-full"
             aria-pressed={saved}
             onClick={() => setSaved(true)}
           >
@@ -255,12 +269,15 @@ function OrderSummary({
                 Cart Saved
               </>
             ) : (
-              "Save Cart"
+              <>
+                <Bookmark className="size-4" aria-hidden="true" />
+                Save Cart
+              </>
             )}
           </Button>
-          {/* Primary lives in the mobile sticky bar; shown here on desktop only. */}
-          <Button asChild size="sm" className="hidden w-full lg:inline-flex">
-            <Link href={checkoutHref}>Proceed to Checkout</Link>
+          <Button type="button" variant="ghost" size="sm">
+            <Share2 className="size-4" aria-hidden="true" />
+            Share Cart
           </Button>
         </div>
       </div>
