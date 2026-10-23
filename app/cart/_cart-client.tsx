@@ -210,10 +210,27 @@ function OrderSummary({
   const [saved, setSaved] = React.useState(false);
   return (
     <aside className="h-fit overflow-hidden rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
-      <div className="border-b bg-muted/60 px-5 py-3">
+      {/* Header — Save / Share pinned to the right, matching the V2 mini-cart header. */}
+      <div className="flex items-center justify-between gap-2 border-b bg-muted/60 px-5 py-2.5">
         <h2 className="text-base font-semibold">
           Order Summary ({count} {count === 1 ? "Item" : "Items"})
         </h2>
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-pressed={saved}
+            onClick={() => setSaved(true)}
+          >
+            {saved ? <Check className="size-4" aria-hidden="true" /> : <Bookmark className="size-4" aria-hidden="true" />}
+            {saved ? "Saved" : "Save"}
+          </Button>
+          <Button type="button" variant="ghost" size="sm">
+            <Share2 className="size-4" aria-hidden="true" />
+            Share
+          </Button>
+        </div>
       </div>
       <div className="space-y-4 p-5">
         <div className="space-y-3 text-sm">
@@ -253,31 +270,6 @@ function OrderSummary({
               <FilePlus2 className="size-4" aria-hidden="true" />
               Create Proposal
             </Link>
-          </Button>
-        </div>
-        <div className="mt-2 flex items-center justify-center gap-2 border-t pt-2.5">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            aria-pressed={saved}
-            onClick={() => setSaved(true)}
-          >
-            {saved ? (
-              <>
-                <Check className="size-4" aria-hidden="true" />
-                Cart Saved
-              </>
-            ) : (
-              <>
-                <Bookmark className="size-4" aria-hidden="true" />
-                Save Cart
-              </>
-            )}
-          </Button>
-          <Button type="button" variant="ghost" size="sm">
-            <Share2 className="size-4" aria-hidden="true" />
-            Share Cart
           </Button>
         </div>
       </div>
@@ -366,7 +358,7 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
 
             {/* Left column carries the account context + Items; the Order Summary
                 sits in the right column and rises to align with the account row. */}
-            <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_440px]">
               <div className="min-w-0 space-y-4">
                 <AccountContextRow brandKey={brandKey} accountId={accountId} onSelectAccount={setAccountId} />
                 <section className="rounded-md border bg-background shadow-sm">
