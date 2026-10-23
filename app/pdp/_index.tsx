@@ -207,6 +207,13 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
+        title: "Cart — V2 button hierarchy (matches mini cart)",
+        desc: "Carried the V2 mini-cart funnel into the full cart’s Order Summary: Proceed to Checkout stays the one primary, Create Proposal drops to a design-system tertiary button, and Save Cart / Share Cart become quiet ghost buttons with icons — same component treatment as the mini cart, per the client’s “match V2” note.",
+        links: [
+          { label: "Cart (V2 buttons)", href: "/cart?demo=1" },
+        ],
+      },
+      {
         title: "Homans header — reorg pass",
         desc: "Flattened the “Your Branch” selector (no filled box) to two lines — “Your Branch · Open now” over the branch name. Narrowed the search and opened up the spacing across the top bar. Moved Quick Order into the More Tools dropdown, removed Services and Find a Local Dealer from the nav, and pinned Warranty Center + Help & Support (with icons) to the right of the dark nav bar.",
         links: [
