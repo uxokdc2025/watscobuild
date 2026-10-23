@@ -237,7 +237,7 @@ export function DeliveryPanel({
             reason={dateReason}
           />
           {dateMsgMode && dateTouched ? (
-            <Alert variant="info" className="mt-3 max-w-[560px]">
+            <Alert variant="info" className="mt-3 w-fit max-w-full">
               <Info className="size-4" />
               <AlertDescription>
                 Availability, prices and delivery rates are subject to change.
