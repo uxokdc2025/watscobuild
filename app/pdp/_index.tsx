@@ -207,10 +207,11 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Cart — V2 button hierarchy (matches mini cart)",
-        desc: "Carried the V2 mini-cart funnel into the full cart’s Order Summary: Proceed to Checkout stays the one primary, Create Proposal drops to a design-system tertiary button, and Save Cart / Share Cart become quiet ghost buttons with icons — same component treatment as the mini cart, per the client’s “match V2” note.",
+        title: "Cart — Order Summary to match V2 (two versions)",
+        desc: "Carried the V2 mini-cart funnel into the full cart’s Order Summary: Proceed to Checkout stays the one primary, Create Proposal is a DS tertiary button, and Save / Share are quiet ghost buttons. Widened the summary, added a Promo Code row (muted-blue Apply), matched the totals exactly (Subtotal · Tax (0%) $0.00 with the “final tax at checkout” note · Total, one line under Total), dropped the “review fulfillment” note, and added the SimpleProposal “quickly create” copy. Two placements for Save / Share: V1 inline in the header, V2 as a full-width band under the header.",
         links: [
-          { label: "Cart (V2 buttons)", href: "/cart?demo=1" },
+          { label: "Cart V1 (Save/Share in header)", href: "/cart?demo=1" },
+          { label: "Cart V2 (Save/Share band under header)", href: "/cart?demo=1&summary=2" },
         ],
       },
       {
