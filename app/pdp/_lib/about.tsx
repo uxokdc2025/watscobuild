@@ -41,7 +41,6 @@ import {
   type PartItem,
   type PdpDocument,
   type PdpProduct,
-  type SpecGroup,
   type SpecRow,
 } from "./types";
 import { PartsGrid } from "./parts";
@@ -106,14 +105,6 @@ function SpecRows({ rows }: { rows: SpecRow[] }) {
   );
 }
 
-function SpecGroupCard({ group }: { group: SpecGroup }) {
-  return (
-    <div className="mb-4 break-inside-avoid overflow-hidden rounded-lg border">
-      <div className="bg-muted px-4 py-2.5 text-sm font-bold">{group.title}</div>
-      <SpecRows rows={group.rows} />
-    </div>
-  );
-}
 
 function Description({ product }: { product: PdpProduct }) {
   return (
@@ -168,23 +159,19 @@ function Specifications({ product }: { product: PdpProduct }) {
     [f],
   );
 
-  // Source groups (rich productSpecs → left/right specGroups) vs a flat list.
-  const sourceGroups: SpecGroup[] = product.productSpecs?.length
-    ? product.productSpecs
-    : product.specsFlat?.length
-      ? []
-      : [...(product.specGroupsLeft ?? []), ...(product.specGroupsRight ?? [])];
-
-  const groups = sourceGroups
-    .map((g) => ({ ...g, rows: g.rows.filter(match) }))
-    .filter((g) => g.rows.length);
-  const flat = (product.specsFlat ?? []).filter(match);
-  // Split the flat list into two balanced columns so it fills the width.
-  const mid = Math.ceil(flat.length / 2);
-  const flatCols = [flat.slice(0, mid), flat.slice(mid)];
-
-  const hasGrouped = groups.length > 0;
-  const hasFlat = !hasGrouped && flat.length > 0;
+  // Attribute grouping isn't available yet, so all specs render as ONE flat
+  // list (no category headers). Gather every row from whichever shape the
+  // product ships, then split into two balanced columns so the table fills
+  // the width instead of stretching one row edge to edge.
+  const allRows: SpecRow[] = (
+    product.productSpecs?.length
+      ? product.productSpecs.flatMap((g) => g.rows)
+      : product.specsFlat?.length
+        ? product.specsFlat
+        : [...(product.specGroupsLeft ?? []), ...(product.specGroupsRight ?? [])].flatMap((g) => g.rows)
+  ).filter(match);
+  const mid = Math.ceil(allRows.length / 2);
+  const cols = [allRows.slice(0, mid), allRows.slice(mid)];
 
   return (
     <div>
@@ -200,17 +187,10 @@ function Specifications({ product }: { product: PdpProduct }) {
         />
       </div>
       <div className="mt-4">
-        {hasGrouped ? (
-          // Grouped: flow the group cards into two columns.
-          <div className="lg:columns-2 lg:gap-4">
-            {groups.map((g) => (
-              <SpecGroupCard key={g.title} group={g} />
-            ))}
-          </div>
-        ) : hasFlat ? (
-          // Flat: two balanced bordered columns, tinted key column in each.
+        {allRows.length ? (
+          // Two balanced bordered columns, tinted key column in each.
           <div className="grid gap-4 lg:grid-cols-2">
-            {flatCols.map((rows, i) =>
+            {cols.map((rows, i) =>
               rows.length ? (
                 <div key={i} className="self-start overflow-hidden rounded-lg border">
                   <SpecRows rows={rows} />

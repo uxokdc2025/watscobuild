@@ -11,21 +11,16 @@ import {
   ScanLine,
   Smartphone,
   Sparkles,
-  Truck,
-  Wrench,
   type LucideIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
   LargeBanner,
-  MiniBanner,
   CategoryTileGrid,
-  BrandTiles,
   SideBySideImage,
   ContentCards,
   type Tile,
-  type BrandTile,
   type ContentCard,
   type AdPanel,
 } from "@/components/category-landing";
@@ -34,24 +29,26 @@ import {
    Brand home — a reskin shell. Takes a distributor home page's content and
    re-renders it on OUR design system using the Category Landing CMS blocks,
    so every brand's home reads as one system (depth, card treatments, tokens).
-   A clone-bones reskin: the structure + content are kept, the source brand art
-   and third-party manufacturer logos are dropped for our tokens + image pool.
+   A clone-bones reskin: the content is the source site's VERBATIM copy; only
+   the source brand art + third-party manufacturer logos are dropped for our
+   tokens + image pool.
    ════════════════════════════════════════════════════════════════════════ */
 
 export type HomeService = { title: string; copy: string; cta: string; icon: LucideIcon };
 
 export type HomeContent = {
-  hero: { kicker: string; title: string; copy: string; cta: { label: string; href: string }; images: string[] };
+  hero: { kicker?: string; title: string; copy: string; cta: { label: string; href: string }; images: string[] };
   specials: string[];
   categoriesHeading: string;
   categories: Tile[];
   servicesHeading: string;
+  servicesSub?: string;
   services: HomeService[];
-  twoUp: { left: AdPanel; right: AdPanel };
+  twoUp?: { left: AdPanel; right: AdPanel };
   brandsHeading: string;
   brandsCopy: string;
-  brands: BrandTile[];
-  partner: { title: string; copy: string; cta: { label: string; href: string } };
+  brandsCta: string;
+  partner: { title: string; copy: string; cta?: { label: string; href: string } };
 };
 
 export function BrandHome({ brandKey }: { brandKey: string }) {
@@ -60,6 +57,7 @@ export function BrandHome({ brandKey }: { brandKey: string }) {
   const serviceCards: ContentCard[] = content.services.map((s) => ({
     title: s.title,
     copy: s.copy,
+    cta: s.cta,
     href: "#",
     icon: s.icon,
   }));
@@ -93,50 +91,35 @@ export function BrandHome({ brandKey }: { brandKey: string }) {
       <CategoryTileGrid heading={content.categoriesHeading} tiles={content.categories} />
 
       {/* Services / tools */}
-      <ContentCards heading={content.servicesHeading} cards={serviceCards} />
+      <ContentCards heading={content.servicesHeading} subheading={content.servicesSub} cards={serviceCards} />
 
-      {/* Two-up content block */}
-      <SideBySideImage left={content.twoUp.left} right={content.twoUp.right} />
+      {/* Two-up content block (only where the source page has one) */}
+      {content.twoUp ? <SideBySideImage left={content.twoUp.left} right={content.twoUp.right} /> : null}
 
-      {/* Trusted brands */}
+      {/* Trusted brands — the source's exact copy + its shop-brands CTA */}
       <section aria-label={content.brandsHeading} className="space-y-4">
-        <div className="max-w-2xl">
+        <div className="max-w-3xl">
           <h2 className="text-xl font-bold tracking-tight">{content.brandsHeading}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{content.brandsCopy}</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{content.brandsCopy}</p>
         </div>
-        <BrandTiles heading="" brands={content.brands} />
+        <Button asChild variant="outline">
+          <Link href="#">{content.brandsCta}</Link>
+        </Button>
       </section>
 
-      {/* Partner / CTA */}
-      <LargeBanner
-        tone="navy"
-        kicker="Trade professionals"
-        title={content.partner.title}
-        copy={content.partner.copy}
-        cta={content.partner.cta}
-      />
-
-      <MiniBanner
-        items={[
-          { icon: Truck, text: "Fast delivery and dockside pickup at your branch" },
-          { icon: Package, text: "Live inventory and pricing for trade accounts" },
-        ]}
-        cta={{ label: "Open an account", href: "#" }}
-      />
+      {/* Partner / mission */}
+      <LargeBanner tone="navy" title={content.partner.title} copy={content.partner.copy} cta={content.partner.cta} />
     </div>
   );
 }
 
-/* ── Shared icon pool for service cards ── */
-const ICON = { Smartphone, ScanLine, LifeBuoy, FileText, CalendarCheck, Wrench, Boxes, Package, Sparkles } as const;
-
-/* ════════════════ Peirce-Phelps — content reskinned ════════════════ */
+/* ════════════════ Peirce-Phelps — content (verbatim) ════════════════ */
 export const PEIRCE_HOME: HomeContent = {
   hero: {
-    kicker: "Quarterly Special · Now Stocking",
-    title: "Serving contractors for 100 years",
-    copy: "High-quality HVAC/R equipment, parts, supplies, and tools at 20+ locations across PA, NJ, and DE.",
-    cta: { label: "Shop the specials", href: "#" },
+    kicker: "Now Stocking",
+    title: "Quarterly Special",
+    copy: "Oct. 1st – Dec. 31st, 2026",
+    cta: { label: "Click here to order now", href: "#" },
     images: ["/category-tiles/gas-furnace-t.png", "/category-tiles/small-packaged-t.png"],
   },
   specials: [
@@ -162,40 +145,35 @@ export const PEIRCE_HOME: HomeContent = {
   ],
   servicesHeading: "Our Services",
   services: [
-    { title: "OnCall Air", copy: "Sales software with AHRI match-ups, live inventory, dynamic pricing, and a proposal builder.", cta: "Boost a proposal", icon: ICON.FileText },
-    { title: "Housecall Pro", copy: "Top-rated field-service software with smart scheduling, online booking, and fast payments.", cta: "Run your business", icon: ICON.CalendarCheck },
-    { title: "Amply", copy: "LiDAR scans, ACCA load calcs, and AR visualization make design and Manual J fast and accurate.", cta: "Explore Amply", icon: ICON.ScanLine },
-    { title: "Wingman", copy: "In the HVAC Pro+ mobile app for faster support and priority service.", cta: "See how it works", icon: ICON.LifeBuoy },
-    { title: "AHRI System Builder", copy: "Matched systems made easy with real-time inventory and pricing.", cta: "Build a system", icon: ICON.Sparkles },
-    { title: "FlashClaim", copy: "Submit warranty claims, receive approvals, and create replacement orders without the back-and-forth.", cta: "Start a claim", icon: ICON.Boxes },
+    { title: "OnCall Air", copy: "HVAC sales software with AHRI match-ups, live inventory, dynamic pricing, and proposal builder.", cta: "Boost a Proposal", icon: FileText },
+    { title: "Housecall Pro", copy: "Top-rated field service software for trades with smart scheduling, online booking, and fast payments.", cta: "Run Your Business Better", icon: CalendarCheck },
+    { title: "Amply", copy: "LiDAR scans, ACCA load calculations, and AR visualization make design and Manual J fast and accurate.", cta: "Explore Amply", icon: ScanLine },
+    { title: "Wingman", copy: "Wingman in the HVAC Pro+ Mobile App for faster support and priority service.", cta: "See How It Works", icon: LifeBuoy },
+    { title: "AHRI System Builder", copy: "Matched Systems made easy with real-time inventory and pricing.", cta: "Build a System", icon: Sparkles },
+    { title: "FlashClaim", copy: "FlashClaim, contractors can take control—submit claims, receive approvals, and create replacement orders without the back-and-forth.", cta: "Start a Claim", icon: Boxes },
   ],
-  twoUp: {
-    left: { image: "/guide-images/sizing.jpg", eyebrow: "Design & sizing", title: "Match a system in minutes", copy: "Real-time AHRI match-ups with live inventory and pricing.", cta: { label: "Build a system", href: "#" } },
-    right: { image: "/guide-images/furnace.jpg", eyebrow: "Preseason", title: "Now stocking for the season", copy: "Get ahead of demand with in-stock equipment at your branch.", cta: { label: "Shop preseason", href: "#" } },
-  },
   brandsHeading: "Our Trusted Brands",
-  brandsCopy: "Shop from the industry's most reliable brands and manufacturers — you're sure to find what you're looking for.",
-  brands: [
-    { label: "Carrier" }, { label: "Viessmann" }, { label: "Mitsubishi" }, { label: "Bryant" }, { label: "Honeywell" }, { label: "Aprilaire" },
-  ],
+  brandsCopy:
+    "Peirce Phelps provides high quality HVAC/R equipment, parts, supplies, and tools to contractors at over 20 locations across Pennsylvania, New Jersey, and Delaware. With some of the most well-known brands in the HVAC/R industry, you're sure to find what you're looking for. Shop from the industry's most reliable brands and manufacturers.",
+  brandsCta: "View Our Brands",
   partner: {
     title: "Partner with Peirce-Phelps",
-    copy: "We sell to HVAC trade professionals within our territory. Credit accounts and payment terms are subject to approval.",
-    cta: { label: "Become a dealer", href: "#" },
+    copy: "Peirce-Phelps only sells to HVAC trade professionals and service organizations within its geographic territory and not sell directly to homeowners. Some HVAC manufacturer's equipment may be restricted without supplying a contractor's license and credit accounts & payment terms are subject to Credit Approval",
+    cta: { label: "Become a Peirce-Phelps Dealer", href: "#" },
   },
 };
 
-/* ════════════════ East Coast Metal — content reskinned ════════════════ */
+/* ════════════════ East Coast Metal — content (verbatim) ════════════════ */
 export const ECM_HOME: HomeContent = {
   hero: {
-    kicker: "Save on select products · Limited time",
-    title: "The HVAC supplier of choice since 1954",
-    copy: "The quality HVAC products you need, when you need them — plus expert technical support before, during, and after the sale.",
-    cta: { label: "Save now", href: "#" },
+    kicker: "HVAC Supplier of Choice",
+    title: "Save on Select Products!",
+    copy: "For a limited time and while supplies last.",
+    cta: { label: "Save Now", href: "#" },
     images: ["/category-tiles/air-conditioner-t.png", "/category-tiles/heat-pump-t.png"],
   },
   specials: ["Google Nest Savings", "Crocodile Cloth", "Pro Deals", "Ductless Solutions"],
-  categoriesHeading: "Shop by Category",
+  categoriesHeading: "Serving the HVAC Industry Since 1954",
   categories: [
     { label: "HVAC Equipment", image: "/category-tiles/air-conditioner-t.png", href: "#" },
     { label: "Ductless & Mini-Splits", image: "/category-tiles/ductless-t.png", href: "#" },
@@ -210,26 +188,37 @@ export const ECM_HOME: HomeContent = {
     { label: "Supplies", image: "/category-tiles/gas-furnace-t.png", href: "#" },
     { label: "Smart Home", image: "/category-tiles/heat-pump-t.png", href: "#" },
   ],
-  servicesHeading: "Premium Tools for Fast Ordering",
+  servicesHeading: "Premium Tools For Fast Ordering",
+  servicesSub: "These tools are designed to make your ordering process faster, simpler, and better organized.",
   services: [
-    { title: "HVAC Pro+ Mobile App", copy: "Product info and easy-to-use tools while you're on the go.", cta: "Learn more", icon: ICON.Smartphone },
-    { title: "SimpleStock", copy: "Inventory and truck-stock replenishment right from your tablet or phone.", cta: "Learn more", icon: ICON.ScanLine },
-    { title: "Dockside Pickup", copy: "Skip the counter for quicker, more convenient contactless pickup.", cta: "Learn more", icon: ICON.Package },
-    { title: "Order Templates", copy: "Save lists of commonly ordered products for fast, organized reordering.", cta: "Learn more", icon: ICON.FileText },
+    { title: "HVAC Pro+™ Mobile App", copy: "Our mobile app provides access to product info and easy to use tools while on the go.", cta: "Learn More", icon: Smartphone },
+    { title: "SimpleStock", copy: "Inventory and truck stock replenishment, right from your tablet or mobile phone.", cta: "Learn More", icon: ScanLine },
+    { title: "Dockside Pickup", copy: "Skip the counter for quicker, more convenient contactless pickup.", cta: "Learn More", icon: Package },
+    { title: "Order Templates", copy: "Save lists of commonly ordered products for easy reference when you need to reorder.", cta: "Learn More", icon: FileText },
   ],
   twoUp: {
-    left: { image: "/guide-images/r454b.jpg", eyebrow: "The blog", title: "Check out our blog", copy: "Expert tech tips, industry news, tutorials, and product troubleshooting.", cta: { label: "Read now", href: "#" } },
-    right: { image: "/guide-images/sizing.jpg", eyebrow: "Training", title: "Grow your skillset", copy: "Certified technical reps, onsite training events, and an on-demand video library.", cta: { label: "Start learning", href: "#" } },
+    left: {
+      image: "/guide-images/r454b.jpg",
+      eyebrow: "Check Out Our Blog",
+      title: "Check Out Our Blog",
+      copy: "Catch up with us. Stay current on what matters to you with expert blog posts, HVAC industry news, tech tips, tutorials, product troubleshooting tips, and more! Be sure to check out our monthly series of Tech Tips blog posts written by members of our Technical Service Team.",
+      cta: { label: "Read Now", href: "#" },
+    },
+    right: {
+      image: "/guide-images/sizing.jpg",
+      eyebrow: "Grow Your Skillset",
+      title: "Grow Your Skillset",
+      copy: "We're here to help. We have certified Technical Service Representatives available to help solve the problem at hand, keep you up-to-date on products, and offer helpful troubleshooting tips. Attend one of our scheduled onsite training events or view our video library for technical training on your own time.",
+      cta: { label: "Start Learning", href: "#" },
+    },
   },
   brandsHeading: "Brands We Trust",
-  brandsCopy: "We partner with the most trusted, highest-quality HVAC manufacturers so your customers get quality equipment, supplies, parts, and tools.",
-  brands: [
-    { label: "Carrier" }, { label: "Rheem" }, { label: "Mitsubishi" }, { label: "Honeywell" }, { label: "Copeland" }, { label: "Aprilaire" },
-  ],
+  brandsCopy:
+    "We take HVAC equipment, supplies, parts, and tools seriously, and we know your customers depend on you for quality goods. That's why we partner with the most trusted and highest quality HVAC manufacturers in the heating and cooling industry to offer you quality equipment, supplies, parts, and tools.",
+  brandsCta: "Shop By Brand",
   partner: {
-    title: "HVAC products you need, when you need them",
-    copy: "Our products, branches, and technical support combine to give you exceptional service — our commitment to you, every day.",
-    cta: { label: "Open an account", href: "#" },
+    title: "HVAC Products You Need, When You Need Them",
+    copy: "Our mission is to deliver the quality HVAC products you need, when you need them, and provide expert technical support. Our products, branches, and technical support combine to give you exceptional service before, during, and after the sale. This is our commitment to you. We are dedicated to fulfilling this commitment every single day. We are confident in our team and our products, and we're proud to have the opportunity to serve you.",
   },
 };
 

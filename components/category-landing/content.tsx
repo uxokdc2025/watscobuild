@@ -12,19 +12,22 @@ import { cn } from "@/lib/utils";
 
 /* ── Content Cards (buyer's guides) ────────────────────────────────────
  * Three editorial cards: icon, title, blurb, "read" link. */
-export type ContentCard = { title: string; copy: string; href: string; icon?: LucideIcon; image?: string };
+export type ContentCard = { title: string; copy: string; href: string; icon?: LucideIcon; image?: string; cta?: string };
 export function ContentCards({
   heading = "Buyer’s Guides",
+  subheading,
   cards,
   className,
 }: {
   heading?: string;
+  subheading?: string;
   cards: ContentCard[];
   className?: string;
 }) {
   return (
     <section aria-label={heading} className={className}>
-      <h2 className="mb-3 text-xl font-bold tracking-tight">{heading}</h2>
+      <h2 className="mb-1 text-xl font-bold tracking-tight">{heading}</h2>
+      {subheading ? <p className="mb-3 text-sm text-muted-foreground">{subheading}</p> : <div className="mb-3" />}
       <ul className="grid gap-3 sm:grid-cols-3">
         {cards.map((c) => (
           <li key={c.title}>
@@ -47,7 +50,7 @@ export function ContentCards({
                 <span className={cn("block font-semibold leading-tight text-foreground group-hover:text-primary", c.icon && !c.image && "mt-3")}>{c.title}</span>
                 <span className="mt-1 block text-sm text-muted-foreground">{c.copy}</span>
                 <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                  Read guide <ArrowRight className="size-4 transition group-hover:translate-x-0.5" aria-hidden />
+                  {c.cta ?? "Read guide"} <ArrowRight className="size-4 transition group-hover:translate-x-0.5" aria-hidden />
                 </span>
               </span>
             </Link>
