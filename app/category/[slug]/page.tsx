@@ -4,6 +4,7 @@ import { getBrand } from "../../pdp/_lib/brands";
 import { SiteFooter, SiteHeader } from "../../pdp/_lib/chrome";
 import { PdpAuthProvider } from "../../pdp/_lib/auth";
 import { CategoryLanding, CategoryLandingV2 } from "./category-landing";
+import { CategoryJump } from "./category-jump";
 
 type SearchParams = { signedin?: string; v?: string };
 type Params = { slug: string };
@@ -46,7 +47,9 @@ export default async function CategoryLandingPage({
       <div className="min-h-svh bg-background">
         <SiteHeader brand={brand} signedIn={signedIn} />
         <main>
-          {v === "2" ? (
+          {v === "jump" ? (
+            <CategoryJump title={titleFor(slug)} />
+          ) : v === "2" ? (
             <CategoryLandingV2 title={titleFor(slug)} />
           ) : (
             <CategoryLanding title={titleFor(slug)} />

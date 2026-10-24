@@ -256,8 +256,9 @@ const CHANGE_LOGS: ChangeLog[] = [
       },
       {
         title: "Category impact designs — V1",
-        desc: "A category experience in two parts. First, the category view reuses exactly the PLP we have for the product grid but adds a different top — a horizontally-scrolling row of circular category tiles (image + label). Second, clicking a tile opens a fully merchandised category landing page (promo carousel, product rows, a system bundle, and promo banners) — shown here for Air Conditioners. Image tiles for every category section are being built out.",
+        desc: "A category experience in parts. The “Jump” page is what a top-level category (e.g. Residential) links to: a banner + a grid of category tiles that forces a subcategory choice before any product grid (Walmart /cp/electronics pattern), with light merchandising below — top sellers, buyer’s guides, brands — never a filterable results grid first. Selecting a tile opens the merchandised category landing (promo carousel, product rows, a system bundle, promo banners), shown here for Air Conditioners in V1 and an Autumn V2.",
         links: [
+          { label: "Jump page (Residential) — pick a category first", href: "/category/residential?v=jump&signedin=1" },
           { label: "Category Scroller (Residential)", href: "/search?brand=homans&category=residential&signedin=1" },
           { label: "Category Landing V1 (Air Conditioners)", href: "/category/air-conditioners?signedin=1" },
           { label: "Category Landing V2 — Autumn (Air Conditioners)", href: "/category/air-conditioners?v=2&signedin=1" },
