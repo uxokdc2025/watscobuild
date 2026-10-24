@@ -3,8 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CategoryTileGrid, BrandTiles, type Tile, type BrandTile } from "@/components/category-landing";
+import type { Tile, BrandTile } from "@/components/category-landing";
 
 /* ════════════════════════════════════════════════════════════════════════
    Brand home — the Watsco Home-page Figma designs (ECM + Peirce) implemented
@@ -33,8 +34,9 @@ export type HomeContent = {
   partner: { title: string; copy: string; cta?: string };
 };
 
-/* A light auto-rotating hero carousel over the design's promo slides. */
-function Hero({ images }: { images: string[] }) {
+/* Hero carousel + our carousel tab-bar. The specials labels are the slide
+   controls (active = primary); auto-rotates and the active tab follows. */
+function HeroCarousel({ images, tabs }: { images: string[]; tabs: string[] }) {
   const [i, setI] = React.useState(0);
   const n = images.length;
   React.useEffect(() => {
@@ -42,45 +44,75 @@ function Hero({ images }: { images: string[] }) {
     const t = setInterval(() => setI((p) => (p + 1) % n), 6000);
     return () => clearInterval(t);
   }, [n]);
+  // One tab per slide, so the bar stays in sync with the carousel images.
+  const slideTabs = images.map((_, idx) => tabs[idx] ?? `Slide ${idx + 1}`);
   return (
-    <section aria-label="Featured" aria-roledescription="carousel" className="relative overflow-hidden rounded-xl border bg-muted">
-      <div className="relative aspect-[1728/540] w-full">
+    <section aria-label="Featured" aria-roledescription="carousel">
+      {/* Hero and its tab-bar are one attached unit so the connection is obvious. */}
+      <div className="relative aspect-[1728/540] w-full overflow-hidden rounded-t-xl border border-b-0 bg-muted">
         {images.map((src, idx) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={src}
             src={src}
             alt=""
-            className={`absolute inset-0 size-full object-cover transition-opacity duration-500 ${idx === i ? "opacity-100" : "opacity-0"}`}
+            className={cn("absolute inset-0 size-full object-cover transition-opacity duration-500", idx === i ? "opacity-100" : "opacity-0")}
           />
         ))}
       </div>
-      {n > 1 ? (
-        <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">
-          {images.map((_, idx) => (
+      <div className="overflow-x-auto rounded-b-xl border [scrollbar-width:thin]">
+        <div className="flex w-max min-w-full divide-x divide-border">
+          {slideTabs.map((t, idx) => (
             <button
-              key={idx}
+              key={t + idx}
               type="button"
-              aria-label={`Go to slide ${idx + 1}`}
-              aria-current={idx === i}
               onClick={() => setI(idx)}
-              className={`h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${idx === i ? "w-6 bg-primary" : "w-2 bg-background/80 hover:bg-background"}`}
-            />
+              aria-current={idx === i}
+              className={cn(
+                "flex-1 whitespace-nowrap px-4 py-2.5 text-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                idx === i ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              {t}
+            </button>
           ))}
         </div>
-      ) : null}
+      </div>
     </section>
   );
 }
 
+/* Centered tile grid — bordered white tiles (no grey fill), label below. */
+function CategoryGrid({ heading, tiles }: { heading: string; tiles: Tile[] }) {
+  return (
+    <section aria-label={heading}>
+      <h2 className="mb-6 text-center text-2xl font-bold tracking-tight">{heading}</h2>
+      <ul className="flex flex-wrap justify-center gap-x-4 gap-y-6">
+        {tiles.map((t) => (
+          <li key={t.label} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.75rem)] lg:w-[calc(16.666%-0.84rem)]">
+            <Link href={t.href} className="group block focus-visible:outline-none">
+              <span className="grid aspect-square place-items-center overflow-hidden rounded-xl border bg-background p-4 transition group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={t.image} alt="" className="max-h-[86%] max-w-[86%] object-contain" loading="lazy" />
+              </span>
+              <span className="mt-2 block text-center text-sm font-medium leading-tight text-foreground group-hover:text-primary">{t.label}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/* Centered image-card grid (the designed service cards). */
 function ServiceGrid({ heading, sub, cards }: { heading: string; sub?: string; cards: ImgLink[] }) {
   return (
     <section aria-label={heading}>
       <h2 className="text-center text-2xl font-bold tracking-tight">{heading}</h2>
       {sub ? <p className="mt-1 text-center text-sm text-muted-foreground">{sub}</p> : null}
-      <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-6 flex flex-wrap justify-center gap-4">
         {cards.map((c) => (
-          <li key={c.alt}>
+          <li key={c.alt} className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]">
             <Link href={c.href} className="group block overflow-hidden rounded-xl border transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={c.image} alt={c.alt} className="w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" />
@@ -92,58 +124,45 @@ function ServiceGrid({ heading, sub, cards }: { heading: string; sub?: string; c
   );
 }
 
+/* Slow horizontal logo marquee — logos only, no labels. Track holds the set
+   twice so a -50% translate loops seamlessly. */
+function LogoMarquee({ logos, band }: { logos?: string[]; band?: string }) {
+  if (band) {
+    return (
+      <div className="overflow-hidden" aria-label="Brands we carry">
+        <div className="flex w-max animate-logo-marquee">
+          {[0, 1].map((k) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={k} src={band} alt="" className="h-16 w-auto shrink-0 pr-16 object-contain" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+  const set = logos ?? [];
+  return (
+    <div className="overflow-hidden" aria-label="Brands we carry">
+      <div className="flex w-max animate-logo-marquee items-center">
+        {[...set, ...set].map((src, idx) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={idx} src={src} alt="" className="h-12 w-auto shrink-0 px-10 object-contain" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function BrandHome({ brandKey }: { brandKey: string }) {
   const content = HOME_CONTENT[brandKey];
   if (!content) return null;
   return (
     <div className="mx-auto max-w-6xl space-y-12 px-4 py-8 md:px-6">
-      <Hero images={content.heroImages} />
+      <HeroCarousel images={content.heroImages} tabs={content.specials} />
 
-      {/* Current specials */}
-      <section aria-label="Current specials">
-        <ul className="flex flex-wrap justify-center gap-2">
-          {content.specials.map((s) => (
-            <li key={s}>
-              <Button asChild variant="outline" size="sm" className="rounded-full">
-                <Link href="#">{s}</Link>
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <CategoryGrid heading={content.categoriesHeading} tiles={content.categories} />
 
-      {/* Featured categories */}
-      <section aria-label={content.categoriesHeading}>
-        <h2 className="mb-5 text-center text-2xl font-bold tracking-tight">{content.categoriesHeading}</h2>
-        <CategoryTileGrid heading="" tiles={content.categories} />
-      </section>
-
-      {/* Trusted brands */}
-      <section aria-label={content.brandsHeading} className="rounded-xl bg-muted/50 p-6 md:p-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl font-bold tracking-tight">{content.brandsHeading}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{content.brandsCopy}</p>
-        </div>
-        {content.brandLogos ? (
-          <div className="mt-6">
-            <BrandTiles heading="" brands={content.brandLogos} />
-          </div>
-        ) : null}
-        {content.brandBand ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={content.brandBand} alt="Brands we carry" className="mx-auto mt-6 w-full max-w-4xl object-contain" loading="lazy" />
-        ) : null}
-        <div className="mt-6 text-center">
-          <Button asChild variant="outline">
-            <Link href="#">{content.brandsCta}</Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* Services / tools */}
       <ServiceGrid heading={content.servicesHeading} sub={content.servicesSub} cards={content.serviceCards} />
 
-      {/* Two-up (blog / training) */}
       {content.twoUp ? (
         <ul className="grid gap-4 sm:grid-cols-2">
           {content.twoUp.map((c) => (
@@ -156,6 +175,22 @@ export function BrandHome({ brandKey }: { brandKey: string }) {
           ))}
         </ul>
       ) : null}
+
+      {/* Trusted brands — light rule separator, centered, slow logo marquee */}
+      <section aria-label={content.brandsHeading} className="border-t pt-10">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-2xl font-bold tracking-tight">{content.brandsHeading}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{content.brandsCopy}</p>
+        </div>
+        <div className="mt-8">
+          <LogoMarquee logos={content.brandLogos?.map((b) => b.logo!).filter(Boolean)} band={content.brandBand} />
+        </div>
+        <div className="mt-8 text-center">
+          <Button asChild variant="outline">
+            <Link href="#">{content.brandsCta}</Link>
+          </Button>
+        </div>
+      </section>
 
       {/* Partner / mission */}
       <section aria-label={content.partner.title} className="overflow-hidden rounded-xl bg-primary text-primary-foreground">
@@ -242,11 +277,7 @@ export const PEIRCE_HOME: HomeContent = {
 /* ════════════════ East Coast Metal ════════════════ */
 const E = "/figma-home/ecmdi";
 export const ECM_HOME: HomeContent = {
-  heroImages: [
-    `${E}/hero/hero-1.jpg`,
-    `${E}/hero/hero-2.jpg`,
-    `${E}/hero/hero-3.jpg`,
-  ],
+  heroImages: [`${E}/hero/hero-1.jpg`, `${E}/hero/hero-2.jpg`, `${E}/hero/hero-3.jpg`],
   specials: ["Google Nest Savings", "Crocodile Cloth", "Pro Deals", "Ductless Solutions"],
   categoriesHeading: "Serving the HVAC Industry Since 1954",
   categories: [

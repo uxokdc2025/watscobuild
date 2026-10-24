@@ -517,3 +517,16 @@
     max-width: var(--layout-max-width);
   }
 }
+
+/* Slow horizontal logo marquee (trusted-brands bar). The track holds the logo
+   set twice, so a -50% translate loops seamlessly. */
+@keyframes logo-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-logo-marquee {
+  animation: logo-marquee 40s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-logo-marquee { animation: none; }
+}
