@@ -36,6 +36,7 @@ const BLOCKS = [
   { label: "Inventory Drawer", href: "/components/inventory-drawer", desc: "Per-branch stock — slides in from the right." },
   { label: "Account Drawer", href: "/components/account-drawer", desc: "Global account panel — switch account, ship-to, nav." },
   { label: "Checkout", href: "/components/checkout", desc: "Delivery / pickup routing and use cases." },
+  { label: "Category Landing", href: "/components/category-landing", desc: "Plug-and-play CMS blocks: banners, category tiles, promo tiles, brand grid, side-by-side ad, content cards." },
 ];
 
 function CardGrid({
