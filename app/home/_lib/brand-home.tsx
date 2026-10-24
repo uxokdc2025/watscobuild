@@ -54,7 +54,9 @@ export type HomeContent = {
   partner: { title: string; copy: string; cta: { label: string; href: string } };
 };
 
-export function BrandHome({ content }: { content: HomeContent }) {
+export function BrandHome({ brandKey }: { brandKey: string }) {
+  const content = HOME_CONTENT[brandKey];
+  if (!content) return null;
   const serviceCards: ContentCard[] = content.services.map((s) => ({
     title: s.title,
     copy: s.copy,
