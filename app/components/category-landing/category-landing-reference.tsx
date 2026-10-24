@@ -39,12 +39,12 @@ function Block({
 }
 
 const TILES = [
-  { label: "Air Conditioners", image: "/category-tiles/air-conditioner.webp", href: "#" },
-  { label: "Heat Pumps", image: "/category-tiles/heat-pump.webp", href: "#" },
-  { label: "Gas Furnaces", image: "/category-tiles/gas-furnace.webp", href: "#" },
-  { label: "Air Handlers", image: "/category-tiles/air-handler.webp", href: "#" },
-  { label: "Evaporator Coils", image: "/category-tiles/evaporator-coil.webp", href: "#" },
-  { label: "Ductless", image: "/category-tiles/ductless.webp", href: "#" },
+  { label: "Air Conditioners", image: "/category-tiles/air-conditioner-t.png", href: "#" },
+  { label: "Heat Pumps", image: "/category-tiles/heat-pump-t.png", href: "#" },
+  { label: "Gas Furnaces", image: "/category-tiles/gas-furnace-t.png", href: "#" },
+  { label: "Air Handlers", image: "/category-tiles/air-handler-t.png", href: "#" },
+  { label: "Evaporator Coils", image: "/category-tiles/evaporator-coil-t.png", href: "#" },
+  { label: "Ductless", image: "/category-tiles/ductless-t.png", href: "#" },
 ];
 
 export default function CategoryLandingReference() {
@@ -72,10 +72,10 @@ export default function CategoryLandingReference() {
               title="Residential Equipment"
               copy="Condensers, furnaces, coils, and complete systems — in stock at your branch."
               cta={{ label: "Shop the season", href: "#" }}
-              image="/category-tiles/air-conditioner.webp"
+              image="/category-tiles/air-conditioner-t.png"
               lockup={<span className="text-lg font-bold tracking-tight text-foreground">R-454B<br />Ready</span>}
             />
-            <LargeBanner tone="navy" kicker="Fall savings event" title="Fall Into Savings" copy="Stack rebates on R-454B systems through October." cta={{ label: "Shop the event", href: "#" }} image="/category-tiles/heat-pump.webp" />
+            <LargeBanner tone="navy" kicker="Fall savings event" title="Fall Into Savings" copy="Stack rebates on R-454B systems through October." cta={{ label: "Shop the event", href: "#" }} image="/category-tiles/heat-pump-t.png" />
           </div>
         </Block>
 
@@ -87,7 +87,7 @@ export default function CategoryLandingReference() {
           <PromoTiles
             tiles={[
               { title: "Clearance & Scratch-Dent", caption: "Shop all clearance", href: "#", bg: "bg-primary", fg: "text-primary-foreground" },
-              { image: "/category-tiles/heat-pump.webp", caption: "Pro picks this month", href: "#" },
+              { image: "/category-tiles/heat-pump-t.png", caption: "Pro picks this month", href: "#" },
               { title: "In Stock Today", caption: "Ready at your branch", href: "#", bg: "bg-secondary", fg: "text-secondary-foreground" },
               { title: "Rebate Roundup", caption: "Save up to $500", href: "#", bg: "bg-foreground", fg: "text-background" },
             ]}
@@ -100,8 +100,8 @@ export default function CategoryLandingReference() {
 
         <Block name="Side-by-Side Image" desc="A 2-up ad block — left image tile and right image tile, each with its own eyebrow, copy, and CTA.">
           <SideBySideImage
-            left={{ image: "/category-tiles/air-handler.webp", eyebrow: "New", title: "Air Handlers, Restocked", copy: "Matched to every R-454B condenser.", cta: { label: "Shop air handlers", href: "#" } }}
-            right={{ image: "/category-tiles/evaporator-coil.webp", eyebrow: "Bundle & save", title: "Coil + Condenser Kits", copy: "Priced and in stock together.", cta: { label: "Build a system", href: "#" } }}
+            left={{ image: "/category-tiles/air-handler-t.png", eyebrow: "New", title: "Air Handlers, Restocked", copy: "Matched to every R-454B condenser.", cta: { label: "Shop air handlers", href: "#" } }}
+            right={{ image: "/category-tiles/evaporator-coil-t.png", eyebrow: "Bundle & save", title: "Coil + Condenser Kits", copy: "Priced and in stock together.", cta: { label: "Build a system", href: "#" } }}
           />
         </Block>
 

@@ -54,20 +54,20 @@ function toCard(r: SearchResult): ProductCardData {
 }
 
 const TILES: Tile[] = [
-  { label: "Air Conditioners", image: "/category-tiles/air-conditioner.webp", href: "/category/air-conditioners?signedin=1" },
-  { label: "Heat Pumps", image: "/category-tiles/heat-pump.webp", href: "/category/heat-pumps?signedin=1" },
-  { label: "Gas Furnaces", image: "/category-tiles/gas-furnace.webp", href: "/category/gas-furnaces?signedin=1" },
-  { label: "Air Handlers", image: "/category-tiles/air-handler.webp", href: "/category/air-handlers?signedin=1" },
-  { label: "Evaporator Coils", image: "/category-tiles/evaporator-coil.webp", href: "/category/evaporator-coils?signedin=1" },
-  { label: "Ductless & Mini-Splits", image: "/category-tiles/ductless.webp", href: "/category/ductless?signedin=1" },
-  { label: "Packaged Units", image: "/category-tiles/small-packaged.webp", href: "/category/packaged-units?signedin=1" },
-  { label: "Oil Furnaces", image: "/category-tiles/oil-furnace.webp", href: "/category/oil-furnaces?signedin=1" },
-  { label: "Parts & Accessories", image: "/category-tiles/accessories.webp", href: "/category/accessories?signedin=1" },
+  { label: "Air Conditioners", image: "/category-tiles/air-conditioner-t.png", href: "/category/air-conditioners?signedin=1" },
+  { label: "Heat Pumps", image: "/category-tiles/heat-pump-t.png", href: "/category/heat-pumps?signedin=1" },
+  { label: "Gas Furnaces", image: "/category-tiles/gas-furnace-t.png", href: "/category/gas-furnaces?signedin=1" },
+  { label: "Air Handlers", image: "/category-tiles/air-handler-t.png", href: "/category/air-handlers?signedin=1" },
+  { label: "Evaporator Coils", image: "/category-tiles/evaporator-coil-t.png", href: "/category/evaporator-coils?signedin=1" },
+  { label: "Ductless & Mini-Splits", image: "/category-tiles/ductless-t.png", href: "/category/ductless?signedin=1" },
+  { label: "Packaged Units", image: "/category-tiles/small-packaged-t.png", href: "/category/packaged-units?signedin=1" },
+  { label: "Oil Furnaces", image: "/category-tiles/oil-furnace-t.png", href: "/category/oil-furnaces?signedin=1" },
+  { label: "Parts & Accessories", image: "/category-tiles/accessories-t.png", href: "/category/accessories?signedin=1" },
 ];
 
 const PROMO_TILES: PromoTile[] = [
   { title: "Clearance & Scratch-Dent", caption: "Shop all clearance", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-primary", fg: "text-primary-foreground" },
-  { image: "/category-tiles/heat-pump.webp", caption: "Pro picks this month", href: "/search?brand=homans&category=residential&signedin=1" },
+  { image: "/category-tiles/heat-pump-t.png", caption: "Pro picks this month", href: "/search?brand=homans&category=residential&signedin=1" },
   { title: "In Stock Today", caption: "Ready at your branch", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-secondary", fg: "text-secondary-foreground" },
   { title: "Rebate Roundup", caption: "Save up to $500", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-foreground", fg: "text-background" },
 ];
@@ -106,7 +106,7 @@ export function CategoryJump({ title = "Residential" }: { title?: string }) {
           title="Residential Equipment"
           copy="Condensers, furnaces, coils, and complete systems — in stock at your branch. Pick a category to start."
           cta={{ label: "Shop the season", href: "#top-sellers" }}
-          image="/category-tiles/air-conditioner.webp"
+          image="/category-tiles/air-conditioner-t.png"
           lockup={<span className="text-lg font-bold tracking-tight text-foreground">R-454B<br />Ready</span>}
         />
         <CategoryTileGrid tiles={TILES} action={{ label: "See all", href: "/search?brand=homans&category=residential&signedin=1" }} />

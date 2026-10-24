@@ -37,11 +37,9 @@ export function CategoryTileGrid({
         {tiles.map((t) => (
           <li key={t.label}>
             <Link href={t.href} className="group block focus-visible:outline-none">
-              <span
-                className="grid aspect-square place-items-center rounded-2xl p-5 transition group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring bg-muted"
-              >
+              <span className="grid aspect-square place-items-center rounded-2xl bg-muted p-4 transition group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={t.image} alt="" className="max-h-[72%] max-w-[72%] object-contain" loading="lazy" />
+                <img src={t.image} alt="" className="max-h-[88%] max-w-[88%] object-contain" loading="lazy" />
               </span>
               <span className="mt-2 block text-center text-sm font-medium leading-tight text-foreground group-hover:text-primary">
                 {t.label}
@@ -87,9 +85,9 @@ export function PromoTiles({
           <li key={t.caption}>
             <Link href={t.href} className="group block focus-visible:outline-none">
               {t.image ? (
-                <span className="grid aspect-square place-items-center overflow-hidden rounded-2xl bg-muted transition group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                <span className="grid aspect-square place-items-center overflow-hidden rounded-2xl bg-muted p-6 transition group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={t.image} alt="" className="size-full object-cover" loading="lazy" />
+                  <img src={t.image} alt="" className="max-h-[82%] max-w-[82%] object-contain" loading="lazy" />
                 </span>
               ) : (
                 <span
