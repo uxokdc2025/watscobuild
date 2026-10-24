@@ -198,6 +198,14 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Oct 20 meeting",
     items: [
       {
+        title: "Home reskins — Peirce & East Coast Metal",
+        desc: "A clone-bones reskin of two distributor home pages: each site's content and structure kept, re-rendered on our design system using the Category Landing CMS blocks (hero, specials, category tiles, service cards, two-up content, brand tiles, partner CTA) inside that brand's own chrome, so both read as one system. Source brand art and third-party manufacturer logos dropped for our tokens + image pool.",
+        links: [
+          { label: "Peirce-Phelps — Home (reskin)", href: "/home/peirce?signedin=1" },
+          { label: "East Coast Metal — Home (reskin)", href: "/home/ecmdi?signedin=1" },
+        ],
+      },
+      {
         title: "PDP — Specifications tab, reorganized",
         desc: "Reworked the Specifications tab to be scannable: each row is a tinted key column + value column (one coloured rail down the left), group cards flow into two columns (flat lists split into two balanced columns) so the table fills the width instead of stretching one row edge to edge, and the filter is a full-width design-system input that actually filters rows. Renders in the new tab layout; design-system tokens throughout. Open the Specifications tab.",
         links: [
