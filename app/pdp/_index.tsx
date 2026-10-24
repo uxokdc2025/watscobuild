@@ -198,6 +198,13 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Oct 20 meeting",
     items: [
       {
+        title: "PDP — Specifications tab, reorganized",
+        desc: "Reworked the Specifications tab to be scannable: each row is a tinted key column + value column (one coloured rail down the left), group cards flow into two columns (flat lists split into two balanced columns) so the table fills the width instead of stretching one row edge to edge, and the filter is a full-width design-system input that actually filters rows. Renders in the new tab layout; design-system tokens throughout. Open the Specifications tab.",
+        links: [
+          { label: "PDP — Specifications (new layout)", href: "/pdp/uc-ahri-matched-system?signedin=1" },
+        ],
+      },
+      {
         title: "Mini cart — layouts (base / V1 / V2) + design-system cleanup",
         desc: "The mini-cart drawer in three layouts, opened in context on a PDP. Base: Checkout (primary) → View Cart → Create Proposal → quiet Save / Share, sticky footer. V1: View Cart + Checkout side by side (Checkout right), with Save Cart | Share Cart as a full-width band right under the header. V2: same side-by-side buttons, with Save / Share moved into the header, left of the close. Shared cleanup: Save / Share now use the design-system Button (foreground, not grey) like Create Proposal; dropped the “You may also need” cross-sell on V1/V2; tightened the top and footer spacing.",
         links: [
