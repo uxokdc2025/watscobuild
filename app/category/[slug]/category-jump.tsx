@@ -73,12 +73,12 @@ const PROMO_TILES: PromoTile[] = [
 ];
 
 const BRANDS: BrandTile[] = [
-  { label: "Bryant" },
-  { label: "Armstrong Air" },
-  { label: "Mitsubishi" },
-  { label: "Honeywell" },
-  { label: "Aprilaire" },
-  { label: "Copeland" },
+  { label: "Bryant", logo: "/brand-logos/bryant.png" },
+  { label: "Armstrong Air", logo: "/brand-logos/armstrong-air.png" },
+  { label: "Mitsubishi", logo: "/brand-logos/mitsubishi.png" },
+  { label: "Honeywell", logo: "/brand-logos/honeywell.png" },
+  { label: "Aprilaire", logo: "/brand-logos/aprilaire.png" },
+  { label: "Copeland", logo: "/brand-logos/copeland.png" },
 ];
 
 const GUIDES: ContentCard[] = [
