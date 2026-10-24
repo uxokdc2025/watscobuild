@@ -20,36 +20,50 @@ export type BannerCta = { label: string; href: string };
  * product inset on the right. `tone` swaps the band to brand navy. */
 export function LargeBanner({
   kicker,
+  kickerIcon: KickerIcon,
   title,
   copy,
   cta,
   image,
+  images,
   lockup,
+  lockupIcon: LockupIcon,
   tone = "grey",
   className,
 }: {
   /** Small line above the headline, e.g. "Now at Homans". */
   kicker?: string;
+  /** Optional icon shown before the kicker (subtle accent). */
+  kickerIcon?: LucideIcon;
   title: React.ReactNode;
   copy?: string;
   cta?: BannerCta;
-  /** Product image shown in the right-hand white inset. */
+  /** A single product image shown in a white inset (legacy). */
   image?: string;
-  /** Short brand/offer lockup for the left white inset (optional). */
+  /** Two product images floated side by side with no background box. */
+  images?: string[];
+  /** Short brand/offer lockup for the left tinted chip (optional). */
   lockup?: React.ReactNode;
+  /** Optional icon above the lockup text. */
+  lockupIcon?: LucideIcon;
   tone?: "grey" | "navy";
   className?: string;
 }) {
   const dark = tone === "navy";
+  const pair = images?.slice(0, 2) ?? [];
   return (
     <section
       aria-label={typeof title === "string" ? title : "Featured banner"}
       className={cn("overflow-hidden rounded-xl", dark ? "bg-primary" : "bg-muted", className)}
     >
       <div className="mx-auto grid min-h-[180px] max-w-[72rem] items-center gap-5 px-5 py-5 sm:grid-cols-[1fr_1.5fr_1fr] sm:px-6 sm:py-6">
-        {/* Left inset lockup */}
+        {/* Left lockup — softly tinted brand chip */}
         {lockup ? (
-          <div className="hidden place-items-center rounded-xl bg-background p-6 text-center shadow-sm sm:grid sm:min-h-[132px]">
+          <div className={cn(
+            "hidden place-content-center gap-1.5 rounded-xl p-6 text-center shadow-sm sm:grid sm:min-h-[132px]",
+            dark ? "bg-background/10 text-primary-foreground ring-1 ring-white/15" : "bg-primary/5 text-primary ring-1 ring-primary/15",
+          )}>
+            {LockupIcon ? <LockupIcon className="mx-auto size-6 text-amber-500" aria-hidden /> : null}
             {lockup}
           </div>
         ) : (
@@ -57,17 +71,36 @@ export function LargeBanner({
         )}
         {/* Center copy */}
         <div className={cn("text-center", dark ? "text-primary-foreground" : "text-foreground")}>
-          {kicker ? <p className={cn("text-sm font-semibold", dark ? "text-primary-foreground/80" : "text-muted-foreground")}>{kicker}</p> : null}
+          {kicker ? (
+            <p className={cn("inline-flex items-center gap-1.5 text-sm font-semibold", dark ? "text-primary-foreground/80" : "text-muted-foreground")}>
+              {KickerIcon ? <KickerIcon className="size-4 text-amber-500" aria-hidden /> : null}
+              {kicker}
+            </p>
+          ) : null}
           <h2 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">{title}</h2>
-          {copy ? <p className={cn("mx-auto mt-2 max-w-md text-sm sm:text-base", dark ? "text-primary-foreground/85" : "text-muted-foreground")}>{copy}</p> : null}
+          {/* subtle accent rule */}
+          <span aria-hidden className={cn("mx-auto mt-3 block h-0.5 w-10 rounded-full", dark ? "bg-primary-foreground/40" : "bg-primary/50")} />
+          {copy ? <p className={cn("mx-auto mt-3 max-w-md text-sm sm:text-base", dark ? "text-primary-foreground/85" : "text-muted-foreground")}>{copy}</p> : null}
           {cta ? (
             <Button asChild variant={dark ? "secondary" : "outline"} className="mt-4 rounded-full px-6">
               <Link href={cta.href}>{cta.label}</Link>
             </Button>
           ) : null}
         </div>
-        {/* Right product inset */}
-        {image ? (
+        {/* Right — two products floated side by side, no background box */}
+        {pair.length ? (
+          <div className="hidden items-end justify-center gap-1 sm:flex">
+            {pair.map((src, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={i}
+                src={src}
+                alt=""
+                className={cn("object-contain drop-shadow-md", i === 0 ? "max-h-[132px]" : "-ml-2 max-h-[104px]")}
+              />
+            ))}
+          </div>
+        ) : image ? (
           <div className="hidden place-items-center rounded-xl bg-background p-4 shadow-sm sm:grid sm:min-h-[132px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={image} alt="" className="max-h-[120px] max-w-full object-contain" />

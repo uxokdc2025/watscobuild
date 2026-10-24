@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight, Leaf, Truck, BadgePercent, BookOpen, Ruler } from "lucide-react";
+import { ChevronRight, Leaf, Truck, BadgePercent, BookOpen, Ruler, Tag, PackageCheck, PiggyBank } from "lucide-react";
 
 import {
   LargeBanner,
@@ -66,10 +66,10 @@ const TILES: Tile[] = [
 ];
 
 const PROMO_TILES: PromoTile[] = [
-  { title: "Clearance & Scratch-Dent", caption: "Shop all clearance", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-primary", fg: "text-primary-foreground" },
+  { title: "Clearance & Scratch-Dent", icon: Tag, caption: "Shop all clearance", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-primary", fg: "text-primary-foreground" },
   { image: "/category-tiles/heat-pump-t.png", caption: "Pro picks this month", href: "/search?brand=homans&category=residential&signedin=1" },
-  { title: "In Stock Today", caption: "Ready at your branch", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-secondary", fg: "text-secondary-foreground" },
-  { title: "Rebate Roundup", caption: "Save up to $500", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-foreground", fg: "text-background" },
+  { title: "In Stock Today", icon: PackageCheck, caption: "Ready at your branch", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-in-stock", fg: "text-white" },
+  { title: "Rebate Roundup", icon: PiggyBank, caption: "Save up to $500", href: "/search?brand=homans&category=residential&signedin=1", bg: "bg-foreground", fg: "text-background" },
 ];
 
 const BRANDS: BrandTile[] = [
@@ -82,9 +82,9 @@ const BRANDS: BrandTile[] = [
 ];
 
 const GUIDES: ContentCard[] = [
-  { title: "R-454B Transition Guide", copy: "What the low-GWP refrigerant change means for your next install.", href: "#", icon: Leaf },
-  { title: "Sizing a Residential System", copy: "Match tonnage, coil, and air handler the right way, every time.", href: "#", icon: Ruler },
-  { title: "Furnace Buying Guide", copy: "Gas vs. oil, efficiency ratings, and what to stock for winter.", href: "#", icon: BookOpen },
+  { title: "R-454B Transition Guide", copy: "What the low-GWP refrigerant change means for your next install.", href: "#", icon: Leaf, image: "/guide-images/r454b.jpg" },
+  { title: "Sizing a Residential System", copy: "Match tonnage, coil, and air handler the right way, every time.", href: "#", icon: Ruler, image: "/guide-images/sizing.jpg" },
+  { title: "Furnace Buying Guide", copy: "Gas vs. oil, efficiency ratings, and what to stock for winter.", href: "#", icon: BookOpen, image: "/guide-images/furnace.jpg" },
 ];
 
 export function CategoryJump({ title = "Residential" }: { title?: string }) {
@@ -103,11 +103,13 @@ export function CategoryJump({ title = "Residential" }: { title?: string }) {
         {/* Content sections first */}
         <LargeBanner
           kicker="Now at Homans"
+          kickerIcon={Leaf}
           title="Residential Equipment"
           copy="Condensers, furnaces, coils, and complete systems — in stock at your branch. Pick a category to start."
           cta={{ label: "Shop the season", href: "#top-sellers" }}
-          image="/category-tiles/air-conditioner-t.png"
-          lockup={<span className="text-lg font-bold tracking-tight text-foreground">R-454B<br />Ready</span>}
+          images={["/category-tiles/air-conditioner-t.png", "/category-tiles/air-handler-t.png"]}
+          lockupIcon={Leaf}
+          lockup={<span className="text-lg font-bold tracking-tight">R-454B<br />Ready</span>}
         />
         <CategoryTileGrid tiles={TILES} action={{ label: "See all", href: "/search?brand=homans&category=residential&signedin=1" }} />
         <PromoTiles tiles={PROMO_TILES} />

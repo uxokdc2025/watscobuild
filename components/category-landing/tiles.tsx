@@ -1,6 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, type LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -63,6 +63,8 @@ export type PromoTile = {
   image?: string;
   /** Color tile: big headline text on a solid background. */
   title?: string;
+  /** Optional icon above the title on a color tile. */
+  icon?: LucideIcon;
   /** Tailwind background class for a color tile, e.g. "bg-primary". */
   bg?: string;
   /** Text color token class for a color tile, e.g. "text-primary-foreground". */
@@ -97,7 +99,10 @@ export function PromoTiles({
                     t.fg ?? "text-primary-foreground",
                   )}
                 >
-                  <span className="text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">{t.title}</span>
+                  <span className="flex flex-col items-center gap-2">
+                    {t.icon ? <t.icon className="size-7" aria-hidden /> : null}
+                    <span className="text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">{t.title}</span>
+                  </span>
                 </span>
               )}
               <span className="mt-2 block text-center text-sm font-medium leading-tight text-foreground group-hover:text-primary">

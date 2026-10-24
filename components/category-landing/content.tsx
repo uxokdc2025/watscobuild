@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 /* ── Content Cards (buyer's guides) ────────────────────────────────────
  * Three editorial cards: icon, title, blurb, "read" link. */
-export type ContentCard = { title: string; copy: string; href: string; icon?: LucideIcon };
+export type ContentCard = { title: string; copy: string; href: string; icon?: LucideIcon; image?: string };
 export function ContentCards({
   heading = "Buyer’s Guides",
   cards,
@@ -30,17 +30,25 @@ export function ContentCards({
           <li key={c.title}>
             <Link
               href={c.href}
-              className="group flex h-full flex-col rounded-xl border bg-muted/30 p-5 transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="group flex h-full flex-col overflow-hidden rounded-xl border bg-muted/30 transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              {c.icon ? (
-                <span className="grid size-10 place-items-center rounded-lg bg-primary/10 text-primary">
-                  <c.icon className="size-5" aria-hidden />
+              {c.image ? (
+                <span className="relative block aspect-[16/9] overflow-hidden bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={c.image} alt="" className="size-full object-cover transition duration-300 group-hover:scale-[1.03]" loading="lazy" />
                 </span>
               ) : null}
-              <span className="mt-3 block font-semibold leading-tight text-foreground group-hover:text-primary">{c.title}</span>
-              <span className="mt-1 block text-sm text-muted-foreground">{c.copy}</span>
-              <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                Read guide <ArrowRight className="size-4 transition group-hover:translate-x-0.5" aria-hidden />
+              <span className="flex flex-1 flex-col p-5">
+                {c.icon && !c.image ? (
+                  <span className="grid size-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                    <c.icon className="size-5" aria-hidden />
+                  </span>
+                ) : null}
+                <span className={cn("block font-semibold leading-tight text-foreground group-hover:text-primary", c.icon && !c.image && "mt-3")}>{c.title}</span>
+                <span className="mt-1 block text-sm text-muted-foreground">{c.copy}</span>
+                <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary">
+                  Read guide <ArrowRight className="size-4 transition group-hover:translate-x-0.5" aria-hidden />
+                </span>
               </span>
             </Link>
           </li>

@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -62,6 +64,70 @@ const LOCATIONS = [
   "Williston, VT #0987",
   "Wilmington, MA #0501",
 ];
+
+/* ── Account Balances (card treatment) ──────────────────────────────────
+ * One card per account (replaces the old table). Each shows the balance
+ * against the credit limit with a utilization meter + pill, coloured by
+ * threshold: < 50% green, 50–80% amber, > 80% red. Semantic DS tokens only. */
+type AccountBalance = { id: string; name: string; balance: number; limit: number };
+
+const ACCOUNT_BALANCES: AccountBalance[] = [
+  { id: "131723", name: "Main Account", balance: 1806.95, limit: 5162.71 },
+  { id: "162355", name: "Job — Riverside Retrofit", balance: 0, limit: 25000 },
+  { id: "302138", name: "Job — Buffalo Expansion", balance: 9300, limit: 15000 },
+  { id: "317734", name: "Fleet Account", balance: 66000, limit: 75000 },
+];
+
+function usd(n: number): string {
+  return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+}
+
+/** Utilization → DS colour band. Full literal classes so Tailwind keeps the
+ *  arbitrary-variant that tints the Progress indicator. */
+function utilBand(pct: number) {
+  if (pct > 80) return { bar: "[&>[data-slot=progress-indicator]]:bg-destructive", badge: "red" as const };
+  if (pct >= 50) return { bar: "[&>[data-slot=progress-indicator]]:bg-low-stock", badge: "amber" as const };
+  return { bar: "[&>[data-slot=progress-indicator]]:bg-in-stock", badge: "green" as const };
+}
+
+function BalanceCard({ account }: { account: AccountBalance }) {
+  const pct = account.limit > 0 ? Math.round((account.balance / account.limit) * 100) : 0;
+  const band = utilBand(pct);
+  return (
+    <div className="flex flex-col rounded-lg border bg-background p-4 shadow-sm">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="text-sm font-semibold">Account #{account.id}</span>
+        <Badge variant="soft" color={band.badge}>{pct}% utilized</Badge>
+      </div>
+      <p className="mt-0.5 truncate text-xs text-muted-foreground">{account.name}</p>
+      <p className="mt-3 text-2xl font-bold tabular-nums">{usd(account.balance)}</p>
+      <p className="text-xs text-muted-foreground">of {usd(account.limit)} limit</p>
+      <Progress
+        value={pct}
+        className={cn("mt-3 h-2 bg-muted", band.bar)}
+        aria-label={`${pct}% of credit limit used`}
+      />
+    </div>
+  );
+}
+
+function AccountBalancesCard() {
+  return (
+    <section
+      aria-labelledby="account-balances-heading"
+      className="rounded-lg border bg-background px-4 py-3 shadow-sm sm:px-6 sm:py-4"
+    >
+      <h2 id="account-balances-heading" className="text-lg font-semibold tracking-tight">
+        Account Balances
+      </h2>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {ACCOUNT_BALANCES.map((a) => (
+          <BalanceCard key={a.id} account={a} />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -306,6 +372,8 @@ export function DashboardHome() {
   return (
     <div className="space-y-6">
         <AccountInformationCard account={account} onSave={setAccount} />
+
+        <AccountBalancesCard />
 
         <FindAnOrder
           filters={filters}
