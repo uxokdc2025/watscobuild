@@ -44,7 +44,7 @@ function Hero({ images }: { images: string[] }) {
   }, [n]);
   return (
     <section aria-label="Featured" aria-roledescription="carousel" className="relative overflow-hidden rounded-xl border bg-muted">
-      <div className="relative aspect-[1440/560] w-full">
+      <div className="relative aspect-[1728/540] w-full">
         {images.map((src, idx) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -183,10 +183,14 @@ export function BrandHome({ brandKey }: { brandKey: string }) {
 const P = "/figma-home/peirce";
 export const PEIRCE_HOME: HomeContent = {
   heroImages: [
-    `${P}/div-pagebuilder-slide-wrapper.png`,
-    `${P}/div-pagebuilder-slide-wrapper-1.png`,
-    `${P}/div-pagebuilder-slide-wrapper-2.png`,
-    `${P}/div-pagebuilder-slide-wrapper-3.png`,
+    `${P}/hero/hero-1.jpg`,
+    `${P}/hero/hero-2.jpg`,
+    `${P}/hero/hero-3.jpg`,
+    `${P}/hero/hero-4.jpg`,
+    `${P}/hero/hero-5.jpg`,
+    `${P}/hero/hero-6.jpg`,
+    `${P}/hero/hero-7.jpg`,
+    `${P}/hero/hero-8.jpg`,
   ],
   specials: [
     "Monthly Special",
@@ -239,9 +243,9 @@ export const PEIRCE_HOME: HomeContent = {
 const E = "/figma-home/ecmdi";
 export const ECM_HOME: HomeContent = {
   heroImages: [
-    `${E}/div-pagebuilder-slide-wrapper.png`,
-    `${E}/div-pagebuilder-slide-wrapper-1.png`,
-    `${E}/div-pagebuilder-slide-wrapper-2.png`,
+    `${E}/hero/hero-1.jpg`,
+    `${E}/hero/hero-2.jpg`,
+    `${E}/hero/hero-3.jpg`,
   ],
   specials: ["Google Nest Savings", "Crocodile Cloth", "Pro Deals", "Ductless Solutions"],
   categoriesHeading: "Serving the HVAC Industry Since 1954",
