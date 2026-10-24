@@ -88,22 +88,29 @@ function ProductThumb({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-/* ── Product Info: Description (left) + Specifications (right) ── */
-function SpecGroupTable({ group }: { group: SpecGroup }) {
+/* ── Specifications: scannable key/value rows ──
+ * Each row is a two-cell grid — a tinted "key" column (the label) and a plain
+ * value column — so the eye tracks one coloured rail down the left. Groups and
+ * the flat list both reuse this; Specifications() flows them into two columns
+ * so the table fills the width instead of stretching one row edge to edge. */
+function SpecRows({ rows }: { rows: SpecRow[] }) {
   return (
-    <div>
+    <dl className="divide-y">
+      {rows.map((r) => (
+        <div key={r.label} className="grid grid-cols-[minmax(0,42%)_1fr] text-sm">
+          <dt className="bg-muted/60 px-4 py-2.5 font-medium text-foreground capitalize">{r.label}</dt>
+          <dd className="px-4 py-2.5 text-muted-foreground">{r.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function SpecGroupCard({ group }: { group: SpecGroup }) {
+  return (
+    <div className="mb-4 break-inside-avoid overflow-hidden rounded-lg border">
       <div className="bg-muted px-4 py-2.5 text-sm font-bold">{group.title}</div>
-      <div>
-        {group.rows.map((r) => (
-          <div
-            key={r.label}
-            className="grid grid-cols-2 gap-4 border-b px-4 py-3 text-sm"
-          >
-            <span className="font-semibold">{r.label}</span>
-            <span className="text-muted-foreground">{r.value}</span>
-          </div>
-        ))}
-      </div>
+      <SpecRows rows={group.rows} />
     </div>
   );
 }
@@ -134,25 +141,6 @@ function Description({ product }: { product: PdpProduct }) {
   );
 }
 
-/** Flat spec list (products that ship a `specsFlat` array instead of groups). */
-function FlatSpecTable({ specs }: { specs: SpecRow[] }) {
-  return (
-    <div className="overflow-hidden rounded-lg border">
-      <div className="grid grid-cols-1 sm:grid-cols-2">
-        {specs.map((r) => (
-          <div
-            key={r.label}
-            className="flex items-baseline justify-between gap-4 border-b px-4 py-3 text-sm"
-          >
-            <span className="font-semibold capitalize">{r.label}</span>
-            <span className="text-right text-muted-foreground">{r.value}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /** True when the product carries any spec data in any of the three shapes. */
 function hasSpecData(product: PdpProduct): boolean {
   return Boolean(
@@ -170,30 +158,70 @@ function hasSpecData(product: PdpProduct): boolean {
  * kept for parity with the source PDPs.
  */
 function Specifications({ product }: { product: PdpProduct }) {
-  const groups: SpecGroup[] = product.productSpecs?.length
+  const [filter, setFilter] = React.useState("");
+  const f = filter.trim().toLowerCase();
+  const match = React.useCallback(
+    (r: SpecRow) =>
+      !f ||
+      r.label.toLowerCase().includes(f) ||
+      String(r.value).toLowerCase().includes(f),
+    [f],
+  );
+
+  // Source groups (rich productSpecs → left/right specGroups) vs a flat list.
+  const sourceGroups: SpecGroup[] = product.productSpecs?.length
     ? product.productSpecs
     : product.specsFlat?.length
       ? []
       : [...(product.specGroupsLeft ?? []), ...(product.specGroupsRight ?? [])];
+
+  const groups = sourceGroups
+    .map((g) => ({ ...g, rows: g.rows.filter(match) }))
+    .filter((g) => g.rows.length);
+  const flat = (product.specsFlat ?? []).filter(match);
+  // Split the flat list into two balanced columns so it fills the width.
+  const mid = Math.ceil(flat.length / 2);
+  const flatCols = [flat.slice(0, mid), flat.slice(mid)];
+
+  const hasGrouped = groups.length > 0;
+  const hasFlat = !hasGrouped && flat.length > 0;
+
   return (
     <div>
-      <div className="relative max-w-lg">
+      {/* Full-width filter, design-system Input. */}
+      <div className="relative">
         <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           aria-label="Filter specifications"
-          placeholder="Filter by name or value..."
-          className="h-11 pr-3 pl-9"
+          placeholder="Filter specifications by name or value..."
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="h-11 w-full pr-3 pl-9"
         />
       </div>
       <div className="mt-4">
-        {groups.length ? (
-          <div className="overflow-hidden rounded-lg border">
+        {hasGrouped ? (
+          // Grouped: flow the group cards into two columns.
+          <div className="lg:columns-2 lg:gap-4">
             {groups.map((g) => (
-              <SpecGroupTable key={g.title} group={g} />
+              <SpecGroupCard key={g.title} group={g} />
             ))}
           </div>
-        ) : product.specsFlat?.length ? (
-          <FlatSpecTable specs={product.specsFlat} />
+        ) : hasFlat ? (
+          // Flat: two balanced bordered columns, tinted key column in each.
+          <div className="grid gap-4 lg:grid-cols-2">
+            {flatCols.map((rows, i) =>
+              rows.length ? (
+                <div key={i} className="self-start overflow-hidden rounded-lg border">
+                  <SpecRows rows={rows} />
+                </div>
+              ) : null,
+            )}
+          </div>
+        ) : f ? (
+          <p className="rounded-md border px-4 py-3 text-sm text-muted-foreground">
+            No specifications match &ldquo;{filter}&rdquo;.
+          </p>
         ) : null}
       </div>
     </div>
