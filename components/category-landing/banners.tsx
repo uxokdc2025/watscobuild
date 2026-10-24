@@ -114,7 +114,7 @@ export function MiniBanner({
         ))}
       </div>
       {cta ? (
-        <Button asChild size="sm" variant={dark ? "secondary" : "default"} className="shrink-0">
+        <Button asChild size="sm" variant={dark ? "outline" : "default"} className="shrink-0">
           <Link href={cta.href}>{cta.label}</Link>
         </Button>
       ) : null}
