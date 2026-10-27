@@ -198,6 +198,14 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Oct 20 meeting",
     items: [
       {
+        title: "Category “Jump” page (Residential)",
+        desc: "The page a top-level category links to (Ryan’s “jump” page): a banner + a grid of category tiles that forces a subcategory choice before any product grid (Walmart /cp/electronics pattern), with light merchandising below — top sellers, buyer’s guides, brands — never a filterable results grid first. Built from reusable, design-system-only CMS blocks; transparent product tiles, DS-token promo tiles, real brand logos, and generated buyer’s-guide photos.",
+        links: [
+          { label: "Jump page (Residential)", href: "/category/residential?v=jump&signedin=1" },
+          { label: "Category Landing — CMS block catalog", href: "/components/category-landing" },
+        ],
+      },
+      {
         title: "Home reskins — Peirce & East Coast Metal",
         desc: "A clone-bones reskin of two distributor home pages: each site's content and structure kept, re-rendered on our design system using the Category Landing CMS blocks (hero, specials, category tiles, service cards, two-up content, brand tiles, partner CTA) inside that brand's own chrome, so both read as one system. Source brand art and third-party manufacturer logos dropped for our tokens + image pool.",
         links: [
