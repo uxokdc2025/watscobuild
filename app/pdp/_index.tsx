@@ -211,6 +211,41 @@ const CHANGE_LOGS: ChangeLog[] = [
           { label: "Homans PLP (mega-menu)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
         ],
       },
+      {
+        title: "Homans header — search fills, actions pinned right",
+        desc: "The search now expands to fill the free space across the top bar, which pins the Lists · My Account · Cart cluster to the far-right edge (no more gap floating between the search and the account tools).",
+        links: [
+          { label: "Homans header (on the PLP)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
+        ],
+      },
+      {
+        title: "Cart — Save / Share moved to the title row",
+        desc: "Save Cart / Share Cart moved up onto the “Cart” page-title row (grouped and right-aligned with a comfortable gap), out of the Order Summary header. Also removed the Backorder availability banner for this version — the Nearby-branches notice stays.",
+        links: [
+          { label: "Cart", href: "/cart?demo=1" },
+        ],
+      },
+      {
+        title: "East Coast Metal — home content + brand carousel",
+        desc: "Filled the real ecmdi.com content: the four “Premium Tools For Fast Ordering” cards (icon, description, Learn More) and the two news/bento boxes — “Check Out Our Blog” (Read Now) and “Grow Your Skillset” (Start Learning) — with verbatim copy. Brands We Trust is now a seamless, no-gap logo carousel of the 25 manufacturer logos.",
+        links: [
+          { label: "East Coast Metal — Home", href: "/home/ecmdi?signedin=1" },
+        ],
+      },
+      {
+        title: "Peirce-Phelps — service copy/CTAs + 4-up categories",
+        desc: "Every “Our Services” card now carries its description and CTA (OnCall Air → Boost a Proposal, Housecall Pro → Run Your Business Better, Amply → Explore Amply, Wingman → See How It Works, AHRI System Builder → Build a System, FlashClaim → Start a Claim). Featured Categories now lay out four across (four on top, four on bottom).",
+        links: [
+          { label: "Peirce-Phelps — Home", href: "/home/peirce?signedin=1" },
+        ],
+      },
+      {
+        title: "PDP — Specifications filter, inset",
+        desc: "Set the Specifications filter inside a padded grey box so the search reads as its own inset element instead of getting lost against the tabs above and the spec table below. Open the Specifications tab.",
+        links: [
+          { label: "PDP — Specifications", href: "/pdp/uc-ahri-matched-system?signedin=1" },
+        ],
+      },
     ],
   },
   {
