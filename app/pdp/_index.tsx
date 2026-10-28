@@ -221,10 +221,9 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Mini cart — layouts (base / V1 / V2) + design-system cleanup",
-        desc: "The mini-cart drawer in three layouts, opened in context on a PDP. Base: Checkout (primary) → View Cart → Create Proposal → quiet Save / Share, sticky footer. V1: View Cart + Checkout side by side (Checkout right), with Save Cart | Share Cart as a full-width band right under the header. V2: same side-by-side buttons, with Save / Share moved into the header, left of the close. Shared cleanup: Save / Share now use the design-system Button (foreground, not grey) like Create Proposal; dropped the “You may also need” cross-sell on V1/V2; tightened the top and footer spacing.",
+        title: "Mini cart — layouts (V1 / V2) + design-system cleanup",
+        desc: "The mini-cart drawer in two layouts, opened in context on a PDP. V1: View Cart + Checkout side by side (Checkout right), with Save Cart | Share Cart as a full-width band right under the header. V2: same side-by-side buttons, with Save / Share moved into the header, left of the close. Shared cleanup: Save / Share now use the design-system Button (foreground, not grey) like Create Proposal; dropped the “You may also need” cross-sell on V1/V2; tightened the top and footer spacing.",
         links: [
-          { label: "Mini Cart Base (on a PDP)", href: "/pdp/tradepro-tp-ec13-50?cart=demo&signedin=1" },
           { label: "Mini Cart V1 (on a PDP)", href: "/pdp/tradepro-tp-ec13-50?cart=demo&cartv=1&signedin=1" },
           { label: "Mini Cart V2 (on a PDP)", href: "/pdp/tradepro-tp-ec13-50?cart=demo&cartv=2&signedin=1" },
         ],
