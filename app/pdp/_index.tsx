@@ -188,7 +188,14 @@ function TemplateCard({
 /* ── Change log — grouped by review date. Each date is its own collapsible
    folder; the newest sits open at the top, older dates collapse below. New
    work lands in a new dated folder (newest first). */
-type ChangeItem = { title: string; desc: string; links: { label: string; href: string }[] };
+type ChangeItem = {
+  title: string;
+  /** One-line lead describing the edit. */
+  desc: string;
+  /** Optional explicit list of what changed — rendered as bullets. */
+  bullets?: string[];
+  links: { label: string; href: string }[];
+};
 type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[] };
 
 const CHANGE_LOGS: ChangeLog[] = [
@@ -199,49 +206,71 @@ const CHANGE_LOGS: ChangeLog[] = [
     items: [
       {
         title: "Dashboard — Account Balances as cards + Pay Bill",
-        desc: "Replaced the Account Balances table with a card per account (Account #, nickname, balance against credit limit) and a utilization meter + pill coloured by threshold — under 50% green, 50–80% amber, over 80% red (design-system tokens). Added a Pay Bill CTA at the top of the section in the edit-button style. Sits under Account Information on the dashboard.",
+        desc: "Changed the Account Balances block on the dashboard:",
+        bullets: [
+          "Replaced the balances table with one card per account (Account #, nickname, balance, credit limit).",
+          "Each card shows a utilization meter + % pill, coloured under 50% green / 50–80% amber / over 80% red.",
+          "Added a “Pay Bill” button at the top of the section, in the edit-button style.",
+        ],
         links: [
           { label: "Dashboard — Account Balances", href: "/dashboard?signedin=1" },
         ],
       },
       {
         title: "Mega-menu — coloured column headers",
-        desc: "Filled the second/third panel column-header rows with a tinted (bg-muted) background so each column group reads as its own block instead of a bare rule. Open Products on the Homans PLP header.",
+        desc: "Tinted the column-header rows in the 2nd/3rd mega-menu panels with a grey fill so each column group reads as its own block instead of a bare underline. (Open Products on the Homans header.)",
         links: [
           { label: "Homans PLP (mega-menu)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
         ],
       },
       {
-        title: "Homans header — search fills, actions pinned right",
-        desc: "The search now expands to fill the free space across the top bar, which pins the Lists · My Account · Cart cluster to the far-right edge (no more gap floating between the search and the account tools).",
+        title: "Homans header — search widened, actions pinned right",
+        desc: "Adjusted the Homans top bar:",
+        bullets: [
+          "The search field now stretches to fill the empty space in the bar.",
+          "Lists · My Account · Cart are pinned to the far-right edge (the floating gap is gone).",
+        ],
         links: [
           { label: "Homans header (on the PLP)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
         ],
       },
       {
-        title: "Cart — Save / Share moved to the title row",
-        desc: "Save Cart / Share Cart moved up onto the “Cart” page-title row (grouped and right-aligned with a comfortable gap), out of the Order Summary header. Also removed the Backorder availability banner for this version — the Nearby-branches notice stays.",
+        title: "Cart — Save / Share relocated; Backorder removed",
+        desc: "Two edits on the cart page:",
+        bullets: [
+          "Moved Save Cart / Share Cart up to the “Cart” title row (right-aligned), out of the Order Summary header.",
+          "Removed the red Backorder banner (the yellow Nearby-branches notice stays).",
+        ],
         links: [
           { label: "Cart", href: "/cart?demo=1" },
         ],
       },
       {
         title: "East Coast Metal — home content + brand carousel",
-        desc: "Filled the real ecmdi.com content: the four “Premium Tools For Fast Ordering” cards (icon, description, Learn More) and the two news/bento boxes — “Check Out Our Blog” (Read Now) and “Grow Your Skillset” (Start Learning) — with verbatim copy. Brands We Trust is now a seamless, no-gap logo carousel of the 25 manufacturer logos.",
+        desc: "Filled in the ECM home with the real ecmdi.com content:",
+        bullets: [
+          "“Premium Tools For Fast Ordering” — the 4 cards now have their icon, description, and Learn More.",
+          "The two boxes below — “Check Out Our Blog” (Read Now) and “Grow Your Skillset” (Start Learning) — filled with verbatim copy + CTA.",
+          "Brands We Trust is now a seamless, no-gap logo carousel of the 25 manufacturer logos.",
+        ],
         links: [
           { label: "East Coast Metal — Home", href: "/home/ecmdi?signedin=1" },
         ],
       },
       {
         title: "Peirce-Phelps — service copy/CTAs + 4-up categories",
-        desc: "Every “Our Services” card now carries its description and CTA (OnCall Air → Boost a Proposal, Housecall Pro → Run Your Business Better, Amply → Explore Amply, Wingman → See How It Works, AHRI System Builder → Build a System, FlashClaim → Start a Claim). Featured Categories now lay out four across (four on top, four on bottom).",
+        desc: "Two edits on the Peirce home:",
+        bullets: [
+          "Added the description and CTA to all 6 “Our Services” cards (OnCall Air → Boost a Proposal, Housecall Pro → Run Your Business Better, Amply → Explore Amply, Wingman → See How It Works, AHRI System Builder → Build a System, FlashClaim → Start a Claim).",
+          "Featured Categories now lay out 4 across (4 on top, 4 on bottom).",
+        ],
         links: [
           { label: "Peirce-Phelps — Home", href: "/home/peirce?signedin=1" },
         ],
       },
       {
         title: "PDP — Specifications filter, inset",
-        desc: "Set the Specifications filter inside a padded grey box so the search reads as its own inset element instead of getting lost against the tabs above and the spec table below. Open the Specifications tab.",
+        desc: "Wrapped the Specifications filter in a padded grey box so the search reads as its own inset element instead of blending into the tabs above and the spec table below. (Open the Specifications tab.)",
         links: [
           { label: "PDP — Specifications", href: "/pdp/uc-ahri-matched-system?signedin=1" },
         ],
@@ -632,6 +661,13 @@ export default function PdpMasterPage() {
                       <li key={c.title} className="rounded-lg border bg-background p-4">
                         <p className="font-semibold">{c.title}</p>
                         <p className="mt-0.5 text-sm text-muted-foreground">{c.desc}</p>
+                        {c.bullets ? (
+                          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground marker:text-primary">
+                            {c.bullets.map((b) => (
+                              <li key={b}>{b}</li>
+                            ))}
+                          </ul>
+                        ) : null}
                         <div className="mt-3 flex flex-wrap gap-2">
                           {c.links.map((l) => (
                             <Button key={l.href} asChild variant="outline" size="sm">
