@@ -228,11 +228,11 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Cart — Save / Share relocated; Backorder removed",
-        desc: "Two edits on the cart page:",
+        title: "Cart — Save / Share moved; availability banners removed",
+        desc: "Edits on the cart page:",
         bullets: [
-          "Moved Save Cart / Share Cart up to the “Cart” title row (right-aligned), out of the Order Summary header.",
-          "Removed the red Backorder banner (the yellow Nearby-branches notice stays).",
+          "Moved Save Cart / Share Cart up beside the “Cart” title (left-aligned, mobile-friendly spacing), out of the Order Summary header.",
+          "Removed both the Backorder and the Nearby-branches banners.",
         ],
         links: [
           { label: "Cart", href: "/cart?demo=1" },
@@ -240,25 +240,33 @@ const CHANGE_LOGS: ChangeLog[] = [
       },
       {
         title: "East Coast Metal — home content + brand carousel",
-        desc: "Filled in the ECM home with the real ecmdi.com content:",
+        desc: "Built out the ECM home with the real ecmdi.com content:",
         bullets: [
-          "“Premium Tools For Fast Ordering” — the 4 cards now have their icon, description, and Learn More.",
-          "The two boxes below — “Check Out Our Blog” (Read Now) and “Grow Your Skillset” (Start Learning) — filled with verbatim copy + CTA.",
-          "Brands We Trust is now a seamless, no-gap logo carousel of the 25 manufacturer logos.",
+          "“Premium Tools For Fast Ordering” now sits in its own full-width grey band with the 4 cards (icon, description, Learn More) brought in narrower so it reads as a separate section.",
+          "The two boxes below — “Check Out Our Blog” (Read Now) and “Grow Your Skillset” (Start Learning) — filled with verbatim copy + CTA and sized to a card width.",
+          "Brands We Trust is a seamless, no-gap logo carousel of the 25 manufacturer logos, scrolling at a slow, readable pace.",
         ],
         links: [
           { label: "East Coast Metal — Home", href: "/home/ecmdi?signedin=1" },
         ],
       },
       {
-        title: "Peirce-Phelps — service copy/CTAs + 4-up categories",
-        desc: "Two edits on the Peirce home:",
+        title: "Peirce-Phelps — service copy/CTAs, 4-up categories, logos",
+        desc: "Edits on the Peirce home:",
         bullets: [
           "Added the description and CTA to all 6 “Our Services” cards (OnCall Air → Boost a Proposal, Housecall Pro → Run Your Business Better, Amply → Explore Amply, Wingman → See How It Works, AHRI System Builder → Build a System, FlashClaim → Start a Claim).",
           "Featured Categories now lay out 4 across (4 on top, 4 on bottom).",
+          "Our Trusted Brands now uses the same seamless 25-logo carousel as ECM.",
         ],
         links: [
           { label: "Peirce-Phelps — Home", href: "/home/peirce?signedin=1" },
+        ],
+      },
+      {
+        title: "Category “Jump” page — Shop by Category grid",
+        desc: "Set the Shop by Category tiles to five across — five on top, four on bottom — centered.",
+        links: [
+          { label: "Category Jump (Residential)", href: "/category/residential?v=jump&signedin=1" },
         ],
       },
       {
