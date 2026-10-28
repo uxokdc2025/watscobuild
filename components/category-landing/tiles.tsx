@@ -33,9 +33,9 @@ export function CategoryTileGrid({
   return (
     <section aria-label={heading} className={className}>
       <SectionHead heading={heading} action={action} />
-      <ul className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
+      <ul className="flex flex-wrap justify-center gap-x-4 gap-y-5">
         {tiles.map((t) => (
-          <li key={t.label}>
+          <li key={t.label} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.75rem)] lg:w-[calc(16.666%-0.84rem)]">
             <Link href={t.href} className="group block focus-visible:outline-none">
               <span className="relative block aspect-square overflow-hidden rounded-2xl bg-muted transition group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
