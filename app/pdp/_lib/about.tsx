@@ -175,16 +175,20 @@ function Specifications({ product }: { product: PdpProduct }) {
 
   return (
     <div>
-      {/* Full-width filter, design-system Input. */}
-      <div className="relative">
-        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          aria-label="Filter specifications"
-          placeholder="Filter specifications by name or value..."
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="h-11 w-full pr-3 pl-9"
-        />
+      {/* Full-width filter, design-system Input — sat inside a padded grey
+          inset so the search reads as its own box, not lost against the tabs
+          above and the spec table below. */}
+      <div className="rounded-xl bg-muted p-1.5">
+        <div className="relative">
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            aria-label="Filter specifications"
+            placeholder="Filter specifications by name or value..."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="h-11 w-full bg-background pr-3 pl-9"
+          />
+        </div>
       </div>
       <div className="mt-4">
         {allRows.length ? (
