@@ -14,7 +14,10 @@ import type { Tile, BrandTile } from "@/components/category-landing";
    product photos, the designed service cards, and brand logos).
    ════════════════════════════════════════════════════════════════════════ */
 
-type ImgLink = { alt: string; image: string; href: string };
+type ImgLink = { alt: string; image: string; href: string; desc?: string; cta?: string };
+/* A two-up "news" bento box: a coloured banner lockup on top, then a white
+   body with a heading, paragraph(s) and its own CTA button. */
+type TwoUpCard = { image: string; alt: string; title: string; body: string; cta: string; href: string };
 
 export type HomeContent = {
   heroImages: string[];
@@ -25,13 +28,12 @@ export type HomeContent = {
   servicesSub?: string;
   serviceCards: ImgLink[];
   serviceStyle?: "card" | "tile";
-  twoUp?: ImgLink[];
+  twoUp?: TwoUpCard[];
   missionImage?: string;
   brandsHeading: string;
   brandsCopy: string;
   brandsCta: string;
   brandLogos?: BrandTile[];
-  brandBand?: string;
   partner: { title: string; copy: string; cta?: string };
 };
 
@@ -105,7 +107,7 @@ function CategoryGrid({ heading, tiles }: { heading: string; tiles: Tile[] }) {
       <h2 className="mb-6 text-center text-2xl font-bold tracking-tight">{heading}</h2>
       <ul className="flex flex-wrap justify-center gap-x-4 gap-y-6">
         {tiles.map((t) => (
-          <li key={t.label} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.75rem)] lg:w-[calc(16.666%-0.84rem)]">
+          <li key={t.label} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.75rem)] lg:w-[calc(25%-0.75rem)]">
             <Link href={t.href} className="group block focus-visible:outline-none">
               <span className="grid aspect-square place-items-center overflow-hidden rounded-xl border bg-background p-4 transition group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -131,12 +133,15 @@ function ServiceGrid({ heading, sub, cards, style = "card" }: { heading: string;
         {cards.map((c) => (
           <li key={c.alt} className={cn("w-full", style === "tile" ? "sm:w-[calc(50%-0.5rem)] lg:w-[calc(25%-0.75rem)]" : "sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]")}>
             {style === "tile" ? (
-              <Link href={c.href} className="group flex h-full flex-col items-center rounded-xl border p-6 text-center transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <div className="group flex h-full flex-col items-center rounded-xl border bg-background p-6 text-center shadow-sm transition hover:shadow-md">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.image} alt="" className="size-20 shrink-0 rounded-lg object-contain" loading="lazy" />
-                <span className="mt-3 block font-semibold leading-tight text-foreground group-hover:text-primary">{c.alt}</span>
-                <span className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary">Learn More →</span>
-              </Link>
+                <img src={c.image} alt="" className="size-16 shrink-0 rounded-lg object-contain" loading="lazy" />
+                <span className="mt-4 block font-semibold leading-tight text-foreground">{c.alt}</span>
+                {c.desc ? <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.desc}</p> : null}
+                <Button asChild variant="outline" size="sm" className="mt-4 text-foreground">
+                  <Link href={c.href}>{c.cta ?? "Learn More"}</Link>
+                </Button>
+              </div>
             ) : (
               <Link href={c.href} className="group block overflow-hidden rounded-xl border transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -150,30 +155,17 @@ function ServiceGrid({ heading, sub, cards, style = "card" }: { heading: string;
   );
 }
 
-/* Slow horizontal logo marquee — logos only, no labels. Track holds the set
-   twice so a -50% translate loops seamlessly. */
-function LogoMarquee({ logos, band }: { logos?: string[]; band?: string }) {
-  if (band) {
-    return (
-      <div className="overflow-hidden" aria-label="Brands we carry">
-        <div className="flex w-max animate-logo-marquee">
-          {[0, 1].map((k) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={k} src={band} alt="" className="h-16 w-auto shrink-0 pr-16 object-contain" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-  const set = logos ?? [];
+/* Seamless logo marquee — logos only, no cards, no gaps. The track holds the
+   full set twice so a -50% translate loops with no visible seam; each logo is
+   a fixed height with even horizontal spacing so the strip reads continuous. */
+function LogoMarquee({ logos }: { logos: string[] }) {
+  if (!logos.length) return null;
   return (
     <div className="overflow-hidden" aria-label="Brands we carry">
-      <div className="flex w-max animate-logo-marquee items-stretch gap-4 px-2">
-        {[...set, ...set].map((src, idx) => (
-          <span key={idx} className="flex h-24 w-44 shrink-0 items-center justify-center rounded-xl border bg-background p-5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt="" className="max-h-[60%] max-w-[80%] object-contain" />
-          </span>
+      <div className="flex w-max animate-logo-marquee items-center">
+        {[...logos, ...logos].map((src, idx) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={idx} src={src} alt="" className="h-12 w-auto shrink-0 px-8 object-contain sm:h-14" />
         ))}
       </div>
     </div>
@@ -194,11 +186,18 @@ export function BrandHome({ brandKey }: { brandKey: string }) {
       {content.twoUp ? (
         <ul className="grid gap-4 sm:grid-cols-2">
           {content.twoUp.map((c) => (
-            <li key={c.alt}>
-              <Link href={c.href} className="group block overflow-hidden rounded-xl border transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <li key={c.alt} className="flex">
+              <article className="flex w-full flex-col overflow-hidden rounded-xl border bg-background shadow-sm">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.image} alt={c.alt} className="w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" />
-              </Link>
+                <img src={c.image} alt={c.alt} className="w-full object-cover" loading="lazy" />
+                <div className="flex flex-1 flex-col items-center p-6 text-center">
+                  <h3 className="text-lg font-bold tracking-tight">{c.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{c.body}</p>
+                  <Button asChild className="mt-5">
+                    <Link href={c.href}>{c.cta}</Link>
+                  </Button>
+                </div>
+              </article>
             </li>
           ))}
         </ul>
@@ -211,7 +210,7 @@ export function BrandHome({ brandKey }: { brandKey: string }) {
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{content.brandsCopy}</p>
         </div>
         <div className="mt-8">
-          <LogoMarquee logos={content.brandLogos?.map((b) => b.logo!).filter(Boolean)} band={content.brandBand} />
+          <LogoMarquee logos={(content.brandLogos ?? []).map((b) => b.logo!).filter(Boolean)} />
         </div>
         <div className="mt-8 text-center">
           <Button asChild variant="outline">
@@ -326,21 +325,39 @@ export const ECM_HOME: HomeContent = {
   servicesSub: "These tools are designed to make your ordering process faster, simpler, and better organized.",
   serviceStyle: "tile",
   serviceCards: [
-    { alt: "HVAC Pro+ Mobile App", image: `${E}/mobile-app.png`, href: "#" },
-    { alt: "SimpleStock", image: `${E}/simple-stock.png`, href: "#" },
-    { alt: "Dockside Pickup", image: `${E}/dockside-pickup.png`, href: "#" },
-    { alt: "Order Templates", image: `${E}/order-templates.png`, href: "#" },
+    { alt: "HVAC Pro+™ Mobile App", image: `${E}/mobile-app.png`, href: "#", desc: "Our mobile app provides access to product info and easy to use tools while on the go.", cta: "Learn More" },
+    { alt: "SimpleStock", image: `${E}/simple-stock.png`, href: "#", desc: "Inventory and truck stock replenishment, right from your tablet or mobile phone.", cta: "Learn More" },
+    { alt: "Dockside Pickup", image: `${E}/dockside-pickup.png`, href: "#", desc: "Skip the counter for quicker, more convenient contactless pickup.", cta: "Learn More" },
+    { alt: "Order Templates", image: `${E}/order-templates.png`, href: "#", desc: "Save lists of commonly ordered products for easy reference when you need to reorder.", cta: "Learn More" },
   ],
   twoUp: [
-    { alt: "Check out our blog", image: `${E}/a-cool-read-ecmd-blog.png`, href: "#" },
-    { alt: "Grow your skillset — PRO training", image: `${E}/pro-training.png`, href: "#" },
+    {
+      alt: "A Cool Read — the ECM blog",
+      image: `${E}/a-cool-read-ecmd-blog.png`,
+      href: "#",
+      title: "Check Out Our Blog",
+      body: "Catch up with us. Stay current on what matters to you with expert blog posts, HVAC industry news, tech tips, tutorials, product troubleshooting tips, and more! Be sure to check out our monthly series of Tech Tips blog posts written by members of our Technical Service Team.",
+      cta: "Read Now",
+    },
+    {
+      alt: "PRO Training",
+      image: `${E}/pro-training.png`,
+      href: "#",
+      title: "Grow Your Skillset",
+      body: "We're here to help. We have certified Technical Service Representatives available to help solve the problem at hand, keep you up-to-date on products, and offer helpful troubleshooting tips. Attend one of our scheduled onsite training events or view our video library for technical training on your own time.",
+      cta: "Start Learning",
+    },
   ],
   missionImage: `${E}/hvac-products.png`,
   brandsHeading: "Brands We Trust",
   brandsCopy:
     "We take HVAC equipment, supplies, parts, and tools seriously, and we know your customers depend on you for quality goods. That's why we partner with the most trusted and highest quality HVAC manufacturers in the heating and cooling industry to offer you quality equipment, supplies, parts, and tools.",
   brandsCta: "Shop By Brand",
-  brandBand: `${E}/brands-we-trust-east-coast-metal-distributors.png`,
+  // The 25 manufacturer logos from ecmdi.com, scrolled as one seamless strip.
+  brandLogos: Array.from({ length: 25 }, (_, i) => ({
+    label: `Brand ${i + 1}`,
+    logo: `${E}/brands/brand-${String(i + 1).padStart(2, "0")}.png`,
+  })),
   partner: {
     title: "HVAC Products You Need, When You Need Them",
     copy: "Our mission is to deliver the quality HVAC products you need, when you need them, and provide expert technical support. Our products, branches, and technical support combine to give you exceptional service before, during, and after the sale. This is our commitment to you. We are dedicated to fulfilling this commitment every single day. We are confident in our team and our products, and we're proud to have the opportunity to serve you.",
