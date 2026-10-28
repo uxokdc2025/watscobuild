@@ -143,10 +143,17 @@ function ServiceGrid({ heading, sub, cards, style = "card" }: { heading: string;
                 </Button>
               </div>
             ) : (
-              <Link href={c.href} className="group block overflow-hidden rounded-xl border transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <article className="flex h-full flex-col overflow-hidden rounded-xl border bg-background shadow-sm transition hover:shadow-md">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.image} alt={c.alt} className="w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" />
-              </Link>
+                <img src={c.image} alt="" className="w-full object-cover" loading="lazy" />
+                <div className="flex flex-1 flex-col items-center p-6 text-center">
+                  <h3 className="text-lg font-bold tracking-tight">{c.alt}</h3>
+                  {c.desc ? <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.desc}</p> : null}
+                  <Button asChild className="mt-5">
+                    <Link href={c.href}>{c.cta ?? "Learn More"}</Link>
+                  </Button>
+                </div>
+              </article>
             )}
           </li>
         ))}
@@ -277,12 +284,12 @@ export const PEIRCE_HOME: HomeContent = {
   ],
   servicesHeading: "Our Services",
   serviceCards: [
-    { alt: "OnCall Air — the ultimate sales engine", image: `${P}/on-call-air.png`, href: "#" },
-    { alt: "Housecall Pro — run your business like a pro", image: `${P}/housecall-pro.png`, href: "#" },
-    { alt: "Amply — LiDAR-powered design", image: `${P}/amply.png`, href: "#" },
-    { alt: "Wingman — faster support", image: `${P}/wingman.png`, href: "#" },
-    { alt: "AHRI System Builder", image: `${P}/ahri.png`, href: "#" },
-    { alt: "FlashClaim", image: `${P}/flashclaim.png`, href: "#" },
+    { alt: "OnCall Air", image: `${P}/on-call-air.png`, href: "#", desc: "HVAC sales software with AHRI match-ups, live inventory, dynamic pricing, and proposal builder.", cta: "Boost a Proposal" },
+    { alt: "Housecall Pro", image: `${P}/housecall-pro.png`, href: "#", desc: "Top-rated field service software for trades with smart scheduling, online booking, and fast payments.", cta: "Run Your Business Better" },
+    { alt: "Amply", image: `${P}/amply.png`, href: "#", desc: "LiDAR scans, ACCA load calculations, and AR visualization make design and Manual J fast and accurate.", cta: "Explore Amply" },
+    { alt: "Wingman", image: `${P}/wingman.png`, href: "#", desc: "Wingman in the HVAC Pro+ Mobile App for faster support and priority service.", cta: "See How It Works" },
+    { alt: "AHRI System Builder", image: `${P}/ahri.png`, href: "#", desc: "Matched Systems made easy with real-time inventory and pricing.", cta: "Build a System" },
+    { alt: "FlashClaim", image: `${P}/flashclaim.png`, href: "#", desc: "FlashClaim, contractors can take control—submit claims, receive approvals, and create replacement orders without the back-and-forth.", cta: "Start a Claim" },
   ],
   brandsHeading: "Our Trusted Brands",
   brandsCopy:
