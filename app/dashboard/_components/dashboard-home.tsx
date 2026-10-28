@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
-import { ArrowUpRight, Pencil, Search } from "lucide-react";
+import { ArrowUpRight, CreditCard, Pencil, Search } from "lucide-react";
 import { AccountSearchInput } from "./account-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -117,9 +117,14 @@ function AccountBalancesCard() {
       aria-labelledby="account-balances-heading"
       className="rounded-lg border bg-background px-4 py-3 shadow-sm sm:px-6 sm:py-4"
     >
-      <h2 id="account-balances-heading" className="text-lg font-semibold tracking-tight">
-        Account Balances
-      </h2>
+      <div className="flex items-center justify-between gap-4">
+        <h2 id="account-balances-heading" className="text-lg font-semibold tracking-tight">
+          Account Balances
+        </h2>
+        <Button type="button" variant="outline" className="min-h-10">
+          <CreditCard aria-hidden="true" className="size-4" /> Pay Bill
+        </Button>
+      </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {ACCOUNT_BALANCES.map((a) => (
           <BalanceCard key={a.id} account={a} />

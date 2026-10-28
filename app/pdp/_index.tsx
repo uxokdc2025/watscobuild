@@ -193,6 +193,27 @@ type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[]
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
+    id: "oct-28",
+    badge: "Oct 28",
+    title: "New edits since the Oct 28 meeting",
+    items: [
+      {
+        title: "Dashboard — Account Balances as cards + Pay Bill",
+        desc: "Replaced the Account Balances table with a card per account (Account #, nickname, balance against credit limit) and a utilization meter + pill coloured by threshold — under 50% green, 50–80% amber, over 80% red (design-system tokens). Added a Pay Bill CTA at the top of the section in the edit-button style. Sits under Account Information on the dashboard.",
+        links: [
+          { label: "Dashboard — Account Balances", href: "/dashboard?signedin=1" },
+        ],
+      },
+      {
+        title: "Mega-menu — coloured column headers",
+        desc: "Filled the second/third panel column-header rows with a tinted (bg-muted) background so each column group reads as its own block instead of a bare rule. Open Products on the Homans PLP header.",
+        links: [
+          { label: "Homans PLP (mega-menu)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
+        ],
+      },
+    ],
+  },
+  {
     id: "oct-20",
     badge: "Oct 20",
     title: "New edits since the Oct 20 meeting",
@@ -546,7 +567,7 @@ export default function PdpMasterPage() {
             Change log
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Grouped by meeting — each card is dated to a meeting and holds the new edits made since it. The latest (Oct 9) is open; earlier meetings are collapsed. Click any link to open that change.
+            Grouped by meeting — each card is dated to a meeting and holds the new edits made since it. The latest (Oct 28) is open; earlier meetings are collapsed. Click any link to open that change.
           </p>
           <Accordion
             type="multiple"
