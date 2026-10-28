@@ -125,14 +125,15 @@ function CategoryGrid({ heading, tiles }: { heading: string; tiles: Tile[] }) {
 /* Centered service grid. "card" = the full designed marketing cards (Peirce);
    "tile" = a compact icon + title + link (ECM's small icon tiles). */
 function ServiceGrid({ heading, sub, cards, style = "card" }: { heading: string; sub?: string; cards: ImgLink[]; style?: "card" | "tile" }) {
-  return (
-    <section aria-label={heading}>
+  const tile = style === "tile";
+  const body = (
+    <>
       <h2 className="text-center text-2xl font-bold tracking-tight">{heading}</h2>
       {sub ? <p className="mt-1 text-center text-sm text-muted-foreground">{sub}</p> : null}
-      <ul className="mt-6 flex flex-wrap justify-center gap-4">
+      <ul className={cn("mt-6 flex flex-wrap justify-center gap-4", tile && "mx-auto max-w-4xl")}>
         {cards.map((c) => (
-          <li key={c.alt} className={cn("w-full", style === "tile" ? "sm:w-[calc(50%-0.5rem)] lg:w-[calc(25%-0.75rem)]" : "sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]")}>
-            {style === "tile" ? (
+          <li key={c.alt} className={cn("w-full", tile ? "sm:w-[calc(50%-0.5rem)] lg:w-[calc(25%-0.75rem)]" : "sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]")}>
+            {tile ? (
               <div className="group flex h-full flex-col items-center rounded-xl border bg-background p-6 text-center shadow-sm transition hover:shadow-md">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={c.image} alt="" className="size-16 shrink-0 rounded-lg object-contain" loading="lazy" />
@@ -158,8 +159,17 @@ function ServiceGrid({ heading, sub, cards, style = "card" }: { heading: string;
           </li>
         ))}
       </ul>
-    </section>
+    </>
   );
+  if (tile) {
+    // Own full-width band so the tools read as their own section.
+    return (
+      <section aria-label={heading} className="[margin-left:calc(50%-50vw)] [margin-right:calc(50%-50vw)] bg-muted/60 py-12">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">{body}</div>
+      </section>
+    );
+  }
+  return <section aria-label={heading}>{body}</section>;
 }
 
 /* Seamless logo marquee — logos only, no cards, no gaps. The track holds the
