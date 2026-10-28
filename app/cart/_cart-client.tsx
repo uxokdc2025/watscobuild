@@ -14,7 +14,6 @@ import {
   Package,
   Plus,
   Share2,
-  TriangleAlert,
   X,
 } from "lucide-react";
 
@@ -202,43 +201,15 @@ function OrderSummary({
   subtotal: number;
   checkoutHref: string;
 }) {
-  // Save-for-later is local demo state — toggles the label to confirm the save.
-  const [saved, setSaved] = React.useState(false);
-  // ?summary=2 — Save / Share sit in a full-width band under the header
-  // (like the V1 mini-cart) instead of inline in the header row.
-  const [sumV2, setSumV2] = React.useState(false);
-  React.useEffect(() => {
-    setSumV2(new URLSearchParams(window.location.search).get("summary") === "2");
-  }, []);
-  const saveBtn = (full: boolean) => (
-    <Button type="button" variant="ghost" size="sm" aria-pressed={saved} onClick={() => setSaved(true)}>
-      {saved ? <Check className="size-4" aria-hidden="true" /> : <Bookmark className="size-4" aria-hidden="true" />}
-      {saved ? (full ? "Cart Saved" : "Saved") : full ? "Save Cart" : "Save"}
-    </Button>
-  );
-  const shareBtn = (full: boolean) => (
-    <Button type="button" variant="ghost" size="sm">
-      <Share2 className="size-4" aria-hidden="true" />
-      {full ? "Share Cart" : "Share"}
-    </Button>
-  );
   return (
     <aside className="h-fit overflow-hidden rounded-md border bg-background shadow-sm lg:sticky lg:top-6">
-      {/* Header — V2 default: Save / Share inline, right of the title. */}
+      {/* Header — Save / Share now live on the page-title row (next to "Cart"),
+          so the Order Summary header is just the title. */}
       <div className="flex items-center justify-between gap-2 border-b bg-muted/60 px-5 py-2.5">
         <h2 className="text-base font-semibold">
           Order Summary ({count} {count === 1 ? "Item" : "Items"})
         </h2>
-        {!sumV2 ? <div className="flex items-center gap-1">{saveBtn(false)}{shareBtn(false)}</div> : null}
       </div>
-      {/* Alt version: Save Cart | Share Cart as a full-width band under the header. */}
-      {sumV2 ? (
-        <div className="flex items-center justify-center gap-2 border-b py-2">
-          {saveBtn(true)}
-          <span aria-hidden className="h-4 w-px bg-border" />
-          {shareBtn(true)}
-        </div>
-      ) : null}
       <div className="space-y-4 p-5">
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
@@ -307,9 +278,11 @@ function EmptyCart() {
 export default function CartClient({ brandKey = "homans" }: { brandKey?: string }) {
   const brand = getBrandCheckout(brandKey);
   const [lines, setLines] = React.useState<CartLine[]>(DEMO_CART);
-  // Stock/availability notices — moved here from checkout. Backorder + nearby
-  // are dismissible summaries.
-  const [notices, setNotices] = React.useState({ backorder: true, nearby: true });
+  // Stock/availability notices — moved here from checkout. Backorder was
+  // dropped for this version; the nearby-branches summary stays (dismissible).
+  const [notices, setNotices] = React.useState({ nearby: true });
+  // Save-for-later lives on the page-title row now (left-aligned with "Cart").
+  const [saved, setSaved] = React.useState(false);
   // Selected account is lifted here so it flows into the checkout href
   // (?account=…) and seeds Order Details on the next step.
   const [accountId, setAccountId] = React.useState(brand.switchAccounts[0].id);
@@ -333,7 +306,23 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
           Back to Shopping
         </Link>
 
-        <h1 className="mt-5 text-2xl font-bold tracking-tight">Cart</h1>
+        {/* Title row — "Cart" on the left, Save / Share on the same line,
+            grouped and pushed to the right with a comfortable gap between. */}
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold tracking-tight">Cart</h1>
+          {lines.length ? (
+            <div className="flex items-center gap-1">
+              <Button type="button" variant="ghost" size="sm" aria-pressed={saved} onClick={() => setSaved(true)}>
+                {saved ? <Check className="size-4" aria-hidden="true" /> : <Bookmark className="size-4" aria-hidden="true" />}
+                {saved ? "Cart Saved" : "Save Cart"}
+              </Button>
+              <Button type="button" variant="ghost" size="sm">
+                <Share2 className="size-4" aria-hidden="true" />
+                Share Cart
+              </Button>
+            </div>
+          ) : null}
+        </div>
 
         {!lines.length ? (
           <div className="mt-6">
@@ -344,16 +333,6 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
             {/* Stock / availability — the backorder + nearby summaries
                 (dismissible). Account context sits BELOW these messages. */}
             <div className="mt-6 space-y-3">
-              {notices.backorder ? (
-                <Alert variant="destructive" className="pr-10">
-                  <TriangleAlert />
-                  <AlertTitle>Backorder</AlertTitle>
-                  <AlertDescription>
-                    Some items are available on backorder. We&apos;ll contact you with an estimated availability date.
-                  </AlertDescription>
-                  <DismissButton label="Dismiss backorder notice" onClick={() => setNotices((n) => ({ ...n, backorder: false }))} />
-                </Alert>
-              ) : null}
               {notices.nearby ? (
                 <Alert variant="warning" className="pr-10">
                   <MapPin />
