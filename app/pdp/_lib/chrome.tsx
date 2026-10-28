@@ -326,8 +326,9 @@ function UnifiedHeader({
             </span>
           </a>
 
-          {/* CENTER: search — narrower, with more breathing room around it. */}
-          <SearchAutocomplete placeholder="Search item # or name" className="lg:max-w-[600px]" />
+          {/* CENTER: search — fills all free space so the right-hand
+              Lists · Account · Cart cluster is pinned to the far-right edge. */}
+          <SearchAutocomplete placeholder="Search item # or name" />
 
           {/* RIGHT: Lists · Account · Cart */}
           <Link
