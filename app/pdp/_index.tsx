@@ -607,6 +607,16 @@ export default function PdpMasterPage() {
                 <ArrowUpRight className="size-3.5" />
               </Link>
             </Button>
+            <Button asChild variant="outline">
+              <Link
+                href="/components/cms-blocks"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                CMS Blocks
+                <ArrowUpRight className="size-3.5" />
+              </Link>
+            </Button>
             <Button asChild variant="secondary">
               <a
                 href="https://github.com/uxokdc2025/watscobuild"
