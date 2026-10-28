@@ -217,13 +217,6 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Mega-menu — coloured column headers",
-        desc: "Tinted the column-header rows in the 2nd/3rd mega-menu panels with a grey fill so each column group reads as its own block instead of a bare underline. (Open Products on the Homans header.)",
-        links: [
-          { label: "Homans PLP (mega-menu)", href: "/search?brand=homans&q=blower%20motor&signedin=1" },
-        ],
-      },
-      {
         title: "Homans header — search widened, actions pinned right",
         desc: "Adjusted the Homans top bar:",
         bullets: [

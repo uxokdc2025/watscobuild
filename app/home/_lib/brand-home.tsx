@@ -248,6 +248,13 @@ export function BrandHome({ brandKey }: { brandKey: string }) {
   );
 }
 
+/* The shared manufacturer-logo set (the 25 "partner" logos) — used in the
+   Brands marquee on every brand home so they read as one system. */
+const PARTNER_BRAND_LOGOS: BrandTile[] = Array.from({ length: 25 }, (_, i) => ({
+  label: `Brand ${i + 1}`,
+  logo: `/figma-home/ecmdi/brands/brand-${String(i + 1).padStart(2, "0")}.png`,
+}));
+
 /* ════════════════ Peirce-Phelps ════════════════ */
 const P = "/figma-home/peirce";
 export const PEIRCE_HOME: HomeContent = {
@@ -295,12 +302,7 @@ export const PEIRCE_HOME: HomeContent = {
   brandsCopy:
     "Peirce Phelps provides high quality HVAC/R equipment, parts, supplies, and tools to contractors at over 20 locations across Pennsylvania, New Jersey, and Delaware. With some of the most well-known brands in the HVAC/R industry, you're sure to find what you're looking for. Shop from the industry's most reliable brands and manufacturers.",
   brandsCta: "View Our Brands",
-  brandLogos: [
-    { label: "Carrier", logo: `${P}/carrier-logo.png` },
-    { label: "Bryant", logo: `${P}/bryant-logo.png` },
-    { label: "WeatherMaker by Carrier", logo: `${P}/weathermaker-by-carrier-logo.png` },
-    { label: "Mitsubishi Electric", logo: `${P}/mitsubishi-logo.png` },
-  ],
+  brandLogos: PARTNER_BRAND_LOGOS,
   partner: {
     title: "Partner with Peirce-Phelps",
     copy: "Peirce-Phelps only sells to HVAC trade professionals and service organizations within its geographic territory and not sell directly to homeowners. Some HVAC manufacturer's equipment may be restricted without supplying a contractor's license and credit accounts & payment terms are subject to Credit Approval",
@@ -360,11 +362,7 @@ export const ECM_HOME: HomeContent = {
   brandsCopy:
     "We take HVAC equipment, supplies, parts, and tools seriously, and we know your customers depend on you for quality goods. That's why we partner with the most trusted and highest quality HVAC manufacturers in the heating and cooling industry to offer you quality equipment, supplies, parts, and tools.",
   brandsCta: "Shop By Brand",
-  // The 25 manufacturer logos from ecmdi.com, scrolled as one seamless strip.
-  brandLogos: Array.from({ length: 25 }, (_, i) => ({
-    label: `Brand ${i + 1}`,
-    logo: `${E}/brands/brand-${String(i + 1).padStart(2, "0")}.png`,
-  })),
+  brandLogos: PARTNER_BRAND_LOGOS,
   partner: {
     title: "HVAC Products You Need, When You Need Them",
     copy: "Our mission is to deliver the quality HVAC products you need, when you need them, and provide expert technical support. Our products, branches, and technical support combine to give you exceptional service before, during, and after the sale. This is our commitment to you. We are dedicated to fulfilling this commitment every single day. We are confident in our team and our products, and we're proud to have the opportunity to serve you.",

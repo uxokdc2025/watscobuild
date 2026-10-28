@@ -9,17 +9,14 @@ import {
   FilePlus2,
   House,
   ImageOff,
-  MapPin,
   Minus,
   Package,
   Plus,
   Share2,
-  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatUSD } from "@/app/pdp/_lib/types";
 import { getBrandCheckout } from "../checkout/_lib/brand-checkout";
 import { SwitchAccountDrawer } from "../checkout/_components/checkout-drawers";
@@ -28,19 +25,6 @@ import { DEMO_CART, type CartLine } from "./_cart-data";
 const SHOP_HREF = "/search?q=blower%20motor&signedin=1";
 
 /** Small dismiss control for a lightly-filled Alert (inherits the alert tone). */
-function DismissButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="absolute top-2 right-2 grid size-7 place-items-center rounded-md text-current/70 transition-colors hover:bg-black/5 hover:text-current focus-visible:ring-2 focus-visible:ring-current/40 focus-visible:outline-none"
-    >
-      <X className="size-4" />
-    </button>
-  );
-}
-
 /* ───────────────────────── Quantity stepper ─────────────────────────
  * Mirrors the shopping-list / cart-drawer stepper markup so the control reads
  * identically across the flow. */
@@ -278,9 +262,6 @@ function EmptyCart() {
 export default function CartClient({ brandKey = "homans" }: { brandKey?: string }) {
   const brand = getBrandCheckout(brandKey);
   const [lines, setLines] = React.useState<CartLine[]>(DEMO_CART);
-  // Stock/availability notices — moved here from checkout. Backorder was
-  // dropped for this version; the nearby-branches summary stays (dismissible).
-  const [notices, setNotices] = React.useState({ nearby: true });
   // Save-for-later lives on the page-title row now (left-aligned with "Cart").
   const [saved, setSaved] = React.useState(false);
   // Selected account is lifted here so it flows into the checkout href
@@ -306,9 +287,9 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
           Back to Shopping
         </Link>
 
-        {/* Title row — "Cart" on the left, Save / Share on the same line,
-            grouped and pushed to the right with a comfortable gap between. */}
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        {/* Title row — "Cart" with Save / Share grouped right beside it (left
+            aligned), spaced at a mobile-friendly distance from the title. */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
           <h1 className="text-2xl font-bold tracking-tight">Cart</h1>
           {lines.length ? (
             <div className="flex items-center gap-1">
@@ -330,21 +311,6 @@ export default function CartClient({ brandKey = "homans" }: { brandKey?: string 
           </div>
         ) : (
           <>
-            {/* Stock / availability — the backorder + nearby summaries
-                (dismissible). Account context sits BELOW these messages. */}
-            <div className="mt-6 space-y-3">
-              {notices.nearby ? (
-                <Alert variant="warning" className="pr-10">
-                  <MapPin />
-                  <AlertTitle>Nearby branches</AlertTitle>
-                  <AlertDescription>
-                    Some items are available at another branch and may ship separately.
-                  </AlertDescription>
-                  <DismissButton label="Dismiss nearby branches notice" onClick={() => setNotices((n) => ({ ...n, nearby: false }))} />
-                </Alert>
-              ) : null}
-            </div>
-
             {/* Left column carries the account context + Items; the Order Summary
                 sits in the right column and rises to align with the account row. */}
             <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_440px]">
