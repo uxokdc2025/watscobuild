@@ -525,7 +525,7 @@
   to { transform: translateX(-50%); }
 }
 .animate-logo-marquee {
-  animation: logo-marquee 40s linear infinite;
+  animation: logo-marquee 80s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .animate-logo-marquee { animation: none; }

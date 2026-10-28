@@ -191,9 +191,9 @@ export function BrandHome({ brandKey }: { brandKey: string }) {
       <ServiceGrid heading={content.servicesHeading} sub={content.servicesSub} cards={content.serviceCards} style={content.serviceStyle} />
 
       {content.twoUp ? (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="flex flex-wrap justify-center gap-4">
           {content.twoUp.map((c) => (
-            <li key={c.alt} className="flex">
+            <li key={c.alt} className="flex w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
               <article className="flex w-full flex-col overflow-hidden rounded-xl border bg-background shadow-sm">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={c.image} alt={c.alt} className="w-full object-cover" loading="lazy" />
