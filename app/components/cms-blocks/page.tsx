@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import { CMS_CATEGORIES, CMS_OTHER, BlockCard } from "./cms-catalog";
+import { CMS_CATEGORIES, CMS_OTHER } from "./cms-catalog";
+import { CatalogGrids } from "./cms-catalog-client";
 
 export const metadata: Metadata = {
   title: "Shopware CMS Blocks — Landing Page Catalog",
@@ -33,23 +34,8 @@ export default function CmsBlocksPage() {
           </p>
         </header>
 
-        {CMS_CATEGORIES.map((cat) => (
-          <section key={cat.id} aria-labelledby={`cat-${cat.id}`} className="mt-10">
-            <div className="flex flex-wrap items-baseline gap-3 border-b pb-2">
-              <h2 id={`cat-${cat.id}`} className="text-xl font-bold tracking-tight">
-                {cat.title}
-              </h2>
-              <span className="text-sm text-muted-foreground">
-                {cat.blocks.length} blocks · Shopware category &ldquo;{cat.shopware}&rdquo;
-              </span>
-            </div>
-            <div className="mt-5 grid gap-5 sm:grid-cols-2">
-              {cat.blocks.map((b) => (
-                <BlockCard key={b.name} block={b} />
-              ))}
-            </div>
-          </section>
-        ))}
+        <p className="mt-2 text-xs text-muted-foreground">Click any block to open its full-size live preview.</p>
+        <CatalogGrids />
 
         <section aria-labelledby="cat-other" className="mt-12">
           <div className="border-b pb-2">

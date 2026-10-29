@@ -81,7 +81,7 @@ function VideoPh({ brand }: { brand: "youtube" | "vimeo" }) {
 }
 
 /* ── Per-block preview renderer (keyed by Shopware block name) ───────── */
-function Preview({ name }: { name: string }) {
+export function Preview({ name }: { name: string }) {
   switch (name) {
     /* Text */
     case "text":
@@ -283,8 +283,9 @@ function Preview({ name }: { name: string }) {
 }
 
 /* ── Catalog data (landing-page categories, Shopware order) ──────────── */
-type Block = { name: string; label: string };
-type Category = { id: string; title: string; shopware: string; blocks: Block[] };
+export type Block = { name: string; label: string };
+export type CmsCategory = { id: string; title: string; shopware: string; blocks: Block[] };
+type Category = CmsCategory;
 
 export const CMS_CATEGORIES: Category[] = [
   {
