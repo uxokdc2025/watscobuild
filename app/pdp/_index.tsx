@@ -205,6 +205,16 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Nov 3 meeting",
     items: [
       {
+        title: "Quick Order — Multiple Search + review/replacement component",
+        desc: "Recreated the storefront Quick Order (Multiple Search) on our design system, with the new expand/collapse piece:",
+        bullets: [
+          "Left panel: Search / Multiple Search / Upload tabs with the paste-a-list box and Add to the List.",
+          "A collapsible “requires your review” card above the items — expand “Select Product” to pick from the matching products; choosing one moves it into the ready list and updates the counts.",
+          "Ready items with availability + quantity steppers, and the “N of M items ready” Add to Cart / Add to My List bar.",
+        ],
+        links: [{ label: "Quick Order", href: "/quickorder?signedin=1" }],
+      },
+      {
         title: "Shopware CMS block catalog + page composer",
         desc: "Catalogued every Shopware “Shopping Experiences” block available on a Landing page, as live design-system components:",
         bullets: [
