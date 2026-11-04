@@ -205,6 +205,21 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Nov 3 meeting",
     items: [
       {
+        title: "Shopware CMS blocks — examples page + full landing-page set",
+        desc: "Reworked the catalog per review: dropped the placeholder stand-ins and the separate per-block preview pages in favour of one long, anchored examples page of real sections.",
+        bullets: [
+          "A labelled example of every Shopware “Shopping Experiences” block offered on a Landing page — Shopware’s exact names and all eight category tabs (Text, Images, Text & images, Video, Commerce, Sidebar, Form, HTML), verified against the shopware/shopware source: 36 blocks in all.",
+          "Each example is a real page section built on our design system with the actual imagery and copy from East Coast Metal, Peirce, and the Residential jump page — not gray placeholders.",
+          "The catalog is a thumbnail per block; clicking one jumps straight to its anchored example. Where a built section differs from the real Shopware block (e.g. our seamless logo marquee vs. Shopware’s paged Image slider), the block is built to match Shopware and the difference is called out inline.",
+          "A “Build a Page” composer stays alongside — stack blocks, reorder them, and render a sample landing page.",
+        ],
+        links: [
+          { label: "CMS block examples", href: "/components/cms-blocks/examples" },
+          { label: "CMS Blocks catalog", href: "/components/cms-blocks" },
+          { label: "Build a Page", href: "/components/cms-blocks/build" },
+        ],
+      },
+      {
         title: "Quick Order — Multiple Search + review/replacement component",
         desc: "Recreated the storefront Quick Order (Multiple Search) on our design system, with the new expand/collapse piece:",
         bullets: [
@@ -213,18 +228,6 @@ const CHANGE_LOGS: ChangeLog[] = [
           "Ready items with availability + quantity steppers, and the “N of M items ready” Add to Cart / Add to My List bar.",
         ],
         links: [{ label: "Quick Order", href: "/quickorder?signedin=1" }],
-      },
-      {
-        title: "Shopware CMS block catalog + page composer",
-        desc: "Catalogued every Shopware “Shopping Experiences” block available on a Landing page, as live design-system components:",
-        bullets: [
-          "A catalog of all 26 landing-page blocks (Text, Images, Video, Text & images) — each drawn on our tokens; click any one for a full-size live preview.",
-          "A “Build a Page” composer — stack blocks, reorder them, and render a real sample landing page.",
-        ],
-        links: [
-          { label: "CMS Blocks catalog", href: "/components/cms-blocks" },
-          { label: "Build a Page", href: "/components/cms-blocks/build" },
-        ],
       },
     ],
   },
