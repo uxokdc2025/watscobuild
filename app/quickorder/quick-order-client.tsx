@@ -18,18 +18,28 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 /* ════════════════════════════════════════════════════════════════════════
    Quick Order — Multiple Search (recreated from the live Homans/Peirce
-   quickorder page on our design system). The new piece is the expandable /
-   collapsible "requires your review" replacement component that sits above
-   the ready items: it holds a pasted item we couldn't match 1:1 and expands
-   to let the buyer pick the right product from the matches.
+   quickorder page on our design system). Two interactions:
+   · the "requires your review" banner is our Alert (warning) with a top-level
+     Show (N) collapse — exactly like the shopping-list "Replacements available"
+     banner — holding the items we couldn't match 1:1;
+   · each review item expands inline to pick the right product from its matches.
+   The ready list is our real product-list table (Product Details · Availability
+   · Price · Qty · actions), the same grid used on the shopping-list detail.
    ════════════════════════════════════════════════════════════════════════ */
 
 type Match = { id: string; brand: string; title: string; item: string; mfg: string; price: number | null };
 type ReviewRow = { id: string; brand: string; title: string; item: string; mfg: string; matches: Match[] };
 type ReadyRow = { id: string; brand: string; title: string; item: string; mfg: string; qty: number; availability: string };
+
+// Ready-list columns: Product Details · Availability · Price · Qty · actions.
+const READY_GRID_COLS =
+  "grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)_minmax(0,0.8fr)_7.5rem_5.5rem]";
 
 const INITIAL_REVIEW: ReviewRow[] = [
   {
@@ -45,6 +55,18 @@ const INITIAL_REVIEW: ReviewRow[] = [
       { id: "m4", brand: "Bryant®", title: 'Evolution Air Purifier Filter 20" x 25", cross-reference', item: "GAPBBCAR2025", mfg: "GAPBBCAR2025", price: 46.75 },
     ],
   },
+  {
+    id: "txv410",
+    brand: "Emerson®",
+    title: "TXV-R410A — Thermostatic Expansion Valve, R-410A (tonnage not specified)",
+    item: "TXV-R410A",
+    mfg: "TXVR410A",
+    matches: [
+      { id: "t1", brand: "Emerson®", title: "TXV-R410A-2T — Thermostatic Expansion Valve, R-410A, 2 Ton", item: "TXVR410A2T", mfg: "TXV-R410A-2T", price: 82.0 },
+      { id: "t2", brand: "Emerson®", title: "TXV-R410A-3T — Thermostatic Expansion Valve, R-410A, 3 Ton", item: "TXVR410A3T", mfg: "TXV-R410A-3T", price: 96.0 },
+      { id: "t3", brand: "Sporlan®", title: "EBF-3-CP100 — Balanced-Port TXV, R-410A, 3 Ton, cross-reference", item: "SPEBF3CP100", mfg: "EBF-3-CP100", price: 104.5 },
+    ],
+  },
 ];
 
 const INITIAL_READY: ReadyRow[] = [
@@ -58,7 +80,7 @@ function usd(n: number) {
 
 function Thumb({ className }: { className?: string }) {
   return (
-    <span className={cn("grid size-16 shrink-0 place-items-center overflow-hidden rounded-md border bg-muted text-muted-foreground/50", className)}>
+    <span className={cn("grid size-14 shrink-0 place-items-center overflow-hidden rounded-md bg-muted/40 p-1 text-muted-foreground/50", className)}>
       <ImageIcon className="size-6" aria-hidden />
     </span>
   );
@@ -78,32 +100,26 @@ function QtyStepper({ value, onChange, label }: { value: number; onChange: (n: n
   );
 }
 
-/* ── The collapsible review / replacement component ──────────────────── */
-function ReviewCard({ row, onSelect, onRemove }: { row: ReviewRow; onSelect: (m: Match) => void; onRemove: () => void }) {
+/* ── One review item inside the banner: expands inline to pick a match ──── */
+function ReviewItem({ row, onSelect, onRemove }: { row: ReviewRow; onSelect: (m: Match) => void; onRemove: () => void }) {
   const [open, setOpen] = React.useState(false);
   const panelId = `review-${row.id}`;
   return (
-    <div className="overflow-hidden rounded-lg border border-yellow-500/40 bg-yellow-400/12">
-      <p className="flex items-center gap-2 px-4 pt-3 text-sm font-semibold text-yellow-800 dark:text-yellow-300">
-        <TriangleAlert className="size-4" aria-hidden />
-        The following item requires your review
-      </p>
-      <div className="flex flex-wrap items-center gap-4 p-4">
-        <Thumb />
+    <div className="overflow-hidden rounded-md border border-border bg-background">
+      <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
+        <Thumb className="size-12" />
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-muted-foreground">{row.brand}</p>
-          <p className="line-clamp-2 text-sm font-semibold">{row.title}</p>
-          <p className="mt-0.5 font-mono text-xs text-muted-foreground">
-            Item: {row.item} · MFG: {row.mfg}
-          </p>
+          <p className="text-xs font-medium text-primary">{row.brand}</p>
+          <p className="truncate text-sm font-semibold text-foreground">{row.title}</p>
+          <p className="mt-0.5 font-mono text-xs text-muted-foreground">Item: {row.item} · MFG: {row.mfg}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground">{row.matches.length} matching products found</span>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="hidden text-sm text-muted-foreground sm:inline">{row.matches.length} matches</span>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="text-foreground"
+            className="min-h-11 text-foreground"
             aria-expanded={open}
             aria-controls={panelId}
             onClick={() => setOpen((o) => !o)}
@@ -111,68 +127,110 @@ function ReviewCard({ row, onSelect, onRemove }: { row: ReviewRow; onSelect: (m:
             Select Product
             <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} aria-hidden />
           </Button>
-          <button
+          <Button
             type="button"
-            aria-label="Remove item"
+            variant="ghost"
+            size="icon-sm"
+            className="shrink-0 text-muted-foreground hover:text-destructive"
+            aria-label={`Remove ${row.item}`}
             onClick={onRemove}
-            className="grid size-9 place-items-center rounded-md text-muted-foreground transition hover:bg-background hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Trash2 className="size-4" />
-          </button>
+          </Button>
         </div>
       </div>
 
-      {open ? (
-        <div id={panelId} className="border-t border-yellow-500/30 bg-background p-3">
-          <p className="px-1 pb-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-            Choose the right product
-          </p>
-          <ul className="divide-y">
-            {row.matches.map((m) => (
-              <li key={m.id} className="flex flex-wrap items-center gap-4 py-3">
-                <Thumb className="size-12" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-muted-foreground">{m.brand}</p>
-                  <p className="line-clamp-1 text-sm font-medium">{m.title}</p>
-                  <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">Item: {m.item} · MFG: {m.mfg}</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-semibold tabular-nums">
-                    {m.price != null ? usd(m.price) : <span className="text-muted-foreground">Call for availability</span>}
-                  </span>
-                  <Button type="button" size="sm" onClick={() => onSelect(m)}>
-                    Select
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+      <div id={panelId} className={cn("border-t bg-muted/30 p-3", !open && "hidden")}>
+        <p className="px-1 pb-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          Choose the right product
+        </p>
+        <ul className="space-y-2">
+          {row.matches.map((m) => (
+            <li key={m.id} className="flex flex-col gap-3 rounded-md border bg-background p-3 sm:flex-row sm:items-center">
+              <Thumb className="size-11" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-primary">{m.brand}</p>
+                <p className="line-clamp-1 text-sm font-medium">{m.title}</p>
+                <p className="mt-0.5 font-mono text-xs text-muted-foreground">Item: {m.item} · MFG: {m.mfg}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="text-sm font-semibold tabular-nums">
+                  {m.price != null ? usd(m.price) : <span className="font-normal text-muted-foreground">Call for availability</span>}
+                </span>
+                <Button type="button" size="sm" className="min-h-11" onClick={() => onSelect(m)}>
+                  Select
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
 
+/* ── One ready product row — our list-detail product-table layout ──────── */
 function ReadyRowItem({ row, onQty, onRemove }: { row: ReadyRow; onQty: (n: number) => void; onRemove: () => void }) {
+  const title = (
+    <>
+      <p className="text-xs font-medium text-primary">{row.brand}</p>
+      <p className="text-sm font-semibold leading-snug text-foreground">{row.title}</p>
+      <p className="mt-0.5 font-mono text-xs text-muted-foreground">Item: {row.item} · MFG: {row.mfg}</p>
+    </>
+  );
   return (
-    <li className="flex flex-wrap items-center gap-4 border-t py-4 first:border-t-0">
-      <Thumb />
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-muted-foreground">{row.brand}</p>
-        <p className="text-sm font-semibold">{row.title}</p>
-        <p className="mt-0.5 font-mono text-xs text-muted-foreground">Item: {row.item} · MFG: {row.mfg}</p>
+    <div className="border-b last:border-b-0">
+      {/* Desktop: aligned to the column header grid */}
+      <div className={cn("hidden sm:grid", READY_GRID_COLS, "items-center gap-x-4 px-4 py-4")}>
+        <div className="flex min-w-0 items-start gap-3">
+          <Thumb />
+          <div className="min-w-0 space-y-1">{title}</div>
+        </div>
+        <div className="text-center text-sm text-muted-foreground">{row.availability}</div>
+        <div className="text-sm font-semibold leading-snug text-muted-foreground">
+          Call for price
+        </div>
+        <div>
+          <QtyStepper value={row.qty} onChange={onQty} label={row.mfg} />
+        </div>
+        <div className="flex items-center justify-end">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="shrink-0 text-destructive hover:text-destructive/80"
+            aria-label={`Remove ${row.mfg}`}
+            onClick={onRemove}
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
       </div>
-      <span className="text-sm text-muted-foreground">{row.availability}</span>
-      <QtyStepper value={row.qty} onChange={onQty} label={row.mfg} />
-      <button
-        type="button"
-        aria-label="Remove item"
-        onClick={onRemove}
-        className="grid size-9 place-items-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <Trash2 className="size-4" />
-      </button>
-    </li>
+
+      {/* Mobile: stacked card */}
+      <div className="p-4 sm:hidden">
+        <div className="flex gap-3">
+          <Thumb className="size-16" />
+          <div className="min-w-0 flex-1 space-y-1">{title}</div>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+          <span>{row.availability}</span>
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <QtyStepper value={row.qty} onChange={onQty} label={row.mfg} />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="min-h-11 min-w-11 text-destructive hover:text-destructive/80"
+            aria-label={`Remove ${row.mfg}`}
+            onClick={onRemove}
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -207,13 +265,12 @@ function ActionBar({ ready, review }: { ready: number; review: number }) {
   );
 }
 
-type Tab = "search" | "multiple" | "upload";
-
 export function QuickOrderClient() {
-  const [tab, setTab] = React.useState<Tab>("multiple");
+  const [tab, setTab] = React.useState("multiple");
   const [paste, setPaste] = React.useState("");
   const [review, setReview] = React.useState<ReviewRow[]>(INITIAL_REVIEW);
   const [ready, setReady] = React.useState<ReadyRow[]>(INITIAL_READY);
+  const [bannerOpen, setBannerOpen] = React.useState(true);
 
   const resolve = (rowId: string, m: Match) => {
     setReview((p) => p.filter((r) => r.id !== rowId));
@@ -239,36 +296,34 @@ export function QuickOrderClient() {
           <button type="button" className="text-sm font-medium text-primary hover:underline">How it works</button>
         </div>
 
-        <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+        <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
           {/* ── Left: input panel ── */}
           <section className="rounded-xl border bg-background p-5 shadow-sm">
-            <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted p-1">
-              {(["search", "multiple", "upload"] as Tab[]).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setTab(t)}
-                  className={cn(
-                    "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                    tab === t ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  {t === "search" ? "Search" : t === "multiple" ? "Multiple Search" : "Upload"}
-                </button>
-              ))}
-            </div>
+            <Tabs value={tab} onValueChange={setTab}>
+              <TabsList variant="segmented" className="w-full">
+                <TabsTrigger value="search">Search</TabsTrigger>
+                <TabsTrigger value="multiple">Multiple Search</TabsTrigger>
+                <TabsTrigger value="upload">Upload</TabsTrigger>
+              </TabsList>
 
-            {tab === "multiple" ? (
-              <div className="mt-4">
+              <TabsContent value="search" className="mt-4">
+                <div className="relative">
+                  <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input placeholder="Search item # or name" className="h-10 pl-9" />
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">Search one item at a time and add it to your list.</p>
+              </TabsContent>
+
+              <TabsContent value="multiple" className="mt-4">
                 <p className="text-sm text-muted-foreground">
                   You can type each search term on a new line, or copy and paste your search in from a spreadsheet
                 </p>
-                <textarea
+                <Textarea
                   value={paste}
                   onChange={(e) => setPaste(e.target.value)}
                   placeholder="Type or paste one per line"
                   rows={9}
-                  className="mt-3 w-full resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="mt-3 resize-y"
                 />
                 <Button type="button" variant="outline" className="mt-3 w-full text-foreground" disabled={!paste.trim()}>
                   Add to the List
@@ -278,25 +333,17 @@ export function QuickOrderClient() {
                   <p className="mt-1 text-primary">Items only</p>
                   <p className="text-primary">Items + qty</p>
                 </div>
-              </div>
-            ) : tab === "search" ? (
-              <div className="mt-4">
-                <div className="relative">
-                  <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input placeholder="Search item # or name" className="h-10 pl-9" />
-                </div>
-                <p className="mt-3 text-sm text-muted-foreground">Search one item at a time and add it to your list.</p>
-              </div>
-            ) : (
-              <div className="mt-4">
+              </TabsContent>
+
+              <TabsContent value="upload" className="mt-4">
                 <label className="grid cursor-pointer place-items-center gap-2 rounded-lg border border-dashed bg-muted/30 px-4 py-10 text-center transition hover:bg-muted/50">
                   <UploadIcon className="size-6 text-muted-foreground" aria-hidden />
                   <span className="text-sm font-medium">Upload a .csv or .xlsx</span>
-                  <span className="text-xs text-muted-foreground">Drag & drop or click to browse</span>
+                  <span className="text-xs text-muted-foreground">Drag &amp; drop or click to browse</span>
                   <input type="file" className="sr-only" accept=".csv,.xlsx" />
                 </label>
-              </div>
-            )}
+              </TabsContent>
+            </Tabs>
           </section>
 
           {/* ── Right: review + list ── */}
@@ -310,13 +357,57 @@ export function QuickOrderClient() {
               </div>
             ) : (
               <>
-                {review.map((r) => (
-                  <ReviewCard key={r.id} row={r} onSelect={(m) => resolve(r.id, m)} onRemove={() => setReview((p) => p.filter((x) => x.id !== r.id))} />
-                ))}
+                {/* Review banner — our Alert (warning) with a Show (N) collapse */}
+                {review.length > 0 ? (
+                  <Alert variant="warning">
+                    <TriangleAlert />
+                    <AlertTitle>
+                      {review.length} item{review.length === 1 ? "" : "s"} require{review.length === 1 ? "s" : ""} your review
+                    </AlertTitle>
+                    <AlertDescription>
+                      <div className="flex w-full items-center justify-between gap-3">
+                        <p className="m-0">Pick the right product for each item we couldn&apos;t match exactly.</p>
+                        <button
+                          type="button"
+                          onClick={() => setBannerOpen((o) => !o)}
+                          aria-expanded={bannerOpen}
+                          className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-foreground/80 hover:text-foreground"
+                        >
+                          {bannerOpen ? "Hide" : `Show (${review.length})`}
+                          <ChevronDown className={cn("size-4 transition-transform", bannerOpen && "rotate-180")} />
+                        </button>
+                      </div>
+                      <div className={cn("mt-3 w-full space-y-3", !bannerOpen && "hidden")}>
+                        {review.map((r) => (
+                          <ReviewItem
+                            key={r.id}
+                            row={r}
+                            onSelect={(m) => resolve(r.id, m)}
+                            onRemove={() => setReview((p) => p.filter((x) => x.id !== r.id))}
+                          />
+                        ))}
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                ) : null}
 
-                <div className="rounded-xl border bg-background p-5 shadow-sm">
-                  <ActionBar ready={ready.length} review={review.length} />
-                  <ul className="mt-4">
+                <section className="rounded-lg border bg-background shadow-sm">
+                  <div className="border-b p-5">
+                    <ActionBar ready={ready.length} review={review.length} />
+                  </div>
+
+                  {/* Column header — desktop only, aligned to the row grid */}
+                  {ready.length > 0 ? (
+                    <div className={cn("hidden sm:grid", READY_GRID_COLS, "items-center gap-x-4 border-b bg-secondary px-4 py-2.5 text-xs font-semibold text-foreground")}>
+                      <span>Product Details</span>
+                      <span className="text-center">Availability</span>
+                      <span>Price</span>
+                      <span>Qty</span>
+                      <span aria-hidden="true" />
+                    </div>
+                  ) : null}
+
+                  <div>
                     {ready.map((row) => (
                       <ReadyRowItem
                         key={row.id}
@@ -325,11 +416,12 @@ export function QuickOrderClient() {
                         onRemove={() => setReady((p) => p.filter((x) => x.id !== row.id))}
                       />
                     ))}
-                  </ul>
-                  <div className="mt-4 border-t pt-4">
+                  </div>
+
+                  <div className="border-t p-5">
                     <ActionBar ready={ready.length} review={review.length} />
                   </div>
-                </div>
+                </section>
               </>
             )}
           </section>
