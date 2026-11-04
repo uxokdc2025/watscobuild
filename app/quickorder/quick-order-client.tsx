@@ -300,10 +300,25 @@ export function QuickOrderClient() {
           {/* ── Left: input panel ── */}
           <section className="rounded-xl border bg-background p-5 shadow-sm">
             <Tabs value={tab} onValueChange={setTab}>
-              <TabsList variant="segmented" className="w-full">
-                <TabsTrigger value="search">Search</TabsTrigger>
-                <TabsTrigger value="multiple">Multiple Search</TabsTrigger>
-                <TabsTrigger value="upload">Upload</TabsTrigger>
+              <TabsList
+                variant="segmented"
+                className="h-11 w-full items-center gap-0 divide-x divide-border overflow-hidden rounded-md border border-border bg-white p-0"
+              >
+                {(
+                  [
+                    { value: "search", label: "Search" },
+                    { value: "multiple", label: "Multiple Search" },
+                    { value: "upload", label: "Upload" },
+                  ] as const
+                ).map((t) => (
+                  <TabsTrigger
+                    key={t.value}
+                    value={t.value}
+                    className="h-full rounded-none border-0 px-4 text-sm font-medium text-muted-foreground after:hidden data-[state=active]:bg-[var(--tab-active-bg)]! data-[state=active]:font-semibold data-[state=active]:text-[var(--tab-active-fg)]! data-[state=active]:hover:bg-[var(--tab-active-bg)] data-[state=active]:hover:text-[var(--tab-active-fg)] data-[state=inactive]:hover:bg-muted/60 data-[state=inactive]:hover:text-foreground"
+                  >
+                    {t.label}
+                  </TabsTrigger>
+                ))}
               </TabsList>
 
               <TabsContent value="search" className="mt-4">
