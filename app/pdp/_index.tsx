@@ -200,6 +200,25 @@ type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[]
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
+    id: "nov-3",
+    badge: "Nov 3",
+    title: "New edits since the Nov 3 meeting",
+    items: [
+      {
+        title: "Shopware CMS block catalog + page composer",
+        desc: "Catalogued every Shopware “Shopping Experiences” block available on a Landing page, as live design-system components:",
+        bullets: [
+          "A catalog of all 26 landing-page blocks (Text, Images, Video, Text & images) — each drawn on our tokens; click any one for a full-size live preview.",
+          "A “Build a Page” composer — stack blocks, reorder them, and render a real sample landing page.",
+        ],
+        links: [
+          { label: "CMS Blocks catalog", href: "/components/cms-blocks" },
+          { label: "Build a Page", href: "/components/cms-blocks/build" },
+        ],
+      },
+    ],
+  },
+  {
     id: "oct-28",
     badge: "Oct 28",
     title: "New edits since the Oct 28 meeting",
@@ -642,7 +661,7 @@ export default function PdpMasterPage() {
             Change log
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Grouped by meeting — each card is dated to a meeting and holds the new edits made since it. The latest (Oct 28) is open; earlier meetings are collapsed. Click any link to open that change.
+            Grouped by meeting — each card is dated to a meeting and holds the new edits made since it. The latest (Nov 3) is open; earlier meetings are collapsed. Click any link to open that change.
           </p>
           <Accordion
             type="multiple"
