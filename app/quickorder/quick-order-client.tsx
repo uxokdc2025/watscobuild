@@ -237,29 +237,19 @@ function ReadyRowItem({ row, onQty, onRemove }: { row: ReadyRow; onQty: (n: numb
 function ActionBar({ ready, review }: { ready: number; review: number }) {
   const total = ready + review;
   return (
-    <div className="flex flex-wrap items-start justify-between gap-3">
+    <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-lg font-bold tracking-tight">
         {ready} of {total} item{total === 1 ? "" : "s"} ready
       </p>
-      <div className="flex flex-col items-end gap-1.5">
-        <div className="flex items-center gap-4">
-          <Button disabled={ready === 0}>
-            <ShoppingCart className="size-4" aria-hidden />
-            Add to Cart
-          </Button>
-          <button type="button" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-            Add to My List
-            <ChevronRight className="size-4" aria-hidden />
-          </button>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {ready > 0 ? `${ready} item${ready === 1 ? "" : "s"} without price will be skipped` : null}
-        </p>
-        {review > 0 ? (
-          <p className="text-xs font-medium text-yellow-700 dark:text-yellow-400">
-            {review} item{review === 1 ? "" : "s"} need{review === 1 ? "s" : ""} review before adding
-          </p>
-        ) : null}
+      <div className="flex items-center gap-3">
+        {/* Secondary on the LEFT, primary on the RIGHT. */}
+        <Button type="button" variant="secondary">
+          Add to My List
+        </Button>
+        <Button disabled={ready === 0}>
+          <ShoppingCart className="size-4" aria-hidden />
+          Add to Cart
+        </Button>
       </div>
     </div>
   );
