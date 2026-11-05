@@ -28,8 +28,8 @@ export default function CmsBlocksPage() {
             with the real imagery and copy from the pages we&apos;ve shipped.
           </p>
           <p className="mt-3 text-xs text-muted-foreground">
-            {total} landing-page blocks · {CMS_CATEGORIES.length} categories · verified against the{" "}
-            <span className="font-mono">shopware/shopware</span> trunk <span className="font-mono">sw-cms</span> block registry
+            {total} landing-page blocks · {CMS_CATEGORIES.length} categories · verified against Shopware 6.7.4.0 (the
+            live admin version)
           </p>
         </header>
 

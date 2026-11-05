@@ -6,12 +6,11 @@ import { cn } from "@/lib/utils";
 /* ════════════════════════════════════════════════════════════════════════
    Shopware CMS — Landing Page block catalog.
    A design-system mirror of every block Shopware's "Shopping Experiences"
-   editor offers when building a LANDING PAGE. Verified against the
-   shopware/shopware trunk source — the sw-cms block registry + the en.json
-   snippet labels, and the isBlockAllowedInPageType() gate for the
-   `landingpage` page type:
-     Text (6), Images (11), Text & images (7), Video (3), Commerce (6),
-     Sidebar (1), Form (1), HTML (1) = 36 landing-page blocks.
+   editor offers when building a LANDING PAGE. Verified against Shopware
+   6.7.4.0 (the live admin version) — the block names and category tabs, and
+   the page-type gate for the `landingpage` page type:
+     Text (6), Images (11), Text & images (7), Video (2), Commerce (5),
+     Sidebar (1), Form (1), HTML (1) = 34 landing-page blocks.
    Each thumbnail is built from DS tokens. Clicking a block jumps to its
    full, realistic example on the /components/cms-blocks/examples page.
    Only three blocks are NOT offered on a landing page (hidden, or gated by
@@ -214,17 +213,6 @@ export function Preview({ name }: { name: string }) {
       );
 
     /* Video */
-    case "video":
-      return (
-        <div className="relative grid aspect-video place-items-center overflow-hidden rounded-md bg-muted">
-          <span className="grid size-12 place-items-center rounded-xl bg-primary text-white shadow">
-            <Play className="size-6 translate-x-0.5 fill-current" aria-hidden />
-          </span>
-          <span className="absolute bottom-2 right-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Media
-          </span>
-        </div>
-      );
     case "youtube-video":
       return <VideoPh brand="youtube" />;
     case "vimeo-video":
@@ -320,12 +308,6 @@ export function Preview({ name }: { name: string }) {
           <div className="grid grid-cols-4 gap-2">
             <PBox /> <PBox /> <PBox /> <PBox />
           </div>
-        </div>
-      );
-    case "category-name":
-      return (
-        <div className="rounded-md bg-muted/60 p-4">
-          <p className="text-lg font-bold tracking-tight text-foreground">Category Name</p>
         </div>
       );
     case "gallery-buybox":
@@ -445,7 +427,6 @@ export const CMS_CATEGORIES: Category[] = [
     title: "Video",
     shopware: "Video",
     blocks: [
-      { name: "video", label: "Video" },
       { name: "vimeo-video", label: "Vimeo video" },
       { name: "youtube-video", label: "YouTube video" },
     ],
@@ -458,7 +439,6 @@ export const CMS_CATEGORIES: Category[] = [
       { name: "product-slider", label: "Product slider" },
       { name: "product-three-column", label: "Three columns, product boxes" },
       { name: "cross-selling", label: "Cross Selling" },
-      { name: "category-name", label: "Category name" },
       { name: "gallery-buybox", label: "Image gallery and buy box" },
       { name: "product-description-reviews", label: "Product description & reviews" },
     ],
@@ -483,8 +463,8 @@ export const CMS_CATEGORIES: Category[] = [
   },
 ];
 
-/* The only blocks the Landing-page picker does NOT surface — verified in the
-   sw-cms registry (either `hidden`, or gated by `allowedPageTypes`). */
+/* The only blocks the Landing-page picker does NOT surface — confirmed in the
+   Shopware 6.7.4.0 admin (either `hidden`, or gated by `allowedPageTypes`). */
 export const CMS_OTHER = [
   { title: "Commerce", blocks: ["Product listing", "Product name & manufacturer logo"] },
   { title: "Sidebar", blocks: ["Product filter"] },

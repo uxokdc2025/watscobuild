@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { ImageIcon, Play, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -210,14 +212,6 @@ export function FullBlock({ name }: { name: string }) {
       );
 
     /* ── Video ── */
-    case "video":
-      return (
-        <div className="relative grid aspect-video w-full place-items-center overflow-hidden rounded-lg bg-muted">
-          <span className="grid size-16 place-items-center rounded-2xl bg-primary text-white shadow-lg">
-            <Play className="size-8 translate-x-0.5 fill-current" aria-hidden />
-          </span>
-        </div>
-      );
     case "youtube-video":
       return <Video brand="youtube" />;
     case "vimeo-video":
@@ -330,12 +324,6 @@ export function FullBlock({ name }: { name: string }) {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <FProd /> <FProd /> <FProd /> <FProd />
           </div>
-        </div>
-      );
-    case "category-name":
-      return (
-        <div className="rounded-xl bg-muted/50 p-6">
-          <Heading className="text-3xl">Category Name</Heading>
         </div>
       );
     case "gallery-buybox":

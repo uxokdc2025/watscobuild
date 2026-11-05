@@ -205,10 +205,23 @@ const CHANGE_LOGS: ChangeLog[] = [
     title: "New edits since the Nov 3 meeting",
     items: [
       {
+        title: "Shopware CMS block catalog + page composer",
+        desc: "A browsable catalog of every Shopware “Shopping Experiences” block offered on a Landing page, with a composer to assemble them into a sample page.",
+        bullets: [
+          "A thumbnail of every Landing-page block, grouped under Shopware’s own category tabs (Text, Images, Text & images, Video, Commerce, Sidebar, Form, HTML), each drawn on our design system.",
+          "A “Build a Page” composer — pick blocks from a palette, stack and reorder them, then preview a rendered sample landing page (the layout is kept in the browser).",
+          "Blocks Shopware doesn’t surface on a Landing page are listed separately for completeness.",
+        ],
+        links: [
+          { label: "CMS Blocks catalog", href: "/components/cms-blocks" },
+          { label: "Build a Page", href: "/components/cms-blocks/build" },
+        ],
+      },
+      {
         title: "Shopware CMS blocks — examples page + full landing-page set",
         desc: "Reworked the catalog per review: dropped the placeholder stand-ins and the separate per-block preview pages in favour of one long, anchored examples page of real sections.",
         bullets: [
-          "A labelled example of every Shopware “Shopping Experiences” block offered on a Landing page — Shopware’s exact names and all eight category tabs (Text, Images, Text & images, Video, Commerce, Sidebar, Form, HTML), verified against the shopware/shopware source: 36 blocks in all.",
+          "A labelled example of every Shopware “Shopping Experiences” block offered on a Landing page — Shopware’s exact names and all eight category tabs (Text, Images, Text & images, Video, Commerce, Sidebar, Form, HTML), verified against Shopware 6.7.4.0 (the live admin version): 34 blocks in all.",
           "Each example is a real page section built on our design system with the actual imagery and copy from East Coast Metal, Peirce, and the Residential jump page — not gray placeholders.",
           "The catalog is a thumbnail per block; clicking one jumps straight to its anchored example. Where a built section differs from the real Shopware block (e.g. our seamless logo marquee vs. Shopware’s paged Image slider), the block is built to match Shopware and the difference is called out inline.",
           "A “Build a Page” composer stays alongside — stack blocks, reorder them, and render a sample landing page.",

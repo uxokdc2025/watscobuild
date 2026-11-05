@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 /* ════════════════════════════════════════════════════════════════════════
    Shopware "Shopping Experiences" — Landing-page block EXAMPLES.
    One long page, one labelled section per block, using Shopware's EXACT block
-   name and category tab as the heading (verified against the shopware/shopware
-   trunk source — the sw-cms block registry + en.json snippets). Each example is
+   name and category tab as the heading (verified against Shopware 6.7.4.0,
+   the live admin version). Each example is
    a realistic, full-width section built on our design-system tokens with the
    real imagery and copy from the built pages (East Coast Metal /home/ecmdi,
    Peirce /home/peirce, Residential jump /category/residential?v=jump) where it
@@ -585,11 +585,10 @@ export function Examples() {
       </div>
 
       {/* ══════════════ VIDEO ══════════════ */}
-      <CategoryHeading id="cat-video" title="Video" count={3} blurb="A video player slot — self-hosted media, or an embedded YouTube or Vimeo video." />
+      <CategoryHeading id="cat-video" title="Video" count={2} blurb="An embedded video player slot — a YouTube or a Vimeo video." />
       <div className="space-y-14">
         {(
           [
-            { id: "video", name: "Video", brand: "media" as const, label: "Uploaded media" },
             { id: "vimeo-video", name: "Vimeo video", brand: "vimeo" as const, label: "Vimeo" },
             { id: "youtube-video", name: "YouTube video", brand: "youtube" as const, label: "YouTube" },
           ]
@@ -618,7 +617,7 @@ export function Examples() {
       <CategoryHeading
         id="cat-commerce"
         title="Commerce"
-        count={6}
+        count={5}
         blurb="Product-aware blocks. On a landing page these need a product or category mapped to them; the blocks offered in the landing-page picker are shown here with sample product data."
       />
       <div className="space-y-14">
@@ -655,17 +654,6 @@ export function Examples() {
               </li>
             ))}
           </ul>
-        </BlockSection>
-
-        <BlockSection
-          id="category-name"
-          category="Commerce"
-          name="Category name"
-          note="Renders the mapped category’s name as a heading. On a landing page (no category mapped) it renders empty in Shopware; a sample value is shown here."
-        >
-          <div className="rounded-xl border bg-muted/30 p-6">
-            <h4 className="text-3xl font-bold tracking-tight text-foreground">Residential Equipment</h4>
-          </div>
         </BlockSection>
 
         <BlockSection
@@ -748,7 +736,7 @@ export function Examples() {
           id="category-navigation"
           category="Sidebar"
           name="Category navigation"
-          note="Renders the shop category tree. Not page-type gated in the Shopware trunk source, so it is offered on landing pages — but only renders meaningfully inside a Sidebar section with a category mapped."
+          note="Renders the shop category tree. Not gated to another page type in Shopware 6.7.4.0, so it is offered on landing pages — but only renders meaningfully inside a Sidebar section with a category mapped."
         >
           <div className="max-w-xs rounded-xl border p-4">
             <p className="mb-2 text-sm font-bold tracking-tight text-foreground">Categories</p>
@@ -832,9 +820,9 @@ export function Examples() {
           Not offered on Landing pages
         </h2>
         <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-          Shopware ships these blocks too, but the Landing-page picker does not surface them — verified in the{" "}
-          <span className="font-mono text-xs">sw-cms</span> block registry (either <span className="font-mono text-xs">hidden</span> or
-          gated by <span className="font-mono text-xs">allowedPageTypes</span>).
+          Shopware ships these blocks too, but the Landing-page picker in Shopware 6.7.4.0 does not surface them —
+          they are either <span className="font-mono text-xs">hidden</span> or gated by{" "}
+          <span className="font-mono text-xs">allowedPageTypes</span> to another page type.
         </p>
         <ul className="mt-4 space-y-2 text-sm">
           {[
