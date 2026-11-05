@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { ImageIcon, Play, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -53,6 +55,20 @@ function Video({ brand }: { brand: "youtube" | "vimeo" }) {
       >
         <Play className="size-8 translate-x-0.5 fill-current" aria-hidden />
       </span>
+    </div>
+  );
+}
+
+/* Product-box placeholder for the Commerce blocks. */
+function FProd() {
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border bg-card p-3">
+      <FImg ratio="1" />
+      <span className="h-3 w-3/4 rounded bg-border" />
+      <span className="h-3 w-1/2 rounded bg-primary/40" />
+      <Button size="sm" className="mt-1 w-full">
+        Add to Cart
+      </Button>
     </div>
   );
 }
@@ -286,6 +302,87 @@ export function FullBlock({ name }: { name: string }) {
             <Button className="mt-6">Shop Now</Button>
           </div>
         </div>
+      );
+
+    /* ── Commerce ── */
+    case "product-slider":
+      return (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <FProd /> <FProd /> <FProd /> <FProd />
+        </div>
+      );
+    case "product-three-column":
+      return (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <FProd /> <FProd /> <FProd />
+        </div>
+      );
+    case "cross-selling":
+      return (
+        <div>
+          <Heading className="mb-4 text-lg">Customers also bought</Heading>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <FProd /> <FProd /> <FProd /> <FProd />
+          </div>
+        </div>
+      );
+    case "gallery-buybox":
+      return (
+        <div className="grid gap-8 rounded-xl border p-6 md:grid-cols-2">
+          <FImg ratio="1" />
+          <div className="flex flex-col justify-center">
+            <Heading className="text-xl" />
+            <Para className="mt-2">{SHORT}</Para>
+            <span className="mt-4 block h-8 w-28 rounded bg-primary/30" />
+            <Button className="mt-5 w-fit">Add to Cart</Button>
+          </div>
+        </div>
+      );
+    case "product-description-reviews":
+      return (
+        <div className="rounded-xl border p-6">
+          <Heading className="text-lg">Description</Heading>
+          <Para className="mt-2">{PARA}</Para>
+          <div className="mt-6 border-t pt-5">
+            <Heading className="text-lg">Reviews</Heading>
+            <Para className="mt-2">{SHORT}</Para>
+          </div>
+        </div>
+      );
+
+    /* ── Sidebar ── */
+    case "category-navigation":
+      return (
+        <div className="max-w-xs rounded-xl border p-4">
+          <Heading className="mb-3 text-lg">Categories</Heading>
+          <div className="space-y-2.5">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <span key={i} className={cn("block h-3 rounded", i === 0 ? "w-2/3 bg-primary/40" : "w-full bg-border")} />
+            ))}
+          </div>
+        </div>
+      );
+
+    /* ── Form ── */
+    case "form":
+      return (
+        <div className="max-w-xl rounded-xl border p-6">
+          <Heading className="text-lg">Contact Us</Heading>
+          <div className="mt-4 space-y-3">
+            <span className="block h-10 w-full rounded-md border bg-background" />
+            <span className="block h-10 w-full rounded-md border bg-background" />
+            <span className="block h-24 w-full rounded-md border bg-background" />
+            <Button>Send Message</Button>
+          </div>
+        </div>
+      );
+
+    /* ── HTML ── */
+    case "html":
+      return (
+        <pre className="overflow-x-auto rounded-xl bg-foreground p-4 text-xs leading-relaxed text-background">
+          <code>{`<div class="promo">…</div>`}</code>
+        </pre>
       );
 
     default:

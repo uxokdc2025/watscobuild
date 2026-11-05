@@ -1,29 +1,24 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
 import { Hammer, ArrowUpRight } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { CMS_CATEGORIES, Preview, type Block } from "./cms-catalog";
-import { FullBlock } from "./cms-blocks-full";
+import { CMS_CATEGORIES, Preview } from "./cms-catalog";
 
-/* Catalog grids with a click-to-open full-size view per block, plus a link
-   into the page composer. Client island inside the server catalog page. */
+/* Catalog grids — each block is a thumbnail that links to its full, realistic
+   example (anchored by block name) on the examples page, plus a link into the
+   page composer. */
 export function CatalogGrids() {
-  const [active, setActive] = React.useState<Block | null>(null);
   return (
     <>
       <div className="mt-6 flex flex-wrap gap-2">
         <Button asChild>
+          <Link href="/components/cms-blocks/examples">
+            View All Examples
+          </Link>
+        </Button>
+        <Button asChild variant="outline">
           <Link href="/components/cms-blocks/build">
             <Hammer className="size-4" aria-hidden />
             Build a Page
@@ -38,15 +33,14 @@ export function CatalogGrids() {
               {cat.title}
             </h2>
             <span className="text-sm text-muted-foreground">
-              {cat.blocks.length} blocks · Shopware category &ldquo;{cat.shopware}&rdquo;
+              {cat.blocks.length} {cat.blocks.length === 1 ? "block" : "blocks"} · Shopware category &ldquo;{cat.shopware}&rdquo;
             </span>
           </div>
           <div className="mt-5 grid gap-5 sm:grid-cols-2">
             {cat.blocks.map((b) => (
-              <button
+              <Link
                 key={b.name}
-                type="button"
-                onClick={() => setActive(b)}
+                href={`/components/cms-blocks/examples#${b.name}`}
                 className="group flex flex-col overflow-hidden rounded-xl border bg-card text-left transition hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <div className="flex min-h-[150px] flex-1 items-center bg-background p-5">
@@ -58,25 +52,11 @@ export function CatalogGrids() {
                   {b.label}
                   <ArrowUpRight className="size-4 text-muted-foreground transition group-hover:text-primary" aria-hidden />
                 </span>
-              </button>
+              </Link>
             ))}
           </div>
         </section>
       ))}
-
-      <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
-        <DialogContent className="max-h-[90svh] w-full max-w-5xl overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{active?.label}</DialogTitle>
-            <DialogDescription>
-              Live, full-width preview of the Shopware &ldquo;{active?.label}&rdquo; block on our design system.
-            </DialogDescription>
-          </DialogHeader>
-          <div className={cn("mt-2 rounded-lg border bg-background p-6")}>
-            {active ? <FullBlock name={active.name} /> : null}
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

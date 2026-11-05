@@ -22,19 +22,18 @@ export default function CmsBlocksPage() {
         <header className="mt-4">
           <h1 className="text-3xl font-bold tracking-tight">Shopware CMS Blocks</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            A design-system mirror of every block Shopware&apos;s &ldquo;Shopping Experiences&rdquo;
-            editor exposes when building a <span className="font-medium text-foreground">Landing page</span>.
-            Catalogued straight from the live admin&apos;s block registry. Each preview is built from
-            our own tokens — placeholder image, header text, lorem ipsum — so any block can be dropped
-            into our pages as a real component.
+            Every block Shopware&apos;s &ldquo;Shopping Experiences&rdquo; editor offers when building a{" "}
+            <span className="font-medium text-foreground">Landing page</span>, with Shopware&apos;s exact names and
+            category tabs. Click any block to jump to its full, realistic example — built on our design system
+            with the real imagery and copy from the pages we&apos;ve shipped.
           </p>
           <p className="mt-3 text-xs text-muted-foreground">
-            {total} landing-page blocks · {CMS_CATEGORIES.length} categories · source:{" "}
-            <span className="font-mono">getCmsBlockRegistry()</span>
+            {total} landing-page blocks · {CMS_CATEGORIES.length} categories · verified against Shopware 6.7.4.0 (the
+            live admin version)
           </p>
         </header>
 
-        <p className="mt-2 text-xs text-muted-foreground">Click any block to open its full-size live preview.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Click any block to jump to its example section.</p>
         <CatalogGrids />
 
         <section aria-labelledby="cat-other" className="mt-12">

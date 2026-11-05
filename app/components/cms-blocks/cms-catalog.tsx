@@ -1,24 +1,28 @@
 import * as React from "react";
-import { ImageIcon, Play } from "lucide-react";
+import { ImageIcon, Play, Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 /* ════════════════════════════════════════════════════════════════════════
    Shopware CMS — Landing Page block catalog.
    A design-system mirror of every block Shopware's "Shopping Experiences"
-   editor exposes when building a LANDING PAGE. Pulled from the live admin's
-   block registry (Shopware.Service('cmsService').getCmsBlockRegistry()):
-   categories Text (6), Images (11), Video (2), Text & images (7) = 26 blocks.
-   Each preview is built from DS tokens only — placeholder image boxes, header
-   text, and lorem ipsum — so we can drop any block into our own pages later.
-   Commerce / Sidebar / Form / HTML / 3D blocks exist in Shopware but are not
-   offered in the Landing-page picker, so they're listed but not drawn.
+   editor offers when building a LANDING PAGE. Verified against Shopware
+   6.7.4.0 (the live admin version) — the block names and category tabs, and
+   the page-type gate for the `landingpage` page type:
+     Text (6), Images (11), Text & images (7), Video (2), Commerce (5),
+     Sidebar (1), Form (1), HTML (1) = 34 landing-page blocks.
+   Each thumbnail is built from DS tokens. Clicking a block jumps to its
+   full, realistic example on the /components/cms-blocks/examples page.
+   Only three blocks are NOT offered on a landing page (hidden, or gated by
+   allowedPageTypes) — listed in CMS_OTHER for completeness.
    ════════════════════════════════════════════════════════════════════════ */
 
-const HEAD = "Lorem Ipsum Dolor";
+/* Thumbnail copy — real HVAC marketing lines (not lorem stand-ins) so the
+   catalog previews read like the live examples they link to. */
+const HEAD = "HVAC Products You Need";
 const LEAD =
-  "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
-const SHORT = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr.";
+  "The quality HVAC equipment, supplies, parts, and tools you need, when you need them — from the most trusted manufacturers in heating and cooling.";
+const SHORT = "Trusted HVAC brands, in stock at your local branch.";
 
 /* ── Preview primitives ─────────────────────────────────────────────── */
 function Img({
@@ -76,6 +80,17 @@ function VideoPh({ brand }: { brand: "youtube" | "vimeo" }) {
       <span className="absolute bottom-2 right-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
         {brand === "youtube" ? "YouTube" : "Vimeo"}
       </span>
+    </div>
+  );
+}
+
+/* Mini product box for the Commerce thumbnails. */
+function PBox() {
+  return (
+    <div className="flex flex-col gap-1.5 rounded-md border bg-card p-2">
+      <Img ratio="1" className="bg-muted" />
+      <span className="h-2 w-3/4 rounded bg-border" />
+      <span className="h-2 w-1/2 rounded bg-primary/40" />
     </div>
   );
 }
@@ -273,6 +288,80 @@ export function Preview({ name }: { name: string }) {
         </div>
       );
 
+    /* Commerce */
+    case "product-slider":
+      return (
+        <div className="grid grid-cols-4 gap-2">
+          <PBox /> <PBox /> <PBox /> <PBox />
+        </div>
+      );
+    case "product-three-column":
+      return (
+        <div className="grid grid-cols-3 gap-2">
+          <PBox /> <PBox /> <PBox />
+        </div>
+      );
+    case "cross-selling":
+      return (
+        <div>
+          <span className="mb-1.5 block h-2 w-24 rounded bg-border" />
+          <div className="grid grid-cols-4 gap-2">
+            <PBox /> <PBox /> <PBox /> <PBox />
+          </div>
+        </div>
+      );
+    case "gallery-buybox":
+      return (
+        <div className="grid grid-cols-2 gap-3">
+          <Img ratio="1" />
+          <div className="flex flex-col justify-center gap-1.5">
+            <span className="h-2.5 w-3/4 rounded bg-border" />
+            <span className="h-3 w-1/2 rounded bg-primary/40" />
+            <span className="mt-1 h-6 w-full rounded bg-primary/80" />
+          </div>
+        </div>
+      );
+    case "product-description-reviews":
+      return (
+        <div className="space-y-1.5">
+          <span className="block h-2 w-full rounded bg-border" />
+          <span className="block h-2 w-5/6 rounded bg-border" />
+          <span className="mt-2 flex items-center gap-1 text-rating-star" aria-hidden>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <Star key={i} className="size-3 fill-current" />
+            ))}
+          </span>
+        </div>
+      );
+
+    /* Sidebar */
+    case "category-navigation":
+      return (
+        <div className="max-w-[180px] space-y-1.5 rounded-md border p-2">
+          {[0, 1, 2, 3].map((i) => (
+            <span key={i} className={cn("block h-2.5 rounded", i === 0 ? "w-3/4 bg-primary/40" : "w-full bg-border")} />
+          ))}
+        </div>
+      );
+
+    /* Form */
+    case "form":
+      return (
+        <div className="space-y-2">
+          <span className="block h-7 w-full rounded border bg-background" />
+          <span className="block h-7 w-full rounded border bg-background" />
+          <span className="block h-6 w-20 rounded bg-primary/80" />
+        </div>
+      );
+
+    /* HTML */
+    case "html":
+      return (
+        <div className="rounded-md bg-foreground p-3 font-mono text-[10px] leading-relaxed text-background">
+          &lt;div class=&quot;promo&quot;&gt;…&lt;/div&gt;
+        </div>
+      );
+
     default:
       return (
         <div className="grid place-items-center rounded-md bg-muted py-8 text-xs text-muted-foreground">
@@ -320,17 +409,8 @@ export const CMS_CATEGORIES: Category[] = [
     ],
   },
   {
-    id: "video",
-    title: "Video",
-    shopware: "Video",
-    blocks: [
-      { name: "youtube-video", label: "YouTube video" },
-      { name: "vimeo-video", label: "Vimeo video" },
-    ],
-  },
-  {
     id: "text-image",
-    title: "Text & Images",
+    title: "Text & images",
     shopware: "Text & images",
     blocks: [
       { name: "image-text", label: "Two columns, boxed image & text" },
@@ -339,18 +419,55 @@ export const CMS_CATEGORIES: Category[] = [
       { name: "image-text-row", label: "Three columns, captioned images" },
       { name: "image-text-gallery", label: "Three columns, image/text cards" },
       { name: "image-text-bubble", label: "Three columns, captioned & rounded" },
-      { name: "text-on-image", label: "Hero image (text on image)" },
+      { name: "text-on-image", label: "Hero image" },
     ],
+  },
+  {
+    id: "video",
+    title: "Video",
+    shopware: "Video",
+    blocks: [
+      { name: "vimeo-video", label: "Vimeo video" },
+      { name: "youtube-video", label: "YouTube video" },
+    ],
+  },
+  {
+    id: "commerce",
+    title: "Commerce",
+    shopware: "Commerce",
+    blocks: [
+      { name: "product-slider", label: "Product slider" },
+      { name: "product-three-column", label: "Three columns, product boxes" },
+      { name: "cross-selling", label: "Cross Selling" },
+      { name: "gallery-buybox", label: "Image gallery and buy box" },
+      { name: "product-description-reviews", label: "Product description & reviews" },
+    ],
+  },
+  {
+    id: "sidebar",
+    title: "Sidebar",
+    shopware: "Sidebar",
+    blocks: [{ name: "category-navigation", label: "Category navigation" }],
+  },
+  {
+    id: "form",
+    title: "Form",
+    shopware: "Form",
+    blocks: [{ name: "form", label: "Form" }],
+  },
+  {
+    id: "html",
+    title: "HTML",
+    shopware: "HTML",
+    blocks: [{ name: "html", label: "HTML" }],
   },
 ];
 
-/* Blocks Shopware has but does NOT offer in the Landing-page picker. */
+/* The only blocks the Landing-page picker does NOT surface — confirmed in the
+   Shopware 6.7.4.0 admin (either `hidden`, or gated by `allowedPageTypes`). */
 export const CMS_OTHER = [
-  { title: "Commerce", blocks: ["Product name & manufacturer logo", "Three columns, product boxes", "Product slider", "Image gallery and buy box", "Product description & reviews", "Cross Selling"] },
-  { title: "Sidebar", blocks: ["Product filter", "Category navigation"] },
-  { title: "Form", blocks: ["Form"] },
-  { title: "HTML", blocks: ["HTML"] },
-  { title: "3D / Spatial", blocks: ["3D Object"] },
+  { title: "Commerce", blocks: ["Product listing", "Product name & manufacturer logo"] },
+  { title: "Sidebar", blocks: ["Product filter"] },
 ];
 
 export function BlockCard({ block }: { block: Block }) {
