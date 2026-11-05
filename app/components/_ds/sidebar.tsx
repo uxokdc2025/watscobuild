@@ -75,7 +75,7 @@ export function DsSidebar() {
         </div>
         <nav
           aria-label="Design system"
-          className="flex gap-6 overflow-x-auto px-5 py-4 md:flex-col md:gap-6 md:overflow-y-auto"
+          className="flex min-w-0 gap-6 overflow-x-auto px-5 py-4 md:flex-col md:gap-6 md:overflow-y-auto"
         >
           {NAV.map((group) => (
             <div key={group.title} className="min-w-max md:min-w-0">
