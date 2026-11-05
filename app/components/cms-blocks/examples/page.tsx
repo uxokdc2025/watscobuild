@@ -13,7 +13,7 @@ export default function CmsBlocksExamplesPage() {
   const total = CMS_CATEGORIES.reduce((n, c) => n + c.blocks.length, 0);
   return (
     <div className="min-h-svh bg-background">
-      <main className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+      <main className="mx-auto min-w-0 max-w-6xl px-4 py-10 md:px-6">
         <Link href="/components/cms-blocks" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
           <ArrowLeft className="size-4" aria-hidden />
           Back to the block catalog

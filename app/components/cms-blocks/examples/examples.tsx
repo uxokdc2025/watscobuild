@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import useEmblaCarousel from "embla-carousel-react";
 import { Play, ChevronLeft, ChevronRight, Star, ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -24,15 +25,30 @@ import { Button } from "@/components/ui/button";
 
 /* Single place for the Next.js raw-img lint opt-out (design prototype, static
    assets, no next/image optimisation wanted). */
-function Img(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-  return <img loading="lazy" alt="" {...props} />;
+function Img({ className, alt = "", ...props }: React.ImgHTMLAttributes<HTMLImageElement>) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img loading="lazy" alt={alt} className={cn("max-w-full min-w-0", className)} {...props} />;
 }
 
 /* ── Real content pulled from the built pages ──────────────────────────── */
 const E = "/figma-home/ecmdi";
 const P = "/figma-home/peirce";
-const HEROES = [`${P}/hero/hero-1.jpg`, `${P}/hero/hero-2.jpg`, `${P}/hero/hero-3.jpg`, `${P}/hero/hero-4.jpg`, `${P}/hero/hero-5.jpg`];
+/* Promo banners are 1728×512. Shown whole (standard / a matching cover frame)
+   so the baked-in type is not sliced off. */
+const HERO_SLIDES = [
+  { src: `${P}/hero/hero-1.jpg`, alt: "Peirce-Phelps October monthly special on Honeywell Home thermostats, through October 31, 2026" },
+  { src: `${P}/hero/hero-2.jpg`, alt: "Quarterly special: Viessmann and Carrier boilers, now stocking through December 31, 2026" },
+  { src: `${P}/hero/hero-3.jpg`, alt: "Peirce-Phelps Flash Claim — file warranty claims in minutes" },
+  { src: `${P}/hero/hero-4.jpg`, alt: "Payne WeatherMaker by Carrier residential equipment" },
+  { src: `${P}/hero/hero-5.jpg`, alt: "SimpleProposal, a free proposal builder for HVAC contractors" },
+];
+
+/* Text-free photos for cover frames (image grid, three-column cover, hero). */
+const SCENE_PHOTOS = [
+  { src: "/guide-images/furnace.jpg", alt: "Residential furnace and air handler in a mechanical room", pos: "object-center" },
+  { src: "/guide-images/r454b.jpg", alt: "Outdoor air conditioner beside a house", pos: "object-[28%_center]" },
+  { src: "/guide-images/sizing.jpg", alt: "Technician reviewing HVAC equipment", pos: "object-[72%_center]" },
+];
 
 const ECM_TOOLS = [
   { title: "HVAC Pro+™ Mobile App", image: `${E}/mobile-app.png`, desc: "Our mobile app provides access to product info and easy to use tools while on the go." },
@@ -94,7 +110,7 @@ function BlockSection({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} aria-labelledby={`${id}-h`} className="scroll-mt-24">
+    <section id={id} aria-labelledby={`${id}-h`} className="min-w-0 scroll-mt-24">
       <div className="mb-5 border-b pb-3">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{category}</p>
         <h3 id={`${id}-h`} className="mt-0.5 text-xl font-bold tracking-tight">
@@ -162,34 +178,247 @@ function ProductBox({ p }: { p: (typeof PRODUCTS)[number] }) {
       </span>
       <span className="mt-1 text-base font-bold text-price">{p.price}</span>
       <span className="mt-1 text-xs text-in-stock">In stock</span>
-      <Button size="sm" className="mt-3 w-full">
-        Add to Cart
-      </Button>
+      <div className="mt-auto pt-3">
+        <Button size="sm" className="w-full">
+          Add to Cart
+        </Button>
+      </div>
     </article>
   );
 }
 
-/* A static, Shopware-accurate paged slider: one image with prev/next controls
-   and a dot pager (NOT a continuous marquee). */
-function PagedSlider({ images, ratio = "21/9" }: { images: string[]; ratio?: string }) {
+function SliderArrow({
+  dir,
+  label,
+  disabled,
+  onClick,
+  className,
+}: {
+  dir: "prev" | "next";
+  label: string;
+  disabled?: boolean;
+  onClick: () => void;
+  className?: string;
+}) {
+  const Icon = dir === "prev" ? ChevronLeft : ChevronRight;
   return (
-    <div className="flex items-center gap-4">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full border bg-background text-muted-foreground" aria-hidden>
-        <ChevronLeft className="size-5" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="overflow-hidden rounded-xl border bg-muted" style={{ aspectRatio: ratio }}>
-          <Img src={images[0]} className="size-full object-cover" />
+    <Button
+      type="button"
+      variant="outline"
+      size="icon"
+      className={cn("shrink-0 rounded-full bg-background/95", className)}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      <Icon className="size-5" />
+    </Button>
+  );
+}
+
+/* Shopware image-slider: one slide at a time, arrows outside from sm up
+   (the 6.7.4.0 default), displayMode standard so the artwork is not
+   cover-cropped. Dots sit under the frame — this page documents a dot pager;
+   6.7.4.0's defaultConfig sets navigationDots to "none". Below sm the arrows
+   join the dots so they don't cover a short 1728×512 banner. */
+function ImageSlider({ images }: { images: { src: string; alt: string }[] }) {
+  const [i, setI] = React.useState(0);
+  const last = images.length - 1;
+  const prev = () => setI((n) => Math.max(0, n - 1));
+  const next = () => setI((n) => Math.min(last, n + 1));
+  return (
+    <div
+      className="min-w-0"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Image slider"
+      onKeyDown={(e) => {
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          prev();
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          next();
+        }
+      }}
+    >
+      <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+        <SliderArrow dir="prev" label="Previous slide" disabled={i === 0} onClick={prev} className="hidden sm:inline-flex" />
+        <div className="relative min-w-0 flex-1 overflow-hidden rounded-xl border bg-muted">
+          <Img src={images[i].src} alt={images[i].alt} className="aspect-[1728/512] h-auto w-full object-contain" />
         </div>
-        <div className="mt-3 flex justify-center gap-2">
-          {images.map((src, i) => (
-            <span key={src} className={cn("h-2 rounded-full transition-all", i === 0 ? "w-6 bg-primary" : "w-2 bg-border")} />
+        <SliderArrow dir="next" label="Next slide" disabled={i === last} onClick={next} className="hidden sm:inline-flex" />
+      </div>
+      {/* On a phone the arrows sit with the dots, under the artwork, so they
+          don't cover the banner type. From sm up they flank the image
+          (Shopware's outside default). */}
+      <div className="mt-3 flex items-center justify-center gap-2" role="group" aria-label="Choose slide">
+        <SliderArrow dir="prev" label="Previous slide" disabled={i === 0} onClick={prev} className="sm:hidden" />
+        <div className="flex flex-wrap justify-center gap-1">
+          {images.map((img, n) => (
+            <button
+              key={img.src}
+              type="button"
+              aria-label={`Go to slide ${n + 1} of ${images.length}`}
+              aria-current={n === i ? "true" : undefined}
+              onClick={() => setI(n)}
+              className="grid size-6 place-items-center rounded-full focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+            >
+              <span className={cn("h-2 rounded-full", n === i ? "w-6 bg-primary" : "w-2 bg-border")} />
+            </button>
           ))}
         </div>
+        <SliderArrow dir="next" label="Next slide" disabled={i === last} onClick={next} className="sm:hidden" />
       </div>
-      <span className="grid size-10 shrink-0 place-items-center rounded-full border bg-background text-muted-foreground" aria-hidden>
-        <ChevronRight className="size-5" />
-      </span>
+    </div>
+  );
+}
+
+/* Shopware image-gallery defaults: thumbnails on the left (underneath on
+   small screens), arrows inside, no dots, displayMode standard. */
+function ImageGallery({ images }: { images: { src: string; alt: string }[] }) {
+  const [i, setI] = React.useState(0);
+  const count = images.length;
+  const go = (n: number) => setI(((n % count) + count) % count);
+  return (
+    <div className="grid min-w-0 items-start gap-3 md:grid-cols-[4.5rem_minmax(0,1fr)] md:gap-4" role="region" aria-label="Image gallery">
+      <div className="order-2 flex min-w-0 gap-2 overflow-x-auto md:order-1 md:flex-col md:overflow-visible">
+        {images.map((img, n) => (
+          <button
+            key={img.src}
+            type="button"
+            onClick={() => setI(n)}
+            aria-label={`Show image ${n + 1} of ${count}`}
+            aria-current={n === i ? "true" : undefined}
+            className={cn(
+              "size-16 shrink-0 overflow-hidden rounded-md border bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
+              n === i ? "border-primary ring-2 ring-primary" : "border-border",
+            )}
+          >
+            <Img src={img.src} alt="" className="size-full object-contain" />
+          </button>
+        ))}
+      </div>
+      <div className="relative order-1 min-w-0 md:order-2">
+        <div className="flex min-w-0 items-center justify-center overflow-hidden rounded-xl border bg-muted md:min-h-[340px]">
+          <Img src={images[i].src} alt={images[i].alt} className="h-auto w-full object-contain" />
+          <SliderArrow dir="prev" label="Previous image" onClick={() => go(i - 1)} className="absolute top-1/2 left-2 hidden -translate-y-1/2 md:inline-flex" />
+          <SliderArrow dir="next" label="Next image" onClick={() => go(i + 1)} className="absolute top-1/2 right-2 hidden -translate-y-1/2 md:inline-flex" />
+        </div>
+        <div className="mt-2 flex justify-between md:hidden">
+          <SliderArrow dir="prev" label="Previous image" onClick={() => go(i - 1)} />
+          <SliderArrow dir="next" label="Next image" onClick={() => go(i + 1)} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Shopware product-slider: outside arrows, no dots (nav: false), boxes at
+   about the 300px default minimum. One box on a phone, two from sm, three
+   from xl — where this column is wide enough for a 300px box. */
+function ProductSlider({ products, label }: { products: typeof PRODUCTS; label: string }) {
+  const [ref, api] = useEmblaCarousel({ align: "start", containScroll: "trimSnaps" });
+  const [canPrev, setCanPrev] = React.useState(false);
+  const [canNext, setCanNext] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!api) return;
+    const sync = () => {
+      setCanPrev(api.canScrollPrev());
+      setCanNext(api.canScrollNext());
+    };
+    sync();
+    api.on("select", sync);
+    api.on("reInit", sync);
+    return () => {
+      api.off("select", sync);
+      api.off("reInit", sync);
+    };
+  }, [api]);
+
+  return (
+    <div
+      className="flex min-w-0 items-center gap-2 sm:gap-3"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={label}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          api?.scrollPrev();
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          api?.scrollNext();
+        }
+      }}
+    >
+      <SliderArrow dir="prev" label={`Previous ${label}`} disabled={!canPrev} onClick={() => api?.scrollPrev()} />
+      <div ref={ref} className="min-w-0 flex-1 overflow-hidden">
+        <ul className="-ml-3 flex items-stretch sm:-ml-4">
+          {products.map((p) => (
+            <li key={p.name} className="flex min-w-0 shrink-0 grow-0 basis-full pl-3 sm:basis-1/2 sm:pl-4 xl:basis-1/3">
+              <div className="w-full">
+                <ProductBox p={p} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <SliderArrow dir="next" label={`Next ${label}`} disabled={!canNext} onClick={() => api?.scrollNext()} />
+    </div>
+  );
+}
+
+/* Shopware cross-selling: one tab per group, each tab a product slider
+   with outside arrows. */
+function CrossSelling() {
+  const groups = [
+    { id: "also-bought", name: "Customers also bought", products: PRODUCTS },
+    { id: "similar", name: "Similar products", products: [...PRODUCTS].reverse() },
+  ];
+  const [active, setActive] = React.useState(0);
+  return (
+    <div className="min-w-0">
+      <div role="tablist" aria-label="Cross selling" className="flex min-w-0 gap-1 overflow-x-auto border-b">
+        {groups.map((g, i) => (
+          <button
+            key={g.id}
+            type="button"
+            role="tab"
+            id={`cross-tab-${g.id}`}
+            aria-selected={i === active}
+            aria-controls={`cross-panel-${g.id}`}
+            tabIndex={i === active ? 0 : -1}
+            onClick={() => setActive(i)}
+            onKeyDown={(e) => {
+              if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+              e.preventDefault();
+              const next = e.key === "ArrowRight" ? (i + 1) % groups.length : (i - 1 + groups.length) % groups.length;
+              setActive(next);
+              document.getElementById(`cross-tab-${groups[next].id}`)?.focus();
+            }}
+            className={cn(
+              "-mb-px shrink-0 border-b-2 px-3 py-2 text-sm font-semibold focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none sm:px-4",
+              i === active ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {g.name}
+          </button>
+        ))}
+      </div>
+      {groups.map((g, i) => (
+        <div
+          key={g.id}
+          role="tabpanel"
+          id={`cross-panel-${g.id}`}
+          aria-labelledby={`cross-tab-${g.id}`}
+          hidden={i !== active}
+          className="pt-4"
+        >
+          {i === active ? <ProductSlider products={g.products} label={g.name} /> : null}
+        </div>
+      ))}
     </div>
   );
 }
@@ -199,7 +428,7 @@ function PagedSlider({ images, ratio = "21/9" }: { images: string[]; ratio?: str
    ════════════════════════════════════════════════════════════════════════ */
 export function Examples() {
   return (
-    <div className="space-y-16">
+    <div className="min-w-0 space-y-16">
       {/* Mapping summary — which Shopware block each real built-page section is */}
       <section aria-labelledby="map-h" className="rounded-xl border bg-muted/30 p-5">
         <h2 id="map-h" className="text-lg font-bold tracking-tight">
@@ -211,7 +440,7 @@ export function Examples() {
           <Link href="/category/residential?v=jump" className="text-primary hover:underline">/category/residential?v=jump</Link>,
           and the Shopware block each one corresponds to. Where the two differ, the block below is built to match Shopware.
         </p>
-        <div className="mt-4 overflow-x-auto">
+        <div className="mt-4 min-w-0 overflow-x-auto">
           <table className="w-full min-w-[640px] border-collapse text-left text-sm">
             <thead>
               <tr className="border-b text-xs uppercase tracking-wide text-muted-foreground">
@@ -339,15 +568,15 @@ export function Examples() {
       <div className="space-y-14">
         <BlockSection id="image" category="Images" name="Image, boxed">
           <div className="mx-auto max-w-3xl">
-            <div className="overflow-hidden rounded-xl border">
-              <Img src={HEROES[0]} className="aspect-[16/9] w-full object-cover" />
+            <div className="overflow-hidden rounded-xl border bg-muted">
+              <Img src={HERO_SLIDES[0].src} alt={HERO_SLIDES[0].alt} className="aspect-[1728/512] h-auto w-full object-contain" />
             </div>
           </div>
         </BlockSection>
 
         <BlockSection id="image-cover" category="Images" name="Image, full-sized">
-          <div className="overflow-hidden rounded-xl">
-            <Img src={HEROES[1]} className="aspect-[21/9] w-full object-cover" />
+          <div className="overflow-hidden rounded-xl bg-muted">
+            <Img src={HERO_SLIDES[1].src} alt={HERO_SLIDES[1].alt} className="aspect-[1728/512] h-auto w-full object-cover" />
           </div>
         </BlockSection>
 
@@ -372,9 +601,9 @@ export function Examples() {
         </BlockSection>
 
         <BlockSection id="image-three-cover" category="Images" name="Three columns, full-sized">
-          <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-xl">
-            {HEROES.slice(0, 3).map((src) => (
-              <Img key={src} src={src} className="aspect-square w-full object-cover" />
+          <div className="grid min-w-0 grid-cols-1 gap-px overflow-hidden rounded-xl bg-border md:grid-cols-3">
+            {SCENE_PHOTOS.map((p) => (
+              <Img key={p.src} src={p.src} alt={p.alt} className={cn("aspect-[16/9] w-full object-cover", p.pos)} />
             ))}
           </div>
         </BlockSection>
@@ -396,9 +625,9 @@ export function Examples() {
         </BlockSection>
 
         <BlockSection id="image-bubble-row" category="Images" name="Three columns, rounded">
-          <div className="flex flex-wrap justify-center gap-10">
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
             {ECM_TOOLS.slice(0, 3).map((t) => (
-              <span key={t.title} className="grid size-36 place-items-center overflow-hidden rounded-full bg-muted">
+              <span key={t.title} className="grid size-24 place-items-center overflow-hidden rounded-full bg-muted sm:size-36">
                 <Img src={t.image} className="max-h-[64%] max-w-[64%] object-contain" />
               </span>
             ))}
@@ -416,12 +645,25 @@ export function Examples() {
         </BlockSection>
 
         <BlockSection id="image-simple-grid" category="Images" name="Image grid">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="grid gap-4">
-              <Img src={HEROES[2]} className="aspect-[2/1] w-full rounded-xl object-cover" />
-              <Img src={HEROES[3]} className="aspect-[2/1] w-full rounded-xl object-cover" />
-            </div>
-            <Img src={HEROES[4]} className="aspect-square w-full rounded-xl object-cover" />
+          <div className="grid min-w-0 grid-cols-1 gap-4 sm:h-[28rem] sm:grid-cols-2 sm:grid-rows-2">
+            <Img
+              src={SCENE_PHOTOS[0].src}
+              alt={SCENE_PHOTOS[0].alt}
+              className={cn("aspect-[16/9] w-full rounded-xl object-cover sm:aspect-auto sm:h-full", SCENE_PHOTOS[0].pos)}
+            />
+            <Img
+              src={SCENE_PHOTOS[1].src}
+              alt={SCENE_PHOTOS[1].alt}
+              className={cn(
+                "aspect-[16/9] w-full rounded-xl object-cover sm:col-start-2 sm:row-span-2 sm:row-start-1 sm:aspect-auto sm:h-full",
+                SCENE_PHOTOS[1].pos,
+              )}
+            />
+            <Img
+              src={SCENE_PHOTOS[2].src}
+              alt={SCENE_PHOTOS[2].alt}
+              className={cn("aspect-[16/9] w-full rounded-xl object-cover sm:aspect-auto sm:h-full", SCENE_PHOTOS[2].pos)}
+            />
           </div>
         </BlockSection>
 
@@ -432,18 +674,11 @@ export function Examples() {
           maps={<>Both home hero carousels and the “Brands We Trust” / “Our Trusted Brands” logo carousels.</>}
           differs="The built hero is a tabbed carousel and the brand strips are a continuous, seamless marquee. Shopware’s “Image slider” is a paged slider with prev/next controls and a dot pager — shown here."
         >
-          <PagedSlider images={HEROES} />
+          <ImageSlider images={HERO_SLIDES} />
         </BlockSection>
 
         <BlockSection id="image-gallery" category="Images" name="Image gallery">
-          <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
-            <Img src={HEROES[0]} className="aspect-[4/3] w-full rounded-xl border object-cover" />
-            <div className="flex gap-3 sm:flex-col">
-              {HEROES.slice(1, 5).map((src) => (
-                <Img key={src} src={src} className="size-20 rounded-lg border object-cover" />
-              ))}
-            </div>
-          </div>
+          <ImageGallery images={HERO_SLIDES} />
         </BlockSection>
       </div>
 
@@ -534,7 +769,7 @@ export function Examples() {
           <div className="grid gap-6 md:grid-cols-3">
             {PEIRCE_SERVICES.map((s) => (
               <article key={s.title} className="flex flex-col overflow-hidden rounded-xl border bg-card">
-                <Img src={s.image} className="aspect-[16/9] w-full object-cover" />
+                <Img src={s.image} alt="" className="aspect-[3/2] w-full object-cover object-top" />
                 <div className="flex flex-1 flex-col p-5">
                   <Heading className="text-lg">{s.title}</Heading>
                   <Body className="mt-2 flex-1">{s.desc}</Body>
@@ -568,11 +803,11 @@ export function Examples() {
           maps={<>The Residential large banner hero (text + CTA over a background).</>}
           differs="The built banner is a light band with side lockups. Shopware’s “Hero image” overlays the headline, copy, and CTA directly on a full background image — shown here."
         >
-          <div className="relative grid min-h-[360px] place-items-center overflow-hidden rounded-xl">
-            <Img src={HEROES[3]} className="absolute inset-0 size-full object-cover" />
-            <div className="absolute inset-0 bg-black/45" aria-hidden />
+          <div className="relative grid min-h-[320px] place-items-center overflow-hidden rounded-xl sm:min-h-[420px]">
+            <Img src="/guide-images/r454b.jpg" alt="" className="absolute inset-0 size-full object-cover object-[32%_center]" />
+            <div className="absolute inset-0 bg-black/55" aria-hidden />
             <div className="relative z-10 max-w-xl px-6 text-center text-white">
-              <h4 className="text-3xl font-bold tracking-tight sm:text-4xl">Residential Equipment</h4>
+              <h4 className="text-3xl font-bold tracking-tight drop-shadow-md sm:text-4xl">Residential Equipment</h4>
               <p className="mx-auto mt-4 max-w-md text-sm text-white/90 sm:text-base">
                 Condensers, furnaces, coils, and complete systems — in stock at your branch. Pick a category to start.
               </p>
@@ -595,7 +830,7 @@ export function Examples() {
         ).map((v, i) => (
           <BlockSection key={v.id} id={v.id} category="Video" name={v.name}>
             <div className="relative grid aspect-video w-full place-items-center overflow-hidden rounded-xl border">
-              <Img src={HEROES[i % HEROES.length]} className="absolute inset-0 size-full object-cover" />
+              <Img src={SCENE_PHOTOS[i % SCENE_PHOTOS.length].src} alt="" className="absolute inset-0 size-full object-cover" />
               <div className="absolute inset-0 bg-black/30" aria-hidden />
               <span
                 className={cn(
@@ -628,13 +863,7 @@ export function Examples() {
           maps={<>The Residential “Top Sellers” / “New Arrivals” product rails.</>}
           differs="The built rails use our storefront ProductCard (branch availability, rewards points, gated price). Shopware’s product slider renders product boxes — image, name, rating, price, Add to Cart — shown here."
         >
-          <ul className="flex snap-x gap-4 overflow-x-auto pb-3 [scrollbar-width:thin]">
-            {PRODUCTS.map((p) => (
-              <li key={p.name} className="w-48 shrink-0 snap-start sm:w-52">
-                <ProductBox p={p} />
-              </li>
-            ))}
-          </ul>
+          <ProductSlider products={PRODUCTS} label="Product slider" />
         </BlockSection>
 
         <BlockSection id="product-three-column" category="Commerce" name="Three columns, product boxes">
@@ -646,14 +875,7 @@ export function Examples() {
         </BlockSection>
 
         <BlockSection id="cross-selling" category="Commerce" name="Cross Selling">
-          <p className="mb-3 text-sm font-semibold text-foreground">Customers also bought</p>
-          <ul className="flex snap-x gap-4 overflow-x-auto pb-3 [scrollbar-width:thin]">
-            {PRODUCTS.slice(1, 6).map((p) => (
-              <li key={p.name} className="w-48 shrink-0 snap-start sm:w-52">
-                <ProductBox p={p} />
-              </li>
-            ))}
-          </ul>
+          <CrossSelling />
         </BlockSection>
 
         <BlockSection
@@ -796,7 +1018,7 @@ export function Examples() {
           name="HTML"
           note="The editor pastes custom markup into a code editor; the storefront renders it verbatim. A rendered example is shown below."
         >
-          <div className="grid gap-5 md:grid-cols-[1fr_1fr]">
+          <div className="grid min-w-0 gap-5 md:grid-cols-2">
             <div className="flex items-center gap-4 rounded-xl border border-dashed p-5">
               <div className="grid size-12 shrink-0 place-items-center rounded-full bg-primary/10 text-primary font-bold">%</div>
               <div>
