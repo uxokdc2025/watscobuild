@@ -3,10 +3,18 @@
 import * as React from "react";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
-import { Play, ChevronLeft, ChevronRight, Star, ChevronDown } from "lucide-react";
+import { Play, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ProductCard, type ProductCardData } from "@/app/pdp/_lib/product-card";
+import { PdpGallery } from "@/app/pdp/_components/gallery";
+import { PdpAuthProvider } from "@/app/pdp/_lib/auth";
+import { AboutThisProduct } from "@/app/pdp/_lib/about";
+import { PdpSummary } from "@/app/pdp/_lib/summary";
+import { getPdp } from "@/app/pdp/_lib/registry";
+import { CATEGORY_RESULTS } from "@/app/search/_lib/category-data";
+import type { SearchResult } from "@/app/search/_lib/mock-data";
 
 /* ════════════════════════════════════════════════════════════════════════
    Shopware "Shopping Experiences" — Landing-page block EXAMPLES.
@@ -76,14 +84,32 @@ const RESI_TILES = [
   { label: "Gas Furnaces", image: "/category-tiles/gas-furnace-t.png" },
 ];
 
-const PRODUCTS = [
-  { mfg: "TradePro", name: "13.4 SEER2 Air Conditioner Condenser, 2.5 Ton", price: "$1,284.00", image: "/category-tiles/air-conditioner-t.png" },
-  { mfg: "TradePro", name: "15 SEER2 Heat Pump, 3 Ton", price: "$1,540.00", image: "/category-tiles/heat-pump-t.png" },
-  { mfg: "TradePro", name: "80% AFUE Gas Furnace, 60,000 BTU", price: "$892.00", image: "/category-tiles/gas-furnace-t.png" },
-  { mfg: "TradePro", name: "Multi-Position Air Handler, 3 Ton", price: "$740.00", image: "/category-tiles/air-handler-t.png" },
-  { mfg: "TradePro", name: "Cased Evaporator Coil, 2.5 Ton", price: "$410.00", image: "/category-tiles/evaporator-coil-t.png" },
-  { mfg: "TradePro", name: "Packaged Gas/Electric Unit, 3 Ton", price: "$2,180.00", image: "/category-tiles/small-packaged-t.png" },
-];
+/* Same card mapping the Residential jump rails use (category-jump toCard):
+   storefront ProductCard with branch availability, rewards points, and price
+   that gates when signed out. */
+function toSliderCard(r: SearchResult): ProductCardData {
+  const inStock = r.stockStatus !== "out-of-stock";
+  return {
+    id: r.id,
+    brand: r.brand,
+    title: r.title,
+    item: r.item,
+    mfg: r.mfg,
+    image: r.image,
+    price: r.price ?? null,
+    points: r.points,
+    yourBranchQty: inStock ? 2 : 0,
+    branchName: "Wilmington",
+    nearbyBranchQty: r.allBranchesQty ?? 0,
+    href: `/pdp/tradepro-${r.item.toLowerCase()}?signedin=1`,
+  };
+}
+
+const SLIDER_PRODUCTS = CATEGORY_RESULTS.residential.slice(0, 8).map(toSliderCard);
+
+/* Condenser PDP already built for the storefront — gallery, buy box, and
+   About This Product all read this one product so the examples match. */
+const EXAMPLE_PDP = getPdp("uc-tabs-accordions");
 
 const LOREM =
   "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
@@ -153,38 +179,6 @@ function Heading({ children, className }: { children: React.ReactNode; className
 }
 function Body({ children, className }: { children: React.ReactNode; className?: string }) {
   return <p className={cn("text-sm leading-relaxed text-muted-foreground", className)}>{children}</p>;
-}
-
-function Stars() {
-  return (
-    <span className="flex items-center gap-0.5 text-rating-star" aria-label="Rated 5 out of 5">
-      {[0, 1, 2, 3, 4].map((i) => (
-        <Star key={i} className="size-3.5 fill-current" aria-hidden />
-      ))}
-    </span>
-  );
-}
-
-function ProductBox({ p }: { p: (typeof PRODUCTS)[number] }) {
-  return (
-    <article className="flex h-full flex-col rounded-xl border bg-card p-3 text-left">
-      <span className="grid aspect-square place-items-center overflow-hidden rounded-lg bg-muted">
-        <Img src={p.image} className="max-h-[82%] max-w-[82%] object-contain" />
-      </span>
-      <span className="mt-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">{p.mfg}</span>
-      <span className="mt-0.5 line-clamp-2 text-sm font-semibold leading-tight text-foreground">{p.name}</span>
-      <span className="mt-1.5">
-        <Stars />
-      </span>
-      <span className="mt-1 text-base font-bold text-price">{p.price}</span>
-      <span className="mt-1 text-xs text-in-stock">In stock</span>
-      <div className="mt-auto pt-3">
-        <Button size="sm" className="w-full">
-          Add to Cart
-        </Button>
-      </div>
-    </article>
-  );
 }
 
 function SliderArrow({
@@ -314,10 +308,12 @@ function ImageGallery({ images }: { images: { src: string; alt: string }[] }) {
   );
 }
 
-/* Shopware product-slider: outside arrows, no dots (nav: false), boxes at
-   about the 300px default minimum. One box on a phone, two from sm, three
-   from xl — where this column is wide enough for a 300px box. */
-function ProductSlider({ products, label }: { products: typeof PRODUCTS; label: string }) {
+/* Product slider: outside arrows, no dots. Slides are the storefront
+   ProductCard. The examples page sits beside the design-system sidebar, so
+   at a 1280px viewport the track is about 900px — wide enough for four
+   cards. The count follows the track (container query): four from ~52rem,
+   three from ~40rem, two from ~22rem, one on a phone. */
+function ProductSlider({ products, label }: { products: ProductCardData[]; label: string }) {
   const [ref, api] = useEmblaCarousel({ align: "start", containScroll: "trimSnaps" });
   const [canPrev, setCanPrev] = React.useState(false);
   const [canNext, setCanNext] = React.useState(false);
@@ -354,12 +350,15 @@ function ProductSlider({ products, label }: { products: typeof PRODUCTS; label: 
       }}
     >
       <SliderArrow dir="prev" label={`Previous ${label}`} disabled={!canPrev} onClick={() => api?.scrollPrev()} />
-      <div ref={ref} className="min-w-0 flex-1 overflow-hidden">
-        <ul className="-ml-3 flex items-stretch sm:-ml-4">
+      <div ref={ref} className="@container min-w-0 flex-1 overflow-hidden">
+        <ul className="-ml-3 flex items-stretch">
           {products.map((p) => (
-            <li key={p.name} className="flex min-w-0 shrink-0 grow-0 basis-full pl-3 sm:basis-1/2 sm:pl-4 xl:basis-1/3">
-              <div className="w-full">
-                <ProductBox p={p} />
+            <li
+              key={p.id}
+              className="flex min-w-0 shrink-0 grow-0 basis-full pl-3 @min-[22rem]:basis-1/2 @min-[40rem]:basis-1/3 @min-[52rem]:basis-1/4"
+            >
+              <div className="h-full w-full">
+                <ProductCard data={p} signedIn />
               </div>
             </li>
           ))}
@@ -374,8 +373,8 @@ function ProductSlider({ products, label }: { products: typeof PRODUCTS; label: 
    with outside arrows. */
 function CrossSelling() {
   const groups = [
-    { id: "also-bought", name: "Customers also bought", products: PRODUCTS },
-    { id: "similar", name: "Similar products", products: [...PRODUCTS].reverse() },
+    { id: "also-bought", name: "Customers also bought", products: SLIDER_PRODUCTS },
+    { id: "similar", name: "Similar products", products: [...SLIDER_PRODUCTS].reverse() },
   ];
   const [active, setActive] = React.useState(0);
   return (
@@ -420,6 +419,27 @@ function CrossSelling() {
         </div>
       ))}
     </div>
+  );
+}
+
+/* Storefront PDP top: PdpGallery (image canvas, zoom chrome, thumbnail rail
+   when the product has more than one image) beside PdpSummary (badges,
+   points, price, branch availability, qty + Add to Cart). Signed in so the
+   buy box shows commerce the way the built PDP does. */
+function GalleryAndBuyBox() {
+  if (!EXAMPLE_PDP) return null;
+  return (
+    <PdpAuthProvider initialSignedIn>
+      {/* Two columns once this block is wide enough for the buy box qty row.
+          The design-system sidebar narrows the page, so a viewport breakpoint
+          would split too early and push Add to Cart past the edge. */}
+      <div className="@container min-w-0">
+        <div className="grid grid-cols-1 items-start gap-8 @min-[42rem]:grid-cols-2 @min-[42rem]:gap-12">
+          <PdpGallery images={EXAMPLE_PDP.images} alt={EXAMPLE_PDP.title} thumbnailCount={EXAMPLE_PDP.thumbnailCount} />
+          <PdpSummary product={EXAMPLE_PDP} />
+        </div>
+      </div>
+    </PdpAuthProvider>
   );
 }
 
@@ -861,15 +881,15 @@ export function Examples() {
           category="Commerce"
           name="Product slider"
           maps={<>The Residential “Top Sellers” / “New Arrivals” product rails.</>}
-          differs="The built rails use our storefront ProductCard (branch availability, rewards points, gated price). Shopware’s product slider renders product boxes — image, name, rating, price, Add to Cart — shown here."
+          differs="Shopware sizes each product box near a 300px minimum, which fits three across this column. These rails use the storefront ProductCard (image, name, item and MFG, rewards points, branch availability, and price that gates when signed out) and keep four cards in view at a desktop width."
         >
-          <ProductSlider products={PRODUCTS} label="Product slider" />
+          <ProductSlider products={SLIDER_PRODUCTS} label="Product slider" />
         </BlockSection>
 
         <BlockSection id="product-three-column" category="Commerce" name="Three columns, product boxes">
-          <div className="grid gap-6 sm:grid-cols-3">
-            {PRODUCTS.slice(0, 3).map((p) => (
-              <ProductBox key={p.name} p={p} />
+          <div className="grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {SLIDER_PRODUCTS.slice(0, 3).map((p) => (
+              <ProductCard key={p.id} data={p} signedIn />
             ))}
           </div>
         </BlockSection>
@@ -882,67 +902,18 @@ export function Examples() {
           id="gallery-buybox"
           category="Commerce"
           name="Image gallery and buy box"
-          note="A product-detail block by intent — a product gallery on the left, the buy box on the right. Offered in the landing-page picker, but needs a product mapped to it to render real data."
+          note="A product-detail block by intent — the storefront image gallery on the left and the buy box on the right. Offered in the landing-page picker; a product has to be mapped for it to render. Shown with the gallery and buy box the product page uses."
         >
-          <div className="grid gap-8 rounded-xl border p-6 md:grid-cols-2">
-            <div className="grid gap-4 sm:grid-cols-[auto_1fr]">
-              <div className="flex gap-3 sm:flex-col">
-                {PRODUCTS.slice(0, 3).map((p) => (
-                  <span key={p.name} className="grid size-16 place-items-center overflow-hidden rounded-lg border bg-muted">
-                    <Img src={p.image} className="max-h-[78%] max-w-[78%] object-contain" />
-                  </span>
-                ))}
-              </div>
-              <span className="grid aspect-square place-items-center overflow-hidden rounded-xl bg-muted">
-                <Img src={PRODUCTS[0].image} className="max-h-[82%] max-w-[82%] object-contain" />
-              </span>
-            </div>
-            <div>
-              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{PRODUCTS[0].mfg}</span>
-              <h4 className="mt-1 text-xl font-bold tracking-tight text-foreground">{PRODUCTS[0].name}</h4>
-              <div className="mt-2 flex items-center gap-2">
-                <Stars />
-                <span className="text-xs text-muted-foreground">(42 reviews)</span>
-              </div>
-              <p className="mt-4 text-3xl font-bold text-price">{PRODUCTS[0].price}</p>
-              <p className="mt-1 text-sm text-in-stock">In stock at your branch</p>
-              <div className="mt-5 flex items-center gap-3">
-                <span className="inline-flex h-10 items-center rounded-md border border-input px-3 text-sm">Qty 1</span>
-                <Button className="flex-1">Add to Cart</Button>
-              </div>
-            </div>
-          </div>
+          <GalleryAndBuyBox />
         </BlockSection>
 
         <BlockSection
           id="product-description-reviews"
           category="Commerce"
           name="Product description & reviews"
-          note="A product-detail block by intent — the long product description and the customer reviews. Offered in the landing-page picker, but needs a product mapped to it to render real data."
+          note="A product-detail block by intent — the long product description. Offered in the landing-page picker; a product has to be mapped for it to render. Shown with the storefront About This Product accordion (description, specifications, documents, and part list) the product page uses."
         >
-          <div className="rounded-xl border p-6">
-            <h4 className="text-lg font-bold tracking-tight text-foreground">Description</h4>
-            <Body className="mt-2 max-w-3xl">
-              A high-efficiency residential condenser built for the R-454B transition. {LOREM}
-            </Body>
-            <div className="mt-6 border-t pt-5">
-              <h4 className="text-lg font-bold tracking-tight text-foreground">Reviews</h4>
-              <div className="mt-3 space-y-4">
-                {[
-                  { who: "Mike R.", text: "Easy install, quiet operation. Exactly what the spec sheet promised." },
-                  { who: "Dana P.", text: "Shipped same-day from my branch. Would order again." },
-                ].map((r) => (
-                  <div key={r.who} className="rounded-lg bg-muted/40 p-4">
-                    <div className="flex items-center gap-2">
-                      <Stars />
-                      <span className="text-sm font-semibold text-foreground">{r.who}</span>
-                    </div>
-                    <Body className="mt-1">{r.text}</Body>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          {EXAMPLE_PDP ? <AboutThisProduct product={EXAMPLE_PDP} /> : null}
         </BlockSection>
       </div>
 
