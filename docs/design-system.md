@@ -445,13 +445,16 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 
 ### 5.1 Container widths
 
-| Pattern | Class | Where |
-|---|---|---|
-| Default page container | `mx-auto max-w-[var(--layout-max-width)] px-4 md:px-6` | Every PDP, PLP, account, locator, showcase, and shared chrome shell; responsive through a 1920px canvas, with 16px mobile and 24px desktop outer padding |
-| Sticky header inner | `mx-auto max-w-6xl flex items-center ... px-4 py-3 md:px-6` | `app/components/page.tsx` header, `app/typography/page.tsx` |
-| Full-bleed bands | `border-b` / `border-t` outside `max-w-6xl` | Sticky headers, footer top border, tab bars |
+**Canonical component:** `PageContainer` — `components/ui/page-container.tsx`. Live reference: **`/components/grid`** (Foundations · Grid & Breakpoints).
 
-**Rule:** Use the shared `--layout-max-width: 1920px` canvas for the account shell and Homans chrome. Content stretches fluidly up to 1920px, then remains centered and static above that width. Padding is `px-4` mobile → `md:px-6` desktop.
+| Pattern | Class / component | Where |
+|---|---|---|
+| **Page container (canonical)** | `<PageContainer>` = `mx-auto w-full max-w-[var(--layout-max-width)] px-[var(--layout-margin)]` | Every new page shell, band inner, and section. Currently adopted by `app/search/_lib/search-body.tsx` (search results + every PLP) and `/components/grid` |
+| Page container (legacy inline) | `mx-auto max-w-[var(--layout-max-width)] px-4 md:px-6` | PDP, account, locator, cart, checkout, quick order, shared chrome. Same canvas, hard-coded margins — migrate to `PageContainer` when a file is next touched |
+| Sticky header inner | `mx-auto max-w-6xl flex items-center ... px-4 py-3 md:px-6` | `app/components/page.tsx` header, `app/typography/page.tsx`. `max-w-6xl` is aliased to `var(--layout-max-width)` in `globals.css` `@layer utilities` |
+| Full-bleed bands | background + `border-b` / `border-t` on the outer element, `PageContainer` inside it | Sticky headers, footer top border, tab bars |
+
+**Rule:** content is fluid up to `--layout-max-width: 1920px`, then it stops and centers. A page never sets its own `max-w-*` or inline padding — side margin is the `--layout-margin` token (16 → 24 → 32 → 40 → 48px, stepping at md / lg / wide / xwide). Full-bleed backgrounds are allowed; full-bleed *content* is not.
 
 ### 5.2 Section rhythm
 
@@ -465,8 +468,11 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 
 ### 5.3 Grid patterns
 
-| Pattern | Class | Where |
+**Canonical component:** `ProductGrid` — `components/ui/product-grid.tsx`. Columns and gutter are tokens (`--layout-columns`, `--layout-gutter`), not per-page classes.
+
+| Pattern | Class / component | Where |
 |---|---|---|
+| **Search / PLP product grid (canonical)** | `<ProductGrid>` = `grid grid-cols-[repeat(var(--layout-columns),minmax(0,1fr))] gap-[var(--layout-gutter)]` → 2 / 3 / 4 / 5 / 6 across, holds at 6 above 1920px | `app/search/_lib/search-body.tsx` (`/search`, `/search?category=…`, `/search/plp-v2`) |
 | Category grids (showcase) | `grid grid-cols-1 gap-4 lg:grid-cols-2` | `app/components/_showcase.tsx` `Category` |
 | Product/FBT grids | `grid grid-cols-2 lg:grid-cols-4 gap-4` | `app/pdp/_lib/fbt.tsx` (FBT "Frequently Bought Together" — 4-across on desktop, 2 on mobile) |
 | Parts | `grid grid-cols-2 lg:grid-cols-4` (mini product cards) | `app/pdp/_lib/parts.tsx` |
@@ -475,17 +481,43 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 | Master index cards | `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4` | `app/pdp/page.tsx` |
 | Carousel / gallery | Embla `Carousel` + thumbnail strip; PDP gallery is a sticky image column (see §15) | `components/ui/carousel.tsx`, `app/pdp/_lib/pdp.tsx` |
 
-### 5.4 Breakpoints (Tailwind defaults; no custom screens in `globals.css`)
+### 5.4 Breakpoints
 
-| Breakpoint | Min-width | Behavior in this system |
+Tailwind's `sm`–`2xl` are untouched (rem-based). Three named screens are added in `globals.css` `@theme` because the product grid steps at 1440 and 1728 and the canvas caps at 1920 — widths Tailwind's scale doesn't cover. The TypeScript mirror of this table is `lib/layout.ts` (`LAYOUT_BREAKPOINTS`), which `/components/grid` renders from.
+
+| Breakpoint | Range | Variant | PLP columns | Gutter | Margin | Container |
+|---|---|---|---|---|---|---|
+| Base (mobile) | 0–639px | — | 2 | 16px | 16px | Fluid |
+| `sm` | 640–767px | `sm:` | 3 | 16px | 16px | Fluid |
+| `md` | 768–1023px | `md:` | 3 | 24px | 24px | Fluid |
+| `lg` | 1024–1279px | `lg:` | 4 | 24px | 32px | Fluid |
+| `xl` | 1280–1439px | `xl:` | 4 | 24px | 32px | Fluid |
+| `wide` **(new)** | 1440–1727px | `wide:` | 5 | 24px | 40px | Fluid |
+| `xwide` **(new)** | 1728–1919px | `xwide:` | 6 | 24px | 48px | Fluid |
+| `canvas` **(new)** | 1920px + | `canvas:` | 6 | 24px | 48px | **Capped at 1920px, centered** |
+
+`2xl` (1536px) still exists but must never drive width — it sits inside the `wide` band, so a `2xl:` width rule reads as a 1440px rule that isn't one.
+
+Other behavior at these breakpoints: `sm` branch cards flip to 2-col (`sm:grid-cols-2`); `md` nav tabs switch from overflow-x scroll to full layout and header sub-bars show (`md:flex`); `lg` showcase categories go `lg:grid-cols-2` and the PLP facet sidebar appears (`lg:grid-cols-[256px_1fr]`).
+
+**Review widths:** 1280, 1440, 1728, 1920 and 2560px (the last proves the canvas cap). Horizontal scroll at 375px is prohibited (Standing Quality Bar). Touch targets are ≥44px (see Button `h-9` = 36px — icon-only buttons use `size-9` = 36px; PDP qty stepper uses `h-12` = 48px, which meets the 44px rule; `Button` `size` `icon` is 36px — add `p-2` or bump to `size="icon-lg"` when the 44px rule applies).
+
+### 5.5 CMS layout rules (max items per row)
+
+A CMS editor can drop any number of items into a Shopware block row. Past these caps an item is narrower than the smallest legible card — which is how a page starts looking stretched even inside the canvas. Source of truth: `CMS_LAYOUT_RULES` in `lib/layout.ts`, rendered at `/components/grid`; block names match `app/components/cms-blocks/cms-catalog.tsx` and the examples at `/components/cms-blocks/examples`.
+
+| Shopware block | Max per row | Steps down |
 |---|---|---|
-| `sm` | 640px | Branch cards flip to 2-col (`sm:grid-cols-2`); FBT starts wrapping |
-| `md` | 768px | Container padding `md:px-6`; nav tabs switch from overflow-x scroll to full layout; header sub-bars show `md:flex` |
-| `lg` | 1024px | Showcase categories `lg:grid-cols-2`; product grids go 4-across |
-| `xl` | 1280px | Screenshot reference width; no extra layout change (max-w-6xl caps at 1152px) |
-| `2xl` | 1536px | Not used for width (content stays max-w-6xl) |
+| Image, boxed · Image, full-sized · Hero image | 1 | 1 at every width |
+| Two columns, boxed · Two columns, boxed image & text | 2 | 2 from `md`, 1 below |
+| Image grid (bento) · Three columns, boxed / rounded · Three columns, image/text cards | 3 | 3 from `lg`, 2 at `sm`–`md`, 1 below `sm` |
+| Four columns, boxed | 4 | 4 from `lg`, 2 at `sm`–`md`, 1 below `sm` |
+| Two / Three columns, text · Teaser text | 3 | 3 from `lg`, 1 below. Body copy ≤ 75 characters per line |
+| Product slider · Cross Selling | 6 | Exactly what the PLP allows (§5.4) |
+| Three columns, product boxes | 3 | 3 from `lg`, 2 below |
+| YouTube / Vimeo video · Form · HTML | 1 | 1 at every width |
 
-Horizontal scroll at 375px is prohibited (Standing Quality Bar). Touch targets are ≥44px (see Button `h-9` = 36px — icon-only buttons use `size-9` = 36px; PDP qty stepper uses `h-12` = 48px, which meets the 44px rule; `Button` `size` `icon` is 36px — add `p-2` or bump to `size="icon-lg"` when the 44px rule applies).
+A CMS row is capped twice: by its block (above) and by the page container. A full-bleed background still keeps its content inside the 1920px canvas.
 
 ---
 

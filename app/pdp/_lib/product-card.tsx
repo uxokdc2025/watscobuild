@@ -148,7 +148,12 @@ function QtyPlusAdd({ data }: { data: ProductCardData }) {
   const cell =
     "grid h-full w-7 cursor-pointer place-items-center text-foreground transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
   return (
-    <div className="flex items-center gap-2">
+    // Wraps instead of shrinking: in a narrow grid cell (2-up at 375px, or
+    // 4-up next to the PLP filter sidebar at 1024px) the stepper + Add row
+    // can't fit on one line, so Add drops to a second line at full width.
+    // Without the wrap the button's label overflows the card. Nothing
+    // changes at a normal cell width.
+    <div className="flex flex-wrap items-center gap-2">
       <div
         className="inline-flex h-[34px] shrink-0 items-center rounded-md border"
         role="group"
@@ -183,7 +188,6 @@ function QtyPlusAdd({ data }: { data: ProductCardData }) {
         size="sm"
         onClick={() => addItem({ id: data.id, title: data.title, brand: data.brand, image: data.image, price: data.price ?? 0 }, qty)}
         className="h-[34px] min-w-[72px] flex-1"
-        style={{ flex: "1 1 0%", minWidth: 0 }}
       >
         <ShoppingCart className="size-4 shrink-0" />
         Add

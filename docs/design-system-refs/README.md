@@ -31,3 +31,29 @@ node .muse-runs/screenshot-backfill.mjs
 - [x] `accordion-styles__all-variants__{1280,375}.png`
 - [x] `pdp-composition__<pattern>__{1280,375}.png` ×12
 - [x] `typography__scale__{1280,375}.png`, `product__page__{1280,375}.png`, `home__root__{1280,375}.png`, `pdp-master__index__{1280,375}.png`
+
+## Pending capture — Grid & Breakpoints review (Nov 2026)
+
+The grid / breakpoints work (Foundations page + token-driven PLP grid) needs the width
+series below. **Not captured in the build container** — it has no usable headless browser
+(Playwright's cached chromium is missing its system libraries, and the container is
+non-root), so these are captured against the Vercel **preview** URL, per the
+preview-first rule.
+
+| File | URL | Viewport |
+|---|---|---|
+| `plp__search-grid__1280.png` | `/search?q=blower+motor&signedin=1` | 1280 × 900 |
+| `plp__search-grid__1440.png` | same | 1440 × 900 |
+| `plp__search-grid__1728.png` | same | 1728 × 1000 |
+| `plp__search-grid__1920.png` | same | 1920 × 1080 |
+| `plp__search-grid__2560.png` | same | 2560 × 1200 |
+| `foundations__grid-breakpoints__1280.png` | `/components/grid` | 1280 × 900 |
+| `foundations__grid-breakpoints__1920.png` | `/components/grid` | 1920 × 1080 |
+
+Expected, and what each shot is evidence of: 4 / 5 / 6 / 6 / 6 product columns at
+1280 / 1440 / 1728 / 1920 / 2560, and at 2560 the content capped at 1920px and centered
+with equal empty margins. Full-page, `networkidle`. Use `deviceScaleFactor: 1` for the
+1728+ shots — at ×2 a full-page 2560 shot is several MB.
+
+- [ ] `plp__search-grid__{1280,1440,1728,1920,2560}.png`
+- [ ] `foundations__grid-breakpoints__{1280,1920}.png`

@@ -102,6 +102,19 @@
   --radius-3xl: var(--radius);
   --radius-4xl: var(--radius);
   --radius-full: 9999px;
+
+  /* ── Breakpoints — the named layout scale.
+        `sm` 640 / `md` 768 / `lg` 1024 / `xl` 1280 / `2xl` 1536 are
+        Tailwind's own and are left untouched (rem-based, so they still
+        respond to the browser font size). The three below are ours: the
+        search / PLP product grid has to step at 1440 and 1728, and the page
+        canvas caps at 1920 — Tailwind's scale has nothing between 1280 and
+        1536. `2xl` stays usable but must never drive width: it sits inside
+        the `wide` band. Keep in sync with lib/layout.ts and the layout
+        media queries below. Documented at /components/grid. ── */
+  --breakpoint-wide: 90rem; /* 1440px — product grid goes 5 across */
+  --breakpoint-xwide: 108rem; /* 1728px — product grid goes 6 across */
+  --breakpoint-canvas: 120rem; /* 1920px — content stops and centers */
 }
 
 :root {
@@ -251,7 +264,6 @@
   --space-4:    1rem;
   --space-5:    1.25rem;
   --space-6:    1.5rem;
-  --layout-max-width: 1920px;
   --space-7:    1.75rem;
   --space-8:    2rem;
   --space-9:    2.25rem;
@@ -276,6 +288,24 @@
   --btn-px-sm:            var(--space-3-5);
   --btn-px-md:            var(--space-4);
   --btn-px-lg:            var(--space-5);
+
+  /* ══════════ LAYOUT — canvas, margins, gutters, grid columns ══════════
+     The single source for page width. `PageContainer`
+     (components/ui/page-container.tsx) reads --layout-max-width +
+     --layout-margin; `ProductGrid` (components/ui/product-grid.tsx) reads
+     --layout-columns + --layout-gutter. Change a value here and every page,
+     search result grid and PLP follows — no page-level overrides.
+
+     Content is fluid up to the canvas, then stops and centers: no page
+     stretches past 1920px (the Nov 10 search-results finding).
+
+     The step points are repeated as literals in the media queries below
+     because a CSS media query can't read a custom property. Those literals
+     and lib/layout.ts are the only other places these widths appear.      */
+  --layout-max-width: 1920px;
+  --layout-margin: 1rem;  /* page side margin  — 16px base */
+  --layout-gutter: 1rem;  /* grid gutter       — 16px base */
+  --layout-columns: 2;    /* search / PLP product columns */
 
   /* ══════════ RADIUS — semantic aliases (self-contained vs --radius) ══════════ */
   --radius-btn:      var(--radius);
@@ -330,6 +360,27 @@
 
 @media (max-width: 640px) {
   :root { --toast-offset-top: 6rem; }
+}
+
+/* ══════════ LAYOUT — per-breakpoint steps ══════════
+   Mirrors --breakpoint-* above and the LAYOUT_BREAKPOINTS table in
+   lib/layout.ts. Columns step 2 → 3 → 4 → 5 → 6 and stop; margins widen as
+   the canvas does, so the content never sits hard against the viewport edge
+   on a large screen. Documented at /components/grid. */
+@media (min-width: 40rem) {  /* sm    640px */
+  :root { --layout-columns: 3; }
+}
+@media (min-width: 48rem) {  /* md    768px */
+  :root { --layout-margin: 1.5rem; --layout-gutter: 1.5rem; }
+}
+@media (min-width: 64rem) {  /* lg   1024px */
+  :root { --layout-margin: 2rem; --layout-columns: 4; }
+}
+@media (min-width: 90rem) {  /* wide 1440px */
+  :root { --layout-margin: 2.5rem; --layout-columns: 5; }
+}
+@media (min-width: 108rem) { /* xwide 1728px */
+  :root { --layout-margin: 3rem; --layout-columns: 6; }
 }
 
 .dark {
