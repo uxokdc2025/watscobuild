@@ -200,6 +200,26 @@ type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[]
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
+    id: "nov-10",
+    badge: "Nov 10",
+    title: "New edits since the Nov 10 meeting",
+    items: [
+      {
+        title: "Quick Order V2 — Select Product opens a right-side drawer",
+        desc: "A second version of Quick Order where picking the right match happens in a drawer instead of the inline list. V1 is untouched — both versions sit behind a V1 / V2 switch next to the page title.",
+        bullets: [
+          "V2 reuses the shopping-list Replacements panel verbatim: the same right-side DrawerPanel, the DS close X, a “You’re replacing” card for the unmatched line, and the matches as ProductListRow entries with availability, price (or “Call for availability”) and a primary Select.",
+          "Selecting a product fills that line, closes the drawer, moves the item into the ready table and updates the “N of M items ready” count.",
+          "Same match data as V1 (GAPCCCAR2025 → 4 matches, TXV-R410A → 3 matches); V1 still expands the match list inline exactly as before.",
+        ],
+        links: [
+          { label: "Quick Order V1 (Inline List)", href: "/quickorder?signedin=1" },
+          { label: "Quick Order V2 (Drawer)", href: "/quickorder/v2?signedin=1" },
+        ],
+      },
+    ],
+  },
+  {
     id: "nov-3",
     badge: "Nov 3",
     title: "New edits since the Nov 3 meeting",
