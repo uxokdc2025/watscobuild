@@ -6,7 +6,7 @@ import { SiteFooter, SiteHeader } from "../pdp/_lib/chrome";
 import { PdpAuthProvider } from "../pdp/_lib/auth";
 import { SearchBody } from "./_lib/search-body";
 import { MOCK_RESULTS, TOTAL_RESULT_COUNT } from "./_lib/mock-data";
-import { CATEGORY_RESULTS } from "./_lib/category-data";
+import { CATEGORY_RESULTS, CATEGORY_STOCK_COUNTS } from "./_lib/category-data";
 import { taxonomyLabel } from "@/components/ui/mega-taxonomy";
 
 type SearchParams = {
@@ -58,6 +58,9 @@ export default async function SearchPage({
   const sourceResults = categoryResults ?? MOCK_RESULTS;
   const results = sourceResults.slice(0, pageSize);
   const totalResults = categoryResults ? categoryResults.length : TOTAL_RESULT_COUNT;
+  // Real per-scope "Stocked At" counts — the facet rail and the grid end card
+  // both read these. Only category pages carry them today.
+  const stockedAtCounts = category ? CATEGORY_STOCK_COUNTS[category] : undefined;
 
   const hiddenSearchFields = [{ name: "brand", value: brandKey }];
   const storeName = brandStoreName(brandKey);
@@ -76,6 +79,7 @@ export default async function SearchPage({
             signedIn={signedIn}
             hiddenSearchFields={hiddenSearchFields}
             storeName={storeName}
+            stockedAtCounts={stockedAtCounts}
             brandKey={brandKey}
           />
         </main>

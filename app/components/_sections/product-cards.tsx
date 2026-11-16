@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
+
 import { ProductCard, type ProductCardData } from "@/app/pdp/_lib/product-card";
+import { MoreOptionsCard } from "@/components/ui/more-options-card";
 import { Category } from "../_showcase";
 
 /** One demo card + a short label so use cases can be compared side by side. */
@@ -43,15 +46,36 @@ export function ProductCardsSection() {
     <Category
       id="product-cards"
       title="Product Card"
-      description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated."
+      description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated. The blue tile is the grid end card variant."
     >
-      <div className="flex flex-wrap gap-6 lg:col-span-2">
+      <div className="flex flex-wrap items-stretch gap-6 lg:col-span-2">
         {/* Badges + % Also Purchased (richest state) */}
         <Case signedIn={true} data={{ ...BASE, pct: 42 }} />
         {/* Badges only */}
         <Case signedIn={true} data={BASE} />
         {/* No badges, no % */}
         <Case signedIn={true} data={{ ...BASE, badges: undefined }} />
+        {/* End card variant — last tile in the PLP grid. Counts mirror the
+            page's "Stocked At" facet; the interactive version (links switch
+            the filter) lives on the Product Card page. */}
+        <div className="flex w-[247px] flex-col gap-2">
+          <div className="flex-1">
+            <MoreOptionsCard
+              branchName="Manchester, NH - Homans"
+              shownCount={16}
+              scopes={[
+                { label: "Nearby Branches", count: 96 },
+                { label: "All Branches", count: 348 },
+              ]}
+            />
+          </div>
+          <Link
+            href="/components/product-card#end-card"
+            className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+          >
+            End card — docs + live filter switching
+          </Link>
+        </div>
       </div>
     </Category>
   );

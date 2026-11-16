@@ -423,6 +423,7 @@ title. `/components` `Badges & Labels` section renders the same pattern under
 | `carousel.tsx` | `import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"` | Embla-based; `orientation: horizontal (default) / vertical` | PDP gallery uses a simpler thumbnail strip, not this component directly |
 | `breadcrumb.tsx` | `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"` | — | Showcase in navigation |
 | `pagination.tsx` | `import { Pagination, PaginationContent, PaginationItem, PaginationLink, ... } from "@/components/ui/pagination"` | — | Showcase in navigation |
+| `more-options-card.tsx` | `import { MoreOptionsCard } from "@/components/ui/more-options-card"` | PLP results-grid **end card** ("Want to see more options?"). `branchName` · `shownCount` · `scopes: { label, count, onSelect }[]`. Same shell metrics as `ProductCard` (`rounded-md border p-[15px] h-full`) but `bg-primary` + `text-primary-foreground` — the one accent colour, never a second. Counts come from the page's "Stocked At" facet; pass only scopes with MORE products, and drop the card when there are none | Last tile of the grid on `/search?brand=homans&category=residential&signedin=1`; docs + live demo at `/components/product-card#end-card` |
 
 ### Navigation / Media (showcase groupings)
 
@@ -469,6 +470,7 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 |---|---|---|
 | Category grids (showcase) | `grid grid-cols-1 gap-4 lg:grid-cols-2` | `app/components/_showcase.tsx` `Category` |
 | Product/FBT grids | `grid grid-cols-2 lg:grid-cols-4 gap-4` | `app/pdp/_lib/fbt.tsx` (FBT "Frequently Bought Together" — 4-across on desktop, 2 on mobile) |
+| PLP results grid (+ end card) | `grid gap-4 sm:grid-cols-2 lg:grid-cols-4 min-[1730px]:grid-cols-5` | `app/search/_lib/search-body.tsx` — products are `<li>` cells; `MoreOptionsCard` is one more cell after the last product on the last page, so it follows the same column rules and row height |
 | Parts | `grid grid-cols-2 lg:grid-cols-4` (mini product cards) | `app/pdp/_lib/parts.tsx` |
 | Branch availability | `grid grid-cols-1 sm:grid-cols-2 gap-3` | `app/pdp/_lib/summary.tsx` `BranchAvailability` (Your Branch | Nearby) |
 | Spec lists | `grid grid-cols-2 lg:grid-cols-4` (flat specs) vs grouped `SpecGroup` 2-column layout | `app/pdp/_lib/details.tsx` |
