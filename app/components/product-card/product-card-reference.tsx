@@ -219,15 +219,19 @@ export default function ProductCardReference() {
 
         {/* ── End card variant ── */}
         <section className="space-y-4">
-          <H2 id="end-card">End card — &ldquo;More options&rdquo;</H2>
+          <H2 id="end-card">End card — &ldquo;Want more options?&rdquo;</H2>
           <p className="text-sm text-muted-foreground">
             The grid&rsquo;s end card: one extra tile after the final product on the last page, in a
             normal grid cell (same column rules, same width, same row height) but filled with the
             primary blue — the one accent colour — so widening the search reads as an action, not as
-            another product. Every count comes from the page&rsquo;s{" "}
-            <span className="font-medium text-foreground">Stocked At</span> facet, and each link
+            another product. Everything is centered: a <code className="rounded bg-muted px-1 py-0.5 text-xs">MapPin</code>{" "}
+            icon in a soft translucent circle, the headline, the &ldquo;<span className="font-medium text-foreground">N</span>{" "}
+            in stock at {"{branch}"}&rdquo; subline, then one stacked white sub-tile per wider scope —
+            fully clickable, with a large bold count in the primary colour, a small label and a
+            trailing arrow. Every count comes from the page&rsquo;s{" "}
+            <span className="font-medium text-foreground">Stocked At</span> facet, and each sub-tile
             switches that filter. Only scopes holding strictly more products are offered; when none
-            do, the card is dropped. Click the links below to switch scope.
+            do, the card is dropped. Click the sub-tiles below to switch scope.
           </p>
           <PreviewCode
             previewClassName="items-stretch justify-center gap-6"

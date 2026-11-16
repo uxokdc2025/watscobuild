@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * MoreOptionsCard — the PLP results-grid end card ("Want to see more options?").
+ * MoreOptionsCard — the PLP results-grid end card ("Want more options?").
  *
  * The last tile in the results grid, after the final product on the last page.
  * It occupies a normal grid cell — same column rules, same width, `h-full` so
@@ -9,13 +9,16 @@
  * system's primary blue (the one accent colour) with white text, so the
  * widen-your-search offer reads as an action rather than as another product.
  *
- * ── Anatomy (top to bottom) ──
- *   1. Heading        "Want to see more options?"
- *   2. Current scope  "We are showing N products stocked at {branchName}" —
- *                     N and the label are the page's currently selected
- *                     "Stocked At" scope.
- *   3. Scope links    one per wider scope: "N products stocked at {label}".
- *                     Each one switches the "Stocked At" filter to that scope.
+ * ── Anatomy (all centered, vertically and horizontally) ──
+ *   1. Icon           DS lucide `MapPin` in a soft translucent-white circle.
+ *   2. Headline       "Want more options?"
+ *   3. Subline        "**N** in stock at {branchName}" — N and the label are
+ *                     the page's currently selected "Stocked At" scope.
+ *   4. Scope tiles    one stacked white sub-tile per wider scope, fully
+ *                     clickable: a large bold count in the primary accent
+ *                     (2x body size), a small label under it ("Nearby
+ *                     branches") and a trailing arrow. Each one switches the
+ *                     "Stocked At" filter to that scope.
  *
  * ── Counts ──
  * `shownCount` and every `scopes[].count` come from the page's "Stocked At"
@@ -23,13 +26,14 @@
  * that genuinely hold MORE products than the current one — when none do there
  * are no more options to offer and the caller should drop the card entirely.
  *
- * Colour: `bg-primary` + `text-primary-foreground`, the same token pair every
- * primary Button and FilterPill uses. Never a hand-picked blue, and never a
- * second accent colour.
+ * Tokens only: `bg-primary` + `text-primary-foreground` for the card, the
+ * inverse pair (`bg-primary-foreground` + `text-primary`) for the sub-tiles,
+ * the small radius (`rounded-sm`) and the DS type scale. Never a hand-picked
+ * blue, and never a second accent colour.
  */
 
 import * as React from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -42,6 +46,11 @@ export type MoreOptionsScope = {
   /** Switches the "Stocked At" filter to this scope. */
   onSelect?: () => void;
 };
+
+/** "Nearby Branches" → "Nearby branches" for the small tile label. */
+function sentenceCase(label: string) {
+  return label.charAt(0) + label.slice(1).toLowerCase();
+}
 
 export function MoreOptionsCard({
   branchName,
@@ -64,38 +73,50 @@ export function MoreOptionsCard({
       className={cn(
         // Same shell metrics as ProductCard (rounded-md border, 15px padding,
         // h-full) so the tile lines up with the products either side of it.
-        "flex h-full flex-col justify-center gap-3 rounded-md border border-primary bg-primary p-[15px] text-primary-foreground",
+        "flex h-full flex-col items-center justify-center gap-3 rounded-md border border-primary bg-primary p-[15px] text-center text-primary-foreground",
         className,
       )}
     >
-      <h2 id={headingId} className="text-base leading-6 font-bold">
-        Want to see more options?
-      </h2>
-      <p className="text-sm leading-5">
-        We are showing <span className="font-semibold">{shownCount.toLocaleString()}</span>{" "}
-        products stocked at {branchName}
-      </p>
+      <span
+        aria-hidden="true"
+        className="grid size-12 place-items-center rounded-full bg-primary-foreground/15 ring-1 ring-primary-foreground/25"
+      >
+        <MapPin className="size-6" />
+      </span>
+      <div className="space-y-1">
+        <h2 id={headingId} className="text-lg leading-7 font-bold">
+          Want more options?
+        </h2>
+        <p className="text-sm leading-5 text-primary-foreground/90">
+          <span className="font-bold text-primary-foreground">{shownCount.toLocaleString()}</span> in
+          stock at {branchName}
+        </p>
+      </div>
       {scopes.length ? (
-        <ul className="flex flex-col gap-1 border-t border-primary-foreground/30 pt-3">
+        <ul className="flex w-full flex-col gap-2 pt-1">
           {scopes.map((scope) => (
             <li key={scope.label}>
-              {/* The DS link Button is the only underlining variant; the colour
-                  is overridden to the inverse token because the surface is
-                  primary, not the page background. */}
+              {/* The whole sub-tile is the DS Button, recoloured to the
+                  inverse token pair because it sits on the primary surface. */}
               <Button
                 type="button"
-                variant="link"
-                size="sm"
+                variant="secondary"
                 onClick={scope.onSelect}
-                className="h-auto w-full justify-start p-0 text-left text-sm font-semibold whitespace-normal text-primary-foreground underline hover:text-primary-foreground focus-visible:border-primary-foreground focus-visible:ring-primary-foreground/70"
+                aria-label={`Show ${scope.count.toLocaleString()} products stocked at ${scope.label}`}
+                className="group/scope h-auto w-full justify-between gap-3 rounded-sm bg-primary-foreground px-3 py-2.5 text-left whitespace-normal text-primary shadow-xs transition-colors hover:bg-primary-foreground/90 focus-visible:ring-primary-foreground/70"
               >
-                {/* The arrow sits INSIDE the text run so it trails the last
-                    word when the link wraps — and so the button keeps zero
-                    padding (a direct svg child would re-add it). */}
-                <span>
-                  {scope.count.toLocaleString()} products stocked at {scope.label}
-                  <ArrowRight className="ml-1 inline size-3.5 align-[-2px]" aria-hidden="true" />
+                <span className="flex flex-col">
+                  <span className="text-2xl leading-8 font-bold tabular-nums">
+                    {scope.count.toLocaleString()}
+                  </span>
+                  <span className="text-xs leading-4 font-medium text-foreground">
+                    {sentenceCase(scope.label)}
+                  </span>
                 </span>
+                <ArrowRight
+                  className="size-5 shrink-0 transition-transform group-hover/scope:translate-x-0.5"
+                  aria-hidden="true"
+                />
               </Button>
             </li>
           ))}
