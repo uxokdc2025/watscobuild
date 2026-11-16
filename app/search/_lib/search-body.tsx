@@ -7,6 +7,15 @@ import { ChevronDown, ChevronRight, Fan, Flame, LayoutGrid, List as ListIcon, Pa
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PageContainer } from "@/components/ui/page-container";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { ProductGrid } from "@/components/ui/product-grid";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
@@ -177,7 +186,7 @@ type SearchBodyProps = {
   storeName?: string;
   /**
    * Real product count per "Stocked At" scope. Feeds the facet rail counts AND
-   * the results-grid end card ("Want to see more options?"), which only renders
+   * the results-grid end card ("Want more options?"), which only renders
    * when a page knows these — there is nothing honest to offer otherwise.
    */
   stockedAtCounts?: StockedAtCounts;
@@ -191,19 +200,7 @@ type SearchBodyProps = {
    * "checkbox" = a "Shop By Availability" checkbox stack (Peirce-Phelps style).
    */
   availabilityVariant?: "radio" | "checkbox";
-  /**
-   * Where the facets live.
-   * "sidebar" (default) = today's page — the left rail only.
-   * "top" = the left rail PLUS the pinned horizontal filter bar above the
-   * grid. Both layouts share one selection state, so the bar is an addition,
-   * never a replacement.
-   */
-  filterLayout?: FilterLayout;
-  /** Renders the Sidebar / Top bar version switch when supplied. */
-  filterLayoutLinks?: Record<FilterLayout, string>;
 };
-
-export type FilterLayout = "sidebar" | "top";
 
 /* Real Residential subcategories + live counts, grabbed from homans.com — fed
    into our existing Categories facet (our pattern, real data). */
@@ -297,8 +294,6 @@ export function SearchBody({
   branchName,
   brandKey,
   availabilityVariant = "radio",
-  filterLayout = "sidebar",
-  filterLayoutLinks,
   initialView = "grid",
 }: SearchBodyProps) {
   const [view, setView] = React.useState<"grid" | "list">(initialView);
@@ -306,7 +301,6 @@ export function SearchBody({
   // One selection map for every facet, keyed by facet key (search results) or
   // facet label (category rail). The sidebar and the top bar both drive it.
   const [selectedFacets, setSelectedFacets] = React.useState<TopFilterSelection>({});
-  const topFilters = filterLayout === "top";
   // Checkbox-variant "Shop By Availability" state — demo-only, all default checked.
   const [pickUpToday, setPickUpToday] = React.useState(true);
   const [branchAvailability, setBranchAvailability] = React.useState(true);
@@ -328,7 +322,7 @@ export function SearchBody({
   };
 
   // ── Results-grid end card ──
-  // "Want to see more options?" is the last tile in the grid, after the final
+  // "Want more options?" is the last tile in the grid, after the final
   // product on the last page. Pagination here is static (the grid always
   // renders page 1), so that means the single-page case. It offers only the
   // scopes holding strictly MORE products than the selected one — when none
@@ -430,10 +424,10 @@ export function SearchBody({
         Array.from(options).map((option) => ({
           facetKey,
           option,
-          label: topFilters ? `${facetLabels[facetKey] ?? facetKey}: ${option}` : option,
+          label: `${facetLabels[facetKey] ?? facetKey}: ${option}`,
         })),
       ),
-    [selectedFacets, facetLabels, topFilters],
+    [selectedFacets, facetLabels],
   );
 
   return (
@@ -651,19 +645,17 @@ export function SearchBody({
             {category ? (
               <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{category}</h1>
             ) : null}
-            {/* Pinned filter bar — the top-bar version only. Sits above the
-                grid and shares its state with the rail, which stays put. */}
-            {topFilters ? (
-              <PlpTopFilterBar
-                facets={pinnedTopFacets}
-                allFacets={allTopFacets}
-                selected={selectedFacets}
-                onToggle={toggleFacet}
-                onClearFacet={clearFacet}
-                onClearAll={clearAllFilters}
-                resultCount={totalResults}
-              />
-            ) : null}
+            {/* Pinned filter bar — always on. Sits above the grid and shares
+                one selection with the left rail, which stays put. */}
+            <PlpTopFilterBar
+              facets={pinnedTopFacets}
+              allFacets={allTopFacets}
+              selected={selectedFacets}
+              onToggle={toggleFacet}
+              onClearFacet={clearFacet}
+              onClearAll={clearAllFilters}
+              resultCount={totalResults}
+            />
             {/* Results toolbar — heading + view toggle (the toggle moves into
                 the sidebar on category pages). */}
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -677,9 +669,6 @@ export function SearchBody({
                 </h1>
               )}
               <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
-                {filterLayoutLinks ? (
-                  <FilterLayoutSwitch current={filterLayout} links={filterLayoutLinks} />
-                ) : null}
                 <div
                   role="group"
                   aria-label="Result view"
@@ -785,66 +774,6 @@ export function SearchBody({
         </div>
       </PageContainer>
     </>
-  );
-}
-
-/* ------------------------------------------------------------------ *
- * Filter layout switch
- *
- * Lets a reviewer flip the same results page between today's sidebar-only
- * facets and the pinned top filter bar, so the two can be compared without
- * hand-editing the URL. Same segmented pattern as the Grid / List toggle.
- * ------------------------------------------------------------------ */
-
-const FILTER_LAYOUTS: { value: FilterLayout; label: string }[] = [
-  { value: "sidebar", label: "Sidebar" },
-  { value: "top", label: "Top bar" },
-];
-
-function FilterLayoutSwitch({
-  current,
-  links,
-}: {
-  current: FilterLayout;
-  links: Record<FilterLayout, string>;
-}) {
-  return (
-    <div className="inline-flex items-center gap-2">
-      <span id="filter-layout-label" className="text-xs font-medium text-muted-foreground">
-        Filters
-      </span>
-      <div
-        role="group"
-        aria-labelledby="filter-layout-label"
-        className="inline-flex items-center gap-0.5 rounded-md border bg-background p-0.5"
-      >
-        {FILTER_LAYOUTS.map((layout) => {
-          const active = current === layout.value;
-          return (
-            <Button
-              key={layout.value}
-              asChild
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "rounded-sm",
-                active
-                  ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
-                  : "text-muted-foreground",
-              )}
-            >
-              <Link
-                href={links[layout.value]}
-                scroll={false}
-                aria-current={active ? "true" : undefined}
-              >
-                {layout.label}
-              </Link>
-            </Button>
-          );
-        })}
-      </div>
-    </div>
   );
 }
 
@@ -960,7 +889,9 @@ function ProductCard({
 
 
 /* ------------------------------------------------------------------ *
- * Pagination — matches source (Prev · 1 2 3 4 5 · Next)
+ * Pagination — the design-system Pagination (components/ui/pagination,
+ * documented at /components/navigation#pagination). The current page uses
+ * `isActive`; Previous / Next are disabled at either end.
  * ------------------------------------------------------------------ */
 
 function SearchPagination({
@@ -973,36 +904,53 @@ function SearchPagination({
   pageSize: number;
 }) {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
-  const pageNumbers = Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1);
-
+  const [page, setPage] = React.useState(1);
   if (currentCount === 0) return null;
 
+  // Up to five page numbers around the current page, then an ellipsis.
+  const start = Math.max(1, Math.min(page - 2, totalPages - 4));
+  const end = Math.min(totalPages, start + 4);
+  const pageNumbers = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  const go = (n: number) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    setPage(Math.min(totalPages, Math.max(1, n)));
+  };
+  const disabled = "pointer-events-none opacity-50";
+
   return (
-    <nav
-      aria-label="Pagination"
-      className="mt-6 flex items-center justify-center gap-1 text-sm"
-    >
-      <Button type="button" variant="outline" size="sm" disabled>
-        Previous
-      </Button>
-      {pageNumbers.map((n) => (
-        <Button
-          key={n}
-          type="button"
-          variant="ghost"
-          size="sm"
-          aria-current={n === 1 ? "page" : undefined}
-          className={cn(
-            "min-w-9",
-            n === 1 && "bg-accent text-accent-foreground hover:bg-accent"
-          )}
-        >
-          {n}
-        </Button>
-      ))}
-      <Button type="button" variant="outline" size="sm">
-        Next
-      </Button>
-    </nav>
+    <Pagination className="mt-6">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            href="#"
+            onClick={go(page - 1)}
+            aria-disabled={page === 1}
+            tabIndex={page === 1 ? -1 : undefined}
+            className={cn(page === 1 && disabled)}
+          />
+        </PaginationItem>
+        {pageNumbers.map((n) => (
+          <PaginationItem key={n}>
+            <PaginationLink href="#" isActive={n === page} onClick={go(n)}>
+              {n}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+        {end < totalPages ? (
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+        ) : null}
+        <PaginationItem>
+          <PaginationNext
+            href="#"
+            onClick={go(page + 1)}
+            aria-disabled={page === totalPages}
+            tabIndex={page === totalPages ? -1 : undefined}
+            className={cn(page === totalPages && disabled)}
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
   );
 }

@@ -154,7 +154,7 @@ const ANATOMY: { part: string; detail: string }[] = [
   { part: "Branch selector", detail: "Your Store / Nearby / All radio card; the active header store is preselected and never becomes a pill." },
   { part: "Radius", detail: "Numeric input with an explicit miles label and an Apply action." },
   { part: "Facets", detail: "Expandable section of checkboxes with counts and a compact “See More” link." },
-  { part: "Pinned filter bar", detail: "Optional row of facet dropdowns above the grid + “More filters”. Adds to the rail, never replaces it — one shared selection." },
+  { part: "Pinned filter bar", detail: "Always-on row of facet dropdowns above the grid + “More filters”. Adds to the rail, never replaces it — one shared selection." },
   { part: "View toggle", detail: "Grid / List — mutually-exclusive selected states on shared Buttons." },
   { part: "List row", detail: "Compact result row: product identity left, commerce actions right." },
 ];
@@ -439,7 +439,8 @@ export default function PlpReference() {
             <em>3 Ton</em> in either place selects it in the other and produces one chip. Every
             control is one cell of a grid, so the widths are identical by construction: a single row
             on desktop, wrapping to three columns on tablets and two on phones rather than scrolling
-            controls off-screen.
+            controls off-screen. The bar is <span className="font-medium text-foreground">always on</span>{" "}
+            for search and category PLPs — there is no Sidebar / Top bar switch.
           </p>
           <PreviewCode
             previewClassName="block"
@@ -547,7 +548,7 @@ export default function PlpReference() {
           <H2 id="anatomy">Anatomy</H2>
           <p className="text-sm text-muted-foreground">
             A search results page is these pieces: the category-thumbnail strip and the filter rail
-            (branch, radius, facets) framing the results, an optional pinned filter bar plus
+            (branch, radius, facets) framing the results, the always-on pinned filter bar plus
             applied-filter pills and the view toggle above them, and a grid of Product Cards or a
             stack of list rows below.
           </p>
@@ -600,10 +601,6 @@ export default function PlpReference() {
             {[
               { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
               { label: "PLP — Residential Category", href: "/search?brand=homans&category=residential&signedin=1" },
-              {
-                label: "PLP — Pinned filter bar",
-                href: "/search?brand=homans&category=residential&signedin=1&filters=top",
-              },
               { label: "Store Locator", href: "/store-locator" },
             ].map((l) => (
               <Link

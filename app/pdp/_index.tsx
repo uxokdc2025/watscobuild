@@ -231,11 +231,12 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Search results — “Want to see more options?” end card",
+        title: "Search results — “Want more options?” end card",
         desc: "A blue call-to-action tile at the end of the results grid that sends shoppers to products stocked at other locations (designed by Nita, based on ecmdi.com).",
         bullets: [
-          "Sits as the last tile in the Grid view, filled in the primary blue with white text so it stands out.",
-          "Shows the real counts for wider scopes (Nearby Branches, All Branches); picking one switches the availability scope.",
+          "Sits as the last tile in the Grid view, filled in the primary blue with white text, everything centered.",
+          "A map-pin icon in a soft white circle, the headline “Want more options?”, and “N in stock at {branch}” with N in bold.",
+          "Two stacked white sub-tiles, Nearby branches and All branches, each fully clickable with a large bold count and an arrow; picking one switches the availability scope.",
           "Added to the design system as the Product Card End card.",
         ],
         links: [
@@ -244,18 +245,17 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Search results — pinned horizontal filter bar (version)",
-        desc: "A row of facet dropdowns across the top of the results, the way retail is moving, as a version you can flip against today’s page. The left rail stays exactly where it is.",
+        title: "Search results — pinned horizontal filter bar (always on)",
+        desc: "A row of facet dropdowns across the top of the results, the way retail is moving. It is always on for search and category pages, and the left rail stays exactly where it is.",
         bullets: [
           "Brand, Tonnage, SEER2, Refrigerant and Product Family as equal-width dropdowns above the grid; “More filters” opens every remaining facet in a sheet.",
           "The bar and the sidebar share one selection, so checking a facet in either place selects it in the other and produces one removable chip (“Tonnage: 3 Ton”). Nothing is duplicated and nothing is replaced.",
           "The row is a grid, so widths are identical: one row pinned to the top on desktop, three columns on tablets, two on phones.",
-          "A “Filters: Sidebar / Top bar” switch sits by the Grid/List control, so the two layouts can be compared on the same results.",
+          "No toggle: the top bar always shows alongside the left filters (old filters=top links still work).",
           "Added to the design system as the Pinned Filter Bar on the PLP Patterns page.",
         ],
         links: [
-          { label: "PLP — Top bar (Residential)", href: "/search?brand=homans&category=residential&signedin=1&filters=top" },
-          { label: "PLP — Sidebar (today)", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "PLP — Residential (top bar + left filters)", href: "/search?brand=homans&category=residential&signedin=1" },
           { label: "DS — Pinned Filter Bar", href: "/components/plp#pinned-bar" },
         ],
       },

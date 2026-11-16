@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getBrand } from "../pdp/_lib/brands";
 import { SiteFooter, SiteHeader } from "../pdp/_lib/chrome";
 import { PdpAuthProvider } from "../pdp/_lib/auth";
-import { SearchBody, type FilterLayout } from "./_lib/search-body";
+import { SearchBody } from "./_lib/search-body";
 import { MOCK_RESULTS, TOTAL_RESULT_COUNT } from "./_lib/mock-data";
 import { CATEGORY_RESULTS, CATEGORY_STOCK_COUNTS } from "./_lib/category-data";
 import { taxonomyLabel } from "@/components/ui/mega-taxonomy";
@@ -15,7 +15,7 @@ type SearchParams = {
   category?: string;
   page_size?: string;
   signedin?: string;
-  /** "top" adds the pinned horizontal filter bar above the grid. */
+  /** Legacy: the top filter bar is always on now, so `filters=top` is ignored. */
   filters?: string;
   view?: string;
 };
@@ -46,14 +46,11 @@ export default async function SearchPage({
     category,
     page_size: pageSizeParam,
     signedin,
-    filters,
     view,
   } = await searchParams;
 
   const brand = getBrand(brandKey);
   if (!brand) notFound();
-
-  const filterLayout: FilterLayout = filters === "top" ? "top" : "sidebar";
 
   const categoryLabel = category ? taxonomyLabel(category) ?? undefined : undefined;
 
@@ -71,13 +68,6 @@ export default async function SearchPage({
 
   const hiddenSearchFields = [{ name: "brand", value: brandKey }];
   const storeName = brandStoreName(brandKey);
-
-  // Links for the Sidebar / Top bar version switch — same page, same query,
-  // only the filter layout changes, so the two can be compared side by side.
-  const filterLayoutLinks = {
-    sidebar: searchHref({ q, brandKey, category, pageSizeParam, signedIn }),
-    top: searchHref({ q, brandKey, category, pageSizeParam, signedIn, filters: "top" }),
-  };
 
   return (
     <PdpAuthProvider initialSignedIn={signedIn}>
@@ -97,39 +87,12 @@ export default async function SearchPage({
             storeName={storeName}
             stockedAtCounts={stockedAtCounts}
             brandKey={brandKey}
-            filterLayout={filterLayout}
-            filterLayoutLinks={filterLayoutLinks}
           />
         </main>
         <SiteFooter brand={brand} />
       </div>
     </PdpAuthProvider>
   );
-}
-
-function searchHref({
-  q,
-  brandKey,
-  category,
-  pageSizeParam,
-  signedIn,
-  filters,
-}: {
-  q: string;
-  brandKey: string;
-  category?: string;
-  pageSizeParam?: string;
-  signedIn: boolean;
-  filters?: string;
-}): string {
-  const params = new URLSearchParams();
-  if (q) params.set("q", q);
-  params.set("brand", brandKey);
-  if (category) params.set("category", category);
-  if (pageSizeParam) params.set("page_size", pageSizeParam);
-  params.set("signedin", signedIn ? "1" : "0");
-  if (filters) params.set("filters", filters);
-  return `/search?${params.toString()}`;
 }
 
 function brandStoreName(brandKey: string): string {

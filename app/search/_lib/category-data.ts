@@ -40,7 +40,7 @@ export const CATEGORY_RESULTS: Record<string, SearchResult[]> = {
 
 /**
  * "Stocked At" product counts per scope, per category — one source of truth for
- * the facet rail and the results-grid end card ("Want to see more options?").
+ * the facet rail and the results-grid end card ("Want more options?").
  *
  * The branch scope is the product set this page renders; the wider scopes are
  * representative catalog counts in the same family as the rest of the
