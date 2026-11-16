@@ -37,3 +37,19 @@ const RESIDENTIAL: SearchResult[] = [
 export const CATEGORY_RESULTS: Record<string, SearchResult[]> = {
   residential: RESIDENTIAL,
 };
+
+/**
+ * "Stocked At" product counts per scope, per category — one source of truth for
+ * the facet rail and the results-grid end card ("Want to see more options?").
+ *
+ * The branch scope is the product set this page renders; the wider scopes are
+ * representative catalog counts in the same family as the rest of the
+ * Residential facet data (348 = the Phase split, 312 single-phase + 36
+ * three-phase), so switching scope visibly widens the result set.
+ */
+export const CATEGORY_STOCK_COUNTS: Record<
+  string,
+  { "your-branch": number; nearby: number; all: number }
+> = {
+  residential: { "your-branch": RESIDENTIAL.length, nearby: 96, all: 348 },
+};

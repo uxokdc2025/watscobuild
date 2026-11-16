@@ -17,7 +17,7 @@ const FOUNDATIONS = [
 const COMPONENTS = [
   { label: "Button", href: "/components/button", desc: "Every variant, size, and state — with real code." },
   { label: "Badge", href: "/components/badge", desc: "Status labels, Pro Essentials, Best Value." },
-  { label: "Product Card", href: "/components/product-card", desc: "The core PDP/PLP merchandising card." },
+  { label: "Product Card", href: "/components/product-card", desc: "The core PDP/PLP merchandising card — plus the grid end card variant." },
   { label: "List Views", href: "/components/list-views", desc: "The one list-row pattern behind every list — PLP, cart, review, and shopping list." },
   { label: "PLP Patterns", href: "/components/plp", desc: "Search rows, filters, grid/list toggle." },
   { label: "Save + AHRI", href: "/components/save-ahri", desc: "Save, share, AHRI matched-system actions." },
