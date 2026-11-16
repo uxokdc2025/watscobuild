@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Minus,
   Plus,
+  Replace,
   Trash2,
   ChevronDown,
   ChevronRight,
@@ -21,6 +22,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ProductListRow } from "@/components/ui/product-list-row";
+import { StockStatus } from "@/components/ui/label-badges";
+import {
+  DRAWER_MOTION_MS,
+  DrawerCloseButton,
+  DrawerPanel,
+  drawerOverlayClassName,
+} from "@/components/ui/drawer";
 
 /* ════════════════════════════════════════════════════════════════════════
    Quick Order — Multiple Search (recreated from the live Homans/Peirce
@@ -32,6 +41,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
    The ready list is our real product-list table (Product Details · Availability
    · Price · Qty · actions), the same grid used on the shopping-list detail.
    ════════════════════════════════════════════════════════════════════════ */
+
+/* Two versions of the "Select Product" step share this one client:
+   · V1 (`/quickorder`) — the inline match list under the row. Locked — Ryan
+     signed off on it, so it stays exactly as it is.
+   · V2 (`/quickorder/v2`) — the matches move into a right-side drawer, reusing
+     the shopping-list Replacements panel (DrawerPanel + ProductListRow). */
+
+/** Which "Select Product" interaction a page renders. */
+type QuickOrderVersion = 1 | 2;
 
 type Match = { id: string; brand: string; title: string; item: string; mfg: string; price: number | null };
 type ReviewRow = { id: string; brand: string; title: string; item: string; mfg: string; matches: Match[] };
@@ -100,10 +118,25 @@ function QtyStepper({ value, onChange, label }: { value: number; onChange: (n: n
   );
 }
 
-/* ── One review item inside the banner: expands inline to pick a match ──── */
-function ReviewItem({ row, onSelect, onRemove }: { row: ReviewRow; onSelect: (m: Match) => void; onRemove: () => void }) {
+/* ── One review item inside the banner: V1 expands inline to pick a match,
+   V2 opens the matches in the right-side drawer ───────────────────── */
+function ReviewItem({
+  row,
+  version,
+  onSelect,
+  onOpenDrawer,
+  onRemove,
+}: {
+  row: ReviewRow;
+  version: QuickOrderVersion;
+  onSelect: (m: Match) => void;
+  onOpenDrawer: () => void;
+  onRemove: () => void;
+}) {
   const [open, setOpen] = React.useState(false);
   const panelId = `review-${row.id}`;
+  // V1 expands the matches inline; V2 opens them in the right-side drawer.
+  const inline = version === 1;
   return (
     <div className="overflow-hidden rounded-md border border-border bg-background">
       <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
@@ -120,12 +153,17 @@ function ReviewItem({ row, onSelect, onRemove }: { row: ReviewRow; onSelect: (m:
             variant="outline"
             size="sm"
             className="min-h-11 text-foreground"
-            aria-expanded={open}
-            aria-controls={panelId}
-            onClick={() => setOpen((o) => !o)}
+            aria-expanded={inline ? open : undefined}
+            aria-controls={inline ? panelId : undefined}
+            aria-haspopup={inline ? undefined : "dialog"}
+            onClick={inline ? () => setOpen((o) => !o) : onOpenDrawer}
           >
             Select Product
-            <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} aria-hidden />
+            {inline ? (
+              <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} aria-hidden />
+            ) : (
+              <ChevronRight className="size-4" aria-hidden />
+            )}
           </Button>
           <Button
             type="button"
@@ -140,31 +178,186 @@ function ReviewItem({ row, onSelect, onRemove }: { row: ReviewRow; onSelect: (m:
         </div>
       </div>
 
-      <div id={panelId} className={cn("border-t bg-muted/30 p-3", !open && "hidden")}>
-        <p className="px-1 pb-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-          Choose the right product
-        </p>
-        <ul className="space-y-2">
-          {row.matches.map((m) => (
-            <li key={m.id} className="flex flex-col gap-3 rounded-md border bg-background p-3 sm:flex-row sm:items-center">
-              <Thumb className="size-11" />
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-primary">{m.brand}</p>
-                <p className="line-clamp-1 text-sm font-medium">{m.title}</p>
-                <p className="mt-0.5 font-mono text-xs text-muted-foreground">Item: {m.item} · MFG: {m.mfg}</p>
-              </div>
-              <div className="flex shrink-0 items-center gap-4">
-                <span className="text-sm font-semibold tabular-nums">
-                  {m.price != null ? usd(m.price) : <span className="font-normal text-muted-foreground">Call for availability</span>}
-                </span>
-                <Button type="button" size="sm" className="min-h-11" onClick={() => onSelect(m)}>
-                  Select
-                </Button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {inline ? (
+        <div id={panelId} className={cn("border-t bg-muted/30 p-3", !open && "hidden")}>
+          <p className="px-1 pb-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+            Choose the right product
+          </p>
+          <ul className="space-y-2">
+            {row.matches.map((m) => (
+              <li key={m.id} className="flex flex-col gap-3 rounded-md border bg-background p-3 sm:flex-row sm:items-center">
+                <Thumb className="size-11" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-primary">{m.brand}</p>
+                  <p className="line-clamp-1 text-sm font-medium">{m.title}</p>
+                  <p className="mt-0.5 font-mono text-xs text-muted-foreground">Item: {m.item} · MFG: {m.mfg}</p>
+                </div>
+                <div className="flex shrink-0 items-center gap-4">
+                  <span className="text-sm font-semibold tabular-nums">
+                    {m.price != null ? usd(m.price) : <span className="font-normal text-muted-foreground">Call for availability</span>}
+                  </span>
+                  <Button type="button" size="sm" className="min-h-11" onClick={() => onSelect(m)}>
+                    Select
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/* ── V2: the matches in a right-side drawer ─────────────────────────
+   The same panel as the shopping-list Replacements drawer: our DrawerPanel on
+   the right, a header with the title and the DS close X, a "You're replacing"
+   card for the line we couldn't match, then the candidates as ProductListRow
+   entries with a primary Select. No one-off UI — every piece is from the
+   components tab. */
+function MatchesDrawer({
+  row,
+  onSelect,
+  onClose,
+}: {
+  row: ReviewRow | null;
+  onSelect: (m: Match) => void;
+  onClose: () => void;
+}) {
+  const [closing, setClosing] = React.useState(false);
+
+  const requestClose = React.useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    // Reset `closing` after the exit so the drawer can reopen for another row.
+    window.setTimeout(() => {
+      setClosing(false);
+      onClose();
+    }, DRAWER_MOTION_MS);
+  }, [closing, onClose]);
+
+  // Escape closes, like any modal dialog.
+  React.useEffect(() => {
+    if (!row) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") requestClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [row, requestClose]);
+
+  if (!row) return null;
+
+  // Fill the line, then play the close animation on the way out.
+  const choose = (m: Match) => {
+    onSelect(m);
+    requestClose();
+  };
+
+  return (
+    <div
+      className={drawerOverlayClassName(closing)}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) requestClose();
+      }}
+    >
+      <DrawerPanel
+        open={!closing}
+        side="right"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Select Product"
+        className="absolute inset-y-0 right-0 flex w-full max-w-[440px] flex-col bg-background text-foreground shadow-2xl"
+      >
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-5 py-4">
+          <h1 className="text-lg font-bold">Select Product</h1>
+          <DrawerCloseButton label="Close select product" onClick={requestClose} />
+        </header>
+        <div className="flex-1 overflow-y-auto">
+          {/* The line item we couldn't match 1:1. */}
+          <section className="border-b bg-muted/30 px-5 py-4">
+            <p className="mb-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              You&rsquo;re replacing
+            </p>
+            <div className="rounded-md border bg-background">
+              <ProductListRow
+                imageAlt={row.title}
+                brand={row.brand}
+                title={row.title}
+                item={row.item}
+                mfg={row.mfg}
+                meta={<StockStatus tone="slate">Needs Your Review</StockStatus>}
+                actions={
+                  <span className="text-sm text-muted-foreground">
+                    {row.matches.length} match{row.matches.length === 1 ? "" : "es"}
+                  </span>
+                }
+              />
+            </div>
+          </section>
+
+          <section className="px-5 py-4">
+            <h2 className="mb-3 flex items-center gap-2 text-sm font-bold">
+              <Replace className="size-4 text-muted-foreground" aria-hidden />
+              Matching Products
+            </h2>
+            <div className="space-y-3">
+              {row.matches.map((m) => (
+                <div key={m.id} className="rounded-md border">
+                  <ProductListRow
+                    imageAlt={m.title}
+                    brand={m.brand}
+                    title={m.title}
+                    item={m.item}
+                    mfg={m.mfg}
+                    meta={
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <StockStatus tone={m.price != null ? "green" : "slate"}>
+                          {m.price != null ? "In Stock" : "Call for availability"}
+                        </StockStatus>
+                        {m.price != null ? (
+                          <span className="text-sm font-semibold tabular-nums">{usd(m.price)}</span>
+                        ) : null}
+                      </div>
+                    }
+                    actions={
+                      <Button type="button" size="sm" className="min-h-11" onClick={() => choose(m)}>
+                        Select
+                      </Button>
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </DrawerPanel>
+    </div>
+  );
+}
+
+/* ── V1 / V2 switch — DS buttons, so the two versions are one click apart ── */
+function VersionSwitch({ version, brand }: { version: QuickOrderVersion; brand?: string }) {
+  const params = new URLSearchParams({ signedin: "1" });
+  if (brand) params.set("brand", brand);
+  const query = params.toString();
+  const options: { value: QuickOrderVersion; label: string; href: string }[] = [
+    { value: 1, label: "V1 · Inline List", href: `/quickorder?${query}` },
+    { value: 2, label: "V2 · Drawer", href: `/quickorder/v2?${query}` },
+  ];
+  return (
+    <div className="flex items-center gap-2" role="group" aria-label="Quick Order version">
+      {options.map((o) => (
+        <Button
+          key={o.value}
+          asChild
+          size="sm"
+          variant={o.value === version ? "default" : "secondary"}
+          aria-current={o.value === version ? "page" : undefined}
+        >
+          <Link href={o.href}>{o.label}</Link>
+        </Button>
+      ))}
     </div>
   );
 }
@@ -255,12 +448,22 @@ function ActionBar({ ready, review }: { ready: number; review: number }) {
   );
 }
 
-export function QuickOrderClient() {
+export function QuickOrderClient({
+  version = 1,
+  brand,
+}: {
+  /** 1 = inline match list (locked), 2 = right-side Select Product drawer. */
+  version?: QuickOrderVersion;
+  /** Current brand param, so the V1/V2 switch keeps the chrome you're in. */
+  brand?: string;
+}) {
   const [tab, setTab] = React.useState("multiple");
   const [paste, setPaste] = React.useState("");
   const [review, setReview] = React.useState<ReviewRow[]>(INITIAL_REVIEW);
   const [ready, setReady] = React.useState<ReadyRow[]>(INITIAL_READY);
   const [bannerOpen, setBannerOpen] = React.useState(true);
+  // V2 only: the review row whose matches are open in the drawer.
+  const [drawerRow, setDrawerRow] = React.useState<ReviewRow | null>(null);
 
   const resolve = (rowId: string, m: Match) => {
     setReview((p) => p.filter((r) => r.id !== rowId));
@@ -283,7 +486,10 @@ export function QuickOrderClient() {
 
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-2xl font-bold tracking-tight">Quick Order</h1>
-          <button type="button" className="text-sm font-medium text-primary hover:underline">How it works</button>
+          <div className="flex flex-wrap items-center gap-4">
+            <VersionSwitch version={version} brand={brand} />
+            <button type="button" className="text-sm font-medium text-primary hover:underline">How it works</button>
+          </div>
         </div>
 
         <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
@@ -387,7 +593,9 @@ export function QuickOrderClient() {
                           <ReviewItem
                             key={r.id}
                             row={r}
+                            version={version}
                             onSelect={(m) => resolve(r.id, m)}
+                            onOpenDrawer={() => setDrawerRow(r)}
                             onRemove={() => setReview((p) => p.filter((x) => x.id !== r.id))}
                           />
                         ))}
@@ -432,6 +640,16 @@ export function QuickOrderClient() {
           </section>
         </div>
       </div>
+
+      {version === 2 ? (
+        <MatchesDrawer
+          row={drawerRow}
+          onSelect={(m) => {
+            if (drawerRow) resolve(drawerRow.id, m);
+          }}
+          onClose={() => setDrawerRow(null)}
+        />
+      ) : null}
     </main>
   );
 }
