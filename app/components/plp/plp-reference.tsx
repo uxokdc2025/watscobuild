@@ -13,6 +13,14 @@ import {
   FilterSection,
   RadiusControl,
 } from "@/components/ui/plp-filters";
+import {
+  PlpTopFilterBar,
+  TopFilterChips,
+  TopFilterDropdown,
+  type TopFilterChip,
+  type TopFilterFacet,
+  type TopFilterSelection,
+} from "@/components/ui/plp-top-filters";
 import { ProductListRow } from "@/components/ui/product-list-row";
 import { PreviewCode, Guidance } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
@@ -22,11 +30,100 @@ const TOC = [
   { id: "branch-selector", label: "Branch Selector" },
   { id: "radius", label: "Radius" },
   { id: "facets", label: "Facet List" },
+  { id: "facet-dropdown", label: "Facet Dropdown" },
+  { id: "pinned-bar", label: "Pinned Filter Bar" },
   { id: "view-toggle", label: "View Toggle" },
   { id: "list-row", label: "Product List Row" },
   { id: "anatomy", label: "Anatomy" },
   { id: "guidance", label: "Guidance" },
   { id: "in-production", label: "In Production" },
+];
+
+/* Demo facets for the pinned bar — the real Homans Residential groups. */
+const DEMO_PINNED_FACETS: TopFilterFacet[] = [
+  {
+    key: "Brand",
+    label: "Brand",
+    options: [
+      { name: "Armstrong Air®" },
+      { name: "Bryant®" },
+      { name: "Payne®" },
+      { name: "Goodman®" },
+      { name: "Mitsubishi Electric®" },
+    ],
+  },
+  {
+    key: "Tonnage",
+    label: "Tonnage",
+    options: [
+      { name: "1.5 Ton", count: 46 },
+      { name: "2 Ton", count: 92 },
+      { name: "2.5 Ton", count: 88 },
+      { name: "3 Ton", count: 95 },
+      { name: "4 Ton", count: 58 },
+      { name: "5 Ton", count: 40 },
+    ],
+  },
+  {
+    key: "SEER2",
+    label: "SEER2",
+    options: [
+      { name: "13.4", count: 72 },
+      { name: "14", count: 95 },
+      { name: "15", count: 83 },
+      { name: "16", count: 51 },
+    ],
+  },
+  {
+    key: "Refrigerant",
+    label: "Refrigerant",
+    options: [
+      { name: "R-454B", count: 268 },
+      { name: "R-410A", count: 96 },
+      { name: "R-32", count: 12 },
+    ],
+  },
+  {
+    key: "Product Family",
+    label: "Product Family",
+    options: [
+      { name: "Legacy™", count: 96 },
+      { name: "Preferred™", count: 58 },
+      { name: "OMNI", count: 74 },
+    ],
+  },
+];
+
+/* Everything behind "More filters" — the pinned five plus the long tail. */
+const DEMO_ALL_FACETS: TopFilterFacet[] = [
+  ...DEMO_PINNED_FACETS,
+  {
+    key: "Stage",
+    label: "Stage",
+    options: [
+      { name: "Single Stage", count: 214 },
+      { name: "Two Stage", count: 58 },
+      { name: "Variable Speed", count: 31 },
+    ],
+  },
+  {
+    key: "Voltage",
+    label: "Voltage",
+    options: [
+      { name: "115V", count: 24 },
+      { name: "208/230V", count: 288 },
+      { name: "460V", count: 31 },
+    ],
+  },
+  {
+    key: "AFUE",
+    label: "AFUE",
+    options: [
+      { name: "80%", count: 58 },
+      { name: "90%", count: 42 },
+      { name: "96%", count: 22 },
+    ],
+  },
 ];
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -42,12 +139,51 @@ const ANATOMY: { part: string; detail: string }[] = [
   { part: "Branch selector", detail: "Your Store / Nearby / All radio card; the active header store is preselected and never becomes a pill." },
   { part: "Radius", detail: "Numeric input with an explicit miles label and an Apply action." },
   { part: "Facets", detail: "Expandable section of checkboxes with counts and a compact “See More” link." },
+  { part: "Pinned filter bar", detail: "Optional row of facet dropdowns above the grid + “More filters”. Adds to the rail, never replaces it — one shared selection." },
   { part: "View toggle", detail: "Grid / List — mutually-exclusive selected states on shared Buttons." },
   { part: "List row", detail: "Compact result row: product identity left, commerce actions right." },
 ];
 
 export default function PlpReference() {
   const [radius, setRadius] = React.useState("50");
+  /* One selection map, exactly as a PLP holds it: the pinned bar, the More
+     filters sheet and the left rail all read and write this. */
+  const [topSelected, setTopSelected] = React.useState<TopFilterSelection>({
+    Tonnage: new Set(["3 Ton"]),
+  });
+
+  const toggleTop = React.useCallback((facetKey: string, option: string) => {
+    setTopSelected((prev) => {
+      const next = { ...prev };
+      const set = new Set(next[facetKey] ?? []);
+      if (set.has(option)) set.delete(option);
+      else set.add(option);
+      if (set.size) next[facetKey] = set;
+      else delete next[facetKey];
+      return next;
+    });
+  }, []);
+
+  const clearTopFacet = React.useCallback((facetKey: string) => {
+    setTopSelected((prev) => {
+      if (!prev[facetKey]) return prev;
+      const next = { ...prev };
+      delete next[facetKey];
+      return next;
+    });
+  }, []);
+
+  const topChips = React.useMemo<TopFilterChip[]>(
+    () =>
+      Object.entries(topSelected).flatMap(([facetKey, options]) =>
+        Array.from(options).map((option) => ({
+          facetKey,
+          option,
+          label: `${facetKey}: ${option}`,
+        })),
+      ),
+    [topSelected],
+  );
 
   return (
     <div className="mx-auto flex max-w-6xl gap-10 px-4 py-10 md:px-8">
@@ -59,12 +195,16 @@ export default function PlpReference() {
           <h1 className="text-3xl font-bold tracking-tight">PLP Patterns</h1>
           <p className="max-w-2xl text-muted-foreground">
             The reusable product-list patterns that frame every search result: branch selection,
-            applied-filter pills, radius, facets, view controls, and the compact list row. Compose
-            these — never re-invent the filter rail or a bespoke result row per category.
+            applied-filter pills, radius, facets, the pinned top filter bar, view controls, and the
+            compact list row. Compose these — never re-invent the filter rail or a bespoke result
+            row per category.
           </p>
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
               import {"{ FilterPill, FilterSection, RadiusControl }"} from &quot;@/components/ui/plp-filters&quot;
+            </code>
+            <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
+              import {"{ PlpTopFilterBar, TopFilterChips }"} from &quot;@/components/ui/plp-top-filters&quot;
             </code>
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
               import {"{ ProductListRow }"} from &quot;@/components/ui/product-list-row&quot;
@@ -207,6 +347,92 @@ export default function PlpReference() {
           </PreviewCode>
         </section>
 
+        {/* ── Facet dropdown ── */}
+        <section className="space-y-4">
+          <H2 id="facet-dropdown">Facet dropdown</H2>
+          <p className="text-sm text-muted-foreground">
+            One facet as a dropdown, for the pinned bar above the grid. The trigger is an outline
+            Button that fills its container — the row, not the label, sets the width — and carries a
+            count badge once something is selected. Options are the same{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">FilterOption</code> rows as the
+            rail, so counts and tap targets match. Selections apply immediately; there is no Apply
+            button to hunt for.
+          </p>
+          <PreviewCode
+            code={`<TopFilterDropdown
+  facet={{ key: "Tonnage", label: "Tonnage", options: [{ name: "3 Ton", count: 95 }] }}
+  selected={selected["Tonnage"]}
+  onToggle={(option) => toggleFacet("Tonnage", option)}
+  onClear={() => clearFacet("Tonnage")}
+/>`}
+          >
+            <div className="w-full max-w-44">
+              <TopFilterDropdown
+                facet={DEMO_PINNED_FACETS[1]}
+                selected={topSelected["Tonnage"]}
+                onToggle={(option) => toggleTop("Tonnage", option)}
+                onClear={() => clearTopFacet("Tonnage")}
+              />
+            </div>
+          </PreviewCode>
+        </section>
+
+        {/* ── Pinned filter bar ── */}
+        <section className="space-y-4">
+          <H2 id="pinned-bar">Pinned filter bar</H2>
+          <p className="text-sm text-muted-foreground">
+            A horizontal row of the top four or five facets above the results, with{" "}
+            <span className="font-medium text-foreground">More filters</span> opening the full list
+            in a sheet. It is an <span className="font-medium text-foreground">addition</span> to the
+            left rail, not a replacement: both are bound to one selection map, so checking{" "}
+            <em>3 Ton</em> in either place selects it in the other and produces one chip. Every
+            control is one cell of a grid, so the widths are identical by construction: a single row
+            on desktop, wrapping to three columns on tablets and two on phones rather than scrolling
+            controls off-screen.
+          </p>
+          <PreviewCode
+            previewClassName="block"
+            code={`const [selected, setSelected] = React.useState<TopFilterSelection>({});
+
+<PlpTopFilterBar
+  facets={PINNED_FACETS}       // Brand, Tonnage, SEER2, Refrigerant, Product Family
+  allFacets={ALL_FACETS}       // everything, for the More filters sheet
+  selected={selected}
+  onToggle={toggleFacet}
+  onClearFacet={clearFacet}
+  onClearAll={clearAllFilters}
+  resultCount={348}
+/>
+<TopFilterChips items={chips} onRemove={removeChip} onClearAll={clearAllFilters} />`}
+          >
+            <div className="w-full space-y-3">
+              <PlpTopFilterBar
+                facets={DEMO_PINNED_FACETS}
+                allFacets={DEMO_ALL_FACETS}
+                selected={topSelected}
+                onToggle={toggleTop}
+                onClearFacet={clearTopFacet}
+                onClearAll={() => setTopSelected({})}
+                resultCount={348}
+                sticky={false}
+              />
+              <TopFilterChips
+                items={topChips}
+                onRemove={(chip) => toggleTop(chip.facetKey, chip.option)}
+                onClearAll={() => setTopSelected({})}
+              />
+            </div>
+          </PreviewCode>
+          <p className="text-sm text-muted-foreground">
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">sticky</code> (the default) pins
+            the bar to the top of the viewport while the grid scrolls under it — on desktop only,
+            where it is one row and cannot eat the screen. Chips sit
+            below the bar and read{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">Facet: Option</code> — up top a
+            bare &ldquo;14&rdquo; has lost the group heading that explained it.
+          </p>
+        </section>
+
         {/* ── View toggle ── */}
         <section className="space-y-4">
           <H2 id="view-toggle">Results view toggle</H2>
@@ -269,9 +495,9 @@ export default function PlpReference() {
         <section className="space-y-4">
           <H2 id="anatomy">Anatomy</H2>
           <p className="text-sm text-muted-foreground">
-            A search results page is these six pieces: the filter rail (branch, radius, facets) on
-            the left, applied-filter pills and the view toggle above the results, and a grid of
-            Product Cards or a stack of list rows below.
+            A search results page is these seven pieces: the filter rail (branch, radius, facets) on
+            the left, an optional pinned filter bar plus applied-filter pills and the view toggle
+            above the results, and a grid of Product Cards or a stack of list rows below.
           </p>
           <ol className="overflow-hidden rounded-xl border">
             {ANATOMY.map((a, i) => (
@@ -298,12 +524,14 @@ export default function PlpReference() {
               <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">FilterPill</code> for every removable applied facet.</>,
               <>Render Grid results with <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;ProductCard&gt;</code> and List results with <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;ProductListRow&gt;</code>.</>,
               <>Keep row/toggle actions on the shared <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Button&gt;</code> so hover/focus match everywhere.</>,
+              <>Bind the pinned bar and the left rail to one selection map, and pin only the four or five facets that actually narrow the set.</>,
             ]}
             donts={[
               <>Make Clear All a solid button — it&apos;s a text link (<code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;link&quot;</code>).</>,
               <>Turn the preselected branch into a pill the user has to remove.</>,
               <>Build a bespoke result row per category — compose <code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code>.</>,
               <>Let Grid and List both read as selected; they&apos;re mutually exclusive.</>,
+              <>Drop the left rail when you add the pinned bar, give the dropdowns ragged widths, or hide every facet behind one &ldquo;Filters&rdquo; button.</>,
             ]}
           />
         </section>
@@ -317,6 +545,10 @@ export default function PlpReference() {
           <div className="flex flex-wrap gap-2">
             {[
               { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
+              {
+                label: "PLP — Pinned filter bar",
+                href: "/search?brand=homans&category=residential&signedin=1&filters=top",
+              },
               { label: "Store Locator", href: "/store-locator" },
             ].map((l) => (
               <Link

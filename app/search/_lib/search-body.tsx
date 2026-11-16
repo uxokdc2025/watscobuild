@@ -18,8 +18,14 @@ import {
 } from "@/app/pdp/_lib/product-card";
 import type { SearchResult } from "./mock-data";
 import { useCart } from "@/components/cart/cart-context";
-import { FilterPill } from "@/components/ui/plp-filters";
 import { MoreOptionsCard } from "@/components/ui/more-options-card";
+import {
+  PlpTopFilterBar,
+  TopFilterChips,
+  type TopFilterChip,
+  type TopFilterFacet,
+  type TopFilterSelection,
+} from "@/components/ui/plp-top-filters";
 
 const STOCK_LOCATIONS = [
   { value: "your-branch", label: "Your Store" },
@@ -122,6 +128,22 @@ const RESIDENTIAL_FACETS: StaticFacet[] = [
   { label: "Fitting Type", options: [ { name: "Sweat", count: 128 }, { name: "Flare", count: 62 } ] },
 ];
 
+/* The category rail as one ordered list — Brand first, then every scraped
+   facet group. The sidebar and the pinned top bar both read this, so a
+   facet checked in one shows as checked in the other. */
+const CATEGORY_FACETS: StaticFacet[] = [
+  { label: "Brand", options: RESIDENTIAL_BRANDS.map((name) => ({ name, count: 0 })), seeMore: true },
+  ...RESIDENTIAL_FACETS,
+];
+
+/* Which facets get pinned to the top bar. Everything else stays one click
+   away behind "More filters". Keys match the facet keys built below. */
+const PINNED_CATEGORY_FACETS = ["Brand", "Tonnage", "SEER2", "Refrigerant", "Product Family"];
+const PINNED_SEARCH_FACETS = ["brand", "amps", "bearingType", "capacitorMfdF", "basisOfRotationView"];
+
+/** Shared empty set so unselected facets keep a stable prop identity. */
+const NO_SELECTION: ReadonlySet<string> = new Set<string>();
+
 /* ------------------------------------------------------------------ *
  * Body
  * ------------------------------------------------------------------ */
@@ -154,7 +176,19 @@ type SearchBodyProps = {
    * "checkbox" = a "Shop By Availability" checkbox stack (Peirce-Phelps style).
    */
   availabilityVariant?: "radio" | "checkbox";
+  /**
+   * Where the facets live.
+   * "sidebar" (default) = today's page — the left rail only.
+   * "top" = the left rail PLUS the pinned horizontal filter bar above the
+   * grid. Both layouts share one selection state, so the bar is an addition,
+   * never a replacement.
+   */
+  filterLayout?: FilterLayout;
+  /** Renders the Sidebar / Top bar version switch when supplied. */
+  filterLayoutLinks?: Record<FilterLayout, string>;
 };
+
+export type FilterLayout = "sidebar" | "top";
 
 /* Real Residential subcategories + live counts, grabbed from homans.com — fed
    into our existing Categories facet (our pattern, real data). */
@@ -215,10 +249,20 @@ function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string
   );
 }
 
-/** A self-contained collapsible facet (its own checkbox state). Used for the
- *  real Residential filter rail, whose options aren't tied to result fields. */
-function StaticFacetGroup({ facet, open = false }: { facet: StaticFacet; open?: boolean }) {
-  const [checked, setChecked] = React.useState<Set<string>>(new Set());
+/** A collapsible facet for the real Residential filter rail, whose options
+ *  aren't tied to result fields. Selection is controlled by the page so the
+ *  rail and the pinned top filter bar stay in sync. */
+function StaticFacetGroup({
+  facet,
+  open = false,
+  selected,
+  onToggle,
+}: {
+  facet: StaticFacet;
+  open?: boolean;
+  selected: ReadonlySet<string>;
+  onToggle: (option: string) => void;
+}) {
   const [showAll, setShowAll] = React.useState(false);
   const visible = showAll ? facet.options : facet.options.slice(0, 6);
   const id = facet.label.replace(/\s+/g, "-").toLowerCase();
@@ -238,15 +282,8 @@ function StaticFacetGroup({ facet, open = false }: { facet: StaticFacet; open?: 
                   <Checkbox
                     id={oid}
                     aria-label={opt.name}
-                    checked={checked.has(opt.name)}
-                    onCheckedChange={() =>
-                      setChecked((prev) => {
-                        const next = new Set(prev);
-                        if (next.has(opt.name)) next.delete(opt.name);
-                        else next.add(opt.name);
-                        return next;
-                      })
-                    }
+                    checked={selected.has(opt.name)}
+                    onCheckedChange={() => onToggle(opt.name)}
                   />
                   <span>{opt.name}</span>
                 </label>
@@ -284,11 +321,15 @@ export function SearchBody({
   branchName,
   brandKey,
   availabilityVariant = "radio",
+  filterLayout = "sidebar",
+  filterLayoutLinks,
 }: SearchBodyProps) {
   const [view, setView] = React.useState<"grid" | "list">("grid");
   const [stockLocation, setStockLocation] = React.useState<StockLocationValue>("your-branch");
-  const [selectedFacets, setSelectedFacets] = React.useState<Record<string, Set<string>>>({});
-  const [selectedBrands, setSelectedBrands] = React.useState<Set<string>>(new Set());
+  // One selection map for every facet, keyed by facet key (search results) or
+  // facet label (category rail). The sidebar and the top bar both drive it.
+  const [selectedFacets, setSelectedFacets] = React.useState<TopFilterSelection>({});
+  const topFilters = filterLayout === "top";
   // Checkbox-variant "Shop By Availability" state — demo-only, all default checked.
   const [pickUpToday, setPickUpToday] = React.useState(true);
   const [branchAvailability, setBranchAvailability] = React.useState(true);
@@ -336,52 +377,87 @@ export function SearchBody({
     [results],
   );
 
-  const toggleFacet = (group: string, option: string) => {
+  const toggleFacet = React.useCallback((group: string, option: string) => {
     setSelectedFacets((prev) => {
       const next = { ...prev };
       const set = new Set(next[group] ?? []);
       if (set.has(option)) set.delete(option);
       else set.add(option);
-      next[group] = set;
+      if (set.size) next[group] = set;
+      else delete next[group];
       return next;
     });
-  };
+  }, []);
 
-  const toggleBrand = (b: string) => {
-    setSelectedBrands((prev) => {
-      const next = new Set(prev);
-      if (next.has(b)) next.delete(b);
-      else next.add(b);
+  const clearFacet = React.useCallback((group: string) => {
+    setSelectedFacets((prev) => {
+      if (!prev[group]) return prev;
+      const next = { ...prev };
+      delete next[group];
       return next;
     });
-  };
-
-  const appliedFilters = [
-    ...Object.entries(selectedFacets).flatMap(([group, options]) =>
-      Array.from(options).map((option) => ({ key: `${group}-${option}`, label: option })),
-    ),
-    ...Array.from(selectedBrands).map((brand) => ({ key: `brand-${brand}`, label: brand })),
-  ];
+  }, []);
 
   const clearAllFilters = () => {
     setStockLocation("all");
     setSelectedFacets({});
-    setSelectedBrands(new Set());
   };
 
-  const removeFilter = (key: string) => {
-    if (key.startsWith("location-")) {
-      setStockLocation("all");
-      return;
+  /* Every facet as the top bar wants it. Category pages use the real
+     Residential rail; search uses the result-driven groups plus Brand. */
+  const allTopFacets = React.useMemo<TopFilterFacet[]>(() => {
+    if (category) {
+      return CATEGORY_FACETS.map((facet) => ({
+        key: facet.label,
+        label: facet.label,
+        options: facet.options.map((opt) =>
+          opt.count > 0 ? { name: opt.name, count: opt.count } : { name: opt.name },
+        ),
+      }));
     }
-    const [group, ...rest] = key.split("-");
-    const option = rest.join("-");
-    if (group === "brand") {
-      toggleBrand(option);
-      return;
-    }
-    toggleFacet(group, option);
-  };
+    return [
+      ...FACET_GROUPS.map((group) => ({
+        key: group.key as string,
+        label: group.label,
+        options: group.options.map((opt) => ({ name: opt, count: facetCount(group.key, opt) || 1 })),
+      })),
+      {
+        key: "brand",
+        label: "Brand",
+        options: BRANDS_FACET.map((name) => ({ name, count: brandCount(name) || 1 })),
+      },
+    ];
+  }, [category, facetCount, brandCount]);
+
+  const pinnedTopFacets = React.useMemo<TopFilterFacet[]>(() => {
+    const order = category ? PINNED_CATEGORY_FACETS : PINNED_SEARCH_FACETS;
+    const byKey = new Map(allTopFacets.map((facet) => [facet.key, facet]));
+    const pinned = order
+      .map((key) => byKey.get(key))
+      .filter((facet): facet is TopFilterFacet => Boolean(facet));
+    return pinned.length ? pinned : allTopFacets.slice(0, 5);
+  }, [allTopFacets, category]);
+
+  const facetLabels = React.useMemo(() => {
+    const labels: Record<string, string> = {};
+    for (const facet of allTopFacets) labels[facet.key] = facet.label;
+    return labels;
+  }, [allTopFacets]);
+
+  /* Applied-filter chips. With the top bar on, chips carry the facet name
+     too — "Tonnage: 3 Ton" — because a bare "3 Ton" loses its group once the
+     facets are no longer read top-to-bottom down a rail. */
+  const appliedChips = React.useMemo<TopFilterChip[]>(
+    () =>
+      Object.entries(selectedFacets).flatMap(([facetKey, options]) =>
+        Array.from(options).map((option) => ({
+          facetKey,
+          option,
+          label: topFilters ? `${facetLabels[facetKey] ?? facetKey}: ${option}` : option,
+        })),
+      ),
+    [selectedFacets, facetLabels, topFilters],
+  );
 
   return (
     <>
@@ -521,16 +597,14 @@ export function SearchBody({
               /* Category pages show the real Residential filter rail — Brand
                  first and open, every other filter collapsed. */
               <>
-                <StaticFacetGroup
-                  facet={{
-                    label: "Brand",
-                    options: RESIDENTIAL_BRANDS.map((b) => ({ name: b, count: 0 })),
-                    seeMore: true,
-                  }}
-                  open
-                />
-                {RESIDENTIAL_FACETS.map((f) => (
-                  <StaticFacetGroup key={f.label} facet={f} />
+                {CATEGORY_FACETS.map((f, i) => (
+                  <StaticFacetGroup
+                    key={f.label}
+                    facet={f}
+                    open={i === 0}
+                    selected={selectedFacets[f.label] ?? NO_SELECTION}
+                    onToggle={(option) => toggleFacet(f.label, option)}
+                  />
                 ))}
               </>
             ) : (
@@ -540,7 +614,7 @@ export function SearchBody({
                     key={group.key}
                     spec={group}
                     results={results}
-                    selected={selectedFacets[group.key] ?? new Set()}
+                    selected={selectedFacets[group.key] ?? NO_SELECTION}
                     onToggle={(opt) => toggleFacet(group.key, opt)}
                     count={facetCount}
                   />
@@ -560,8 +634,8 @@ export function SearchBody({
                               <Checkbox
                                 id={id}
                                 aria-label={b}
-                                checked={selectedBrands.has(b)}
-                                onCheckedChange={() => toggleBrand(b)}
+                                checked={(selectedFacets.brand ?? NO_SELECTION).has(b)}
+                                onCheckedChange={() => toggleFacet("brand", b)}
                               />
                               <span>{b}</span>
                             </label>
@@ -599,6 +673,19 @@ export function SearchBody({
             {category ? (
               <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{category}</h1>
             ) : null}
+            {/* Pinned filter bar — the top-bar version only. Sits above the
+                grid and shares its state with the rail, which stays put. */}
+            {topFilters ? (
+              <PlpTopFilterBar
+                facets={pinnedTopFacets}
+                allFacets={allTopFacets}
+                selected={selectedFacets}
+                onToggle={toggleFacet}
+                onClearFacet={clearFacet}
+                onClearAll={clearAllFilters}
+                resultCount={totalResults}
+              />
+            ) : null}
             {/* Results toolbar — heading + view toggle (the toggle moves into
                 the sidebar on category pages). */}
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -611,61 +698,53 @@ export function SearchBody({
                   Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results for &ldquo;{query}&rdquo;
                 </h1>
               )}
-              <div
-                role="group"
-                aria-label="Result view"
-                className="inline-flex items-center gap-0.5 self-start rounded-md border bg-background p-0.5 md:self-auto"
-              >
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  aria-pressed={view === "grid"}
-                  onClick={() => setView("grid")}
-                  className={cn(
-                    "rounded-sm",
-                    view === "grid"
-                      ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
-                      : "text-muted-foreground"
-                  )}
+              <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                {filterLayoutLinks ? (
+                  <FilterLayoutSwitch current={filterLayout} links={filterLayoutLinks} />
+                ) : null}
+                <div
+                  role="group"
+                  aria-label="Result view"
+                  className="inline-flex items-center gap-0.5 rounded-md border bg-background p-0.5"
                 >
-                  <LayoutGrid /> Grid
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  aria-pressed={view === "list"}
-                  onClick={() => setView("list")}
-                  className={cn(
-                    "rounded-sm",
-                    view === "list"
-                      ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  <ListIcon /> List
-                </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    aria-pressed={view === "grid"}
+                    onClick={() => setView("grid")}
+                    className={cn(
+                      "rounded-sm",
+                      view === "grid"
+                        ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    <LayoutGrid /> Grid
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    aria-pressed={view === "list"}
+                    onClick={() => setView("list")}
+                    className={cn(
+                      "rounded-sm",
+                      view === "list"
+                        ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    <ListIcon /> List
+                  </Button>
+                </div>
               </div>
             </div>
-            {appliedFilters.length ? (
-              <div className="flex flex-wrap items-center gap-2">
-                {appliedFilters.map((filter) => (
-                  <FilterPill
-                    key={filter.key}
-                    label={filter.label}
-                    onRemove={() => removeFilter(filter.key)}
-                  />
-                ))}
-                <button
-                  type="button"
-                  onClick={clearAllFilters}
-                  className="ml-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
-                >
-                  Clear All
-                </button>
-              </div>
-            ) : null}
+            <TopFilterChips
+              items={appliedChips}
+              onRemove={(chip) => toggleFacet(chip.facetKey, chip.option)}
+              onClearAll={clearAllFilters}
+            />
             {view === "grid" ? (
               <ProductGrid>
                 {results.map((r, i) => (
@@ -732,6 +811,66 @@ export function SearchBody({
 }
 
 /* ------------------------------------------------------------------ *
+ * Filter layout switch
+ *
+ * Lets a reviewer flip the same results page between today's sidebar-only
+ * facets and the pinned top filter bar, so the two can be compared without
+ * hand-editing the URL. Same segmented pattern as the Grid / List toggle.
+ * ------------------------------------------------------------------ */
+
+const FILTER_LAYOUTS: { value: FilterLayout; label: string }[] = [
+  { value: "sidebar", label: "Sidebar" },
+  { value: "top", label: "Top bar" },
+];
+
+function FilterLayoutSwitch({
+  current,
+  links,
+}: {
+  current: FilterLayout;
+  links: Record<FilterLayout, string>;
+}) {
+  return (
+    <div className="inline-flex items-center gap-2">
+      <span id="filter-layout-label" className="text-xs font-medium text-muted-foreground">
+        Filters
+      </span>
+      <div
+        role="group"
+        aria-labelledby="filter-layout-label"
+        className="inline-flex items-center gap-0.5 rounded-md border bg-background p-0.5"
+      >
+        {FILTER_LAYOUTS.map((layout) => {
+          const active = current === layout.value;
+          return (
+            <Button
+              key={layout.value}
+              asChild
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "rounded-sm",
+                active
+                  ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
+                  : "text-muted-foreground",
+              )}
+            >
+              <Link
+                href={links[layout.value]}
+                scroll={false}
+                aria-current={active ? "true" : undefined}
+              >
+                {layout.label}
+              </Link>
+            </Button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ *
  * Facet group
  * ------------------------------------------------------------------ */
 
@@ -744,7 +883,7 @@ function FacetGroup({
 }: {
   spec: FacetGroupSpec;
   results: SearchResult[];
-  selected: Set<string>;
+  selected: ReadonlySet<string>;
   onToggle: (option: string) => void;
   count: (key: FacetGroupSpec["key"], option: string) => number;
   /** Initial expanded state. Omitting `open` leaves the group collapsed and

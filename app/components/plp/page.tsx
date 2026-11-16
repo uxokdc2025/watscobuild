@@ -5,7 +5,7 @@ import PlpReference from "./plp-reference";
 export const metadata: Metadata = {
   title: "PLP Patterns — Watsco DS",
   description:
-    "The reusable product-list patterns: branch selection, applied-filter pills, radius, facets, view controls, and the compact list row — with the exact code to paste.",
+    "The reusable product-list patterns: branch selection, applied-filter pills, radius, facets, the pinned top filter bar, view controls, and the compact list row — with the exact code to paste.",
 };
 
 // Server Component so it can export metadata; all live rendering (radix-backed

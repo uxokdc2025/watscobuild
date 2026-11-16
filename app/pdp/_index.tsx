@@ -217,6 +217,22 @@ const CHANGE_LOGS: ChangeLog[] = [
           { label: "Quick Order V2 (Drawer)", href: "/quickorder/v2?signedin=1" },
         ],
       },
+      {
+        title: "Search results — pinned horizontal filter bar (version)",
+        desc: "A row of facet dropdowns across the top of the results, the way retail is moving, as a version you can flip against today’s page. The left rail stays exactly where it is.",
+        bullets: [
+          "Brand, Tonnage, SEER2, Refrigerant and Product Family as equal-width dropdowns above the grid; “More filters” opens every remaining facet in a sheet.",
+          "The bar and the sidebar share one selection, so checking a facet in either place selects it in the other and produces one removable chip (“Tonnage: 3 Ton”). Nothing is duplicated and nothing is replaced.",
+          "The row is a grid, so widths are identical: one row pinned to the top on desktop, three columns on tablets, two on phones.",
+          "A “Filters: Sidebar / Top bar” switch sits by the Grid/List control, so the two layouts can be compared on the same results.",
+          "Added to the design system as the Pinned Filter Bar on the PLP Patterns page.",
+        ],
+        links: [
+          { label: "PLP — Top bar (Residential)", href: "/search?brand=homans&category=residential&signedin=1&filters=top" },
+          { label: "PLP — Sidebar (today)", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "DS — Pinned Filter Bar", href: "/components/plp#pinned-bar" },
+        ],
+      },
     ],
   },
   {
