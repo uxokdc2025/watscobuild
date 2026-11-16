@@ -2,13 +2,17 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, Fan, Flame, ImageOff, Info, LayoutGrid, List as ListIcon, ListPlus, Package, ShoppingCart, Snowflake, Thermometer, Wind, Wrench, type LucideIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, Fan, Flame, ImageOff, Info, LayoutGrid, List as ListIcon, ListPlus, Package, ShoppingCart, Snowflake, Thermometer, Wind, Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
+import {
+  CategoryThumbnails,
+  type CategoryThumbnailItem,
+} from "@/components/ui/category-thumbnails";
 
 import {
   ProductCard as CanonicalProductCard,
@@ -143,12 +147,12 @@ type SearchBodyProps = {
 
 /* Real Residential subcategories + live counts, grabbed from homans.com — fed
    into our existing Categories facet (our pattern, real data). */
-/* Category impact design — V1: a horizontally-scrolling row of circular
-   category tiles above the PLP grid (reference: Atwoods "Farm and Ranch").
-   Each tile carries a real product image when we have one, else a tinted
-   circle + category icon as a placeholder until the full image set is built. */
-type CategoryTile = { label: string; Icon: LucideIcon; image?: string; href?: string };
-const CATEGORY_TILES: CategoryTile[] = [
+/* Category impact design: the shared category-thumbnail strip above the PLP
+   grid — square tiles on the small corner-radius token (see
+   `@/components/ui/category-thumbnails`). Each tile carries a real product
+   image when we have one, else a tinted tile + category icon as a
+   placeholder until the full image set is built. */
+const CATEGORY_TILES: CategoryThumbnailItem[] = [
   { label: "Air Conditioner", Icon: Snowflake, image: "/category-tiles/air-conditioner.webp", href: "/category/air-conditioners?signedin=1" },
   { label: "Heat Pump", Icon: Thermometer, image: "/category-tiles/heat-pump.webp" },
   { label: "Gas Furnace", Icon: Flame, image: "/category-tiles/gas-furnace.webp" },
@@ -159,46 +163,6 @@ const CATEGORY_TILES: CategoryTile[] = [
   { label: "Small Packaged", Icon: Package, image: "/category-tiles/small-packaged.webp" },
   { label: "Accessories", Icon: Wrench, image: "/category-tiles/accessories.webp" },
 ];
-
-function CategoryScroller({ items, href }: { items: CategoryTile[]; href: string }) {
-  return (
-    <section aria-label="Shop by category" className="mb-5 border-b pb-4">
-      <div>
-        <ul className="flex snap-x gap-5 overflow-x-auto pb-3 [scrollbar-color:var(--border)_transparent] [scrollbar-width:thin]">
-          {items.map((it) => (
-            <li key={it.label} className="snap-start">
-              <Link
-                href={it.href ?? href}
-                aria-label={`Shop ${it.label}`}
-                className="group flex w-28 shrink-0 flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
-              >
-                <span
-                  className={cn(
-                    // ring-inset so the ring draws INSIDE the circle — the
-                    // scroll container's overflow:auto would clip an outset
-                    // ring flat at the top (the "notch").
-                    "grid size-24 place-items-center overflow-hidden rounded-full ring-1 ring-inset ring-border transition group-hover:ring-2 group-hover:ring-primary",
-                    it.image ? "bg-white" : "bg-muted",
-                  )}
-                >
-                  {it.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={it.image} alt="" className="max-h-[68%] max-w-[68%] object-contain" loading="lazy" />
-                  ) : (
-                    <it.Icon className="size-9 text-muted-foreground transition group-hover:text-primary" aria-hidden="true" />
-                  )}
-                </span>
-                <span className="text-xs font-medium leading-snug text-foreground group-hover:text-primary">
-                  {it.label}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
 
 /** A self-contained collapsible facet (its own checkbox state). Used for the
  *  real Residential filter rail, whose options aren't tied to result fields. */
@@ -449,8 +413,9 @@ export function SearchBody({
               </section>
             )}
 
-            {/* Categories facet — hidden on category pages, where the circular
-                category scroller on top already presents the categories. */}
+            {/* Categories facet — hidden on category pages, where the
+                category-thumbnail strip on top already presents the
+                categories. */}
             {!category ? (
               <section aria-labelledby="categories-heading" className="space-y-2 pt-4">
                 <h2 id="categories-heading" className="border-b border-border/70 pb-3 font-semibold">
@@ -542,11 +507,11 @@ export function SearchBody({
 
           {/* Results grid or list */}
           <section aria-label="Search results" className="flex flex-col gap-4">
-            {/* Category impact design V1 — circular category scroller sits at the
-                top of the content column so it lines up with the category H1
-                (not over the sidebar). Category pages only. */}
+            {/* The shared category-thumbnail strip sits at the top of the
+                content column so it lines up with the category H1 (not over
+                the sidebar). Category pages only. */}
             {category ? (
-              <CategoryScroller
+              <CategoryThumbnails
                 items={CATEGORY_TILES}
                 href={`/search?brand=${brandKey}&category=residential&signedin=1`}
               />
