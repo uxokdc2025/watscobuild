@@ -2,21 +2,22 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, Fan, Flame, ImageOff, Info, LayoutGrid, List as ListIcon, ListPlus, Package, ShoppingCart, Snowflake, Thermometer, Wind, Wrench, type LucideIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, Fan, Flame, LayoutGrid, List as ListIcon, Package, Snowflake, Thermometer, Wind, Wrench, type LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import { formatUSD } from "@/app/pdp/_lib/types";
 
 import {
   ProductCard as CanonicalProductCard,
   type ProductCardData,
 } from "@/app/pdp/_lib/product-card";
 import type { SearchResult } from "./mock-data";
-import { useCart } from "@/components/cart/cart-context";
 import { FilterPill } from "@/components/ui/plp-filters";
+import { productImageFor } from "./product-images";
+import { FamilyListView } from "./family-list-view";
+import { tableConfigFor } from "./family-table-config";
 
 const STOCK_LOCATIONS = [
   { value: "your-branch", label: "Your Store" },
@@ -121,6 +122,16 @@ type SearchBodyProps = {
   query: string;
   /** When set, the page renders as a category listing (breadcrumb + H1). */
   category?: string;
+  /**
+   * Category slug — picks the List view's column config out of
+   * CATEGORY_TABLE_CONFIG. Omitted falls back to the parts/motor columns.
+   */
+  categorySlug?: string;
+  /**
+   * Which view the page opens on. Grid stays the default; `?view=list` makes
+   * the family-table view deep-linkable for review and QA.
+   */
+  initialView?: "grid" | "list";
   results: SearchResult[];
   totalResults: number;
   pageSize: number;
@@ -259,6 +270,7 @@ function StaticFacetGroup({ facet, open = false }: { facet: StaticFacet; open?: 
 export function SearchBody({
   query,
   category,
+  categorySlug,
   results,
   totalResults,
   pageSize,
@@ -268,8 +280,9 @@ export function SearchBody({
   branchName,
   brandKey,
   availabilityVariant = "radio",
+  initialView = "grid",
 }: SearchBodyProps) {
-  const [view, setView] = React.useState<"grid" | "list">("grid");
+  const [view, setView] = React.useState<"grid" | "list">(initialView);
   const [stockLocation, setStockLocation] = React.useState<typeof STOCK_LOCATIONS[number]["value"]>("your-branch");
   const [selectedFacets, setSelectedFacets] = React.useState<Record<string, Set<string>>>({});
   const [selectedBrands, setSelectedBrands] = React.useState<Set<string>>(new Set());
@@ -631,16 +644,16 @@ export function SearchBody({
                 ))}
               </ul>
             ) : (
-              // True full-width horizontal list — one product per row, spanning
-              // the content column. Rows are divided within a single card, using
-              // the shared [image | details | actions] storefront row pattern.
-              <ul className="divide-y overflow-hidden rounded-lg border bg-card">
-                {results.map((r, i) => (
-                  <li key={r.id}>
-                    <ProductRow result={r} signedIn={signedIn} index={i} brandKey={brandKey} />
-                  </li>
-                ))}
-              </ul>
+              // Family tables — results grouped by product family, sub-grouped
+              // by a key attribute, each row expanding in place. Columns come
+              // from the per-category config map, never from this component.
+              <FamilyListView
+                results={results}
+                signedIn={signedIn}
+                brandKey={brandKey}
+                storeName={storeName}
+                config={tableConfigFor(categorySlug)}
+              />
             )}
 
             <SearchPagination
@@ -736,52 +749,11 @@ function FacetGroup({
 }
 
 /* ------------------------------------------------------------------ *
- * Product cards (grid + list)
+ * Product cards (grid view)
+ *
+ * The List view no longer renders one flat row per SKU — it renders the
+ * family-table pattern (see ./family-list-view). Grid is unchanged.
  * ------------------------------------------------------------------ */
-
-/** Product photos captured from each distributor's search page. Per-brand list
- *  because extensions and counts differ (Homans: 24× webp — logo + spacer dropped;
- *  Peirce: 28× avif + 1× webp). */
-const IMAGES_BY_BRAND: Record<string, string[]> = {
-  homans: Array.from({ length: 24 }, (_, i) => `/homans-search/blower-motor-${(i + 1).toString().padStart(2, "0")}.webp`),
-  peirce: [
-    "/peirce-search/blower-motor-01.avif",
-    "/peirce-search/blower-motor-02.avif",
-    "/peirce-search/blower-motor-03.avif",
-    "/peirce-search/blower-motor-04.avif",
-    "/peirce-search/blower-motor-05.avif",
-    "/peirce-search/blower-motor-06.avif",
-    "/peirce-search/blower-motor-07.avif",
-    "/peirce-search/blower-motor-08.avif",
-    "/peirce-search/blower-motor-09.avif",
-    "/peirce-search/blower-motor-10.avif",
-    "/peirce-search/blower-motor-11.avif",
-    "/peirce-search/blower-motor-12.avif",
-    "/peirce-search/blower-motor-13.avif",
-    "/peirce-search/blower-motor-14.avif",
-    "/peirce-search/blower-motor-15.avif",
-    "/peirce-search/blower-motor-16.avif",
-    "/peirce-search/blower-motor-17.avif",
-    "/peirce-search/blower-motor-18.avif",
-    "/peirce-search/blower-motor-19.avif",
-    "/peirce-search/blower-motor-20.avif",
-    "/peirce-search/blower-motor-21.avif",
-    "/peirce-search/blower-motor-22.avif",
-    "/peirce-search/blower-motor-23.avif",
-    "/peirce-search/blower-motor-24.avif",
-    "/peirce-search/blower-motor-25.avif",
-    "/peirce-search/blower-motor-26.avif",
-    "/peirce-search/blower-motor-27.webp",
-    "/peirce-search/blower-motor-28.avif",
-    "/peirce-search/blower-motor-29.avif",
-  ],
-};
-
-function productImageFor(brandKey: string, index: number, explicit?: string): string {
-  if (explicit) return explicit;
-  const list = IMAGES_BY_BRAND[brandKey] ?? IMAGES_BY_BRAND.homans;
-  return list[index % list.length];
-}
 
 /** PLP tile — delegates to the canonical ProductCard (app/pdp/_lib) so
  *  the vertical slot structure (points chip → title → item/mfg → badges
@@ -825,215 +797,6 @@ function ProductCard({
   return <CanonicalProductCard data={cardData} signedIn={signedIn} />;
 }
 
-/** PLP list row — a TRUE full-width horizontal row spanning the content column.
- *  Canonical 3-zone storefront grid: [image 96px] [details flex-1] [actions,
- *  right-aligned] at sm+, matching the cart / checkout review / shopping-list
- *  rows. Below sm it stacks: image + details side-by-side on top, actions full
- *  width beneath (no horizontal overflow at 375px). Stock/price/contact logic is
- *  shared via StockLine + SignedInCommerce — never duplicated. */
-function ProductRow({
-  result,
-  signedIn,
-  index,
-  brandKey,
-}: {
-  result: SearchResult;
-  signedIn: boolean;
-  index: number;
-  brandKey: string;
-}) {
-  const imageSrc = productImageFor(brandKey, index, result.image);
-  const href = result.href ?? `/pdp/tradepro-${result.item.toLowerCase()}`;
-  const media = imageSrc ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={imageSrc}
-      alt={result.title}
-      loading="lazy"
-      className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
-    />
-  ) : (
-    <ImageOff className="size-6 opacity-40" aria-hidden="true" />
-  );
-  const details = (
-    <div className="min-w-0">
-      <p className="truncate text-xs font-medium text-primary">{result.brand}</p>
-      <Link href={href} className="line-clamp-3 text-sm font-semibold leading-snug hover:text-primary hover:underline">
-        {result.title}
-      </Link>
-      <p className="mt-1 truncate text-xs text-muted-foreground">
-        Item: {result.item} · MFG: {result.mfg}
-      </p>
-    </div>
-  );
-  // Availability is its own column between the description and the CTAs — keeps
-  // the description from sprawling and gives the row a clear middle.
-  const availability = signedIn ? <StockLine result={result} /> : null;
-  const signedOutActions = (
-    <p className="text-sm">
-      <span className="font-medium">Sign in</span>{" "}
-      <span className="text-muted-foreground">for pricing.</span>
-    </p>
-  );
-  return (
-    <article className="p-4">
-      {/* Desktop — [image] [capped description] [availability, centered] [actions].
-          The description is capped so the title wraps (2–3 lines) instead of
-          sprawling; availability takes the middle slack and centers between the
-          description and the Add CTA. */}
-      <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
-        <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-          {media}
-        </div>
-        {details}
-        <div className="text-center text-sm">{availability}</div>
-        <div className="justify-self-end">
-          {signedIn ? (
-            <SignedInCommerce result={result} align="right" showStock={false} />
-          ) : (
-            signedOutActions
-          )}
-        </div>
-      </div>
-      {/* Mobile — image + details side-by-side (availability beneath), actions full width */}
-      <div className="flex flex-col gap-3 sm:hidden">
-        <div className="flex items-start gap-3">
-          <div className="grid size-20 shrink-0 place-items-center self-start rounded-md bg-muted/40 p-1 text-muted-foreground">
-            {media}
-          </div>
-          <div className="min-w-0 flex-1">
-            {details}
-            {availability ? <div className="mt-1.5 text-sm">{availability}</div> : null}
-          </div>
-        </div>
-        <div>
-          {signedIn ? (
-            <SignedInCommerce result={result} align="left" showStock={false} />
-          ) : (
-            signedOutActions
-          )}
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function SignedInCommerce({
-  result,
-  align = "left",
-  showStock = true,
-}: {
-  result: SearchResult;
-  align?: "left" | "right";
-  showStock?: boolean;
-}) {
-  const { addItem } = useCart();
-  return (
-    <div className={cn("space-y-1", align === "right" ? "text-right" : "text-left")}>
-      {result.price != null ? (
-        <p className="text-base font-semibold text-price">
-          {formatUSD(result.price)}
-          <span className="ml-1 text-xs font-normal text-muted-foreground">/ EACH</span>
-        </p>
-      ) : null}
-      {result.points != null ? (
-        <p className="text-xs font-medium text-[color:var(--violet)]">
-          Earn {result.points.toLocaleString()} points
-        </p>
-      ) : null}
-      {showStock ? <StockLine result={result} /> : null}
-      {result.price != null ? (
-        <>
-          {/* Add to Cart — design-system primary Button (solid), with the cart
-              icon. Matches the grid card's Add button. */}
-          <Button
-            size="sm"
-            className="mt-2"
-            onClick={() => addItem({
-              id: result.id,
-              title: result.title,
-              brand: result.brand,
-              image: result.image,
-              price: result.price ?? 0,
-            })}
-          >
-            <ShoppingCart className="size-4" />
-            Add to Cart
-          </Button>
-          {/* Save to List — muted affordance below the Add button, mirroring the
-              grid card's Save. */}
-          <div className="pt-1">
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ListPlus className="size-4" />
-              Save
-            </button>
-          </div>
-        </>
-      ) : null}
-    </div>
-  );
-}
-
-function StockLine({ result }: { result: SearchResult }) {
-  // Homans "never shows out-of-stock": flagged rows swap every stock line
-  // (including "Out of stock") for a single "Contact Us" link — or, on the
-  // richer reference-style variant, for "Limited Availability" (info icon,
-  // friendly low-stock token) plus the muted helper subline and a primary
-  // "Contact Us" link directly underneath (same block).
-  if (result.contactForAvailability) {
-    if (result.contactVariant === "rich") {
-      return (
-        <div className="flex flex-col gap-0.5">
-          <p className="inline-flex items-center gap-1 text-xs font-medium text-low-stock">
-            <Info className="size-3.5 shrink-0" aria-hidden />
-            Limited Availability
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Let us help you find this product.
-          </p>
-          <p className="text-xs font-medium">
-            <a
-              href="#"
-              className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            >
-              Contact Us
-            </a>
-          </p>
-        </div>
-      );
-    }
-    return (
-      <p className="text-xs font-medium">
-        <a
-          href="#"
-          className="text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-        >
-          Contact Us
-        </a>
-      </p>
-    );
-  }
-  const status = result.stockStatus;
-  if (!status) return null;
-  if (status === "in-stock")
-    return (
-      <p className="text-xs font-medium text-in-stock">
-        In stock · {result.allBranchesQty ?? 0} All Branches
-      </p>
-    );
-  if (status === "low-stock")
-    return (
-      <p className="text-xs font-medium text-low-stock">
-        Low stock · {result.allBranchesQty ?? 0} All Branches
-      </p>
-    );
-  return (
-    <p className="text-xs font-medium text-out-of-stock">Out of stock</p>
-  );
-}
 
 /* ------------------------------------------------------------------ *
  * Pagination — matches source (Prev · 1 2 3 4 5 · Next)

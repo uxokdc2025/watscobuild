@@ -15,6 +15,7 @@ type SearchParams = {
   category?: string;
   page_size?: string;
   signedin?: string;
+  view?: string;
 };
 
 export async function generateMetadata({
@@ -43,6 +44,7 @@ export default async function SearchPage({
     category,
     page_size: pageSizeParam,
     signedin,
+    view,
   } = await searchParams;
 
   const brand = getBrand(brandKey);
@@ -70,6 +72,8 @@ export default async function SearchPage({
           <SearchBody
             query={q}
             category={categoryLabel}
+            categorySlug={category}
+            initialView={view === "list" ? "list" : "grid"}
             results={results}
             totalResults={totalResults}
             pageSize={pageSize}
