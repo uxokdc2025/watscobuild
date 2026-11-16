@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 
 const FOUNDATIONS = [
   { label: "Color & Tokens", href: "/components/colors", desc: "Semantic, status, and brand-chrome tokens." },
+  { label: "Grid & Breakpoints", href: "/components/grid", desc: "Supported breakpoints, the 1920px canvas, the page container, and the PLP grid." },
   { label: "Typography", href: "/components/typography", desc: "Type scale, weights, and usage." },
 ];
 

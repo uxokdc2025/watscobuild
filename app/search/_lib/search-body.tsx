@@ -6,6 +6,8 @@ import { ChevronDown, ChevronRight, Fan, Flame, ImageOff, Info, LayoutGrid, List
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PageContainer } from "@/components/ui/page-container";
+import { ProductGrid } from "@/components/ui/product-grid";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/app/pdp/_lib/types";
@@ -347,18 +349,22 @@ export function SearchBody({
     <>
       {/* Breadcrumb — the site-chrome search bar carries the query, no
           second search input on the results page. */}
-      <nav
-        aria-label="Breadcrumb"
-        className="mx-auto flex max-w-6xl items-center gap-2 px-4 pt-6 text-sm text-muted-foreground md:px-6"
-      >
-        <Link href="/" className="text-primary hover:underline">
-          Home
-        </Link>
-        <ChevronRight className="size-3.5 opacity-60" />
-        <span>{category ? category : <>Search For &ldquo;{query}&rdquo;</>}</span>
-      </nav>
+      <PageContainer asChild>
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-2 pt-6 text-sm text-muted-foreground"
+        >
+          <Link href="/" className="text-primary hover:underline">
+            Home
+          </Link>
+          <ChevronRight className="size-3.5 opacity-60" />
+          <span>{category ? category : <>Search For &ldquo;{query}&rdquo;</>}</span>
+        </nav>
+      </PageContainer>
 
-      <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:px-6">
+      {/* Page width, side margins and the results grid all come from the
+          layout tokens — see /components/grid. */}
+      <PageContainer className="pt-4 pb-16">
         <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
           {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-5 text-sm">
@@ -623,13 +629,13 @@ export function SearchBody({
               </div>
             ) : null}
             {view === "grid" ? (
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 min-[1730px]:grid-cols-5">
+              <ProductGrid>
                 {results.map((r, i) => (
                   <li key={r.id}>
                     <ProductCard result={r} signedIn={signedIn} index={i} brandKey={brandKey} />
                   </li>
                 ))}
-              </ul>
+              </ProductGrid>
             ) : (
               // True full-width horizontal list — one product per row, spanning
               // the content column. Rows are divided within a single card, using
@@ -669,7 +675,7 @@ export function SearchBody({
             </p>
           </section>
         </div>
-      </div>
+      </PageContainer>
     </>
   );
 }

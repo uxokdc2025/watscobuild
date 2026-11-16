@@ -20,6 +20,7 @@ const NAV: NavGroup[] = [
     items: [
       { label: "Overview", href: "/components" },
       { label: "Color & Tokens", href: "/components/colors" },
+      { label: "Grid & Breakpoints", href: "/components/grid" },
       { label: "Typography", href: "/components/typography" },
     ],
   },
