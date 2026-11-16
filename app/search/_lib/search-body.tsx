@@ -19,12 +19,19 @@ import {
 import type { SearchResult } from "./mock-data";
 import { useCart } from "@/components/cart/cart-context";
 import { FilterPill } from "@/components/ui/plp-filters";
+import { MoreOptionsCard } from "@/components/ui/more-options-card";
 
 const STOCK_LOCATIONS = [
   { value: "your-branch", label: "Your Store" },
   { value: "nearby", label: "Nearby Branches" },
   { value: "all", label: "All Branches" },
 ] as const;
+
+export type StockLocationValue = (typeof STOCK_LOCATIONS)[number]["value"];
+
+/** Product count per "Stocked At" scope — ONE source of truth, shared by the
+ *  facet rail and the results-grid end card so the two can never disagree. */
+export type StockedAtCounts = Record<StockLocationValue, number>;
 
 /* ------------------------------------------------------------------ *
  * Facet definitions
@@ -131,6 +138,12 @@ type SearchBodyProps = {
   hiddenSearchFields?: { name: string; value: string }[];
   /** Store name shown in the "Stocked At" facet. */
   storeName?: string;
+  /**
+   * Real product count per "Stocked At" scope. Feeds the facet rail counts AND
+   * the results-grid end card ("Want to see more options?"), which only renders
+   * when a page knows these — there is nothing honest to offer otherwise.
+   */
+  stockedAtCounts?: StockedAtCounts;
   /** Renders the branch-scoped facet count first. */
   branchName?: string;
   /** Brand key — picks the correct image manifest for product cards. */
@@ -267,12 +280,13 @@ export function SearchBody({
   signedIn,
   hiddenSearchFields = [],
   storeName = "Manchester, NH - Homans",
+  stockedAtCounts,
   branchName,
   brandKey,
   availabilityVariant = "radio",
 }: SearchBodyProps) {
   const [view, setView] = React.useState<"grid" | "list">("grid");
-  const [stockLocation, setStockLocation] = React.useState<typeof STOCK_LOCATIONS[number]["value"]>("your-branch");
+  const [stockLocation, setStockLocation] = React.useState<StockLocationValue>("your-branch");
   const [selectedFacets, setSelectedFacets] = React.useState<Record<string, Set<string>>>({});
   const [selectedBrands, setSelectedBrands] = React.useState<Set<string>>(new Set());
   // Checkbox-variant "Shop By Availability" state — demo-only, all default checked.
@@ -285,6 +299,30 @@ export function SearchBody({
     () => STOCK_LOCATIONS.map((loc) => loc.value === "your-branch" ? { ...loc, label: storeName } : loc),
     [storeName],
   );
+  // "Stocked At" counts — one source of truth for the facet rail and the grid
+  // end card. Pages that know their real per-scope counts pass them in; the
+  // rest keep the long-standing placeholder treatment, where only "All
+  // Branches" carries a count.
+  const stockCounts: StockedAtCounts = stockedAtCounts ?? {
+    "your-branch": 0,
+    nearby: 0,
+    all: totalResults,
+  };
+
+  // ── Results-grid end card ──
+  // "Want to see more options?" is the last tile in the grid, after the final
+  // product on the last page. Pagination here is static (the grid always
+  // renders page 1), so that means the single-page case. It offers only the
+  // scopes holding strictly MORE products than the selected one — when none
+  // do, there are no more options and the card drops out of the grid.
+  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
+  const selectedScopeLabel =
+    displayLocations.find((loc) => loc.value === stockLocation)?.label ?? storeName;
+  const widerScopes = displayLocations.filter(
+    (loc) => stockCounts[loc.value] > stockCounts[stockLocation],
+  );
+  const showEndCard = stockedAtCounts != null && totalPages === 1 && widerScopes.length > 0;
+
   // Counts for facets — derived from the visible mock set for realism.
   const facetCount = React.useCallback(
     (key: FacetGroupSpec["key"], option: string) => {
@@ -426,7 +464,7 @@ export function SearchBody({
                 <h2 id="stocked-at-heading" className="pb-2 font-semibold">Stocked At</h2>
                 <RadioGroup
                   value={stockLocation}
-                  onValueChange={(value) => setStockLocation(value as typeof STOCK_LOCATIONS[number]["value"])}
+                  onValueChange={(value) => setStockLocation(value as StockLocationValue)}
                   className="space-y-0.5"
                 >
                   {displayLocations.map((location) => (
@@ -441,7 +479,7 @@ export function SearchBody({
                           <RadioGroupItem value={location.value} id={`loc-${location.value}`} aria-label={location.label} />
                           <span>{location.label}</span>
                         </span>
-                        <span className="text-xs text-muted-foreground">({location.value === "all" ? totalResults : 0})</span>
+                        <span className="text-xs text-muted-foreground">({stockCounts[location.value].toLocaleString()})</span>
                       </label>
                       {/* Change sits directly under the current ("Your Store") row */}
                       {location.value === "your-branch" ? (
@@ -635,6 +673,19 @@ export function SearchBody({
                     <ProductCard result={r} signedIn={signedIn} index={i} brandKey={brandKey} />
                   </li>
                 ))}
+                {showEndCard ? (
+                  <li>
+                    <MoreOptionsCard
+                      branchName={selectedScopeLabel}
+                      shownCount={stockCounts[stockLocation]}
+                      scopes={widerScopes.map((loc) => ({
+                        label: loc.label,
+                        count: stockCounts[loc.value],
+                        onSelect: () => setStockLocation(loc.value),
+                      }))}
+                    />
+                  </li>
+                ) : null}
               </ProductGrid>
             ) : (
               // True full-width horizontal list — one product per row, spanning

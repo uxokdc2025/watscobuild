@@ -1,9 +1,12 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
 import { ProductCard, type ProductCardData } from "@/app/pdp/_lib/product-card";
+import { MoreOptionsCard } from "@/components/ui/more-options-card";
+import { Button } from "@/components/ui/button";
 import { PreviewCode, PropsTable, Guidance } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
 
@@ -11,6 +14,7 @@ const TOC = [
   { id: "usage", label: "Usage" },
   { id: "anatomy", label: "Anatomy" },
   { id: "states", label: "States" },
+  { id: "end-card", label: "End card" },
   { id: "guidance", label: "Guidance" },
   { id: "api", label: "API" },
   { id: "in-production", label: "In Production" },
@@ -35,6 +39,48 @@ const BASE: ProductCardData = {
     { label: "Substitute", tone: "outline-color", color: "blue" },
   ],
 };
+
+/** The target page's real "Stocked At" scopes, ascending by count. */
+const END_CARD_SCOPES = [
+  { value: "your-branch", label: "Manchester, NH - Homans", count: 16 },
+  { value: "nearby", label: "Nearby Branches", count: 96 },
+  { value: "all", label: "All Branches", count: 348 },
+] as const;
+
+/** Live end-card demo — each link switches the "Stocked At" scope exactly as it
+ *  does on the PLP. Selecting the widest scope leaves nothing wider to offer,
+ *  which is precisely when the real grid drops the card. */
+function EndCardDemo() {
+  const [scope, setScope] = React.useState<string>("your-branch");
+  const current = END_CARD_SCOPES.find((s) => s.value === scope) ?? END_CARD_SCOPES[0];
+  const wider = END_CARD_SCOPES.filter((s) => s.count > current.count);
+  return (
+    <div className="flex w-[247px] flex-col gap-3">
+      <div className="flex-1">
+        {wider.length ? (
+          <MoreOptionsCard
+            branchName={current.label}
+            shownCount={current.count}
+            scopes={wider.map((s) => ({
+              label: s.label,
+              count: s.count,
+              onSelect: () => setScope(s.value),
+            }))}
+          />
+        ) : (
+          <div className="grid h-full min-h-40 place-items-center rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
+            All Branches selected — nothing wider to offer, so the grid drops the card.
+          </div>
+        )}
+      </div>
+      {scope === "your-branch" ? null : (
+        <Button type="button" variant="secondary" size="sm" onClick={() => setScope("your-branch")}>
+          Reset to branch scope
+        </Button>
+      )}
+    </div>
+  );
+}
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
   return (
@@ -171,6 +217,52 @@ export default function ProductCardReference() {
           </PreviewCode>
         </section>
 
+        {/* ── End card variant ── */}
+        <section className="space-y-4">
+          <H2 id="end-card">End card — &ldquo;More options&rdquo;</H2>
+          <p className="text-sm text-muted-foreground">
+            The grid&rsquo;s end card: one extra tile after the final product on the last page, in a
+            normal grid cell (same column rules, same width, same row height) but filled with the
+            primary blue — the one accent colour — so widening the search reads as an action, not as
+            another product. Every count comes from the page&rsquo;s{" "}
+            <span className="font-medium text-foreground">Stocked At</span> facet, and each link
+            switches that filter. Only scopes holding strictly more products are offered; when none
+            do, the card is dropped. Click the links below to switch scope.
+          </p>
+          <PreviewCode
+            previewClassName="items-stretch justify-center gap-6"
+            code={`import { MoreOptionsCard } from "@/components/ui/more-options-card";
+
+{/* Last tile in the results grid, after the final product on the last page.
+    Counts come straight from the "Stocked At" facet, so the card and the
+    facet rail can never disagree. */}
+<li>
+  <MoreOptionsCard
+    branchName="Manchester, NH - Homans"
+    shownCount={16}
+    scopes={[
+      { label: "Nearby Branches", count: 96, onSelect: () => setStockLocation("nearby") },
+      { label: "All Branches", count: 348, onSelect: () => setStockLocation("all") },
+    ]}
+  />
+</li>`}
+          >
+            <div className="w-[247px]">
+              <ProductCard signedIn data={BASE} />
+            </div>
+            <EndCardDemo />
+          </PreviewCode>
+          <PropsTable
+            caption="MoreOptionsCard props"
+            rows={[
+              { name: "branchName", type: "string", description: "The selected Stocked At scope — the branch name in the default scope." },
+              { name: "shownCount", type: "number", description: "How many products the grid is showing in that scope." },
+              { name: "scopes", type: "MoreOptionsScope[]", description: "Wider scopes to offer, ascending by count: { label, count, onSelect }. Pass only scopes with MORE products; empty means drop the card." },
+              { name: "className", type: "string?", description: "Cell-level overrides only — never a fixed height." },
+            ]}
+          />
+        </section>
+
         {/* ── Guidance ── */}
         <section className="space-y-4">
           <H2 id="guidance">Guidance</H2>
@@ -184,6 +276,9 @@ export default function ProductCardReference() {
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Badge&gt;</code> through the{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">badges</code> data.</>,
               <>Reuse this one component for PLP, FBT, and Customers-Also-Purchased alike.</>,
+              <>Close the grid with{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;MoreOptionsCard&gt;</code>{" "}
+                and feed it the <strong>Stocked At</strong> counts the facet rail already shows.</>,
               <><strong>Unit of measure is always ALL-CAPS</strong> — render it through{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">formatUom()</code> as{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">/ EACH</code> (leading slash + space, &quot;EA&quot;/&quot;Each&quot; → &quot;EACH&quot;). Never print a lowercase &quot;each&quot;.</>,
@@ -193,6 +288,8 @@ export default function ProductCardReference() {
               <>Show price or the Add button in the signed-out state.</>,
               <>Set a fixed height on the card to force alignment; use a parent grid.</>,
               <>Style status as a bare colored <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;span&gt;</code> instead of <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Badge&gt;</code>.</>,
+              <>Recolour a product card to make an end card, give the end card a second accent
+                colour, or hand it counts the Stocked At facet does not show.</>,
             ]}
           />
         </section>
@@ -233,6 +330,7 @@ export default function ProductCardReference() {
           <div className="flex flex-wrap gap-2">
             {[
               { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PLP — End card (Residential)", href: "/search?brand=homans&category=residential&signedin=1" },
               { label: "PDP — Replacement Products", href: "/pdp/uc-replacement-products?signedin=1" },
             ].map((l) => (
               <Link
