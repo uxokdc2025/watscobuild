@@ -22,10 +22,15 @@ import {
   type TopFilterSelection,
 } from "@/components/ui/plp-top-filters";
 import { ProductListRow } from "@/components/ui/product-list-row";
+import {
+  CategoryThumbnails,
+  type CategoryThumbnailItem,
+} from "@/components/ui/category-thumbnails";
 import { PreviewCode, Guidance } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
 
 const TOC = [
+  { id: "category-thumbnails", label: "Category Thumbnails" },
   { id: "applied-filters", label: "Applied Filters" },
   { id: "branch-selector", label: "Branch Selector" },
   { id: "radius", label: "Radius" },
@@ -134,7 +139,17 @@ function H2({ id, children }: { id: string; children: React.ReactNode }) {
   );
 }
 
+const CATEGORY_THUMBNAILS: CategoryThumbnailItem[] = [
+  { label: "Air Conditioner", image: "/category-tiles/air-conditioner.webp", href: "#" },
+  { label: "Heat Pump", image: "/category-tiles/heat-pump.webp", href: "#" },
+  { label: "Gas Furnace", image: "/category-tiles/gas-furnace.webp", href: "#" },
+  { label: "Air Handler", image: "/category-tiles/air-handler.webp", href: "#" },
+  { label: "Evaporator Coil", image: "/category-tiles/evaporator-coil.webp", href: "#" },
+  { label: "Ductless", image: "/category-tiles/ductless.webp", href: "#" },
+];
+
 const ANATOMY: { part: string; detail: string }[] = [
+  { part: "Category thumbnails", detail: "A scrolling strip of square category tiles above the results — the category jump." },
   { part: "Applied filters", detail: "Blue removable pills below the results heading + a “Clear All” text link." },
   { part: "Branch selector", detail: "Your Store / Nearby / All radio card; the active header store is preselected and never becomes a pill." },
   { part: "Radius", detail: "Numeric input with an explicit miles label and an Apply action." },
@@ -209,8 +224,44 @@ export default function PlpReference() {
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
               import {"{ ProductListRow }"} from &quot;@/components/ui/product-list-row&quot;
             </code>
+            <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
+              import {"{ CategoryThumbnails }"} from &quot;@/components/ui/category-thumbnails&quot;
+            </code>
           </div>
         </header>
+
+        {/* ── Category thumbnails ── */}
+        <section className="space-y-4">
+          <H2 id="category-thumbnails">Category thumbnails</H2>
+          <p className="text-sm text-muted-foreground">
+            The category jump that sits above search and PLP results. Tiles are{" "}
+            <span className="font-medium text-foreground">square</span>, on the small
+            corner-radius token (<code className="rounded bg-muted px-1 py-0.5 text-xs">rounded-sm</code>{" "}
+            → <code className="rounded bg-muted px-1 py-0.5 text-xs">var(--radius)</code>), using the
+            standard card tile treatment — a bordered <code className="rounded bg-muted px-1 py-0.5 text-xs">bg-card</code>{" "}
+            square with the art contained inside and the label below. Never circles: the strip matches the
+            square tiles already used by Category Landing and the brand homepages. The row scrolls
+            horizontally at every width.
+          </p>
+          <PreviewCode
+            code={`<CategoryThumbnails
+  items={[
+    { label: "Air Conditioner", image: "/category-tiles/air-conditioner.webp", href: "/category/air-conditioners" },
+    { label: "Heat Pump", image: "/category-tiles/heat-pump.webp" },
+    // …
+  ]}
+  href="/search?brand=homans&category=residential"
+/>`}
+          >
+            <div className="w-full">
+              <CategoryThumbnails
+                items={CATEGORY_THUMBNAILS}
+                href="#"
+                className="mb-0 border-b-0 pb-0"
+              />
+            </div>
+          </PreviewCode>
+        </section>
 
         {/* ── Applied filters ── */}
         <section className="space-y-4">
@@ -495,9 +546,10 @@ export default function PlpReference() {
         <section className="space-y-4">
           <H2 id="anatomy">Anatomy</H2>
           <p className="text-sm text-muted-foreground">
-            A search results page is these seven pieces: the filter rail (branch, radius, facets) on
-            the left, an optional pinned filter bar plus applied-filter pills and the view toggle
-            above the results, and a grid of Product Cards or a stack of list rows below.
+            A search results page is these pieces: the category-thumbnail strip and the filter rail
+            (branch, radius, facets) framing the results, an optional pinned filter bar plus
+            applied-filter pills and the view toggle above them, and a grid of Product Cards or a
+            stack of list rows below.
           </p>
           <ol className="overflow-hidden rounded-xl border">
             {ANATOMY.map((a, i) => (
@@ -520,6 +572,7 @@ export default function PlpReference() {
           <H2 id="guidance">Guidance</H2>
           <Guidance
             dos={[
+              <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">CategoryThumbnails</code> for every search/PLP category strip so one change updates them all.</>,
               <>Preselect the active header store and keep it out of the applied-filter pills.</>,
               <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">FilterPill</code> for every removable applied facet.</>,
               <>Render Grid results with <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;ProductCard&gt;</code> and List results with <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;ProductListRow&gt;</code>.</>,
@@ -527,6 +580,7 @@ export default function PlpReference() {
               <>Bind the pinned bar and the left rail to one selection map, and pin only the four or five facets that actually narrow the set.</>,
             ]}
             donts={[
+              <>Render category thumbnails as circles (<code className="rounded bg-muted px-1 py-0.5 text-xs">rounded-full</code>) or on a bespoke radius — they&apos;re square tiles on the small radius token.</>,
               <>Make Clear All a solid button — it&apos;s a text link (<code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;link&quot;</code>).</>,
               <>Turn the preselected branch into a pill the user has to remove.</>,
               <>Build a bespoke result row per category — compose <code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code>.</>,
@@ -545,6 +599,7 @@ export default function PlpReference() {
           <div className="flex flex-wrap gap-2">
             {[
               { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "PLP — Residential Category", href: "/search?brand=homans&category=residential&signedin=1" },
               {
                 label: "PLP — Pinned filter bar",
                 href: "/search?brand=homans&category=residential&signedin=1&filters=top",

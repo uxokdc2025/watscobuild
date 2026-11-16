@@ -9,12 +9,27 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FilterPill, FilterOption, FilterSection, RadiusControl } from "@/components/ui/plp-filters";
 import { ProductListRow } from "@/components/ui/product-list-row";
 import { SearchAutocomplete } from "@/components/ui/search-autocomplete";
+import { CategoryThumbnails, type CategoryThumbnailItem } from "@/components/ui/category-thumbnails";
 import { Category, Demo, State } from "../_showcase";
+
+const CATEGORY_THUMBNAILS: CategoryThumbnailItem[] = [
+  { label: "Air Conditioner", image: "/category-tiles/air-conditioner.webp", href: "#" },
+  { label: "Heat Pump", image: "/category-tiles/heat-pump.webp", href: "#" },
+  { label: "Gas Furnace", image: "/category-tiles/gas-furnace.webp", href: "#" },
+  { label: "Air Handler", image: "/category-tiles/air-handler.webp", href: "#" },
+  { label: "Evaporator Coil", image: "/category-tiles/evaporator-coil.webp", href: "#" },
+  { label: "Ductless", image: "/category-tiles/ductless.webp", href: "#" },
+];
 
 export function PlpSection() {
   const [radius, setRadius] = React.useState("50");
   return (
-    <Category id="plp" title="PLP patterns" description="Reusable product-list patterns: branch selection, applied filters, radius, facets, view controls, and product actions.">
+    <Category id="plp" title="PLP patterns" description="Reusable product-list patterns: category thumbnails, branch selection, applied filters, radius, facets, view controls, and product actions.">
+      <Demo name="Category thumbnails" slug="category-thumbnails" description="The scrolling category strip above search and PLP results. Square tiles on the small corner-radius token — never circles.">
+        <State label="Default" className="w-full items-stretch">
+          <CategoryThumbnails items={CATEGORY_THUMBNAILS} href="#" className="mb-0 w-full border-b-0 pb-0" />
+        </State>
+      </Demo>
       <Demo name="Applied filter pills" slug="plp-filters" description="Blue pills sit below the results heading; Clear All is a text link.">
         <State label="Default">
           <div className="flex flex-wrap items-center gap-2"><FilterPill label="Manchester, NH - Homans" onRemove={() => undefined} /><FilterPill label="Amps: 2" onRemove={() => undefined} /><Button variant="link" className="px-1">Clear All</Button></div>

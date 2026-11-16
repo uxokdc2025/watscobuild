@@ -6,6 +6,14 @@
 
 ## Captured
 
+**Category thumbnails (square tiles): 2026-11-16 · 5 PNGs.** Before/after for the shared
+category-thumbnail strip moving from circles to square tiles on the small corner-radius token.
+Captured on `/search?brand=homans&category=residential&signedin=1` at 1280 + 375 (clipped to the
+strip), plus the Components-tab demo.
+- `plp-category-thumbnails__before-circles__{1280,375}.png`
+- `plp-category-thumbnails__after-squares__{1280,375}.png`
+- `plp-category-thumbnails__components-tab__1100.png`
+
 **Backfill run: 2026-08-12 · 45 PNGs.** Playwright (chromium, deviceScaleFactor=2, `networkidle`, full-page). Signed-in state on PDP + brand-chrome pages driven by the `?signedin=1` query param (see `app/pdp/[slug]/page.tsx` — the auth context is initialized from that server prop; the earlier README note about `localStorage.setItem('signedIn', '1')` is superseded).
 
 Coverage:
