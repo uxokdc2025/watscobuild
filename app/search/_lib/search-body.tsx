@@ -450,7 +450,7 @@ export function SearchBody({
       {/* Page width, side margins and the results grid all come from the
           layout tokens — see /components/grid. */}
       <PageContainer className="pt-4 pb-16">
-        <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[var(--layout-sidebar)_minmax(0,1fr)]">
           {/* Facet sidebar */}
           <aside aria-label="Filters" className="space-y-5 text-sm">
             {availabilityVariant === "checkbox" ? (
@@ -631,7 +631,7 @@ export function SearchBody({
           </aside>
 
           {/* Results grid or list */}
-          <section aria-label="Search results" className="flex flex-col gap-4">
+          <section aria-label="Search results" className="flex min-w-0 flex-col gap-4">
             {/* The shared category-thumbnail strip sits at the top of the
                 content column so it lines up with the category H1 (not over
                 the sidebar). Category pages only. */}

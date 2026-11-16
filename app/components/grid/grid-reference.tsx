@@ -30,6 +30,10 @@ import {
   LAYOUT_BREAKPOINTS,
   LAYOUT_MAX_WIDTH,
   layoutBreakpointAt,
+  LAYOUT_CARD_MIN,
+  LAYOUT_SIDEBAR,
+  LAYOUT_SIDEBAR_FROM,
+  plpColumnsAt,
 } from "@/lib/layout";
 
 import { Guidance, PreviewCode, PropsTable } from "../_ds/code";
@@ -56,7 +60,7 @@ const TOC = [
 ];
 
 /** The widths the PR screenshots are taken at, plus the two extremes. */
-const PRESETS = [375, 768, 1280, 1440, 1728, 1920, 2560];
+const PRESETS = [375, 768, 1024, 1280, 1440, 1456, 1600, 1728, 1920, 2560];
 
 /* Real search rows + the real captured Homans product photos, so the
    resizable demo renders the same cards /search renders. */
@@ -100,6 +104,23 @@ function useViewportWidth(): number | null {
 
 /* ─────────────────────────── Breakpoint table ─────────────────────────── */
 
+/** What a search / PLP page (results column beside the filter sidebar)
+ *  actually renders across one band, e.g. "4 → 5 from 1456px". */
+function plpColumnsLabel(bp: (typeof LAYOUT_BREAKPOINTS)[number]): string {
+  const top = Math.min(bp.max ?? 2560, 2560);
+  const atMin = plpColumnsAt(bp.min);
+  const steps: string[] = [String(atMin)];
+  let last = atMin;
+  for (let w = bp.min + 1; w <= top; w++) {
+    const n = plpColumnsAt(w);
+    if (n !== last) {
+      steps.push(`${n} from ${w}px`);
+      last = n;
+    }
+  }
+  return steps.join(" → ");
+}
+
 function BreakpointTable({ activeKey }: { activeKey: string | null }) {
   return (
     <div className="overflow-hidden rounded-xl border">
@@ -109,7 +130,8 @@ function BreakpointTable({ activeKey }: { activeKey: string | null }) {
             <TableHead className="px-4">Breakpoint</TableHead>
             <TableHead className="px-4">Range</TableHead>
             <TableHead className="px-4">Variant</TableHead>
-            <TableHead className="px-4 text-right">Columns</TableHead>
+            <TableHead className="px-4 text-right">Max columns</TableHead>
+            <TableHead className="px-4">PLP with filters</TableHead>
             <TableHead className="px-4 text-right">Gutter</TableHead>
             <TableHead className="px-4 text-right">Margin</TableHead>
             <TableHead className="px-4">Container</TableHead>
@@ -137,6 +159,9 @@ function BreakpointTable({ activeKey }: { activeKey: string | null }) {
               </TableCell>
               <TableCell className="px-4 py-2.5 text-right font-medium tabular-nums">
                 {bp.columns}
+              </TableCell>
+              <TableCell className="px-4 py-2.5 whitespace-normal tabular-nums text-muted-foreground">
+                {plpColumnsLabel(bp)}
               </TableCell>
               <TableCell className="px-4 py-2.5 text-right tabular-nums text-muted-foreground">
                 {bp.gutter}px
@@ -190,7 +215,12 @@ function ColumnOverlayDemo({ viewport }: { viewport: number | null }) {
         </p>
       </div>
 
-      <div className="relative overflow-hidden rounded-xl border bg-card py-8">
+      {/* The overlay draws the page's layout columns, so card-min is off here
+          (it only limits how narrow a product card may get, see Product grid). */}
+      <div
+        className="relative overflow-hidden rounded-xl border bg-card py-8"
+        style={{ "--layout-card-min": "0px" } as React.CSSProperties}
+      >
         <PageContainer>
           <ProductGrid>
             {Array.from({ length: columns }, (_, i) => (
@@ -243,7 +273,11 @@ function ColumnOverlayDemo({ viewport }: { viewport: number | null }) {
 function ResizableGridDemo() {
   const [width, setWidth] = React.useState(1440);
   const bp = layoutBreakpointAt(width);
-  const cards = DEMO_CARDS.slice(0, bp.columns);
+  // Lay out exactly as the search page does: filter sidebar beside the
+  // results from lg up, and the grid's card-min rule decides the count.
+  const withSidebar = width >= LAYOUT_SIDEBAR_FROM;
+  const shownColumns = plpColumnsAt(width);
+  const cards = DEMO_CARDS.slice(0, shownColumns);
   const capped = width > LAYOUT_MAX_WIDTH;
 
   return (
@@ -264,8 +298,8 @@ function ResizableGridDemo() {
           <p className="text-sm tabular-nums">
             <span className="font-semibold">{width}px</span>{" "}
             <span className="text-muted-foreground">
-              · {bp.label} · {bp.columns} columns · {bp.gutter}px gutter · {bp.margin}px
-              margin
+              · {bp.label} · {shownColumns} of max {bp.columns} columns beside the filters ·{" "}
+              {bp.gutter}px gutter · {bp.margin}px margin
             </span>
           </p>
         </div>
@@ -296,17 +330,33 @@ function ResizableGridDemo() {
               "--layout-margin": `${bp.margin}px`,
               "--layout-gutter": `${bp.gutter}px`,
               "--layout-columns": bp.columns,
+              "--layout-card-min": `${bp.cardMin}px`,
             } as React.CSSProperties
           }
         >
           <PageContainer className="bg-background">
-            <ProductGrid>
-              {cards.map((card) => (
-                <li key={card.id}>
-                  <ProductCard data={card} signedIn />
-                </li>
-              ))}
-            </ProductGrid>
+            <div
+              className={
+                withSidebar ? "grid gap-6 grid-cols-[var(--layout-sidebar)_minmax(0,1fr)]" : undefined
+              }
+            >
+              {withSidebar ? (
+                <div className="space-y-3" aria-label="Filter sidebar (placeholder)">
+                  <Skeleton className="h-6 w-2/3 animate-none" />
+                  <Skeleton className="h-40 w-full animate-none" />
+                  <Skeleton className="h-40 w-full animate-none" />
+                </div>
+              ) : null}
+              <div className="min-w-0">
+                <ProductGrid>
+                  {cards.map((card) => (
+                    <li key={card.id}>
+                      <ProductCard data={card} signedIn />
+                    </li>
+                  ))}
+                </ProductGrid>
+              </div>
+            </div>
           </PageContainer>
         </div>
       </div>
@@ -321,8 +371,11 @@ function ResizableGridDemo() {
         ) : (
           <>
             Below {LAYOUT_MAX_WIDTH}px the container is fluid: the columns grow with the
-            viewport and the count steps at the breakpoints above. Drag to 2560px to see
-            the cap.
+            viewport and the count steps at the breakpoints above. From {LAYOUT_SIDEBAR_FROM}px the{" "}
+            {LAYOUT_SIDEBAR}px filter sidebar sits beside the results, and no card gets narrower
+            than {LAYOUT_CARD_MIN}px — when the max column count won&apos;t fit at that width
+            the grid shows one fewer instead of overflowing (e.g. 4 at 1440px, 5 from 1456px).
+            Drag to 2560px to see the cap.
           </>
         )}
       </p>
@@ -446,7 +499,19 @@ export default function GridReference() {
                 name: "--layout-columns",
                 type: "2 → 6",
                 description:
-                  "Search / PLP product columns. 2 / 3 / 4 / 5 / 6, then holds at 6.",
+                  "MAXIMUM search / PLP product columns per band. 2 / 3 / 4 / 5 / 6, then holds at 6. The grid shows fewer when that many cards can't each be --layout-card-min wide.",
+              },
+              {
+                name: "--layout-card-min",
+                type: "0 → 200px",
+                description:
+                  "Narrowest legible product card. 0 below lg (phones/tablets get exactly the column count); 200px from lg up, the width where the qty stepper and Add stay on one line. ProductGrid auto-fills tracks of max(card-min, 1/N of the row), so it drops a column rather than overflow.",
+              },
+              {
+                name: "--layout-sidebar",
+                type: "256px",
+                description:
+                  "PLP filter sidebar width beside the results (lg and up). The results column is minmax(0, 1fr), so wide content inside it can never push the grid past the viewport.",
               },
             ]}
           />

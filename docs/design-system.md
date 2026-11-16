@@ -476,7 +476,7 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 
 | Pattern | Class / component | Where |
 |---|---|---|
-| **Search / PLP product grid (canonical)** | `<ProductGrid>` = `grid grid-cols-[repeat(var(--layout-columns),minmax(0,1fr))] gap-[var(--layout-gutter)]` → 2 / 3 / 4 / 5 / 6 across, holds at 6 above 1920px | `app/search/_lib/search-body.tsx` (`/search`, `/search?category=…`, `/search/plp-v2`) |
+| **Search / PLP product grid (canonical)** | `<ProductGrid>` = auto-fill tracks of `max(var(--layout-card-min), 1/N of the row)` with `gap-[var(--layout-gutter)]` → at most 2 / 3 / 4 / 5 / 6 across, holds at 6 above 1920px; from lg up no card is narrower than `--layout-card-min` (200px), so beside the 256px `--layout-sidebar` a PLP shows 3 at 1024, 4 at 1280–1455, 5 from 1456, 6 from 1728 (results column is `minmax(0,1fr)` + `min-w-0`, never overflows) | `app/search/_lib/search-body.tsx` (`/search`, `/search?category=…`, `/search/plp-v2`) |
 | Category grids (showcase) | `grid grid-cols-1 gap-4 lg:grid-cols-2` | `app/components/_showcase.tsx` `Category` |
 | Product/FBT grids | `grid grid-cols-2 lg:grid-cols-4 gap-4` | `app/pdp/_lib/fbt.tsx` (FBT "Frequently Bought Together" — 4-across on desktop, 2 on mobile) |
 | PLP results grid (+ end card) | `grid gap-4 sm:grid-cols-2 lg:grid-cols-4 min-[1730px]:grid-cols-5` | `app/search/_lib/search-body.tsx` — products are `<li>` cells; `MoreOptionsCard` is one more cell after the last product on the last page, so it follows the same column rules and row height |

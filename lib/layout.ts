@@ -21,6 +21,15 @@
 /** Content canvas, px. Mirrors `--layout-max-width`. */
 export const LAYOUT_MAX_WIDTH = 1920;
 
+/** PLP filter sidebar, px (lg and up). Mirrors `--layout-sidebar`. */
+export const LAYOUT_SIDEBAR = 256;
+/** Gap between the filter sidebar and the results column, px (`gap-6`). */
+export const LAYOUT_SIDEBAR_GAP = 24;
+/** Sidebar sits beside the results from this width up (Tailwind `lg`). */
+export const LAYOUT_SIDEBAR_FROM = 1024;
+/** Narrowest legible product card from lg up, px. Mirrors `--layout-card-min`. */
+export const LAYOUT_CARD_MIN = 200;
+
 export type LayoutBreakpointKey =
   | "base"
   | "sm"
@@ -40,8 +49,11 @@ export type LayoutBreakpoint = {
   min: number;
   /** Inclusive upper bound, px. `null` = no upper bound. */
   max: number | null;
-  /** Product-grid columns on /search and every PLP. */
+  /** MAXIMUM product-grid columns on /search and every PLP. The grid shows
+   *  fewer when that many cards can't each be `cardMin` wide. */
   columns: number;
+  /** Narrowest card the grid allows in this band, px. Mirrors `--layout-card-min`. */
+  cardMin: number;
   /** Gap between grid cells, px. Mirrors `--layout-gutter`. */
   gutter: number;
   /** Page side margin (container inline padding), px. Mirrors `--layout-margin`. */
@@ -68,6 +80,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     min: 0,
     max: 639,
     columns: 2,
+    cardMin: 0,
     gutter: 16,
     margin: 16,
     container: "Fluid",
@@ -79,6 +92,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     min: 640,
     max: 767,
     columns: 3,
+    cardMin: 0,
     gutter: 16,
     margin: 16,
     container: "Fluid",
@@ -90,6 +104,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     min: 768,
     max: 1023,
     columns: 3,
+    cardMin: 0,
     gutter: 24,
     margin: 24,
     container: "Fluid",
@@ -101,6 +116,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     min: 1024,
     max: 1279,
     columns: 4,
+    cardMin: LAYOUT_CARD_MIN,
     gutter: 24,
     margin: 32,
     container: "Fluid",
@@ -112,6 +128,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     min: 1280,
     max: 1439,
     columns: 4,
+    cardMin: LAYOUT_CARD_MIN,
     gutter: 24,
     margin: 32,
     container: "Fluid",
@@ -123,6 +140,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     min: 1440,
     max: 1727,
     columns: 5,
+    cardMin: LAYOUT_CARD_MIN,
     gutter: 24,
     margin: 40,
     container: "Fluid",
@@ -134,6 +152,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     min: 1728,
     max: 1919,
     columns: 6,
+    cardMin: LAYOUT_CARD_MIN,
     gutter: 24,
     margin: 48,
     container: "Fluid",
@@ -145,6 +164,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     min: LAYOUT_MAX_WIDTH,
     max: null,
     columns: 6,
+    cardMin: LAYOUT_CARD_MIN,
     gutter: 24,
     margin: 48,
     container: "Capped at 1920px, centered",
@@ -163,6 +183,29 @@ export function layoutBreakpointAt(width: number): LayoutBreakpoint {
 /** Product-grid columns at a given viewport width. */
 export function productGridColumnsAt(width: number): number {
   return layoutBreakpointAt(width).columns;
+}
+
+/**
+ * Columns the auto-fill grid actually renders in a content column `content`
+ * px wide — mirrors the CSS track max(card-min, 1/N share) in
+ * `components/ui/product-grid.tsx`.
+ */
+export function fitColumns(content: number, bp: LayoutBreakpoint): number {
+  if (bp.cardMin <= 0) return bp.columns;
+  const fit = Math.floor((content + bp.gutter) / (bp.cardMin + bp.gutter));
+  return Math.max(1, Math.min(bp.columns, fit));
+}
+
+/** Width of the PLP results column (viewport − margins − filter sidebar). */
+export function plpResultsWidthAt(width: number): number {
+  const bp = layoutBreakpointAt(width);
+  const content = contentWidthAt(width) - 2 * bp.margin;
+  return width >= LAYOUT_SIDEBAR_FROM ? content - LAYOUT_SIDEBAR - LAYOUT_SIDEBAR_GAP : content;
+}
+
+/** Columns a search / PLP page (with its filter sidebar) shows at a viewport width. */
+export function plpColumnsAt(width: number): number {
+  return fitColumns(plpResultsWidthAt(width), layoutBreakpointAt(width));
 }
 
 /** Content width at a given viewport width — fluid, then capped at the canvas. */

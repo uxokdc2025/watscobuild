@@ -306,6 +306,15 @@
   --layout-margin: 1rem;  /* page side margin  — 16px base */
   --layout-gutter: 1rem;  /* grid gutter       — 16px base */
   --layout-columns: 2;    /* search / PLP product columns */
+  /* Narrowest legible product card. The grid never squeezes a card below
+     this: when the content column (viewport − margins − filter sidebar) can't
+     hold --layout-columns cards at this width, it drops a column instead of
+     overflowing. 0 below lg, where cards are designed 2–3 up on a phone /
+     tablet; 200px from lg up — the width at which the card's qty stepper and
+     Add button still sit on one line. */
+  --layout-card-min: 0px;
+  /* PLP filter sidebar width (the left rail next to the grid, lg and up). */
+  --layout-sidebar: 16rem; /* 256px */
 
   /* ══════════ RADIUS — semantic aliases (self-contained vs --radius) ══════════ */
   --radius-btn:      var(--radius);
@@ -364,7 +373,8 @@
 
 /* ══════════ LAYOUT — per-breakpoint steps ══════════
    Mirrors --breakpoint-* above and the LAYOUT_BREAKPOINTS table in
-   lib/layout.ts. Columns step 2 → 3 → 4 → 5 → 6 and stop; margins widen as
+   lib/layout.ts. Columns step 2 → 3 → 4 → 5 → 6 and stop (a MAXIMUM — the
+   grid drops a column rather than shrink a card under --layout-card-min); margins widen as
    the canvas does, so the content never sits hard against the viewport edge
    on a large screen. Documented at /components/grid. */
 @media (min-width: 40rem) {  /* sm    640px */
@@ -374,7 +384,7 @@
   :root { --layout-margin: 1.5rem; --layout-gutter: 1.5rem; }
 }
 @media (min-width: 64rem) {  /* lg   1024px */
-  :root { --layout-margin: 2rem; --layout-columns: 4; }
+  :root { --layout-margin: 2rem; --layout-columns: 4; --layout-card-min: 12.5rem; }
 }
 @media (min-width: 90rem) {  /* wide 1440px */
   :root { --layout-margin: 2.5rem; --layout-columns: 5; }
