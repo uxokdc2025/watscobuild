@@ -17,6 +17,7 @@ type SearchParams = {
   signedin?: string;
   /** "top" adds the pinned horizontal filter bar above the grid. */
   filters?: string;
+  view?: string;
 };
 
 export async function generateMetadata({
@@ -46,6 +47,7 @@ export default async function SearchPage({
     page_size: pageSizeParam,
     signedin,
     filters,
+    view,
   } = await searchParams;
 
   const brand = getBrand(brandKey);
@@ -85,6 +87,8 @@ export default async function SearchPage({
           <SearchBody
             query={q}
             category={categoryLabel}
+            categorySlug={category}
+            initialView={view === "list" ? "list" : "grid"}
             results={results}
             totalResults={totalResults}
             pageSize={pageSize}

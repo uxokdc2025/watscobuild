@@ -31,6 +31,8 @@ const NAV: NavGroup[] = [
       { label: "Badge", href: "/components/badge" },
       { label: "Product Card", href: "/components/product-card" },
       { label: "PLP Patterns", href: "/components/plp" },
+      { label: "Family Table", href: "/components/family-table" },
+      { label: "List Views", href: "/components/list-views" },
       { label: "Save + AHRI", href: "/components/save-ahri" },
       { label: "Forms", href: "/components/forms" },
       { label: "Feedback", href: "/components/feedback" },

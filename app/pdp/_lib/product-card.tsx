@@ -52,7 +52,7 @@
  */
 
 import * as React from "react";
-import { ImageOff, Info, ListPlus, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ImageOff, Info, ListPlus, ShoppingCart } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -61,7 +61,7 @@ import {
   ProEssentialsBadge,
   SubstituteBadge,
 } from "@/components/ui/label-badges";
-import { cn } from "@/lib/utils";
+import { QtyStepper } from "@/components/ui/qty-stepper";
 import { formatUSD, formatUom, type PdpBadge } from "./types";
 import { useCart } from "@/components/cart/cart-context";
 
@@ -145,8 +145,6 @@ function CardImage({ src, alt }: { src?: string; alt: string }) {
 function QtyPlusAdd({ data }: { data: ProductCardData }) {
   const [qty, setQty] = React.useState(1);
   const { addItem } = useCart();
-  const cell =
-    "grid h-full w-7 cursor-pointer place-items-center text-foreground transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
   return (
     // Wraps instead of shrinking: in a narrow grid cell (2-up at 375px, or
     // 4-up next to the PLP filter sidebar at 1024px) the stepper + Add row
@@ -154,35 +152,8 @@ function QtyPlusAdd({ data }: { data: ProductCardData }) {
     // Without the wrap the button's label overflows the card. Nothing
     // changes at a normal cell width.
     <div className="flex flex-wrap items-center gap-2">
-      <div
-        className="inline-flex h-[34px] shrink-0 items-center rounded-md border"
-        role="group"
-        aria-label="Quantity"
-      >
-        <button
-          type="button"
-          onClick={() => setQty((q) => Math.max(1, q - 1))}
-          disabled={qty <= 1}
-          aria-label="Decrease quantity"
-          className={cn(cell, "rounded-l-md")}
-        >
-          <Minus className="size-4" />
-        </button>
-        <span
-          aria-live="polite"
-          className="grid h-full w-7 place-items-center border-x text-sm font-medium tabular-nums"
-        >
-          {qty}
-        </span>
-        <button
-          type="button"
-          onClick={() => setQty((q) => Math.min(99, q + 1))}
-          aria-label="Increase quantity"
-          className={cn(cell, "rounded-r-md")}
-        >
-          <Plus className="size-4" />
-        </button>
-      </div>
+      {/* Shared DS control — same stepper the family table's expanded row uses. */}
+      <QtyStepper value={qty} onChange={setQty} className="shrink-0" />
       <Button
         type="button"
         size="sm"
