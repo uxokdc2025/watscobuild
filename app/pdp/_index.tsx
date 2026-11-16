@@ -218,6 +218,32 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
+        title: "Grid & Breakpoints — supported breakpoints, page container, 1920 cap",
+        desc: "From Ryan in the Nov 10 meeting: our supported breakpoints and max widths are now written down in the design system and wired into the code, so pages stop stretching on wide screens.",
+        bullets: [
+          "New Foundations page “Grid & Breakpoints”: the breakpoints table, the page container with its side margins, a toggleable column overlay, a live product-grid demo and the CMS max-items-per-row rules.",
+          "Search / PLP product grid: 2 columns under 640, 3 from 640, 4 from 1024, 5 from 1440, 6 from 1728 — capped at 1920px and centered beyond that.",
+          "Breakpoints and the container are shared tokens (PageContainer, ProductGrid), so the same rules apply everywhere the grid is used.",
+        ],
+        links: [
+          { label: "DS — Grid & Breakpoints", href: "/components/grid" },
+          { label: "PLP — Residential (capped grid)", href: "/search?brand=homans&category=residential&signedin=1" },
+        ],
+      },
+      {
+        title: "Search results — “Want to see more options?” end card",
+        desc: "A blue call-to-action tile at the end of the results grid that sends shoppers to products stocked at other locations (designed by Nita, based on ecmdi.com).",
+        bullets: [
+          "Sits as the last tile in the Grid view, filled in the primary blue with white text so it stands out.",
+          "Shows the real counts for wider scopes (Nearby Branches, All Branches); picking one switches the availability scope.",
+          "Added to the design system as the Product Card End card.",
+        ],
+        links: [
+          { label: "PLP — Residential (end of grid)", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "DS — Product Card End card", href: "/components/product-card#end-card" },
+        ],
+      },
+      {
         title: "Search results — pinned horizontal filter bar (version)",
         desc: "A row of facet dropdowns across the top of the results, the way retail is moving, as a version you can flip against today’s page. The left rail stays exactly where it is.",
         bullets: [
@@ -231,6 +257,31 @@ const CHANGE_LOGS: ChangeLog[] = [
           { label: "PLP — Top bar (Residential)", href: "/search?brand=homans&category=residential&signedin=1&filters=top" },
           { label: "PLP — Sidebar (today)", href: "/search?brand=homans&category=residential&signedin=1" },
           { label: "DS — Pinned Filter Bar", href: "/components/plp#pinned-bar" },
+        ],
+      },
+      {
+        title: "Search results — List view redesigned like Grainger (family tables)",
+        desc: "The List view no longer reads like a spreadsheet: results are rolled up by product family, the way Grainger does it. The Grid view is unchanged.",
+        bullets: [
+          "Each family gets a compact table, sub-grouped by a key attribute (e.g. tonnage), with columns set per category.",
+          "Clicking a row expands it in place to show the product detail: image, name, item / MFG numbers, View Product Details, web price, availability, qty and Add to Cart.",
+          "Switch with the Grid / List toggle, or open it directly with view=list. Added to the design system as the Family Table.",
+        ],
+        links: [
+          { label: "PLP — List view (Residential)", href: "/search?brand=homans&category=residential&signedin=1&view=list" },
+          { label: "DS — Family Table", href: "/components/family-table" },
+        ],
+      },
+      {
+        title: "Search / PLP — category thumbnails are square tiles",
+        desc: "Ryan’s note: the category thumbnails along the top of the results are now square tiles on the small corner-radius token instead of circles.",
+        bullets: [
+          "One shared CategoryThumbnails component, so the square treatment is the same everywhere the strip appears.",
+          "Image tiles keep a white background; placeholder tiles keep the tinted background and category icon.",
+        ],
+        links: [
+          { label: "PLP — Residential (thumbnails)", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "DS — Category thumbnails", href: "/components/plp#category-thumbnails" },
         ],
       },
     ],
