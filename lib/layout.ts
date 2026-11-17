@@ -16,6 +16,12 @@
  *
  * Rule: content stretches fluidly to 1920px, then stops and centers. No page
  * stretches past the canvas — that was the Nov 10 search-results finding.
+ *
+ * Column rule (Nov 17, item 8): the product grid is capped at FIVE columns and
+ * never shows six, at any width. It reaches 5 at 1440 — with the PLP filter
+ * sidebar beside it — and holds there to 2560 and beyond; past 1440 the extra
+ * width goes into wider cards, not another column. 24 products plus the
+ * "Want more options?" end card therefore land as a 5 × 5 grid.
  */
 
 /** Content canvas, px. Mirrors `--layout-max-width`. */
@@ -27,8 +33,15 @@ export const LAYOUT_SIDEBAR = 256;
 export const LAYOUT_SIDEBAR_GAP = 24;
 /** Sidebar sits beside the results from this width up (Tailwind `lg`). */
 export const LAYOUT_SIDEBAR_FROM = 1024;
-/** Narrowest legible product card from lg up, px. Mirrors `--layout-card-min`. */
-export const LAYOUT_CARD_MIN = 200;
+/**
+ * Narrowest legible product card from lg up, px. Mirrors `--layout-card-min`.
+ *
+ * 196 = the card's own minimum: qty stepper (86) + gap (8) + Add button (72)
+ * + the card's 15px padding either side (30). Below it the Add button wraps to
+ * its own line. It is also the value that keeps the 5-column cap at 1440 with
+ * the filter sidebar, where each card is 196.8px wide.
+ */
+export const LAYOUT_CARD_MIN = 196;
 
 export type LayoutBreakpointKey =
   | "base"
@@ -49,8 +62,9 @@ export type LayoutBreakpoint = {
   min: number;
   /** Inclusive upper bound, px. `null` = no upper bound. */
   max: number | null;
-  /** MAXIMUM product-grid columns on /search and every PLP. The grid shows
-   *  fewer when that many cards can't each be `cardMin` wide. */
+  /** MAXIMUM product-grid columns on /search and every PLP. Capped at 5 —
+   *  never 6. The grid shows fewer when that many cards can't each be
+   *  `cardMin` wide. */
   columns: number;
   /** Narrowest card the grid allows in this band, px. Mirrors `--layout-card-min`. */
   cardMin: number;
@@ -68,9 +82,13 @@ export type LayoutBreakpoint = {
  *
  * `sm`, `md`, `lg` and `xl` are Tailwind's own breakpoints. `wide`, `xwide`
  * and `canvas` are ours, added in `globals.css` because the product grid has
- * to step at 1440 / 1728 / 1920 and Tailwind's scale has nothing between
- * 1280 and 1536. Tailwind's `2xl` (1536px) is still available but triggers no
+ * to reach its 5-column cap at 1440, the page margin steps at 1728 and the
+ * canvas caps at 1920 — widths Tailwind's scale has nothing for between 1280
+ * and 1536. Tailwind's `2xl` (1536px) is still available but triggers no
  * layout change — it sits inside the `wide` band, so never use it for width.
+ *
+ * Columns max out at 5 in the `wide` band and stay 5 through `xwide` and
+ * `canvas`: those two bands only widen the page margin.
  */
 export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
   {
@@ -151,7 +169,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     label: "Extra wide",
     min: 1728,
     max: 1919,
-    columns: 6,
+    columns: 5,
     cardMin: LAYOUT_CARD_MIN,
     gutter: 24,
     margin: 48,
@@ -163,7 +181,7 @@ export const LAYOUT_BREAKPOINTS: LayoutBreakpoint[] = [
     label: "Canvas (cap)",
     min: LAYOUT_MAX_WIDTH,
     max: null,
-    columns: 6,
+    columns: 5,
     cardMin: LAYOUT_CARD_MIN,
     gutter: 24,
     margin: 48,
@@ -273,8 +291,8 @@ export const CMS_LAYOUT_RULES: CmsLayoutRule[] = [
   {
     blocks: "Product slider · Cross Selling",
     category: "Commerce",
-    maxPerRow: 6,
-    steps: "Exactly what the PLP allows — 6 / 5 / 4 / 3 / 2 per the table above.",
+    maxPerRow: 5,
+    steps: "Exactly what the PLP allows — 5 / 4 / 3 / 2 per the table above. Never 6.",
   },
   {
     blocks: "Three columns, product boxes",

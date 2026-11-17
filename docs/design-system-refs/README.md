@@ -50,18 +50,20 @@ preview-first rule.
 
 | File | URL | Viewport |
 |---|---|---|
-| `plp__search-grid__1280.png` | `/search?q=blower+motor&signedin=1` | 1280 × 900 |
+| `plp__search-grid__1024.png` | `/search?brand=homans&category=residential&signedin=1` | 1024 × 900 |
+| `plp__search-grid__1280.png` | same | 1280 × 900 |
 | `plp__search-grid__1440.png` | same | 1440 × 900 |
-| `plp__search-grid__1728.png` | same | 1728 × 1000 |
 | `plp__search-grid__1920.png` | same | 1920 × 1080 |
 | `plp__search-grid__2560.png` | same | 2560 × 1200 |
 | `foundations__grid-breakpoints__1280.png` | `/components/grid` | 1280 × 900 |
 | `foundations__grid-breakpoints__1920.png` | `/components/grid` | 1920 × 1080 |
 
-Expected, and what each shot is evidence of: 4 / 5 / 6 / 6 / 6 product columns at
-1280 / 1440 / 1728 / 1920 / 2560, and at 2560 the content capped at 1920px and centered
-with equal empty margins. Full-page, `networkidle`. Use `deviceScaleFactor: 1` for the
-1728+ shots — at ×2 a full-page 2560 shot is several MB.
+Expected, and what each shot is evidence of (Nov 17, item 8 — five columns is the cap):
+3 / 4 / 5 / 5 / 5 product columns beside the filter sidebar at 1024 / 1280 / 1440 / 1920 /
+2560 — never 6 — with 24 products + the end card reading as a 5 × 5 from 1440 up, and at
+2560 the content capped at 1920px and centered with equal empty margins. No horizontal
+scroll at any width from 1024 to 2560. Full-page, `networkidle`. Use
+`deviceScaleFactor: 1` for the 1920+ shots — at ×2 a full-page 2560 shot is several MB.
 
-- [ ] `plp__search-grid__{1280,1440,1728,1920,2560}.png`
+- [ ] `plp__search-grid__{1024,1280,1440,1920,2560}.png`
 - [ ] `foundations__grid-breakpoints__{1280,1920}.png`
