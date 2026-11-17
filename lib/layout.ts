@@ -36,8 +36,9 @@ export const LAYOUT_SIDEBAR_FROM = 1024;
 /**
  * Narrowest legible product card from lg up, px. Mirrors `--layout-card-min`.
  *
- * 196 = the card's own minimum: qty stepper (86) + gap (8) + Add button (72)
- * + the card's 15px padding either side (30). Below it the Add button wraps to
+ * 196 = the card's own minimum: qty stepper (86) + gap (6, `gap-1.5`) + Add
+ * button (72 min) + the card's 15px padding and 1px border on each side
+ * (32). Below it the Add button wraps to
  * its own line. It is also the value that keeps the 5-column cap at 1440 with
  * the filter sidebar, where each card is 196.8px wide.
  */

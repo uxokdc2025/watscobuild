@@ -517,7 +517,7 @@ export default function GridReference() {
                 name: "--layout-card-min",
                 type: "0 → 196px",
                 description:
-                  "Narrowest legible product card. 0 below lg (phones/tablets get exactly the column count); 196px from lg up — qty stepper (86) + gap (8) + Add (72) + the card's 15px padding either side, i.e. the width where the stepper and Add stay on one line. ProductGrid auto-fills tracks of max(card-min, 1/N of the row), so it drops a column rather than overflow.",
+                  "Narrowest legible product card. 0 below lg (phones/tablets get exactly the column count); 196px from lg up — qty stepper (86) + gap (6) + Add (72 min) + the card's 15px padding and 1px border on each side (32) = 196, i.e. the narrowest card where the stepper and Add stay on one line (at 1440 beside the filters each card is 196.8px, so they do). ProductGrid auto-fills tracks of max(card-min, 1/N of the row), so it drops a column rather than overflow.",
               },
               {
                 name: "--layout-sidebar",

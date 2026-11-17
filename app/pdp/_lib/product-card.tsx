@@ -151,7 +151,11 @@ function QtyPlusAdd({ data }: { data: ProductCardData }) {
     // can't fit on one line, so Add drops to a second line at full width.
     // Without the wrap the button's label overflows the card. Nothing
     // changes at a normal cell width.
-    <div className="flex flex-wrap items-center gap-2">
+    // gap-1.5 (6px), not gap-2: with the card's 1px border + 15px padding a
+    // side, 86 (stepper) + 6 + 72 (Add min) + 32 = 196 = --layout-card-min,
+    // so at 1440 beside the filter sidebar (five 196.8px cards) the row
+    // still fits on one line.
+    <div className="flex flex-wrap items-center gap-1.5">
       {/* Shared DS control — same stepper the family table's expanded row uses. */}
       <QtyStepper value={qty} onChange={setQty} className="shrink-0" />
       <Button
