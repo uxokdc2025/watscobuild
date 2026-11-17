@@ -22,7 +22,7 @@ export default async function QuickOrderPage({
   return (
     <>
       <SiteHeader brand={brand} signedIn />
-      <QuickOrderClient brand={params.brand} />
+      <QuickOrderClient />
       <SiteFooter brand={brand} />
     </>
   );

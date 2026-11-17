@@ -336,32 +336,6 @@ function MatchesDrawer({
   );
 }
 
-/* ── V1 / V2 switch — DS buttons, so the two versions are one click apart ── */
-function VersionSwitch({ version, brand }: { version: QuickOrderVersion; brand?: string }) {
-  const params = new URLSearchParams({ signedin: "1" });
-  if (brand) params.set("brand", brand);
-  const query = params.toString();
-  const options: { value: QuickOrderVersion; label: string; href: string }[] = [
-    { value: 1, label: "V1 · Inline List", href: `/quickorder?${query}` },
-    { value: 2, label: "V2 · Drawer", href: `/quickorder/v2?${query}` },
-  ];
-  return (
-    <div className="flex items-center gap-2" role="group" aria-label="Quick Order version">
-      {options.map((o) => (
-        <Button
-          key={o.value}
-          asChild
-          size="sm"
-          variant={o.value === version ? "default" : "secondary"}
-          aria-current={o.value === version ? "page" : undefined}
-        >
-          <Link href={o.href}>{o.label}</Link>
-        </Button>
-      ))}
-    </div>
-  );
-}
-
 /* ── One ready product row — our list-detail product-table layout ──────── */
 function ReadyRowItem({ row, onQty, onRemove }: { row: ReadyRow; onQty: (n: number) => void; onRemove: () => void }) {
   const title = (
@@ -450,12 +424,9 @@ function ActionBar({ ready, review }: { ready: number; review: number }) {
 
 export function QuickOrderClient({
   version = 1,
-  brand,
 }: {
   /** 1 = inline match list (locked), 2 = right-side Select Product drawer. */
   version?: QuickOrderVersion;
-  /** Current brand param, so the V1/V2 switch keeps the chrome you're in. */
-  brand?: string;
 }) {
   const [tab, setTab] = React.useState("multiple");
   const [paste, setPaste] = React.useState("");
@@ -486,10 +457,7 @@ export function QuickOrderClient({
 
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-2xl font-bold tracking-tight">Quick Order</h1>
-          <div className="flex flex-wrap items-center gap-4">
-            <VersionSwitch version={version} brand={brand} />
-            <button type="button" className="text-sm font-medium text-primary hover:underline">How it works</button>
-          </div>
+          <button type="button" className="text-sm font-medium text-primary hover:underline">How it works</button>
         </div>
 
         <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
