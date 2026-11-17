@@ -13,7 +13,13 @@ const PAYNE = img("payne_ph5sa_en_normal");
 /* Real Residential products grabbed from homans.com's Residential category
    (Armstrong Air + Bryant air conditioners, R-454B). Titles / item # / MFR and
    images are the actual catalog values; price, points and stock are
-   representative. */
+   representative.
+
+   Count matters: 24 products is one full page (the default page_size) and,
+   with the "Want more options?" end card as the 25th tile, it fills the wide
+   product grid as a 5 × 5 — the Nov 17 grid rule. Keep it at 24. The first 16
+   entries are the original capture and are referenced by fixed slices in
+   /category/[slug] and the CMS examples page, so new rows go on the END. */
 const RESIDENTIAL: SearchResult[] = [
   { id: "ARA-A7AC13F36P", brand: "Armstrong Air®", mfg: "25H99", title: "Armstrong Air® - A7AC13F - 3-Ton - 13 SEER2 - OMNI Air Conditioner - Single Stage - R-454B", item: "ARA-A7AC13F36P", image: ARMSTRONG, price: 2419.0, points: 2419, stockStatus: "in-stock", allBranchesQty: 42 },
   { id: "134SAN03000N", brand: "Bryant®", mfg: "134SAN03000N", title: "Bryant® - Legacy™ - 2.5-Ton - 14 SEER - Single Stage Air Conditioner - 208/1 - R-454B", item: "134SAN03000N", image: BRYANT_134, price: 2187.5, points: 2187, stockStatus: "in-stock", allBranchesQty: 31 },
@@ -31,6 +37,14 @@ const RESIDENTIAL: SearchResult[] = [
   { id: "135SAN03600W", brand: "Bryant®", mfg: "135SAN03600W", title: "Bryant® - Legacy™ - 3.0-Ton - 15 SEER - Single Stage Air Conditioner - 208/1 - R-454B", item: "135SAN03600W", image: BRYANT_135, price: 2615.0, points: 2615, stockStatus: "in-stock", allBranchesQty: 14 },
   { id: "134SAN04200N", brand: "Bryant®", mfg: "134SAN04200N", title: "Bryant® - Legacy™ - 3.5-Ton - 14 SEER - Single Stage Air Conditioner - 208/1 - R-454B", item: "134SAN04200N", image: BRYANT_134, price: 2560.0, points: 2560, stockStatus: "in-stock", allBranchesQty: 11 },
   { id: "ARA-A7AC13F48P", brand: "Armstrong Air®", mfg: "25J02", title: "Armstrong Air® - A7AC13F - 4-Ton - 13 SEER2 - OMNI Air Conditioner - Single Stage - R-454B", item: "ARA-A7AC13F48P", image: ARMSTRONG, price: 2690.0, points: 2690, stockStatus: "in-stock", allBranchesQty: 16 },
+  { id: "135SAN02400W", brand: "Bryant®", mfg: "135SAN02400W", title: "Bryant® - Legacy™ - 2.0-Ton - 15 SEER - Single Stage Air Conditioner - 208/1 - R-454B", item: "135SAN02400W", image: BRYANT_135, price: 2364.0, points: 2364, stockStatus: "in-stock", allBranchesQty: 17 },
+  { id: "135SAN04200W", brand: "Bryant®", mfg: "135SAN04200W", title: "Bryant® - Legacy™ - 3.5-Ton - 15 SEER - Single Stage Air Conditioner - 208/1 - R-454B", item: "135SAN04200W", image: BRYANT_135, price: 2742.0, points: 2742, stockStatus: "in-stock", allBranchesQty: 10 },
+  { id: "135SAN04800W", brand: "Bryant®", mfg: "135SAN04800W", title: "Bryant® - Legacy™ - 4.0-Ton - 15 SEER - Single Stage Air Conditioner - 208/1 - R-454B", item: "135SAN04800W", image: BRYANT_135, price: 2896.0, points: 2896, stockStatus: "low-stock", allBranchesQty: 5 },
+  { id: "148TAN02400W", brand: "Bryant®", mfg: "148TAN02400W", title: "Bryant® - Preferred™ - 148TAN - 2-Ton - 18 SEER2 - Air Conditioner - 2 Stage w/ InteliSense Technology - R-454B", item: "148TAN02400W", image: BRYANT_148, price: 3284.0, points: 3284, stockStatus: "in-stock", allBranchesQty: 8 },
+  { id: "148TAN04800W", brand: "Bryant®", mfg: "148TAN04800W", title: "Bryant® - Preferred™ - 148TAN - 4-Ton - 18 SEER2 - Air Conditioner - 2 Stage w/ InteliSense Technology - R-454B", item: "148TAN04800W", image: BRYANT_148, price: 3972.0, points: 3972, stockStatus: "out-of-stock", allBranchesQty: 3 },
+  { id: "ARA-A7AC14F30P", brand: "Armstrong Air®", mfg: "25Z23", title: "Armstrong Air® - A7AC14F - 2.5-Ton - 14 SEER2 - OMNI Air Conditioner - Single Stage - R-454B", item: "ARA-A7AC14F30P", image: ARMSTRONG, price: 2468.0, points: 2468, stockStatus: "in-stock", allBranchesQty: 22 },
+  { id: "ARA-A7AC14F48P", brand: "Armstrong Air®", mfg: "25Z27", title: "Armstrong Air® - A7AC14F - 4-Ton - 14 SEER2 - OMNI Air Conditioner - Single Stage - R-454B", item: "ARA-A7AC14F48P", image: ARMSTRONG, price: 2854.0, points: 2854, stockStatus: "in-stock", allBranchesQty: 13 },
+  { id: "PA4SAN54800N", brand: "Bryant®", mfg: "PA4SAN54800N", title: "Bryant® - 4-Ton - 14 SEER2 - Single Stage Air Conditioner - R-454B", item: "PA4SAN54800N", image: PAYNE, price: 2716.0, points: 2716, stockStatus: "low-stock", allBranchesQty: 6 },
 ];
 
 /** Real product sets per category slug (extend as more categories are built). */
@@ -41,6 +55,9 @@ export const CATEGORY_RESULTS: Record<string, SearchResult[]> = {
 /**
  * "Stocked At" product counts per scope, per category — one source of truth for
  * the facet rail and the results-grid end card ("Want more options?").
+ *
+ * The branch scope is RESIDENTIAL.length (24), which is also one full page, so
+ * the grid is a single page and the end card renders as its 25th tile.
  *
  * The branch scope is the product set this page renders; the wider scopes are
  * representative catalog counts in the same family as the rest of the

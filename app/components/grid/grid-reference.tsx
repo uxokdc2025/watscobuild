@@ -60,7 +60,7 @@ const TOC = [
 ];
 
 /** The widths the PR screenshots are taken at, plus the two extremes. */
-const PRESETS = [375, 768, 1024, 1280, 1440, 1456, 1600, 1728, 1920, 2560];
+const PRESETS = [375, 768, 1024, 1280, 1440, 1600, 1728, 1920, 2560];
 
 /* Real search rows + the real captured Homans product photos, so the
    resizable demo renders the same cards /search renders. */
@@ -105,7 +105,7 @@ function useViewportWidth(): number | null {
 /* ─────────────────────────── Breakpoint table ─────────────────────────── */
 
 /** What a search / PLP page (results column beside the filter sidebar)
- *  actually renders across one band, e.g. "4 → 5 from 1456px". */
+ *  actually renders across one band, e.g. "3 → 4 from 1200px". */
 function plpColumnsLabel(bp: (typeof LAYOUT_BREAKPOINTS)[number]): string {
   const top = Math.min(bp.max ?? 2560, 2560);
   const atMin = plpColumnsAt(bp.min);
@@ -371,11 +371,12 @@ function ResizableGridDemo() {
         ) : (
           <>
             Below {LAYOUT_MAX_WIDTH}px the container is fluid: the columns grow with the
-            viewport and the count steps at the breakpoints above. From {LAYOUT_SIDEBAR_FROM}px the{" "}
+            viewport and the count steps at the breakpoints above, up to the 5-column cap.
+            From {LAYOUT_SIDEBAR_FROM}px the{" "}
             {LAYOUT_SIDEBAR}px filter sidebar sits beside the results, and no card gets narrower
             than {LAYOUT_CARD_MIN}px — when the max column count won&apos;t fit at that width
-            the grid shows one fewer instead of overflowing (e.g. 4 at 1440px, 5 from 1456px).
-            Drag to 2560px to see the cap.
+            the grid shows one fewer instead of overflowing (e.g. 4 at 1280px, 5 from 1440px).
+            Drag to 2560px to see the cap — the count stays 5, the cards just get wider.
           </>
         )}
       </p>
@@ -444,6 +445,17 @@ export default function GridReference() {
         <section className="space-y-3">
           <H2 id="rule">The rule</H2>
           <div className="rounded-xl border-l-4 border-l-primary bg-primary/5 p-4 text-sm">
+            <p className="font-medium">Five columns maximum — never six.</p>
+            <p className="mt-1 text-muted-foreground">
+              The product grid reaches{" "}
+              <span className="font-medium text-foreground">5 columns at 1440px</span> — with
+              the {LAYOUT_SIDEBAR}px filter sidebar beside it — and holds at 5 all the way to
+              2560px. Past 1440 the extra width goes into wider cards, not another column, so
+              24 products plus the &ldquo;Want more options?&rdquo; end card read as a 5 × 5
+              grid. Below 1440 it steps down 4 / 3 / 2 as the cards run out of room.
+            </p>
+          </div>
+          <div className="rounded-xl border-l-4 border-l-primary bg-primary/5 p-4 text-sm">
             <p className="font-medium">Fluid to {LAYOUT_MAX_WIDTH}px, then centered.</p>
             <p className="mt-1 text-muted-foreground">
               Content grows with the viewport up to{" "}
@@ -468,8 +480,8 @@ export default function GridReference() {
             <code className="rounded bg-muted px-1 py-0.5 text-xs">wide</code>,{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">xwide</code> and{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">canvas</code> are ours,
-            because the product grid steps at 1440 and 1728 and the canvas caps at 1920 —
-            widths Tailwind&apos;s scale doesn&apos;t cover. Tailwind&apos;s{" "}
+            because the product grid hits its 5-column cap at 1440, the page margin steps at
+            1728 and the canvas caps at 1920 — widths Tailwind&apos;s scale doesn&apos;t cover. Tailwind&apos;s{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">2xl</code> (1536px) still
             exists but must never drive width: it sits inside the{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">wide</code> band.
@@ -497,15 +509,15 @@ export default function GridReference() {
               },
               {
                 name: "--layout-columns",
-                type: "2 → 6",
+                type: "2 → 5",
                 description:
-                  "MAXIMUM search / PLP product columns per band. 2 / 3 / 4 / 5 / 6, then holds at 6. The grid shows fewer when that many cards can't each be --layout-card-min wide.",
+                  "MAXIMUM search / PLP product columns per band. 2 / 3 / 4 / 5, then holds at 5 — six columns are never allowed, at any width. The grid shows fewer when that many cards can't each be --layout-card-min wide.",
               },
               {
                 name: "--layout-card-min",
-                type: "0 → 200px",
+                type: "0 → 196px",
                 description:
-                  "Narrowest legible product card. 0 below lg (phones/tablets get exactly the column count); 200px from lg up, the width where the qty stepper and Add stay on one line. ProductGrid auto-fills tracks of max(card-min, 1/N of the row), so it drops a column rather than overflow.",
+                  "Narrowest legible product card. 0 below lg (phones/tablets get exactly the column count); 196px from lg up — qty stepper (86) + gap (8) + Add (72) + the card's 15px padding either side, i.e. the width where the stepper and Add stay on one line. ProductGrid auto-fills tracks of max(card-min, 1/N of the row), so it drops a column rather than overflow.",
               },
               {
                 name: "--layout-sidebar",
@@ -584,7 +596,9 @@ export default function GridReference() {
             </Link>{" "}
             and every PLP. Drag the slider to change the simulated viewport — these are the
             real cards, the real container and the real grid, with only the layout tokens
-            overridden.
+            overridden. It tops out at five columns: from 1440px up, every width from 1440 to
+            2560 shows the same five, so a full page of 24 products plus the end card is a
+            5 × 5.
           </p>
           <ResizableGridDemo />
           <PreviewCode
@@ -671,8 +685,12 @@ import { ProductGrid } from "@/components/ui/product-grid"
                 inside it.
               </>,
               <>
-                Check a new page at 1280, 1440, 1728, 1920 and 2560px — the five widths this
-                system is reviewed at.
+                Check a new page at 1024, 1280, 1440, 1920 and 2560px — and confirm nothing
+                scrolls sideways at any width in between.
+              </>,
+              <>
+                Let a wide screen make the cards bigger, not the row longer. Five columns is
+                the cap at every width from 1440 to 2560.
               </>,
             ]}
             donts={[
@@ -695,6 +713,13 @@ import { ProductGrid } from "@/components/ui/product-grid"
                 width — it sits inside the{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">wide</code> band and
                 reads as a 1440px rule that isn&apos;t one.
+              </>,
+              <>
+                Run a sixth product column at any width — not with{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">--layout-columns</code>,
+                not with a{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">columns</code> override,
+                and not with a CMS product slider. Five is the cap.
               </>,
               <>Let a CMS row run more items across than its block&apos;s cap.</>,
             ]}

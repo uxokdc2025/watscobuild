@@ -254,6 +254,22 @@ const CHANGE_LOGS: ChangeLog[] = [
           { label: "DS — Product Card End card", href: "/components/product-card#end-card" },
         ],
       },
+      {
+        title: "Product grid — five columns maximum, never six (item 8)",
+        desc: "The grid now stops at five columns at every width. It reaches five at 1440 with the left filters showing, and stays five all the way to 2560 — past 1440 the extra width makes the cards bigger instead of adding a sixth column. This replaces the Nov 10 / Nov 16 grid, which stepped up to six from 1728.",
+        bullets: [
+          "Residential now carries a full page of 24 products, so with the “Want more options?” end card as the 25th tile the wide grid reads as a 5 × 5.",
+          "Below 1440 it steps down as before: 4 beside the filters from 1280, 3 at 1024, 3 on tablets, 2 on phones — the count only drops when a card would get too narrow to keep its qty stepper and Add button on one line.",
+          "The change is in the layout tokens, not on the page: --layout-columns stops at 5 and --layout-card-min is 196px (the card’s real minimum), so every page using the shared product grid follows — search, category PLPs and the CMS product slider.",
+          "The Foundations “Grid & breakpoints” page is updated to match: the rule callout, the breakpoints table, the “PLP with filters” column, the token table and the live resizable demo all read 5 as the cap.",
+          "Checked for sideways scroll at 1024, 1280, 1440, 1920 and 2560 — including 1440 with the filter sidebar, which is the tightest fit (five 196.8px cards in a 1080px column).",
+        ],
+        links: [
+          { label: "DS — Grid & Breakpoints (max 5 columns)", href: "/components/grid" },
+          { label: "PLP — Residential, 24 products + end card", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "PLP — Residential (Nov 17 chrome)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
+        ],
+      },
     ],
   },
   {

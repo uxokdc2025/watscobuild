@@ -7,10 +7,11 @@ import { cn } from "@/lib/utils"
  *
  * Columns and gutter are tokens, not classes: `--layout-columns` and
  * `--layout-gutter` step per breakpoint in `app/globals.css`, so the grid is
- * at most 2 / 3 / 4 / 5 / 6 across (base / sm / lg / wide / xwide) and at most
- * 6 above the 1920px canvas, where `PageContainer` caps and centers the page.
- * From lg up a card never gets narrower than `--layout-card-min` (200px): the
- * grid shows one column fewer instead of overflowing its column.
+ * at most 2 / 3 / 4 / 5 across (base / sm / lg / wide) and then holds at 5
+ * through `xwide` and above the 1920px canvas, where `PageContainer` caps and
+ * centers the page. FIVE IS THE CAP — the grid never shows six columns at any
+ * width. From lg up a card never gets narrower than `--layout-card-min`
+ * (196px): the grid shows one column fewer instead of overflowing its column.
  *
  * Pair it with `PageContainer` — the grid fills its column, the container
  * owns the width:
@@ -28,12 +29,13 @@ import { cn } from "@/lib/utils"
  * Documented at /components/grid.
  */
 /*
- * Column logic: `--layout-columns` is the MAXIMUM per band, and
- * `--layout-card-min` the narrowest legible card. Each track is
- * max(card-min, an exact 1/N share of the row), auto-filled — so the grid
+ * Column logic: `--layout-columns` is the MAXIMUM per band (5 from 1440 up,
+ * never more), and `--layout-card-min` the narrowest legible card. Each track
+ * is max(card-min, an exact 1/N share of the row), auto-filled — so the grid
  * shows N columns when N cards fit at card-min or wider, and drops to N−1
- * (never overflows) when they don't, e.g. 1440px with the filter sidebar.
- * The −0.5px absorbs sub-pixel rounding so an exact fit isn't lost.
+ * (never overflows) when they don't, e.g. 4 at 1280 with the filter sidebar.
+ * The −0.5px absorbs sub-pixel rounding so an exact fit isn't lost: at 1440
+ * beside the 256px sidebar five 196.8px cards fit a 1080px column exactly.
  * Below lg card-min is 0, so phones and tablets get exactly N.
  */
 export const PRODUCT_GRID_CLASS =

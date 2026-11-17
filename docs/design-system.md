@@ -473,14 +473,14 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 
 ### 5.3 Grid patterns
 
-**Canonical component:** `ProductGrid` — `components/ui/product-grid.tsx`. Columns and gutter are tokens (`--layout-columns`, `--layout-gutter`), not per-page classes.
+**Canonical component:** `ProductGrid` — `components/ui/product-grid.tsx`. Columns and gutter are tokens (`--layout-columns`, `--layout-gutter`), not per-page classes. **The product grid is capped at five columns and never shows six, at any width** (Nov 17, item 8): it reaches 5 at 1440 beside the filter sidebar and holds there to 2560, so 24 products + the end card is a 5 × 5.
 
 | Pattern | Class / component | Where |
 |---|---|---|
-| **Search / PLP product grid (canonical)** | `<ProductGrid>` = auto-fill tracks of `max(var(--layout-card-min), 1/N of the row)` with `gap-[var(--layout-gutter)]` → at most 2 / 3 / 4 / 5 / 6 across, holds at 6 above 1920px; from lg up no card is narrower than `--layout-card-min` (200px), so beside the 256px `--layout-sidebar` a PLP shows 3 at 1024, 4 at 1280–1455, 5 from 1456, 6 from 1728 (results column is `minmax(0,1fr)` + `min-w-0`, never overflows) | `app/search/_lib/search-body.tsx` (`/search`, `/search?category=…`, `/search/plp-v2`) |
+| **Search / PLP product grid (canonical)** | `<ProductGrid>` = auto-fill tracks of `max(var(--layout-card-min), 1/N of the row)` with `gap-[var(--layout-gutter)]` → at most 2 / 3 / 4 / 5 across, then holds at 5 (never 6, including above 1920px); from lg up no card is narrower than `--layout-card-min` (196px), so beside the 256px `--layout-sidebar` a PLP shows 3 at 1024, 4 from 1200, 5 from 1440 and 5 at every width to 2560 (results column is `minmax(0,1fr)` + `min-w-0`, never overflows) | `app/search/_lib/search-body.tsx` (`/search`, `/search?category=…`, `/search/plp-v2`) |
 | Category grids (showcase) | `grid grid-cols-1 gap-4 lg:grid-cols-2` | `app/components/_showcase.tsx` `Category` |
 | Product/FBT grids | `grid grid-cols-2 lg:grid-cols-4 gap-4` | `app/pdp/_lib/fbt.tsx` (FBT "Frequently Bought Together" — 4-across on desktop, 2 on mobile) |
-| PLP results grid (+ end card) | `grid gap-4 sm:grid-cols-2 lg:grid-cols-4 min-[1730px]:grid-cols-5` | `app/search/_lib/search-body.tsx` — products are `<li>` cells; `MoreOptionsCard` is one more cell after the last product on the last page, so it follows the same column rules and row height |
+| PLP results grid (+ end card) | `<ProductGrid>` (the canonical grid above — no per-page column classes) | `app/search/_lib/search-body.tsx` — products are `<li>` cells; `MoreOptionsCard` is one more cell after the last product on the last page, so it follows the same column rules and row height. Residential carries 24 products, so the end card is the 25th tile and the wide grid is a 5 × 5 |
 | Parts | `grid grid-cols-2 lg:grid-cols-4` (mini product cards) | `app/pdp/_lib/parts.tsx` |
 | Branch availability | `grid grid-cols-1 sm:grid-cols-2 gap-3` | `app/pdp/_lib/summary.tsx` `BranchAvailability` (Your Branch | Nearby) |
 | Spec lists | `grid grid-cols-2 lg:grid-cols-4` (flat specs) vs grouped `SpecGroup` 2-column layout | `app/pdp/_lib/details.tsx` |
@@ -489,7 +489,7 @@ The showcase itself is at `app/components/page.tsx` with sections in `app/compon
 
 ### 5.4 Breakpoints
 
-Tailwind's `sm`–`2xl` are untouched (rem-based). Three named screens are added in `globals.css` `@theme` because the product grid steps at 1440 and 1728 and the canvas caps at 1920 — widths Tailwind's scale doesn't cover. The TypeScript mirror of this table is `lib/layout.ts` (`LAYOUT_BREAKPOINTS`), which `/components/grid` renders from.
+Tailwind's `sm`–`2xl` are untouched (rem-based). Three named screens are added in `globals.css` `@theme` because the product grid hits its 5-column cap at 1440, the page margin steps at 1728 and the canvas caps at 1920 — widths Tailwind's scale doesn't cover. The TypeScript mirror of this table is `lib/layout.ts` (`LAYOUT_BREAKPOINTS`), which `/components/grid` renders from.
 
 | Breakpoint | Range | Variant | PLP columns | Gutter | Margin | Container |
 |---|---|---|---|---|---|---|
@@ -499,14 +499,14 @@ Tailwind's `sm`–`2xl` are untouched (rem-based). Three named screens are added
 | `lg` | 1024–1279px | `lg:` | 4 | 24px | 32px | Fluid |
 | `xl` | 1280–1439px | `xl:` | 4 | 24px | 32px | Fluid |
 | `wide` **(new)** | 1440–1727px | `wide:` | 5 | 24px | 40px | Fluid |
-| `xwide` **(new)** | 1728–1919px | `xwide:` | 6 | 24px | 48px | Fluid |
-| `canvas` **(new)** | 1920px + | `canvas:` | 6 | 24px | 48px | **Capped at 1920px, centered** |
+| `xwide` **(new)** | 1728–1919px | `xwide:` | 5 (margin only band) | 24px | 48px | Fluid |
+| `canvas` **(new)** | 1920px + | `canvas:` | 5 | 24px | 48px | **Capped at 1920px, centered** |
 
 `2xl` (1536px) still exists but must never drive width — it sits inside the `wide` band, so a `2xl:` width rule reads as a 1440px rule that isn't one.
 
 Other behavior at these breakpoints: `sm` branch cards flip to 2-col (`sm:grid-cols-2`); `md` nav tabs switch from overflow-x scroll to full layout and header sub-bars show (`md:flex`); `lg` showcase categories go `lg:grid-cols-2` and the PLP facet sidebar appears (`lg:grid-cols-[256px_1fr]`).
 
-**Review widths:** 1280, 1440, 1728, 1920 and 2560px (the last proves the canvas cap). Horizontal scroll at 375px is prohibited (Standing Quality Bar). Touch targets are ≥44px (see Button `h-9` = 36px — icon-only buttons use `size-9` = 36px; PDP qty stepper uses `h-12` = 48px, which meets the 44px rule; `Button` `size` `icon` is 36px — add `p-2` or bump to `size="icon-lg"` when the 44px rule applies).
+**Review widths:** 1024, 1280, 1440, 1920 and 2560px (the last proves the canvas cap; 1440 proves the 5-column cap beside the filter sidebar, and no width from 1024 to 2560 may scroll sideways). Horizontal scroll at 375px is prohibited (Standing Quality Bar). Touch targets are ≥44px (see Button `h-9` = 36px — icon-only buttons use `size-9` = 36px; PDP qty stepper uses `h-12` = 48px, which meets the 44px rule; `Button` `size` `icon` is 36px — add `p-2` or bump to `size="icon-lg"` when the 44px rule applies).
 
 ### 5.5 CMS layout rules (max items per row)
 
@@ -519,7 +519,7 @@ A CMS editor can drop any number of items into a Shopware block row. Past these 
 | Image grid (bento) · Three columns, boxed / rounded · Three columns, image/text cards | 3 | 3 from `lg`, 2 at `sm`–`md`, 1 below `sm` |
 | Four columns, boxed | 4 | 4 from `lg`, 2 at `sm`–`md`, 1 below `sm` |
 | Two / Three columns, text · Teaser text | 3 | 3 from `lg`, 1 below. Body copy ≤ 75 characters per line |
-| Product slider · Cross Selling | 6 | Exactly what the PLP allows (§5.4) |
+| Product slider · Cross Selling | 5 | Exactly what the PLP allows (§5.4) — never 6 |
 | Three columns, product boxes | 3 | 3 from `lg`, 2 below |
 | YouTube / Vimeo video · Form · HTML | 1 | 1 at every width |
 

@@ -107,13 +107,13 @@
         `sm` 640 / `md` 768 / `lg` 1024 / `xl` 1280 / `2xl` 1536 are
         Tailwind's own and are left untouched (rem-based, so they still
         respond to the browser font size). The three below are ours: the
-        search / PLP product grid has to step at 1440 and 1728, and the page
-        canvas caps at 1920 — Tailwind's scale has nothing between 1280 and
-        1536. `2xl` stays usable but must never drive width: it sits inside
-        the `wide` band. Keep in sync with lib/layout.ts and the layout
-        media queries below. Documented at /components/grid. ── */
-  --breakpoint-wide: 90rem; /* 1440px — product grid goes 5 across */
-  --breakpoint-xwide: 108rem; /* 1728px — product grid goes 6 across */
+        search / PLP product grid has to step at 1440, the page margin steps
+        at 1728, and the canvas caps at 1920 — Tailwind's scale has nothing
+        between 1280 and 1536. `2xl` stays usable but must never drive width:
+        it sits inside the `wide` band. Keep in sync with lib/layout.ts and
+        the layout media queries below. Documented at /components/grid. ── */
+  --breakpoint-wide: 90rem; /* 1440px — product grid goes 5 across (its cap) */
+  --breakpoint-xwide: 108rem; /* 1728px — page margin widens; grid holds at 5 */
   --breakpoint-canvas: 120rem; /* 1920px — content stops and centers */
 }
 
@@ -305,13 +305,16 @@
   --layout-max-width: 1920px;
   --layout-margin: 1rem;  /* page side margin  — 16px base */
   --layout-gutter: 1rem;  /* grid gutter       — 16px base */
-  --layout-columns: 2;    /* search / PLP product columns */
+  --layout-columns: 2;    /* search / PLP product columns — MAX 5, never 6 */
   /* Narrowest legible product card. The grid never squeezes a card below
      this: when the content column (viewport − margins − filter sidebar) can't
      hold --layout-columns cards at this width, it drops a column instead of
      overflowing. 0 below lg, where cards are designed 2–3 up on a phone /
-     tablet; 200px from lg up — the width at which the card's qty stepper and
-     Add button still sit on one line. */
+     tablet; 196px from lg up — the width at which the card's qty stepper
+     (86px) and Add button (72px min) still sit on one line inside the card's
+     15px padding: 86 + 8 gap + 72 + 30 = 196. That value is also what lets
+     the 5-column cap hold at 1440 beside the 256px filter sidebar, where a
+     card lands at 196.8px. */
   --layout-card-min: 0px;
   /* PLP filter sidebar width (the left rail next to the grid, lg and up). */
   --layout-sidebar: 16rem; /* 256px */
@@ -373,10 +376,12 @@
 
 /* ══════════ LAYOUT — per-breakpoint steps ══════════
    Mirrors --breakpoint-* above and the LAYOUT_BREAKPOINTS table in
-   lib/layout.ts. Columns step 2 → 3 → 4 → 5 → 6 and stop (a MAXIMUM — the
-   grid drops a column rather than shrink a card under --layout-card-min); margins widen as
-   the canvas does, so the content never sits hard against the viewport edge
-   on a large screen. Documented at /components/grid. */
+   lib/layout.ts. Columns step 2 → 3 → 4 → 5 and STOP AT 5 — never 6, at any
+   width (a MAXIMUM: the grid drops a column rather than shrink a card under
+   --layout-card-min). Above 1440 only the margin changes, so the extra width
+   goes into wider cards instead of a sixth column. Margins widen as the
+   canvas does, so the content never sits hard against the viewport edge on a
+   large screen. Documented at /components/grid. */
 @media (min-width: 40rem) {  /* sm    640px */
   :root { --layout-columns: 3; }
 }
@@ -384,13 +389,14 @@
   :root { --layout-margin: 1.5rem; --layout-gutter: 1.5rem; }
 }
 @media (min-width: 64rem) {  /* lg   1024px */
-  :root { --layout-margin: 2rem; --layout-columns: 4; --layout-card-min: 12.5rem; }
+  :root { --layout-margin: 2rem; --layout-columns: 4; --layout-card-min: 12.25rem; }
 }
-@media (min-width: 90rem) {  /* wide 1440px */
+@media (min-width: 90rem) {  /* wide 1440px — the 5-column cap. The last band
+                                where the column count changes at all. */
   :root { --layout-margin: 2.5rem; --layout-columns: 5; }
 }
-@media (min-width: 108rem) { /* xwide 1728px */
-  :root { --layout-margin: 3rem; --layout-columns: 6; }
+@media (min-width: 108rem) { /* xwide 1728px — margin only; columns hold at 5. */
+  :root { --layout-margin: 3rem; }
 }
 
 .dark {
