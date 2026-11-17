@@ -5,6 +5,7 @@ import { ChevronRight, ExternalLink, ImageOff, Minus, Plus, Replace, ShoppingCar
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ProductListRow } from "@/components/ui/product-list-row";
 import { InventoryLine } from "@/app/ahri/_lib/parts";
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
@@ -20,7 +21,8 @@ function H2({ id, children }: { id: string; children: React.ReactNode }) {
 type RowItem = {
   brand: string;
   title: string;
-  meta: string;
+  item: string;
+  mfg: string;
   branchQty: number;
   branch: string;
   allBranches: number;
@@ -30,7 +32,8 @@ const SAMPLE_ROWS: RowItem[] = [
   {
     brand: "TRADEPRO®",
     title: "TP-EC13-50 — Blower Motor, X-13 ECM, Variable Speed, 1075 RPM, 115/208-230V, 1/2 HP",
-    meta: "Item: 54510A · MFG: TP-EC13-50",
+    item: "54510A",
+    mfg: "TP-EC13-50",
     branchQty: 18,
     branch: "Durham NC #1",
     allBranches: 168,
@@ -39,7 +42,8 @@ const SAMPLE_ROWS: RowItem[] = [
   {
     brand: "TRADEPRO®",
     title: "TP-CAP-370-455 — Run Capacitor, 45/5 MFD, 370V, Round Dual",
-    meta: "Item: 11822 · MFG: TP-CAP-370-455",
+    item: "11822",
+    mfg: "TP-CAP-370-455",
     branchQty: 240,
     branch: "Durham NC #1",
     allBranches: 1240,
@@ -48,7 +52,8 @@ const SAMPLE_ROWS: RowItem[] = [
   {
     brand: "TRADEPRO®",
     title: "TP-CONT-2P30 — Contactor, 2-Pole, 30 Amp, 24V Coil",
-    meta: "Item: 90313 · MFG: TP-CONT-2P30",
+    item: "90313",
+    mfg: "TP-CONT-2P30",
     branchQty: 6,
     branch: "Durham NC #1",
     allBranches: 54,
@@ -57,7 +62,8 @@ const SAMPLE_ROWS: RowItem[] = [
   {
     brand: "TRADEPRO®",
     title: "TP-TXV-R410-3 — Thermostatic Expansion Valve, R-410A, 3 Ton, Bi-Flow",
-    meta: "Item: 66145 · MFG: TP-TXV-R410-3",
+    item: "66145",
+    mfg: "TP-TXV-R410-3",
     branchQty: 0,
     branch: "Durham NC #1",
     allBranches: 12,
@@ -65,64 +71,36 @@ const SAMPLE_ROWS: RowItem[] = [
   },
 ];
 
-/* The one canonical storefront list row: [image] [capped description]
-   [availability, its own centered column] [price + action]. Full width on
-   mobile it stacks; at sm+ it's the 4-zone grid. Availability uses the DS
-   InventoryLine — never hand-rolled stock text. */
+/* The one canonical storefront list row — the shared DS component
+   `ProductListRow`: [image] [capped description] [availability, its own
+   centered column] [price + action]. Thumbnail beside the description on
+   mobile, the 4-zone grid at sm+. Availability uses the DS InventoryLine —
+   never hand-rolled stock text. There is no Compare control on the row: it
+   isn't part of the card, and the search List view doesn't add one. */
 function Row({ item }: { item: RowItem }) {
-  const availability = (
-    <InventoryLine branchQty={item.branchQty} branchName={item.branch} allBranchesQty={item.allBranches} />
-  );
-  const price = (
-    <p className="text-base font-semibold text-price">
-      {item.price}
-      <span className="ml-1 text-xs font-normal text-muted-foreground">/ EACH</span>
-    </p>
-  );
-  const details = (
-    <div className="min-w-0">
-      <p className="truncate text-xs font-medium text-primary">{item.brand}</p>
-      <p className="line-clamp-3 text-sm font-semibold leading-snug">{item.title}</p>
-      <p className="mt-1 truncate text-xs text-muted-foreground">{item.meta}</p>
-    </div>
-  );
   return (
-    <article className="p-4">
-      {/* Desktop — [image] [capped description] [availability, centered] [price + action] */}
-      <div className="hidden grid-cols-[96px_minmax(0,340px)_minmax(0,1fr)_auto] items-center gap-5 sm:grid">
-        <div className="grid aspect-square place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-          <ImageOff className="size-6 opacity-40" aria-hidden />
-        </div>
-        {details}
-        <div className="flex justify-center">{availability}</div>
-        <div className="justify-self-end text-right">
-          {price}
-          <Button size="sm" className="mt-2">
-            <ShoppingCart className="size-4" />
-            Add
-          </Button>
-        </div>
-      </div>
-      {/* Mobile — image + details stacked, availability beneath, action full width */}
-      <div className="flex flex-col gap-3 sm:hidden">
-        <div className="flex items-start gap-3">
-          <div className="grid size-20 shrink-0 place-items-center rounded-md bg-muted/40 p-1 text-muted-foreground">
-            <ImageOff className="size-6 opacity-40" aria-hidden />
-          </div>
-          <div className="min-w-0 flex-1">
-            {details}
-            <div className="mt-1.5">{availability}</div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          {price}
+    <ProductListRow
+      imageAlt={item.title}
+      brand={item.brand}
+      title={item.title}
+      item={item.item}
+      mfg={item.mfg}
+      availability={
+        <InventoryLine branchQty={item.branchQty} branchName={item.branch} allBranchesQty={item.allBranches} />
+      }
+      actions={
+        <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
+          <p className="text-base font-semibold text-price">
+            {item.price}
+            <span className="ml-1 text-xs font-normal text-muted-foreground">/ EACH</span>
+          </p>
           <Button size="sm">
             <ShoppingCart className="size-4" />
             Add
           </Button>
         </div>
-      </div>
-    </article>
+      }
+    />
   );
 }
 
@@ -332,8 +310,8 @@ const USAGES: { name: string; grid: string; desc: string; href: string; example:
   {
     name: "Search / PLP — List view",
     grid: "[96px · minmax(0,340px) · minmax(0,1fr) · auto]",
-    desc: "Full-width rows with availability as its own centered middle column; capped description.",
-    href: "/search?q=blower%20motor&signedin=1",
+    desc: "The ProductListRow component: full-width rows with availability as its own centered middle column, a capped description, and price + Add. No Compare, no attribute table.",
+    href: "/search?brand=homans&category=residential&signedin=1&view=list",
     example: <Row item={SAMPLE_ROWS[0]} />,
   },
   {
@@ -374,6 +352,9 @@ export default function ListViewsReference() {
             Four zones: <strong>image</strong>, a <strong>capped description</strong> (so the
             title wraps instead of sprawling), <strong>availability as its own centered column</strong>,
             and <strong>price + action</strong>. Build new lists from this — never a one-off.
+            The search/PLP List view is the shared{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code>{" "}
+            component itself; there is no Compare control on the row.
           </p>
         </header>
 

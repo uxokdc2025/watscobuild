@@ -224,6 +224,21 @@ const CHANGE_LOGS: ChangeLog[] = [
           { label: "DS — Top filter bar (no box)", href: "/components/plp#pinned-bar" },
         ],
       },
+      {
+        title: "Search — List view is the design system’s list-view product card",
+        desc: "The List view (view=list) now renders one design-system list-view product card per product and nothing else. The Grainger-style family tables, the per-family header sections, the attribute/comparison tables and the Compare checkbox are gone. Grid view is unchanged. The Nov 10 family-table version is still viewable without “&rev=nov17” (or with “&rev=nov10”).",
+        bullets: [
+          "Each row is the shared ProductListRow component from the Components tab: product image, capped description (brand, name, Item / MFG), availability as its own centered column, then web price and Add.",
+          "The Compare checkbox is removed — the design-system list card has none, and comparison stays on the product page.",
+          "No expanding rows and no spec tables in the results: clicking the product name opens its page.",
+          "The Nov 10 family-table version is still viewable without rev=nov17 (or with rev=nov10) on the same link, so the Nov 10 review links show the Nov 10 state.",
+        ],
+        links: [
+          { label: "PLP — Residential, List view (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list" },
+          { label: "DS — List Views", href: "/components/list-views" },
+          { label: "DS — PLP list row", href: "/components/plp#list-row" },
+        ],
+      },
     ],
   },
   {
@@ -295,7 +310,7 @@ const CHANGE_LOGS: ChangeLog[] = [
           "Switch with the Grid / List toggle, or open it directly with view=list. Added to the design system as the Family Table.",
         ],
         links: [
-          { label: "PLP — List view (Residential)", href: "/search?brand=homans&category=residential&signedin=1&view=list" },
+          { label: "PLP — List view, Nov 10 state (Residential)", href: "/search?brand=homans&category=residential&signedin=1&view=list&rev=nov10" },
           { label: "DS — Family Table", href: "/components/family-table" },
         ],
       },
