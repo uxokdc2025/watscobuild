@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Callout, CalloutDescription, CalloutTitle } from "@/components/ui/callout";
 import { Label } from "@/components/ui/label";
 import { PageContainer } from "@/components/ui/page-container";
 import { ProductGrid } from "@/components/ui/product-grid";
@@ -444,20 +445,20 @@ export default function GridReference() {
 
         <section className="space-y-3">
           <H2 id="rule">The rule</H2>
-          <div className="rounded-xl border-l-4 border-l-primary bg-primary/5 p-4 text-sm">
-            <p className="font-medium">Five columns maximum — never six.</p>
-            <p className="mt-1 text-muted-foreground">
+          <Callout>
+            <CalloutTitle>Five columns maximum — never six.</CalloutTitle>
+            <CalloutDescription>
               The product grid reaches{" "}
               <span className="font-medium text-foreground">5 columns at 1440px</span> — with
               the {LAYOUT_SIDEBAR}px filter sidebar beside it — and holds at 5 all the way to
               2560px. Past 1440 the extra width goes into wider cards, not another column, so
               24 products plus the &ldquo;Want more options?&rdquo; end card read as a 5 × 5
               grid. Below 1440 it steps down 4 / 3 / 2 as the cards run out of room.
-            </p>
-          </div>
-          <div className="rounded-xl border-l-4 border-l-primary bg-primary/5 p-4 text-sm">
-            <p className="font-medium">Fluid to {LAYOUT_MAX_WIDTH}px, then centered.</p>
-            <p className="mt-1 text-muted-foreground">
+            </CalloutDescription>
+          </Callout>
+          <Callout>
+            <CalloutTitle>Fluid to {LAYOUT_MAX_WIDTH}px, then centered.</CalloutTitle>
+            <CalloutDescription>
               Content grows with the viewport up to{" "}
               <span className="font-medium text-foreground">{LAYOUT_MAX_WIDTH}px</span>, then
               it stops and the page centers inside the extra space. Width lives in tokens —{" "}
@@ -467,8 +468,8 @@ export default function GridReference() {
               <code className="rounded bg-muted px-1 py-0.5 text-xs">--layout-columns</code>{" "}
               — so a page never sets its own max-width, and a one-line token change moves
               every page at once.
-            </p>
-          </div>
+            </CalloutDescription>
+          </Callout>
         </section>
 
         <section className="space-y-4">
@@ -647,14 +648,14 @@ import { ProductGrid } from "@/components/ui/product-grid"
             page.
           </p>
           <CmsRulesTable />
-          <div className="rounded-xl border-l-4 border-l-primary bg-primary/5 p-4 text-sm">
-            <p className="font-medium">Two caps, not one.</p>
-            <p className="mt-1 text-muted-foreground">
+          <Callout>
+            <CalloutTitle>Two caps, not one.</CalloutTitle>
+            <CalloutDescription>
               A CMS row is capped by its block (above) <em>and</em> by the page container.
               Even a full-bleed background keeps its content inside the{" "}
               {LAYOUT_MAX_WIDTH}px canvas — background bleeds, content doesn&apos;t.
-            </p>
-          </div>
+            </CalloutDescription>
+          </Callout>
           <Button asChild variant="outline" size="sm">
             <Link href="/components/cms-blocks/examples">
               Open the CMS block examples

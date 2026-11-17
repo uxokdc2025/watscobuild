@@ -22,7 +22,7 @@ const COMPONENTS = [
   { label: "PLP Patterns", href: "/components/plp", desc: "Category thumbnails, search rows, filters, grid/list toggle." },
   { label: "Save + AHRI", href: "/components/save-ahri", desc: "Save, share, AHRI matched-system actions." },
   { label: "Forms", href: "/components/forms", desc: "Inputs, selects, checkboxes, quantity." },
-  { label: "Feedback", href: "/components/feedback", desc: "Alerts, toasts, skeletons, empty states." },
+  { label: "Feedback", href: "/components/feedback", desc: "Alerts, callouts, toasts, skeletons, empty states." },
   { label: "Overlays", href: "/components/overlays", desc: "Dialog, sheet, drawer, popover." },
 ];
 
