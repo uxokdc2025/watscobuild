@@ -25,7 +25,7 @@ export default async function QuickOrderV2Page({
   return (
     <>
       <SiteHeader brand={brand} signedIn />
-      <QuickOrderClient version={2} brand={params.brand} />
+      <QuickOrderClient version={2} />
       <SiteFooter brand={brand} />
     </>
   );

@@ -206,7 +206,7 @@ const CHANGE_LOGS: ChangeLog[] = [
     items: [
       {
         title: "Quick Order V2 — Select Product opens a right-side drawer",
-        desc: "A second version of Quick Order where picking the right match happens in a drawer instead of the inline list. V1 is untouched — both versions sit behind a V1 / V2 switch next to the page title.",
+        desc: "A second version of Quick Order where picking the right match happens in a drawer instead of the inline list. V1 is untouched. Each version has its own link below (V1 at /quickorder, V2 at /quickorder/v2).",
         bullets: [
           "V2 reuses the shopping-list Replacements panel verbatim: the same right-side DrawerPanel, the DS close X, a “You’re replacing” card for the unmatched line, and the matches as ProductListRow entries with availability, price (or “Call for availability”) and a primary Select.",
           "Selecting a product fills that line, closes the drawer, moves the item into the ready table and updates the “N of M items ready” count.",
