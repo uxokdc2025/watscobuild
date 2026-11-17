@@ -5,7 +5,10 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
 import { ProductCard, type ProductCardData } from "@/app/pdp/_lib/product-card";
-import { MoreOptionsCard } from "@/components/ui/more-options-card";
+import {
+  MoreOptionsCard,
+  type MoreOptionsCardVariant,
+} from "@/components/ui/more-options-card";
 import { Button } from "@/components/ui/button";
 import { PreviewCode, PropsTable, Guidance } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
@@ -50,7 +53,7 @@ const END_CARD_SCOPES = [
 /** Live end-card demo — each link switches the "Stocked At" scope exactly as it
  *  does on the PLP. Selecting the widest scope leaves nothing wider to offer,
  *  which is precisely when the real grid drops the card. */
-function EndCardDemo() {
+function EndCardDemo({ variant = "solid" }: { variant?: MoreOptionsCardVariant }) {
   const [scope, setScope] = React.useState<string>("your-branch");
   const current = END_CARD_SCOPES.find((s) => s.value === scope) ?? END_CARD_SCOPES[0];
   const wider = END_CARD_SCOPES.filter((s) => s.count > current.count);
@@ -59,6 +62,7 @@ function EndCardDemo() {
       <div className="flex-1">
         {wider.length ? (
           <MoreOptionsCard
+            variant={variant}
             branchName={current.label}
             shownCount={current.count}
             scopes={wider.map((s) => ({
@@ -222,16 +226,32 @@ export default function ProductCardReference() {
           <H2 id="end-card">End card — &ldquo;Want more options?&rdquo;</H2>
           <p className="text-sm text-muted-foreground">
             The grid&rsquo;s end card: one extra tile after the final product on the last page, in a
-            normal grid cell (same column rules, same width, same row height) but filled with the
-            primary blue — the one accent colour — so widening the search reads as an action, not as
-            another product. Everything is centered: a <code className="rounded bg-muted px-1 py-0.5 text-xs">MapPin</code>{" "}
-            icon in a soft translucent circle, the headline, the &ldquo;<span className="font-medium text-foreground">N</span>{" "}
-            in stock at {"{branch}"}&rdquo; subline, then one stacked white sub-tile per wider scope —
-            fully clickable, with a large bold count in the primary colour, a small label and a
-            trailing arrow. Every count comes from the page&rsquo;s{" "}
+            normal grid cell (same column rules, same width, same row height), offering the wider
+            stock scopes instead of another product. Everything is centered: a{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">MapPin</code> icon in a soft
+            circle, the headline, the &ldquo;<span className="font-medium text-foreground">N</span>{" "}
+            in stock at {"{branch}"}&rdquo; subline, then one stacked sub-tile per wider scope —
+            fully clickable, with a large bold count, a small label and a trailing arrow. Every
+            count comes from the page&rsquo;s{" "}
             <span className="font-medium text-foreground">Stocked At</span> facet, and each sub-tile
             switches that filter. Only scopes holding strictly more products are offered; when none
             do, the card is dropped. Click the sub-tiles below to switch scope.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Two framings, one anatomy and one behaviour.{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code>{" "}
+            is the <span className="font-medium text-foreground">Nov 17 review treatment</span> and
+            the one to reach for: a white card surface inside a{" "}
+            <span className="font-medium text-foreground">thick grey outline</span> — 3px on the{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">border-input</code> token, three
+            times the product card&rsquo;s 1px edge — with the icon chip and sub-tiles on{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">muted</code> and the counts
+            emphasised in <code className="rounded bg-muted px-1 py-0.5 text-xs">foreground</code>.
+            No blue at all: no blue fill, no blue outline, no blue count. The thick neutral frame is
+            the whole signal, so the tile sets itself apart from the products either side of it
+            without shouting over the grid it closes.{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;solid&quot;</code>{" "}
+            is the original primary-blue tile, kept for the pages reviewed before Nov 17.
           </p>
           <PreviewCode
             previewClassName="items-stretch justify-center gap-6"
@@ -241,7 +261,9 @@ export default function ProductCardReference() {
     Counts come straight from the "Stocked At" facet, so the card and the
     facet rail can never disagree. */}
 <li>
+  {/* variant="outline" — Nov 17: white surface, thick grey outline, no blue. */}
   <MoreOptionsCard
+    variant="outline"
     branchName="Manchester, NH - Homans"
     shownCount={16}
     scopes={[
@@ -249,11 +271,15 @@ export default function ProductCardReference() {
       { label: "All Branches", count: 348, onSelect: () => setStockLocation("all") },
     ]}
   />
-</li>`}
+</li>
+
+{/* The pre-Nov-17 framing — the filled primary-blue tile. */}
+<MoreOptionsCard variant="solid" branchName="Manchester, NH - Homans" shownCount={16} scopes={scopes} />`}
           >
             <div className="w-[247px]">
               <ProductCard signedIn data={BASE} />
             </div>
+            <EndCardDemo variant="outline" />
             <EndCardDemo />
           </PreviewCode>
           <PropsTable
@@ -262,6 +288,7 @@ export default function ProductCardReference() {
               { name: "branchName", type: "string", description: "The selected Stocked At scope — the branch name in the default scope." },
               { name: "shownCount", type: "number", description: "How many products the grid is showing in that scope." },
               { name: "scopes", type: "MoreOptionsScope[]", description: "Wider scopes to offer, ascending by count: { label, count, onSelect }. Pass only scopes with MORE products; empty means drop the card." },
+              { name: "variant", type: '"solid" | "outline"', description: 'Framing. "outline" (Nov 17) is a white surface in a thick 3px border-input grey outline, counts in foreground, no blue anywhere. "solid" (default) is the original primary-blue tile. Anatomy and behaviour are identical.' },
               { name: "className", type: "string?", description: "Cell-level overrides only — never a fixed height." },
             ]}
           />
@@ -283,6 +310,10 @@ export default function ProductCardReference() {
               <>Close the grid with{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;MoreOptionsCard&gt;</code>{" "}
                 and feed it the <strong>Stocked At</strong> counts the facet rail already shows.</>,
+              <>Reach for{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code>{" "}
+                on new work — the thick grey outline on white is the Nov 17 treatment, and it keeps
+                the icon, the centered layout and the emphasised counts exactly as they were.</>,
               <><strong>Unit of measure is always ALL-CAPS</strong> — render it through{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">formatUom()</code> as{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">/ EACH</code> (leading slash + space, &quot;EA&quot;/&quot;Each&quot; → &quot;EACH&quot;). Never print a lowercase &quot;each&quot;.</>,
@@ -294,6 +325,10 @@ export default function ProductCardReference() {
               <>Style status as a bare colored <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;span&gt;</code> instead of <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Badge&gt;</code>.</>,
               <>Recolour a product card to make an end card, give the end card a second accent
                 colour, or hand it counts the Stocked At facet does not show.</>,
+              <>Put blue back on the outline end card — no blue fill, no blue edge, no blue count.
+                The outline is a grey token (<code className="rounded bg-muted px-1 py-0.5 text-xs">border-input</code>),
+                and a hand-picked grey or a thin 1px edge loses the signal that separates it from a
+                product tile.</>,
             ]}
           />
         </section>
@@ -334,7 +369,8 @@ export default function ProductCardReference() {
           <div className="flex flex-wrap gap-2">
             {[
               { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
-              { label: "PLP — End card (Residential)", href: "/search?brand=homans&category=residential&signedin=1" },
+              { label: "PLP — End card, outline (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
+              { label: "PLP — End card, solid (Nov 10)", href: "/search?brand=homans&category=residential&signedin=1" },
               { label: "PDP — Replacement Products", href: "/pdp/uc-replacement-products?signedin=1" },
             ].map((l) => (
               <Link
