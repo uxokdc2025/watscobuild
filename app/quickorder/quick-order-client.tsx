@@ -139,11 +139,11 @@ function ReviewItem({
   const inline = version === 1;
   return (
     <div className="overflow-hidden rounded-md border border-border bg-background">
-      <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
+      <div className="flex min-w-0 flex-col gap-3 p-3 sm:flex-row sm:items-center">
         <Thumb className="size-12" />
         <div className="min-w-0 flex-1">
           <p className="text-xs font-medium text-primary">{row.brand}</p>
-          <p className="truncate text-sm font-semibold text-foreground">{row.title}</p>
+          <p className="truncate text-sm font-semibold text-foreground" title={row.title}>{row.title}</p>
           <p className="mt-0.5 font-mono text-xs text-muted-foreground">Item: {row.item} · MFG: {row.mfg}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -152,7 +152,7 @@ function ReviewItem({
             type="button"
             variant="outline"
             size="sm"
-            className="min-h-11 text-foreground"
+            className="min-h-11 shrink-0 text-foreground"
             aria-expanded={inline ? open : undefined}
             aria-controls={inline ? panelId : undefined}
             aria-haspopup={inline ? undefined : "dialog"}
@@ -543,7 +543,9 @@ export function QuickOrderClient({
                     <AlertTitle>
                       {review.length} item{review.length === 1 ? "" : "s"} require{review.length === 1 ? "s" : ""} your review
                     </AlertTitle>
-                    <AlertDescription>
+                    {/* min-w-0: the Alert's 1fr track would otherwise grow to the
+                        rows' longest title and push Select Product off-screen. */}
+                    <AlertDescription className="min-w-0">
                       <div className="flex w-full items-center justify-between gap-3">
                         <p className="m-0">Pick the right product for each item we couldn&apos;t match exactly.</p>
                         <button
@@ -556,7 +558,7 @@ export function QuickOrderClient({
                           <ChevronDown className={cn("size-4 transition-transform", bannerOpen && "rotate-180")} />
                         </button>
                       </div>
-                      <div className={cn("mt-3 w-full space-y-3", !bannerOpen && "hidden")}>
+                      <div className={cn("mt-3 w-full min-w-0 justify-self-stretch space-y-3", !bannerOpen && "hidden")}>
                         {review.map((r) => (
                           <ReviewItem
                             key={r.id}
