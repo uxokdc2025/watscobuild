@@ -200,6 +200,33 @@ type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[]
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
+    id: "nov-17",
+    badge: "Nov 17",
+    title: "Nov 17, 2026 — new edits since the Nov 17 meeting",
+    items: [
+      {
+        title: "Search / PLP — header row, top filter bar and active filter pills (items 2, 4, 5)",
+        desc: "The search chrome above the results is one change: a single header row, a filter bar with no box around it, and quiet white filter pills. The Nov 10 links still open the Nov 10 state — the new chrome is on the same page with “&rev=nov17”.",
+        bullets: [
+          "Item 2 — one header row above the filter bar: the title (“Residential”) with the results count beside it in a smaller font, and the Grid / List toggle at the right end of that same row. The second “Shop 348 results” line and its separate toggle are gone. The square category thumbnails stay exactly as they are.",
+          "Item 4 — the top filter bar keeps the full row of dropdowns and the left filter nav, but loses the grey inset box around it: the dropdowns now sit straight on the page. Each dropdown trigger picks up a light-blue hover and open state, taken from the design system’s existing active-nav / tab tokens.",
+          "Item 5 — active filters are no longer dark-blue pills. They are plain white pills with a thin outline and a small red × (“Brand: Factory Authorized Parts ×”), sitting under the results count. Clear All stays a text link.",
+          "Item 3 was dropped: the Grid / List toggle stays at the top, on the header row, per item 2. Item 9 is unchanged — the category thumbnails are still square.",
+          "Left nav and top bar still share one selection, so a facet checked in either place shows checked in the other and produces exactly one pill.",
+          "Added to the design system first, then used: the Results Header (title + count + view toggle), the filter bar’s container-less “plain” framing with the light-blue trigger hover, and the outlined white Filter Pill — all on the PLP Patterns page.",
+        ],
+        links: [
+          { label: "PLP — Residential (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
+          { label: "PLP — Residential, List view (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list" },
+          { label: "PLP — Search Results (Nov 17)", href: "/search?q=blower%20motor&signedin=1&rev=nov17" },
+          { label: "DS — Results Header", href: "/components/plp#results-header" },
+          { label: "DS — Active filter pills", href: "/components/plp#applied-filters" },
+          { label: "DS — Top filter bar (no box)", href: "/components/plp#pinned-bar" },
+        ],
+      },
+    ],
+  },
+  {
     id: "nov-10",
     badge: "Nov 10",
     title: "New edits since the Nov 10 meeting",
@@ -774,7 +801,7 @@ export default function PdpMasterPage() {
             Change log
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Grouped by meeting — each card is dated to a meeting and holds the new edits made since it. The latest (Nov 3) is open; earlier meetings are collapsed. Click any link to open that change.
+            Grouped by meeting — each card is dated to a meeting and holds the new edits made since it. The latest (Nov 17) is open; earlier meetings are collapsed. Click any link to open that change.
           </p>
           <Accordion
             type="multiple"

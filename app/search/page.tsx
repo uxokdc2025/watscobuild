@@ -18,6 +18,12 @@ type SearchParams = {
   /** Legacy: the top filter bar is always on now, so `filters=top` is ignored. */
   filters?: string;
   view?: string;
+  /**
+   * Which revision of the search chrome to render. Absent keeps the Nov 10
+   * state, so every link handed out at that review still shows what was
+   * reviewed; `rev=nov17` opts into the Nov 17 punch-list chrome.
+   */
+  rev?: string;
 };
 
 export async function generateMetadata({
@@ -47,6 +53,7 @@ export default async function SearchPage({
     page_size: pageSizeParam,
     signedin,
     view,
+    rev,
   } = await searchParams;
 
   const brand = getBrand(brandKey);
@@ -87,6 +94,7 @@ export default async function SearchPage({
             storeName={storeName}
             stockedAtCounts={stockedAtCounts}
             brandKey={brandKey}
+            rev={rev === "nov17" ? "nov17" : "nov10"}
           />
         </main>
         <SiteFooter brand={brand} />
