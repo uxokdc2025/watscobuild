@@ -5,6 +5,7 @@ import { AlertCircle, CheckCircle2, Terminal } from "lucide-react";
 import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Callout, CalloutDescription, CalloutTitle } from "@/components/ui/callout";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,36 @@ export function FeedbackSection() {
               Your session expired. Please log in again.
             </AlertDescription>
           </Alert>
+        </Block>
+      </Demo>
+
+      {/* ── Callout ── */}
+      <Demo
+        name="Callout"
+        slug="callout"
+        className="items-stretch"
+        description="A standing editorial note — a rule, a decision, a what-changed summary. Not a live region, so it repeats safely on a page."
+      >
+        <Block label="Default">
+          <Callout>
+            <CalloutTitle>Five columns maximum — never six.</CalloutTitle>
+            <CalloutDescription>
+              The product grid reaches 5 columns at 1440px and holds at 5 to 2560px.
+            </CalloutDescription>
+          </Callout>
+        </Block>
+        <Block label="Neutral">
+          <Callout variant="neutral">
+            <CalloutTitle>Superseded by a later review.</CalloutTitle>
+            <CalloutDescription>
+              Kept for the record; the link now shows the newer state.
+            </CalloutDescription>
+          </Callout>
+        </Block>
+        <Block label="Warning">
+          <Callout variant="warning">
+            <CalloutTitle>Price is gated to signed-in users.</CalloutTitle>
+          </Callout>
         </Block>
       </Demo>
 

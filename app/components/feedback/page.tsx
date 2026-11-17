@@ -5,7 +5,7 @@ import FeedbackReference from "./feedback-reference";
 export const metadata: Metadata = {
   title: "Feedback — Watsco DS",
   description:
-    "Alert, Skeleton, Progress, and toast: how the storefront tells a customer what just happened, with the exact code to paste.",
+    "Alert, Callout, Skeleton, Progress, and toast: how the storefront tells a customer what just happened, with the exact code to paste.",
 };
 
 // Server Component (so it can export metadata); all live rendering — including

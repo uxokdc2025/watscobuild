@@ -15,6 +15,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Callout, CalloutDescription, CalloutTitle } from "@/components/ui/callout";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { OnThisPage } from "../_ds/sidebar";
 const TOC = [
   { id: "usage", label: "Usage" },
   { id: "alert", label: "Alert" },
+  { id: "callout", label: "Callout" },
   { id: "skeleton", label: "Skeleton" },
   { id: "progress", label: "Progress" },
   { id: "toast", label: "Toast" },
@@ -66,11 +68,16 @@ export default function FeedbackReference() {
             a <code className="rounded bg-muted px-1 py-0.5 text-xs">Progress</code> bar, or a
             transient <code className="rounded bg-muted px-1 py-0.5 text-xs">toast</code>. Match the
             surface to the permanence of the message: inline for something the user must act on,
-            toast for a fleeting confirmation.
+            toast for a fleeting confirmation. A{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">Callout</code> is the quiet
+            editorial case — a standing rule or a what-changed note, not an event.
           </p>
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
               import {"{ Alert, AlertTitle, AlertDescription }"} from &quot;@/components/ui/alert&quot;
+            </code>
+            <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
+              import {"{ Callout, CalloutTitle, CalloutDescription }"} from &quot;@/components/ui/callout&quot;
             </code>
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
               import {"{ toast }"} from &quot;sonner&quot;
@@ -187,6 +194,58 @@ export default function FeedbackReference() {
               <AlertTitle>Something went wrong</AlertTitle>
               <AlertDescription>Your session expired. Please log in again.</AlertDescription>
             </Alert>
+          </PreviewCode>
+        </section>
+
+        {/* ── Callout ── */}
+        <section className="space-y-4">
+          <H2 id="callout">Callout</H2>
+          <p className="text-sm text-muted-foreground">
+            The editorial sibling of the Alert: a rail down the left edge, a lightly tinted
+            surface, a one-line title and an optional description. Use it for a standing note —
+            a layout rule, a decision, a &ldquo;what changed since the last review&rdquo; summary.
+            It is <span className="font-medium text-foreground">not</span> a live region, so
+            several can sit on one page (or inside a collapsed accordion) without a screen reader
+            announcing them. Five tones:{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">default</code>,{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">neutral</code>,{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">success</code>,{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">warning</code>, and{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">danger</code>.
+          </p>
+          <PreviewCode
+            previewClassName="flex-col items-stretch gap-3"
+            code={`<Callout>
+  <CalloutTitle>Five columns maximum — never six.</CalloutTitle>
+  <CalloutDescription>
+    The product grid reaches 5 columns at 1440px and holds at 5 to 2560px.
+  </CalloutDescription>
+</Callout>
+
+<Callout variant="neutral">
+  <CalloutTitle>Superseded by a later review.</CalloutTitle>
+  <CalloutDescription>Kept for the record; the link now shows the newer state.</CalloutDescription>
+</Callout>
+
+<Callout variant="warning">
+  <CalloutTitle>Price is gated to signed-in users.</CalloutTitle>
+</Callout>`}
+          >
+            <Callout>
+              <CalloutTitle>Five columns maximum — never six.</CalloutTitle>
+              <CalloutDescription>
+                The product grid reaches 5 columns at 1440px and holds at 5 to 2560px.
+              </CalloutDescription>
+            </Callout>
+            <Callout variant="neutral">
+              <CalloutTitle>Superseded by a later review.</CalloutTitle>
+              <CalloutDescription>
+                Kept for the record; the link now shows the newer state.
+              </CalloutDescription>
+            </Callout>
+            <Callout variant="warning">
+              <CalloutTitle>Price is gated to signed-in users.</CalloutTitle>
+            </Callout>
           </PreviewCode>
         </section>
 
@@ -365,12 +424,14 @@ toast("File deleted", {
               <>Match a skeleton to the real element&apos;s shape and size so layout doesn&apos;t jump when data arrives.</>,
               <>Fire toasts imperatively with <code className="rounded bg-muted px-1 py-0.5 text-xs">toast.success/error/…</code> so the right color and icon come for free.</>,
               <>Give every list, search, and cart a real empty state with one recovery action.</>,
+              <>Reach for a <code className="rounded bg-muted px-1 py-0.5 text-xs">Callout</code> for a standing editorial note (a rule, a what-changed summary) — it repeats safely because it isn&apos;t a live region.</>,
             ]}
             donts={[
               <>Invent an alert color — success is the <code className="rounded bg-muted px-1 py-0.5 text-xs">in-stock</code> token, danger is <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;destructive&quot;</code>.</>,
               <>Use a toast for an error the user must fix — it disappears before they can act.</>,
               <>Swap layout for a centered spinner; hold the shape with skeletons instead.</>,
               <>Render <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Toaster /&gt;</code> per page — it&apos;s mounted once, globally.</>,
+              <>Stack five <code className="rounded bg-muted px-1 py-0.5 text-xs">Alert</code>s as page copy — every one announces itself; use <code className="rounded bg-muted px-1 py-0.5 text-xs">Callout</code> instead.</>,
             ]}
           />
         </section>
@@ -391,6 +452,24 @@ toast("File deleted", {
               { name: "<Alert>", type: "role=\"alert\"", description: "Wrapper. Optional leading lucide icon auto-aligns." },
               { name: "<AlertTitle>", type: "required", description: "One-line heading; truncates to a single line." },
               { name: "<AlertDescription>", type: "optional", description: "Supporting text in muted-foreground." },
+            ]}
+          />
+          <PropsTable
+            caption="Callout — variant"
+            rows={[
+              { name: "default", type: "primary rail", description: "A rule, a decision, or a what-changed note. The house default." },
+              { name: "neutral", type: "muted rail", description: "History or context — something superseded, kept for the record." },
+              { name: "success", type: "in-stock rail", description: "A confirmed or approved outcome." },
+              { name: "warning", type: "yellow rail", description: "A standing caveat the reader has to keep in mind." },
+              { name: "danger", type: "destructive rail", description: "A known problem or a hard prohibition." },
+            ]}
+          />
+          <PropsTable
+            caption="Callout — anatomy"
+            rows={[
+              { name: "<Callout>", type: "div (no role)", description: "Wrapper. Not a live region — safe to repeat on a page." },
+              { name: "<CalloutTitle>", type: "required", description: "The note in one line; wraps rather than truncating." },
+              { name: "<CalloutDescription>", type: "optional", description: "Supporting detail in muted-foreground." },
             ]}
           />
           <PropsTable
@@ -424,6 +503,8 @@ toast("File deleted", {
               { label: "Checkout — Confirmation", href: "/checkout?demo=1" },
               { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
               { label: "PDP — Add to Cart", href: "/pdp/uc-replacement-products?signedin=1" },
+              { label: "Change log — what-changed Callouts", href: "/" },
+              { label: "Grid & Breakpoints — rule Callouts", href: "/components/grid" },
             ].map((l) => (
               <Link
                 key={l.href}

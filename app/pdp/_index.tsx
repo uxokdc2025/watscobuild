@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Callout, CalloutDescription, CalloutTitle } from "@/components/ui/callout";
 import { pdps } from "./_lib/registry";
 import type { PdpProduct } from "./_lib/types";
 import { BRANDS } from "./_lib/brands";
@@ -188,25 +189,49 @@ function TemplateCard({
 /* ── Change log — grouped by review date. Each date is its own collapsible
    folder; the newest sits open at the top, older dates collapse below. New
    work lands in a new dated folder (newest first). */
+
+/**
+ * A review link. `rev` says which state it opens, so a reviewer can tell a
+ * revised link from the one handed out at the previous meeting:
+ * - `nov17` — the revised link (a new route, or `?rev=nov17` on the same page).
+ * - `nov10` — the link handed out at the Nov 10 review, kept working so it
+ *   still shows the Nov 10 state. Use it to compare the two side by side.
+ * - omitted — a design-system reference page (not dated).
+ */
+type ChangeLink = { label: string; href: string; rev?: "nov17" | "nov10" };
+
 type ChangeItem = {
   title: string;
   /** One-line lead describing the edit. */
   desc: string;
+  /** What changed against the previous meeting's state — rendered as a callout. */
+  changed?: string;
+  /** Quieter callout: this entry has been overtaken by later work. */
+  superseded?: string;
   /** Optional explicit list of what changed — rendered as bullets. */
   bullets?: string[];
-  links: { label: string; href: string }[];
+  links: ChangeLink[];
 };
-type ChangeLog = { id: string; badge: string; title: string; items: ChangeItem[] };
+type ChangeLog = {
+  id: string;
+  badge: string;
+  title: string;
+  /** Optional lead under the section title, before the entries. */
+  note?: string;
+  items: ChangeItem[];
+};
 
 const CHANGE_LOGS: ChangeLog[] = [
   {
     id: "nov-17",
     badge: "Nov 17",
     title: "Nov 17, 2026 — new edits since the Nov 17 meeting",
+    note: "Every edit from the Nov 17 punch list, newest meeting first. Each entry opens with what changed against the Nov 10 state, and carries its own revised link — a new route or “&rev=nov17” on the same page — so every link handed out at the Nov 10 review still opens the Nov 10 state. Where both exist, the solid blue button is the Nov 17 link and the outlined one beside it opens the Nov 10 state to compare against; the plain links are design-system reference pages.",
     items: [
       {
         title: "Search / PLP — header row, top filter bar and active filter pills (items 2, 4, 5)",
         desc: "The search chrome above the results is one change: a single header row, a filter bar with no box around it, and quiet white filter pills. The Nov 10 links still open the Nov 10 state — the new chrome is on the same page with “&rev=nov17”.",
+        changed: "vs Nov 10: the two stacked header lines (title, then “Shop 348 results” with its own Grid / List toggle) are now one row — title, count and toggle together. The grey inset box around the top filter bar is gone, so the dropdowns sit straight on the page. Active filters were dark-blue pills; they are now white pills with a thin outline and a small red ×.",
         bullets: [
           "Item 2 — one header row above the filter bar: the title (“Residential”) with the results count beside it in a smaller font, and the Grid / List toggle at the right end of that same row. The second “Shop 348 results” line and its separate toggle are gone. The square category thumbnails stay exactly as they are.",
           "Item 4 — the top filter bar keeps the full row of dropdowns and the left filter nav, but loses the grey inset box around it: the dropdowns now sit straight on the page. Each dropdown trigger picks up a light-blue hover and open state, taken from the design system’s existing active-nav / tab tokens.",
@@ -216,9 +241,11 @@ const CHANGE_LOGS: ChangeLog[] = [
           "Added to the design system first, then used: the Results Header (title + count + view toggle), the filter bar’s container-less “plain” framing with the light-blue trigger hover, and the outlined white Filter Pill — all on the PLP Patterns page.",
         ],
         links: [
-          { label: "PLP — Residential (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
-          { label: "PLP — Residential, List view (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list" },
-          { label: "PLP — Search Results (Nov 17)", href: "/search?q=blower%20motor&signedin=1&rev=nov17" },
+          { label: "PLP — Residential (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
+          { label: "PLP — Residential, List view (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list", rev: "nov17" },
+          { label: "PLP — Search Results (Nov 17)", href: "/search?q=blower%20motor&signedin=1&rev=nov17", rev: "nov17" },
+          { label: "PLP — Residential (Nov 10 chrome)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
+          { label: "PLP — Search Results (Nov 10 chrome)", href: "/search?q=blower%20motor&signedin=1", rev: "nov10" },
           { label: "DS — Results Header", href: "/components/plp#results-header" },
           { label: "DS — Active filter pills", href: "/components/plp#applied-filters" },
           { label: "DS — Top filter bar (no box)", href: "/components/plp#pinned-bar" },
@@ -227,6 +254,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search — List view is the design system’s list-view product card",
         desc: "The List view (view=list) now renders one design-system list-view product card per product and nothing else. The Grainger-style family tables, the per-family header sections, the attribute/comparison tables and the Compare checkbox are gone. Grid view is unchanged. The Nov 10 family-table version is still viewable without “&rev=nov17” (or with “&rev=nov10”).",
+        changed: "vs Nov 10: the List view was the Grainger-style family rollup — per-family header sections, a spec table under each, expanding rows and a Compare checkbox. It is now one design-system list-view product card per product, and nothing else. Grid view is untouched.",
         bullets: [
           "Each row is the shared ProductListRow component from the Components tab: product image, capped description (brand, name, Item / MFG), availability as its own centered column, then web price and Add.",
           "The Compare checkbox is removed — the design-system list card has none, and comparison stays on the product page.",
@@ -234,7 +262,8 @@ const CHANGE_LOGS: ChangeLog[] = [
           "The Nov 10 family-table version is still viewable without rev=nov17 (or with rev=nov10) on the same link, so the Nov 10 review links show the Nov 10 state.",
         ],
         links: [
-          { label: "PLP — Residential, List view (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list" },
+          { label: "PLP — Residential, List view (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list", rev: "nov17" },
+          { label: "PLP — List view, Nov 10 family tables", href: "/search?brand=homans&category=residential&signedin=1&view=list&rev=nov10", rev: "nov10" },
           { label: "DS — List Views", href: "/components/list-views" },
           { label: "DS — PLP list row", href: "/components/plp#list-row" },
         ],
@@ -242,6 +271,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search / PLP — “Want more options?” end card is no longer blue (item 7)",
         desc: "The tile that closes the results grid keeps everything it did — the map-pin icon, the centered layout, the bold counts — but drops the solid blue. It is now a plain white card inside a thick grey outline, so it reads as a quiet offer instead of a billboard. The Nov 10 link still opens the blue version.",
+        changed: "vs Nov 10: the end card was filled solid primary blue with white text. It is now white inside a thick (3px) grey outline, with no blue anywhere on it. Nothing else about the card moved — same icon, same headline, same two sub-tiles, same counts.",
         bullets: [
           "No blue anywhere on it: no blue fill, no blue outline, no blue count. The white surface and a thick grey outline (3px, three times the edge on a product card) are the whole treatment.",
           "Unchanged: the map-pin icon, the “Want more options?” headline, the “16 in stock at Manchester, NH - Homans” line, and the two stacked sub-tiles (Nearby branches / All branches) with their big bold counts and arrows. Clicking one still switches the availability scope.",
@@ -249,14 +279,15 @@ const CHANGE_LOGS: ChangeLog[] = [
           "Added to the design system as a second framing of the existing end card (variant “outline”), documented side by side with the old blue one on the Product Card page.",
         ],
         links: [
-          { label: "PLP — Residential, end of grid (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
-          { label: "PLP — Residential, end of grid (Nov 10, blue)", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "PLP — Residential, end of grid (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
+          { label: "PLP — Residential, end of grid (Nov 10, blue)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
           { label: "DS — Product Card End card", href: "/components/product-card#end-card" },
         ],
       },
       {
         title: "Product grid — five columns maximum, never six (item 8)",
         desc: "The grid now stops at five columns at every width. It reaches five at 1440 with the left filters showing, and stays five all the way to 2560 — past 1440 the extra width makes the cards bigger instead of adding a sixth column. This replaces the Nov 10 / Nov 16 grid, which stepped up to six from 1728.",
+        changed: "vs Nov 10: the grid stepped up to a sixth column from 1728 and the Residential page carried a short page of products. It now holds at five columns from 1440 to 2560, and Residential carries a full 24 products so the wide grid reads as a 5 × 5 with the end card. This is the one Nov 17 edit that is NOT behind “&rev=nov17”: the column cap is a layout token every page reads, so the Nov 10 links show the five-column grid too. Everything else on those links — chrome, pills, list view, end card — is still the Nov 10 state.",
         bullets: [
           "Residential now carries a full page of 24 products, so with the “Want more options?” end card as the 25th tile the wide grid reads as a 5 × 5.",
           "Below 1440 it steps down as before: 4 beside the filters from 1280, 3 at 1024, 3 on tablets, 2 on phones — the count only drops when a card would get too narrow to keep its qty stepper and Add button on one line.",
@@ -265,9 +296,26 @@ const CHANGE_LOGS: ChangeLog[] = [
           "Checked for sideways scroll at 1024, 1280, 1440, 1920 and 2560 — including 1440 with the filter sidebar, which is the tightest fit (five 196.8px cards in a 1080px column).",
         ],
         links: [
+          { label: "PLP — Residential, 24 products + end card (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
+          { label: "PLP — Residential (Nov 10 chrome, same 5-column grid)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
           { label: "DS — Grid & Breakpoints (max 5 columns)", href: "/components/grid" },
-          { label: "PLP — Residential, 24 products + end card", href: "/search?brand=homans&category=residential&signedin=1" },
-          { label: "PLP — Residential (Nov 17 chrome)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
+        ],
+      },
+      {
+        title: "Landing page (/) — Nov 17 section at the top, Nov 10 and older collapsed (item 1)",
+        desc: "This page. The change log now leads with a “Nov 17, 2026” section holding every edit from this punch list; Nov 10 and every older meeting are collapsed below it. Each Nov 17 entry opens with what changed against the Nov 10 state and carries its own revised link, so nothing handed out at the Nov 10 review has moved.",
+        changed: "vs Nov 10: the Nov 10 section used to sit at the top and open on load. The newest meeting now leads, and only the newest meeting is open — Nov 10, Nov 3, Oct 28, Oct 20, Oct 9, Oct 2 and the earlier baseline all start collapsed. Entries also gained a what-changed callout and a Nov 17 / Nov 10 split on their links, which the Nov 10 section never had.",
+        bullets: [
+          "Newest meeting first, and only the newest is expanded on load. Older meetings stay one click away in the same accordion.",
+          "Every page the Nov 17 punch list touched has a revised link here — a new route or “&rev=nov17” on the same page — and the Nov 10 link beside it still opens the Nov 10 state. The solid blue button is the Nov 17 link; the outlined one beside it is Nov 10.",
+          "The one exception is called out on its own entry: the five-column cap is a layout token, not a page, so it applies on the Nov 10 links too.",
+          "Item 9 is a no-change: the Quick Order V2 drawer was approved as reviewed and the category thumbnails stay square, so their Nov 10 links are untouched and keep working as handed out.",
+          "The what-changed notes use the design system’s Callout — added to the Components tab (Feedback) first, then used here and on the Grid & Breakpoints rules.",
+        ],
+        links: [
+          { label: "Landing page (/) — Nov 17", href: "/", rev: "nov17" },
+          { label: "Quick Order V2 (item 9 — unchanged)", href: "/quickorder/v2?signedin=1", rev: "nov10" },
+          { label: "DS — Callout", href: "/components/feedback#callout" },
         ],
       },
     ],
@@ -275,11 +323,13 @@ const CHANGE_LOGS: ChangeLog[] = [
   {
     id: "nov-10",
     badge: "Nov 10",
-    title: "New edits since the Nov 10 meeting",
+    title: "Nov 10, 2026 — new edits since the Nov 10 meeting",
+    note: "Kept as reviewed on Nov 10. Every link in this section still opens the Nov 10 state, so this record stays readable even after Nov 17 changed the same screens — where it did, the entry says so and points at the Nov 17 entry above.",
     items: [
       {
         title: "Quick Order V2 — Select Product opens a right-side drawer",
         desc: "A second version of Quick Order where picking the right match happens in a drawer instead of the inline list. V1 is untouched. Each version has its own link below (V1 at /quickorder, V2 at /quickorder/v2).",
+        superseded: "Approved as reviewed (Nov 17, item 9) — no change. The square thumbnails on the results pages were approved the same way. Both links below are unchanged.",
         bullets: [
           "V2 reuses the shopping-list Replacements panel verbatim: the same right-side DrawerPanel, the DS close X, a “You’re replacing” card for the unmatched line, and the matches as ProductListRow entries with availability, price (or “Call for availability”) and a primary Select.",
           "Selecting a product fills that line, closes the drawer, moves the item into the ready table and updates the “N of M items ready” count.",
@@ -293,6 +343,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Grid & Breakpoints — supported breakpoints, page container, 1920 cap",
         desc: "From Ryan in the Nov 10 meeting: our supported breakpoints and max widths are now written down in the design system and wired into the code, so pages stop stretching on wide screens.",
+        superseded: "Superseded by Nov 17, item 8: the sixth column from 1728 is gone and the grid holds at five from 1440 to 2560. The column cap is a layout token, so the links below show the five-column grid — see the Nov 17 entry for the current rule.",
         bullets: [
           "New Foundations page “Grid & Breakpoints”: the breakpoints table, the page container with its side margins, a toggleable column overlay, a live product-grid demo and the CMS max-items-per-row rules.",
           "Search / PLP product grid: 2 columns under 640, 3 from 640, 4 from 1024, 5 from 1440, 6 from 1728 — capped at 1920px and centered beyond that.",
@@ -306,6 +357,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search results — “Want more options?” end card",
         desc: "A blue call-to-action tile at the end of the results grid that sends shoppers to products stocked at other locations (designed by Nita, based on ecmdi.com).",
+        superseded: "Restyled by Nov 17, item 7: white card, thick grey outline, no blue. The link below still opens the blue Nov 10 version; the Nov 17 entry has the outlined one.",
         bullets: [
           "Sits as the last tile in the Grid view, filled in the primary blue with white text, everything centered.",
           "A map-pin icon in a soft white circle, the headline “Want more options?”, and “N in stock at {branch}” with N in bold.",
@@ -320,6 +372,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search results — pinned horizontal filter bar (always on)",
         desc: "A row of facet dropdowns across the top of the results, the way retail is moving. It is always on for search and category pages, and the left rail stays exactly where it is.",
+        superseded: "Reframed by Nov 17, items 4 and 5: the grey inset box around the bar is gone and the chips are now outlined white pills. The dropdowns and the shared selection are unchanged. The link below still opens the Nov 10 framing.",
         bullets: [
           "Brand, Tonnage, SEER2, Refrigerant and Product Family as equal-width dropdowns above the grid; “More filters” opens every remaining facet in a sheet.",
           "The bar and the sidebar share one selection, so checking a facet in either place selects it in the other and produces one removable chip (“Tonnage: 3 Ton”). Nothing is duplicated and nothing is replaced.",
@@ -335,6 +388,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search results — List view redesigned like Grainger (family tables)",
         desc: "The List view no longer reads like a spreadsheet: results are rolled up by product family, the way Grainger does it. The Grid view is unchanged.",
+        superseded: "Replaced by Nov 17, item 6: List view is now one design-system list-view product card per product, with no family tables and no Compare. The link below is pinned to “&rev=nov10”, so it still opens these family tables.",
         bullets: [
           "Each family gets a compact table, sub-grouped by a key attribute (e.g. tonnage), with columns set per category.",
           "Clicking a row expands it in place to show the product detail: image, name, item / MFG numbers, View Product Details, web price, availability, qty and Add to Cart.",
@@ -348,6 +402,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search / PLP — category thumbnails are square tiles",
         desc: "Ryan’s note: the category thumbnails along the top of the results are now square tiles on the small corner-radius token instead of circles.",
+        superseded: "Approved as reviewed (Nov 17, item 9) — the thumbnails stay square. No change.",
         bullets: [
           "One shared CategoryThumbnails component, so the square treatment is the same everywhere the strip appears.",
           "Image tiles keep a white background; placeholder tiles keep the tinted background and category icon.",
@@ -362,7 +417,7 @@ const CHANGE_LOGS: ChangeLog[] = [
   {
     id: "nov-3",
     badge: "Nov 3",
-    title: "New edits since the Nov 3 meeting",
+    title: "Nov 3, 2026 — new edits since the Nov 3 meeting",
     items: [
       {
         title: "Shopware CMS block catalog + page composer",
@@ -407,7 +462,7 @@ const CHANGE_LOGS: ChangeLog[] = [
   {
     id: "oct-28",
     badge: "Oct 28",
-    title: "New edits since the Oct 28 meeting",
+    title: "Oct 28, 2026 — new edits since the Oct 28 meeting",
     items: [
       {
         title: "Dashboard — Account Balances as cards + Pay Bill",
@@ -486,7 +541,7 @@ const CHANGE_LOGS: ChangeLog[] = [
   {
     id: "oct-20",
     badge: "Oct 20",
-    title: "New edits since the Oct 20 meeting",
+    title: "Oct 20, 2026 — new edits since the Oct 20 meeting",
     items: [
       {
         title: "Category “Jump” page (Residential)",
@@ -557,7 +612,7 @@ const CHANGE_LOGS: ChangeLog[] = [
   {
     id: "oct-9",
     badge: "Oct 9",
-    title: "New edits since the Oct 9 meeting",
+    title: "Oct 9, 2026 — new edits since the Oct 9 meeting",
     items: [
       {
         title: "Mini cart — V2 (re-ranked actions)",
@@ -641,7 +696,7 @@ const CHANGE_LOGS: ChangeLog[] = [
   {
     id: "oct-2",
     badge: "Oct 2",
-    title: "New edits (Oct 2 – Oct 8)",
+    title: "Oct 2, 2026 — new edits (Oct 2 – Oct 8)",
     items: [
       {
         title: "PDP About tabs — Specifications & Part List icons",
@@ -698,7 +753,7 @@ const CHANGE_LOGS: ChangeLog[] = [
   {
     id: "earlier",
     badge: "Earlier",
-    title: "Before Oct 2 — baseline, kept for reference",
+    title: "Before Oct 2, 2026 — baseline, kept for reference",
     items: [
       {
         title: "Checkout v3 — everything open",
@@ -847,7 +902,11 @@ export default function PdpMasterPage() {
             Change log
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Grouped by meeting — each card is dated to a meeting and holds the new edits made since it. The latest (Nov 17) is open; earlier meetings are collapsed. Click any link to open that change.
+            Grouped by meeting, newest first — each card is dated to a meeting and holds the new
+            edits made since it. The latest ({CHANGE_LOGS[0]?.badge ?? "latest"}) is open; Nov 10 and
+            every older meeting are collapsed, one click away. Each entry says what changed against
+            the previous meeting and carries its own revised link, so a link handed out at an earlier
+            review still opens the state that was reviewed.
           </p>
           <Accordion
             type="multiple"
@@ -872,11 +931,26 @@ export default function PdpMasterPage() {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent>
+                  {log.note ? (
+                    <p className="pb-3 text-sm text-muted-foreground">{log.note}</p>
+                  ) : null}
                   <ul className="flex flex-col gap-3 pb-2">
                     {log.items.map((c) => (
                       <li key={c.title} className="rounded-lg border bg-background p-4">
                         <p className="font-semibold">{c.title}</p>
                         <p className="mt-0.5 text-sm text-muted-foreground">{c.desc}</p>
+                        {c.changed ? (
+                          <Callout className="mt-3">
+                            <CalloutTitle>What changed</CalloutTitle>
+                            <CalloutDescription>{c.changed}</CalloutDescription>
+                          </Callout>
+                        ) : null}
+                        {c.superseded ? (
+                          <Callout variant="neutral" className="mt-3">
+                            <CalloutTitle>Since Nov 17</CalloutTitle>
+                            <CalloutDescription>{c.superseded}</CalloutDescription>
+                          </Callout>
+                        ) : null}
                         {c.bullets ? (
                           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground marker:text-primary">
                             {c.bullets.map((b) => (
@@ -886,7 +960,18 @@ export default function PdpMasterPage() {
                         ) : null}
                         <div className="mt-3 flex flex-wrap gap-2">
                           {c.links.map((l) => (
-                            <Button key={l.href} asChild variant="outline" size="sm">
+                            <Button
+                              key={l.href}
+                              asChild
+                              size="sm"
+                              variant={
+                                l.rev === "nov17"
+                                  ? "default"
+                                  : l.rev === "nov10"
+                                    ? "outline"
+                                    : "tertiary"
+                              }
+                            >
                               <Link href={l.href} target="_blank" rel="noopener noreferrer">
                                 {l.label}
                                 <ArrowUpRight className="size-3.5" />
