@@ -19,9 +19,11 @@ type SearchParams = {
   filters?: string;
   view?: string;
   /**
-   * Which revision of the search chrome to render. Absent keeps the Nov 10
-   * state, so every link handed out at that review still shows what was
-   * reviewed; `rev=nov17` opts into the Nov 17 punch-list chrome.
+   * Which revision to render. Absent keeps the Nov 10 state (original search
+   * chrome and Grainger-style family tables), so every link handed out at that
+   * review still shows what was reviewed. `rev=nov17` opts into the Nov 17
+   * punch-list chrome (header row, container-less filter bar, outlined pills)
+   * and the design-system list-view product card (no Compare).
    */
   rev?: string;
 };
@@ -86,6 +88,7 @@ export default async function SearchPage({
             category={categoryLabel}
             categorySlug={category}
             initialView={view === "list" ? "list" : "grid"}
+            listVariant={rev === "nov17" ? "cards" : "family-tables"}
             results={results}
             totalResults={totalResults}
             pageSize={pageSize}

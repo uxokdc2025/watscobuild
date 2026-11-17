@@ -27,6 +27,7 @@ import {
   type ResultsView,
 } from "@/components/ui/plp-results-header";
 import { ProductListRow } from "@/components/ui/product-list-row";
+import { InventoryLine } from "@/app/ahri/_lib/parts";
 import {
   CategoryThumbnails,
   type CategoryThumbnailItem,
@@ -163,7 +164,7 @@ const ANATOMY: { part: string; detail: string }[] = [
   { part: "Facets", detail: "Expandable section of checkboxes with counts and a compact “See More” link." },
   { part: "Pinned filter bar", detail: "Always-on row of facet dropdowns under the header row + “More filters”. No container; light-blue hover on each trigger. Adds to the rail, never replaces it — one shared selection." },
   { part: "View toggle", detail: "Grid / List — mutually-exclusive selected states on shared Buttons, at the right end of the header row." },
-  { part: "List row", detail: "Compact result row: product identity left, commerce actions right." },
+  { part: "List row", detail: "The one thing List view renders: product identity left, availability centered, commerce actions right. No Compare, no attribute table." },
 ];
 
 export default function PlpReference() {
@@ -622,8 +623,11 @@ export default function PlpReference() {
         <section className="space-y-4">
           <H2 id="list-row">Product list row</H2>
           <p className="text-sm text-muted-foreground">
-            The compact result row for List view: product identity on the left, commerce actions
-            aligned to the right. Actions are ordinary Buttons from the shared system.
+            The result row for List view — and the only thing List view renders, one row per SKU:
+            product identity on the left, availability as its own centered column, commerce actions
+            aligned to the right. Actions are ordinary Buttons from the shared system. The row has
+            no Compare control and no attribute table; pass <code className="rounded bg-muted px-1 py-0.5 text-xs">availability</code>{" "}
+            and the row adds the centered stock column.
           </p>
           <PreviewCode
             code={`<ProductListRow
@@ -633,6 +637,7 @@ export default function PlpReference() {
   title="Blower Motor 1/2 HP · 120/240 V"
   item="58MV660006"
   mfg="58MV 660 006"
+  availability={<InventoryLine branchQty={2} branchName="Norristown, PA" allBranchesQty={12} />}
   actions={<Button size="sm">Add to Cart</Button>}
 />`}
           >
@@ -644,6 +649,9 @@ export default function PlpReference() {
                 title="Blower Motor 1/2 HP · 120/240 V"
                 item="58MV660006"
                 mfg="58MV 660 006"
+                availability={
+                  <InventoryLine branchQty={2} branchName="Norristown, PA" allBranchesQty={12} />
+                }
                 actions={<Button size="sm">Add to Cart</Button>}
               />
             </div>
@@ -693,6 +701,7 @@ export default function PlpReference() {
               <>Make Clear All a solid button — it&apos;s a text link (<code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;link&quot;</code>).</>,
               <>Turn the preselected branch into a pill the user has to remove.</>,
               <>Build a bespoke result row per category — compose <code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code>.</>,
+              <>Hang a Compare checkbox, an attribute/comparison table or a per-family header section off a list row — the row is the whole card.</>,
               <>Let Grid and List both read as selected; they&apos;re mutually exclusive.</>,
               <>Drop the left rail when you add the pinned bar, give the dropdowns ragged widths, or hide every facet behind one &ldquo;Filters&rdquo; button.</>,
               <>Wrap the results-page filter row in a grey inset box, or hand-roll a second title/count/toggle row under it.</>,

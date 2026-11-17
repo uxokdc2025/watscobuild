@@ -39,6 +39,7 @@ import {
 import { ResultsHeader, ResultsViewToggle } from "@/components/ui/plp-results-header";
 import { productImageFor } from "./product-images";
 import { FamilyListView } from "./family-list-view";
+import { SearchListView } from "./list-view";
 import { tableConfigFor } from "./family-table-config";
 
 const STOCK_LOCATIONS = [
@@ -173,9 +174,16 @@ type SearchBodyProps = {
   categorySlug?: string;
   /**
    * Which view the page opens on. Grid stays the default; `?view=list` makes
-   * the family-table view deep-linkable for review and QA.
+   * the list view deep-linkable for review and QA.
    */
   initialView?: "grid" | "list";
+  /**
+   * How List view renders its rows.
+   * "cards" (default) = the design-system list-view product card, one per SKU.
+   * "family-tables" = the Nov 10 Grainger-style family tables, kept reachable
+   * with `?rev=nov10` so the Nov 10 review links still show the Nov 10 state.
+   */
+  listVariant?: "cards" | "family-tables";
   results: SearchResult[];
   totalResults: number;
   pageSize: number;
@@ -304,8 +312,10 @@ export function SearchBody({
   availabilityVariant = "radio",
   initialView = "grid",
   rev = "nov10",
+  listVariant: listVariantProp,
 }: SearchBodyProps) {
   const nov17 = rev === "nov17";
+  const listVariant = listVariantProp ?? (nov17 ? "cards" : "family-tables");
   const [view, setView] = React.useState<"grid" | "list">(initialView);
   const [stockLocation, setStockLocation] = React.useState<StockLocationValue>("your-branch");
   // One selection map for every facet, keyed by facet key (search results) or
@@ -317,6 +327,17 @@ export function SearchBody({
   const [allStoresAvailability, setAllStoresAvailability] = React.useState(true);
 
   const displayName = branchName ?? storeName.split(" - ")[0];
+  // The gated-price link: this page's own URL plus `signedin=1`, so signing in
+  // from a row keeps the brand, the query and the List view.
+  const signInHref = React.useMemo(() => {
+    const params = new URLSearchParams();
+    for (const field of hiddenSearchFields) params.set(field.name, field.value);
+    if (query) params.set("q", query);
+    if (categorySlug) params.set("category", categorySlug);
+    params.set("view", "list");
+    params.set("signedin", "1");
+    return `?${params.toString()}`;
+  }, [hiddenSearchFields, query, categorySlug]);
   const displayLocations = React.useMemo(
     () => STOCK_LOCATIONS.map((loc) => loc.value === "your-branch" ? { ...loc, label: storeName } : loc),
     [storeName],
@@ -724,16 +745,25 @@ export function SearchBody({
                   </li>
                 ) : null}
               </ProductGrid>
-            ) : (
-              // Family tables — results grouped by product family, sub-grouped
-              // by a key attribute, each row expanding in place. Columns come
-              // from the per-category config map, never from this component.
+            ) : listVariant === "family-tables" ? (
+              // Nov 10 state, kept reachable at `?rev=nov10`: results grouped
+              // by product family, each row expanding in place.
               <FamilyListView
                 results={results}
                 signedIn={signedIn}
                 brandKey={brandKey}
                 storeName={storeName}
                 config={tableConfigFor(categorySlug)}
+              />
+            ) : (
+              // List view — one design-system list-view product card per SKU
+              // (see /components/list-views). No tables, no Compare.
+              <SearchListView
+                results={results}
+                signedIn={signedIn}
+                brandKey={brandKey}
+                storeName={storeName}
+                signInHref={signInHref}
               />
             )}
 
@@ -832,8 +862,8 @@ function FacetGroup({
 /* ------------------------------------------------------------------ *
  * Product cards (grid view)
  *
- * The List view no longer renders one flat row per SKU — it renders the
- * family-table pattern (see ./family-list-view). Grid is unchanged.
+ * List view renders the design-system list-view product card, one per SKU
+ * (see ./list-view). Grid is unchanged.
  * ------------------------------------------------------------------ */
 
 /** PLP tile — delegates to the canonical ProductCard (app/pdp/_lib) so
