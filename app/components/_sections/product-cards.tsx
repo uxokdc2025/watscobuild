@@ -3,7 +3,10 @@
 import Link from "next/link";
 
 import { ProductCard, type ProductCardData } from "@/app/pdp/_lib/product-card";
-import { MoreOptionsCard } from "@/components/ui/more-options-card";
+import {
+  MoreOptionsCard,
+  type MoreOptionsCardVariant,
+} from "@/components/ui/more-options-card";
 import { Category } from "../_showcase";
 
 /** One demo card + a short label so use cases can be compared side by side. */
@@ -18,6 +21,37 @@ function Case({
   return (
     <div className="w-[247px]">
       <ProductCard data={data} signedIn={signedIn} />
+    </div>
+  );
+}
+
+/** One end-card framing + the link through to its docs. */
+function EndCard({
+  variant,
+  label,
+}: {
+  variant: MoreOptionsCardVariant;
+  label: string;
+}) {
+  return (
+    <div className="flex w-[247px] flex-col gap-2">
+      <div className="flex-1">
+        <MoreOptionsCard
+          variant={variant}
+          branchName="Manchester, NH - Homans"
+          shownCount={16}
+          scopes={[
+            { label: "Nearby Branches", count: 96 },
+            { label: "All Branches", count: 348 },
+          ]}
+        />
+      </div>
+      <Link
+        href="/components/product-card#end-card"
+        className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+      >
+        {label}
+      </Link>
     </div>
   );
 }
@@ -46,7 +80,7 @@ export function ProductCardsSection() {
     <Category
       id="product-cards"
       title="Product Card"
-      description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated. The blue tile is the grid end card variant."
+      description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated. The last two tiles are the grid end card: the Nov 17 outline framing (white surface, thick grey outline, no blue) and the original solid-blue one."
     >
       <div className="flex flex-wrap items-stretch gap-6 lg:col-span-2">
         {/* Badges + % Also Purchased (richest state) */}
@@ -55,27 +89,12 @@ export function ProductCardsSection() {
         <Case signedIn={true} data={BASE} />
         {/* No badges, no % */}
         <Case signedIn={true} data={{ ...BASE, badges: undefined }} />
-        {/* End card variant — last tile in the PLP grid. Counts mirror the
+        {/* End card framings — last tile in the PLP grid. Counts mirror the
             page's "Stocked At" facet; the interactive version (links switch
-            the filter) lives on the Product Card page. */}
-        <div className="flex w-[247px] flex-col gap-2">
-          <div className="flex-1">
-            <MoreOptionsCard
-              branchName="Manchester, NH - Homans"
-              shownCount={16}
-              scopes={[
-                { label: "Nearby Branches", count: 96 },
-                { label: "All Branches", count: 348 },
-              ]}
-            />
-          </div>
-          <Link
-            href="/components/product-card#end-card"
-            className="text-xs font-medium text-primary underline-offset-4 hover:underline"
-          >
-            End card — docs + live filter switching
-          </Link>
-        </div>
+            the filter) lives on the Product Card page. `outline` is the
+            Nov 17 treatment: white surface, thick grey outline, no blue. */}
+        <EndCard variant="outline" label="End card — outline (Nov 17)" />
+        <EndCard variant="solid" label="End card — solid (Nov 10)" />
       </div>
     </Category>
   );

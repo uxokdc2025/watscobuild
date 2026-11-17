@@ -239,6 +239,21 @@ const CHANGE_LOGS: ChangeLog[] = [
           { label: "DS — PLP list row", href: "/components/plp#list-row" },
         ],
       },
+      {
+        title: "Search / PLP — “Want more options?” end card is no longer blue (item 7)",
+        desc: "The tile that closes the results grid keeps everything it did — the map-pin icon, the centered layout, the bold counts — but drops the solid blue. It is now a plain white card inside a thick grey outline, so it reads as a quiet offer instead of a billboard. The Nov 10 link still opens the blue version.",
+        bullets: [
+          "No blue anywhere on it: no blue fill, no blue outline, no blue count. The white surface and a thick grey outline (3px, three times the edge on a product card) are the whole treatment.",
+          "Unchanged: the map-pin icon, the “Want more options?” headline, the “16 in stock at Manchester, NH - Homans” line, and the two stacked sub-tiles (Nearby branches / All branches) with their big bold counts and arrows. Clicking one still switches the availability scope.",
+          "The counts and the icon chip sit on the design system’s neutral grey tokens, and the counts are emphasised in the normal text colour, so nothing is hand-picked.",
+          "Added to the design system as a second framing of the existing end card (variant “outline”), documented side by side with the old blue one on the Product Card page.",
+        ],
+        links: [
+          { label: "PLP — Residential, end of grid (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
+          { label: "PLP — Residential, end of grid (Nov 10, blue)", href: "/search?brand=homans&category=residential&signedin=1" },
+          { label: "DS — Product Card End card", href: "/components/product-card#end-card" },
+        ],
+      },
     ],
   },
   {

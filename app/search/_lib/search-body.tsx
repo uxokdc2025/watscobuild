@@ -213,7 +213,8 @@ type SearchBodyProps = {
    * keeps the state reviewed on Nov 10 so existing links stay honest;
    * `nov17` is the reviewed punch-list chrome — one header row (title +
    * count + view toggle) above a container-less filter bar, with the applied
-   * filters as outlined white pills underneath.
+   * filters as outlined white pills underneath, and the grid's "Want more
+   * options?" end card on its thick-grey-outline framing instead of blue.
    */
   rev?: "nov10" | "nov17";
 };
@@ -734,6 +735,9 @@ export function SearchBody({
                 {showEndCard ? (
                   <li>
                     <MoreOptionsCard
+                      // Nov 17 review: the end card drops the solid blue for
+                      // the thick-grey-outline framing on a white surface.
+                      variant={nov17 ? "outline" : "solid"}
                       branchName={selectedScopeLabel}
                       shownCount={stockCounts[stockLocation]}
                       scopes={widerScopes.map((loc) => ({
