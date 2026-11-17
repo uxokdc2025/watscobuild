@@ -231,9 +231,9 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search / PLP — header row, top filter bar and active filter pills (items 2, 4, 5)",
         desc: "The search chrome above the results is one change: a single header row, a filter bar with no box around it, and quiet white filter pills. The Nov 10 links still open the Nov 10 state — the new chrome is on the same page with “&rev=nov17”.",
-        changed: "vs Nov 10: the two stacked header lines (title, then “Shop 348 results” with its own Grid / List toggle) are now one row — title, count and toggle together. The grey inset box around the top filter bar is gone, so the dropdowns sit straight on the page. Active filters were dark-blue pills; they are now white pills with a thin outline and a small red ×.",
+        changed: "vs Nov 10: the two stacked header lines (title, then “Shop 16 results” — “Shop 24 results” now that Residential carries a full page — with its own Grid / List toggle) are now one row — title, count and toggle together. The grey inset box around the top filter bar is gone, so the dropdowns sit straight on the page. Active filters were dark-blue pills; they are now white pills with a thin outline and a small red ×.",
         bullets: [
-          "Item 2 — one header row above the filter bar: the title (“Residential”) with the results count beside it in a smaller font, and the Grid / List toggle at the right end of that same row. The second “Shop 348 results” line and its separate toggle are gone. The square category thumbnails stay exactly as they are.",
+          "Item 2 — one header row above the filter bar: the title (“Residential”) with the results count beside it in a smaller font, and the Grid / List toggle at the right end of that same row. The second “Shop 16 results” line (24 now) and its separate toggle are gone. The square category thumbnails stay exactly as they are.",
           "Item 4 — the top filter bar keeps the full row of dropdowns and the left filter nav, but loses the grey inset box around it: the dropdowns now sit straight on the page. Each dropdown trigger picks up a light-blue hover and open state, taken from the design system’s existing active-nav / tab tokens.",
           "Item 5 — active filters are no longer dark-blue pills. They are plain white pills with a thin outline and a small red × (“Brand: Factory Authorized Parts ×”), sitting under the results count. Clear All stays a text link.",
           "Item 3 was dropped: the Grid / List toggle stays at the top, on the header row, per item 2. Item 9 is unchanged — the category thumbnails are still square.",
@@ -252,7 +252,7 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Search — List view is the design system’s list-view product card",
+        title: "Search — List view is the design system’s list-view product card (item 6)",
         desc: "The List view (view=list) now renders one design-system list-view product card per product and nothing else. The Grainger-style family tables, the per-family header sections, the attribute/comparison tables and the Compare checkbox are gone. Grid view is unchanged. The Nov 10 family-table version is still viewable without “&rev=nov17” (or with “&rev=nov10”).",
         changed: "vs Nov 10: the List view was the Grainger-style family rollup — per-family header sections, a spec table under each, expanding rows and a Compare checkbox. It is now one design-system list-view product card per product, and nothing else. Grid view is untouched.",
         bullets: [
@@ -274,7 +274,7 @@ const CHANGE_LOGS: ChangeLog[] = [
         changed: "vs Nov 10: the end card was filled solid primary blue with white text. It is now white inside a thick (3px) grey outline, with no blue anywhere on it. Nothing else about the card moved — same icon, same headline, same two sub-tiles, same counts.",
         bullets: [
           "No blue anywhere on it: no blue fill, no blue outline, no blue count. The white surface and a thick grey outline (3px, three times the edge on a product card) are the whole treatment.",
-          "Unchanged: the map-pin icon, the “Want more options?” headline, the “16 in stock at Manchester, NH - Homans” line, and the two stacked sub-tiles (Nearby branches / All branches) with their big bold counts and arrows. Clicking one still switches the availability scope.",
+          "Unchanged: the map-pin icon, the “Want more options?” headline, the “24 in stock at Manchester, NH - Homans” line, and the two stacked sub-tiles (Nearby branches / All branches) with their big bold counts and arrows. Clicking one still switches the availability scope.",
           "The counts and the icon chip sit on the design system’s neutral grey tokens, and the counts are emphasised in the normal text colour, so nothing is hand-picked.",
           "Added to the design system as a second framing of the existing end card (variant “outline”), documented side by side with the old blue one on the Product Card page.",
         ],
@@ -293,6 +293,7 @@ const CHANGE_LOGS: ChangeLog[] = [
           "Below 1440 it steps down as before: 4 beside the filters from 1280, 3 at 1024, 3 on tablets, 2 on phones — the count only drops when a card would get too narrow to keep its qty stepper and Add button on one line.",
           "The change is in the layout tokens, not on the page: --layout-columns stops at 5 and --layout-card-min is 196px (the card’s real minimum), so every page using the shared product grid follows — search, category PLPs and the CMS product slider.",
           "The Foundations “Grid & breakpoints” page is updated to match: the rule callout, the breakpoints table, the “PLP with filters” column, the token table and the live resizable demo all read 5 as the cap.",
+          "Follow-up fix (PR #20): at exactly 1440 beside the filters the five 196.8px cards had Add wrapping under the qty stepper. The card’s stepper-to-Add gap is now 6px (gap-1.5) and the 196px minimum counts the card’s 1px borders, so the stepper and Add sit on one line at 1440 and every width above it — still five columns, never six.",
           "Checked for sideways scroll at 1024, 1280, 1440, 1920 and 2560 — including 1440 with the filter sidebar, which is the tightest fit (five 196.8px cards in a 1080px column).",
         ],
         links: [
