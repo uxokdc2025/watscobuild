@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ExternalLink, LayoutGrid, List } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,6 +21,11 @@ import {
   type TopFilterFacet,
   type TopFilterSelection,
 } from "@/components/ui/plp-top-filters";
+import {
+  ResultsHeader,
+  ResultsViewToggle,
+  type ResultsView,
+} from "@/components/ui/plp-results-header";
 import { ProductListRow } from "@/components/ui/product-list-row";
 import {
   CategoryThumbnails,
@@ -31,6 +36,7 @@ import { OnThisPage } from "../_ds/sidebar";
 
 const TOC = [
   { id: "category-thumbnails", label: "Category Thumbnails" },
+  { id: "results-header", label: "Results Header" },
   { id: "applied-filters", label: "Applied Filters" },
   { id: "branch-selector", label: "Branch Selector" },
   { id: "radius", label: "Radius" },
@@ -150,17 +156,19 @@ const CATEGORY_THUMBNAILS: CategoryThumbnailItem[] = [
 
 const ANATOMY: { part: string; detail: string }[] = [
   { part: "Category thumbnails", detail: "A scrolling strip of square category tiles above the results — the category jump." },
-  { part: "Applied filters", detail: "Blue removable pills below the results heading + a “Clear All” text link." },
+  { part: "Results header", detail: "One row above the filters: title + result count in a smaller font + the view toggle at the right end." },
+  { part: "Applied filters", detail: "Removable pills under the results count — white with a thin outline and a small red × — plus a “Clear All” text link." },
   { part: "Branch selector", detail: "Your Store / Nearby / All radio card; the active header store is preselected and never becomes a pill." },
   { part: "Radius", detail: "Numeric input with an explicit miles label and an Apply action." },
   { part: "Facets", detail: "Expandable section of checkboxes with counts and a compact “See More” link." },
-  { part: "Pinned filter bar", detail: "Always-on row of facet dropdowns above the grid + “More filters”. Adds to the rail, never replaces it — one shared selection." },
-  { part: "View toggle", detail: "Grid / List — mutually-exclusive selected states on shared Buttons." },
+  { part: "Pinned filter bar", detail: "Always-on row of facet dropdowns under the header row + “More filters”. No container; light-blue hover on each trigger. Adds to the rail, never replaces it — one shared selection." },
+  { part: "View toggle", detail: "Grid / List — mutually-exclusive selected states on shared Buttons, at the right end of the header row." },
   { part: "List row", detail: "Compact result row: product identity left, commerce actions right." },
 ];
 
 export default function PlpReference() {
   const [radius, setRadius] = React.useState("50");
+  const [resultsView, setResultsView] = React.useState<ResultsView>("grid");
   /* One selection map, exactly as a PLP holds it: the pinned bar, the More
      filters sheet and the left rail all read and write this. */
   const [topSelected, setTopSelected] = React.useState<TopFilterSelection>({
@@ -222,6 +230,9 @@ export default function PlpReference() {
               import {"{ PlpTopFilterBar, TopFilterChips }"} from &quot;@/components/ui/plp-top-filters&quot;
             </code>
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
+              import {"{ ResultsHeader, ResultsViewToggle }"} from &quot;@/components/ui/plp-results-header&quot;
+            </code>
+            <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
               import {"{ ProductListRow }"} from &quot;@/components/ui/product-list-row&quot;
             </code>
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
@@ -263,26 +274,86 @@ export default function PlpReference() {
           </PreviewCode>
         </section>
 
+        {/* ── Results header ── */}
+        <section className="space-y-4">
+          <H2 id="results-header">Results header</H2>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">One row</span> above the filters: the
+            category (or query) as the page title, the result count beside it in a smaller font,
+            and the view controls pushed to the right end of that same row. It sits{" "}
+            <span className="font-medium text-foreground">above</span> the top filter bar, so the
+            page reads title → count → view → filters → results and the shopper never hunts for the
+            view switch halfway down the page. The count is its own line of type — smaller, muted,
+            with the number itself bold — never a badge.
+          </p>
+          <PreviewCode
+            previewClassName="block"
+            code={`<ResultsHeader
+  title="Residential"
+  count={348}
+  actions={<ResultsViewToggle value={view} onChange={setView} />}
+/>`}
+          >
+            <div className="w-full">
+              <ResultsHeader
+                title="Residential"
+                count={348}
+                actions={
+                  <ResultsViewToggle value={resultsView} onChange={setResultsView} />
+                }
+              />
+            </div>
+          </PreviewCode>
+          <p className="text-sm text-muted-foreground">
+            The title renders as an{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">h1</code> by default; pass{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">as=&quot;h2&quot;</code> where
+            the page already owns its H1. Below the layout&apos;s small breakpoint the actions drop
+            to their own right-aligned line rather than forcing the row to overflow.
+          </p>
+        </section>
+
         {/* ── Applied filters ── */}
         <section className="space-y-4">
           <H2 id="applied-filters">Applied filters</H2>
           <p className="text-sm text-muted-foreground">
-            Blue pills sit below the results heading; each removes one facet. Clear All is a text
-            link, not a button.
+            Removable pills sit under the results count; each one drops a single facet. Clear All is
+            a text link, not a button.{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code>{" "}
+            is the default treatment for a results page: a plain white pill with a thin outline and
+            a small red ×, so a dozen applied facets read as a quiet list instead of a wall of
+            blue, and the × reads unmistakably as &ldquo;remove&rdquo;.{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;solid&quot;</code>{" "}
+            is the original filled pill, kept for surfaces where one or two pills carry real
+            emphasis.
           </p>
           <PreviewCode
+            previewClassName="block"
             code={`<div className="flex flex-wrap items-center gap-2">
-  <FilterPill label="Manchester, NH - Homans" onRemove={remove} />
-  <FilterPill label="Amps: 2" onRemove={remove} />
+  <FilterPill variant="outline" label="Brand: Factory Authorized Parts" onRemove={remove} />
+  <FilterPill variant="outline" label="Tonnage: 3 Ton" onRemove={remove} />
   <Button variant="link" className="px-1">Clear All</Button>
 </div>`}
           >
-            <div className="flex flex-wrap items-center gap-2">
-              <FilterPill label="Manchester, NH - Homans" onRemove={() => undefined} />
-              <FilterPill label="Amps: 2" onRemove={() => undefined} />
-              <Button variant="link" className="px-1">
-                Clear All
-              </Button>
+            <div className="w-full space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <FilterPill
+                  variant="outline"
+                  label="Brand: Factory Authorized Parts"
+                  onRemove={() => undefined}
+                />
+                <FilterPill variant="outline" label="Tonnage: 3 Ton" onRemove={() => undefined} />
+                <Button variant="link" className="px-1">
+                  Clear All
+                </Button>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <FilterPill label="Manchester, NH - Homans" onRemove={() => undefined} />
+                <FilterPill label="Amps: 2" onRemove={() => undefined} />
+                <span className="text-xs text-muted-foreground">
+                  ← <code className="rounded bg-muted px-1 py-0.5">variant=&quot;solid&quot;</code>
+                </span>
+              </div>
             </div>
           </PreviewCode>
         </section>
@@ -407,7 +478,11 @@ export default function PlpReference() {
             count badge once something is selected. Options are the same{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">FilterOption</code> rows as the
             rail, so counts and tap targets match. Selections apply immediately; there is no Apply
-            button to hunt for.
+            button to hunt for.{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">hover=&quot;accent&quot;</code>{" "}
+            swaps the grey Button hover for the light-blue active-nav state — use it in the
+            container-less bar, where the trigger is the only thing signalling the row is
+            interactive.
           </p>
           <PreviewCode
             code={`<TopFilterDropdown
@@ -432,7 +507,11 @@ export default function PlpReference() {
         <section className="space-y-4">
           <H2 id="pinned-bar">Pinned filter bar</H2>
           <p className="text-sm text-muted-foreground">
-            A horizontal row of the top four or five facets above the results, with{" "}
+            A horizontal row of the top four or five facets, sitting directly under the{" "}
+            <a href="#results-header" className="font-medium text-primary hover:underline">
+              results header
+            </a>{" "}
+            and above the results, with{" "}
             <span className="font-medium text-foreground">More filters</span> opening the full list
             in a sheet. It is an <span className="font-medium text-foreground">addition</span> to the
             left rail, not a replacement: both are bound to one selection map, so checking{" "}
@@ -467,11 +546,44 @@ export default function PlpReference() {
                 onClearAll={() => setTopSelected({})}
                 resultCount={348}
                 sticky={false}
+                variant="plain"
               />
               <TopFilterChips
                 items={topChips}
                 onRemove={(chip) => toggleTop(chip.facetKey, chip.option)}
                 onClearAll={() => setTopSelected({})}
+                variant="outline"
+              />
+            </div>
+          </PreviewCode>
+          <p className="text-sm text-muted-foreground">
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;plain&quot;</code>{" "}
+            (above) is the results-page framing: the dropdowns sit straight on the page with{" "}
+            <span className="font-medium text-foreground">no container</span> around them — no
+            grey inset box competing with the header row and the grid. With the card edge gone the
+            interactive signal moves onto the triggers themselves, as the light-blue hover and open
+            state built from the design-system active-nav tokens (
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">--tab-active-bg</code> /{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">--tab-active-fg</code> — the same
+            pair the active tab and the Grid/List toggle use). Hover any dropdown to see it.{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;inset&quot;</code>{" "}
+            keeps the original bordered card.
+          </p>
+          <PreviewCode
+            previewClassName="block"
+            code={`<PlpTopFilterBar variant="inset" … />   {/* bordered card */}`}
+          >
+            <div className="w-full">
+              <PlpTopFilterBar
+                facets={DEMO_PINNED_FACETS}
+                allFacets={DEMO_ALL_FACETS}
+                selected={topSelected}
+                onToggle={toggleTop}
+                onClearFacet={clearTopFacet}
+                onClearAll={() => setTopSelected({})}
+                resultCount={348}
+                sticky={false}
+                variant="inset"
               />
             </div>
           </PreviewCode>
@@ -489,25 +601,20 @@ export default function PlpReference() {
         <section className="space-y-4">
           <H2 id="view-toggle">Results view toggle</H2>
           <p className="text-sm text-muted-foreground">
-            Grid and list are mutually-exclusive selected states — the selected view is a primary
-            Button, the other a ghost Button.
+            Grid and list are mutually-exclusive selected states on shared ghost Buttons — the
+            selected side takes the light-blue active-nav tokens, the other stays muted. It lives
+            at the right end of the{" "}
+            <a href="#results-header" className="font-medium text-primary hover:underline">
+              results header
+            </a>{" "}
+            row; never build a second copy next to the grid.
           </p>
           <PreviewCode
-            code={`<div className="inline-flex rounded-md border p-0.5">
-  <Button size="sm" className="gap-1"><LayoutGrid />Grid</Button>
-  <Button size="sm" variant="ghost" className="gap-1"><List />List</Button>
-</div>`}
+            code={`const [view, setView] = React.useState<ResultsView>("grid");
+
+<ResultsViewToggle value={view} onChange={setView} />`}
           >
-            <div className="inline-flex rounded-md border p-0.5">
-              <Button size="sm" className="gap-1">
-                <LayoutGrid />
-                Grid
-              </Button>
-              <Button size="sm" variant="ghost" className="gap-1">
-                <List />
-                List
-              </Button>
-            </div>
+            <ResultsViewToggle value={resultsView} onChange={setResultsView} />
           </PreviewCode>
         </section>
 
@@ -547,10 +654,10 @@ export default function PlpReference() {
         <section className="space-y-4">
           <H2 id="anatomy">Anatomy</H2>
           <p className="text-sm text-muted-foreground">
-            A search results page is these pieces: the category-thumbnail strip and the filter rail
-            (branch, radius, facets) framing the results, the always-on pinned filter bar plus
-            applied-filter pills and the view toggle above them, and a grid of Product Cards or a
-            stack of list rows below.
+            A search results page is these pieces, top to bottom: the category-thumbnail strip, the
+            one-row results header (title + count + view toggle), the always-on pinned filter bar,
+            the applied-filter pills, and a grid of Product Cards or a stack of list rows — with
+            the filter rail (branch, radius, facets) alongside them the whole way down.
           </p>
           <ol className="overflow-hidden rounded-xl border">
             {ANATOMY.map((a, i) => (
@@ -575,7 +682,8 @@ export default function PlpReference() {
             dos={[
               <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">CategoryThumbnails</code> for every search/PLP category strip so one change updates them all.</>,
               <>Preselect the active header store and keep it out of the applied-filter pills.</>,
-              <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">FilterPill</code> for every removable applied facet.</>,
+              <>Put the title, the result count and the view toggle on one <code className="rounded bg-muted px-1 py-0.5 text-xs">ResultsHeader</code> row above the filter bar.</>,
+              <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">FilterPill</code> for every removable applied facet, on <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code> under the results count.</>,
               <>Render Grid results with <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;ProductCard&gt;</code> and List results with <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;ProductListRow&gt;</code>.</>,
               <>Keep row/toggle actions on the shared <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Button&gt;</code> so hover/focus match everywhere.</>,
               <>Bind the pinned bar and the left rail to one selection map, and pin only the four or five facets that actually narrow the set.</>,
@@ -587,6 +695,7 @@ export default function PlpReference() {
               <>Build a bespoke result row per category — compose <code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code>.</>,
               <>Let Grid and List both read as selected; they&apos;re mutually exclusive.</>,
               <>Drop the left rail when you add the pinned bar, give the dropdowns ragged widths, or hide every facet behind one &ldquo;Filters&rdquo; button.</>,
+              <>Wrap the results-page filter row in a grey inset box, or hand-roll a second title/count/toggle row under it.</>,
             ]}
           />
         </section>
@@ -599,8 +708,9 @@ export default function PlpReference() {
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
-              { label: "PLP — Residential Category", href: "/search?brand=homans&category=residential&signedin=1" },
+              { label: "PLP — Residential Category (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
+              { label: "PLP — Search Results (Nov 17)", href: "/search?q=blower%20motor&signedin=1&rev=nov17" },
+              { label: "PLP — Residential Category (Nov 10)", href: "/search?brand=homans&category=residential&signedin=1" },
               { label: "Store Locator", href: "/store-locator" },
             ].map((l) => (
               <Link

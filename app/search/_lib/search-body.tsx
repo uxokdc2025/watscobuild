@@ -2,9 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronRight, Fan, Flame, LayoutGrid, List as ListIcon, Package, Snowflake, Thermometer, Wind, Wrench } from "lucide-react";
+import { ChevronDown, ChevronRight, Fan, Flame, Package, Snowflake, Thermometer, Wind, Wrench } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PageContainer } from "@/components/ui/page-container";
 import {
@@ -37,6 +36,7 @@ import {
   type TopFilterFacet,
   type TopFilterSelection,
 } from "@/components/ui/plp-top-filters";
+import { ResultsHeader, ResultsViewToggle } from "@/components/ui/plp-results-header";
 import { productImageFor } from "./product-images";
 import { FamilyListView } from "./family-list-view";
 import { tableConfigFor } from "./family-table-config";
@@ -200,6 +200,14 @@ type SearchBodyProps = {
    * "checkbox" = a "Shop By Availability" checkbox stack (Peirce-Phelps style).
    */
   availabilityVariant?: "radio" | "checkbox";
+  /**
+   * Which revision of the search chrome to render. `nov10` (the default)
+   * keeps the state reviewed on Nov 10 so existing links stay honest;
+   * `nov17` is the reviewed punch-list chrome — one header row (title +
+   * count + view toggle) above a container-less filter bar, with the applied
+   * filters as outlined white pills underneath.
+   */
+  rev?: "nov10" | "nov17";
 };
 
 /* Real Residential subcategories + live counts, grabbed from homans.com — fed
@@ -295,7 +303,9 @@ export function SearchBody({
   brandKey,
   availabilityVariant = "radio",
   initialView = "grid",
+  rev = "nov10",
 }: SearchBodyProps) {
+  const nov17 = rev === "nov17";
   const [view, setView] = React.useState<"grid" | "list">(initialView);
   const [stockLocation, setStockLocation] = React.useState<StockLocationValue>("your-branch");
   // One selection map for every facet, keyed by facet key (search results) or
@@ -638,11 +648,23 @@ export function SearchBody({
             {category ? (
               <CategoryThumbnails
                 items={CATEGORY_TILES}
-                href={`/search?brand=${brandKey}&category=residential&signedin=1`}
+                href={`/search?brand=${brandKey}&category=residential&signedin=1${nov17 ? "&rev=nov17" : ""}`}
+              />
+            ) : null}
+            {/* ── Nov 17 search chrome ──
+                One header row: title + result count in a smaller font + the
+                Grid/List toggle on the right end, sitting ABOVE the filter
+                bar. The filter bar loses its inset box, and the applied
+                filters follow underneath as outlined white pills. */}
+            {nov17 ? (
+              <ResultsHeader
+                title={category ?? <>Search Results for &ldquo;{query}&rdquo;</>}
+                count={totalResults}
+                actions={<ResultsViewToggle value={view} onChange={setView} />}
               />
             ) : null}
             {/* Category H1 sits on top of the grid (not over the sidebar). */}
-            {category ? (
+            {!nov17 && category ? (
               <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{category}</h1>
             ) : null}
             {/* Pinned filter bar — always on. Sits above the grid and shares
@@ -655,62 +677,31 @@ export function SearchBody({
               onClearFacet={clearFacet}
               onClearAll={clearAllFilters}
               resultCount={totalResults}
+              variant={nov17 ? "plain" : "inset"}
             />
-            {/* Results toolbar — heading + view toggle (the toggle moves into
-                the sidebar on category pages). */}
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              {category ? (
-                <h2 className="text-lg font-semibold tracking-tight">
-                  Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results
-                </h2>
-              ) : (
-                <h1 className="text-lg font-semibold tracking-tight">
-                  Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results for &ldquo;{query}&rdquo;
-                </h1>
-              )}
-              <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
-                <div
-                  role="group"
-                  aria-label="Result view"
-                  className="inline-flex items-center gap-0.5 rounded-md border bg-background p-0.5"
-                >
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    aria-pressed={view === "grid"}
-                    onClick={() => setView("grid")}
-                    className={cn(
-                      "rounded-sm",
-                      view === "grid"
-                        ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    <LayoutGrid /> Grid
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    aria-pressed={view === "list"}
-                    onClick={() => setView("list")}
-                    className={cn(
-                      "rounded-sm",
-                      view === "list"
-                        ? "bg-[var(--tab-active-bg)] font-semibold text-[var(--tab-active-fg)] hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)]"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    <ListIcon /> List
-                  </Button>
+            {/* Results toolbar — heading + view toggle. The Nov 17 chrome
+                folds both into the header row above the filter bar. */}
+            {nov17 ? null : (
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                {category ? (
+                  <h2 className="text-lg font-semibold tracking-tight">
+                    Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results
+                  </h2>
+                ) : (
+                  <h1 className="text-lg font-semibold tracking-tight">
+                    Shop <span className="font-bold">{totalResults.toLocaleString()}</span> results for &ldquo;{query}&rdquo;
+                  </h1>
+                )}
+                <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                  <ResultsViewToggle value={view} onChange={setView} />
                 </div>
               </div>
-            </div>
+            )}
             <TopFilterChips
               items={appliedChips}
               onRemove={(chip) => toggleFacet(chip.facetKey, chip.option)}
               onClearAll={clearAllFilters}
+              variant={nov17 ? "outline" : "solid"}
             />
             {view === "grid" ? (
               <ProductGrid>

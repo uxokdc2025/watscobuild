@@ -17,7 +17,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { FilterOption, FilterPill, FilterSection } from "@/components/ui/plp-filters";
+import {
+  FilterOption,
+  FilterPill,
+  FilterSection,
+  type FilterPillVariant,
+} from "@/components/ui/plp-filters";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ *
@@ -33,9 +38,32 @@ import { cn } from "@/lib/utils";
  *     <TopFilterDropdown>   one facet, popover of checkboxes
  *     <TopFilterMore>       sheet with every facet group
  *   <TopFilterChips>    removable applied-filter chips + Clear All
+ *
+ * Two framings, one behaviour: `variant="inset"` keeps the bordered card the
+ * row shipped in; `variant="plain"` drops the container and moves the signal
+ * onto the triggers as the DS light-blue hover.
  * ------------------------------------------------------------------ */
 
 export type TopFilterOption = { name: string; count?: number };
+
+/**
+ * Trigger hover treatment.
+ *  - `neutral` — the stock outline Button hover (light grey accent).
+ *  - `accent`  — the design-system light-blue nav/tab state: the
+ *    `--tab-active-bg` tint with the darkened `--tab-active-fg` label, the
+ *    same pair the active tab and the Grid/List toggle already use. Pair it
+ *    with the container-less bar, where there is no card edge to signal
+ *    that the row is interactive.
+ */
+export type TopFilterHover = "neutral" | "accent";
+
+/** The light-blue hover/open state, straight off the DS active-nav tokens. */
+const ACCENT_HOVER =
+  "hover:bg-[var(--tab-active-bg)] hover:text-[var(--tab-active-fg)] data-[state=open]:bg-[var(--tab-active-bg)] data-[state=open]:text-[var(--tab-active-fg)]";
+
+function hoverClasses(hover: TopFilterHover) {
+  return hover === "accent" ? ACCENT_HOVER : undefined;
+}
 
 export type TopFilterFacet = {
   /** Stable key used for state + DOM ids. */
@@ -76,12 +104,14 @@ export function TopFilterDropdown({
   selected = EMPTY_SELECTION,
   onToggle,
   onClear,
+  hover = "neutral",
   className,
 }: {
   facet: TopFilterFacet;
   selected?: ReadonlySet<string>;
   onToggle: (option: string) => void;
   onClear?: () => void;
+  hover?: TopFilterHover;
   className?: string;
 }) {
   const count = selected.size;
@@ -98,6 +128,7 @@ export function TopFilterDropdown({
             // every dropdown in the bar is exactly the same size.
             "w-full justify-between gap-2 px-3 font-normal",
             count > 0 && "border-primary font-medium",
+            hoverClasses(hover),
             className,
           )}
         >
@@ -151,6 +182,7 @@ export function TopFilterMore({
   onClearAll,
   resultCount,
   label = "More filters",
+  hover = "neutral",
   className,
 }: {
   /** Every facet group — not just the pinned ones. */
@@ -161,6 +193,7 @@ export function TopFilterMore({
   /** Shown in the header and on the apply button. */
   resultCount?: number;
   label?: string;
+  hover?: TopFilterHover;
   className?: string;
 }) {
   const [open, setOpen] = React.useState(false);
@@ -188,7 +221,7 @@ export function TopFilterMore({
           type="button"
           variant="outline"
           aria-label={total ? `${label}, ${total} selected` : label}
-          className={cn("w-full justify-between gap-2 px-3", className)}
+          className={cn("w-full justify-between gap-2 px-3", hoverClasses(hover), className)}
         >
           <span className="flex min-w-0 items-center gap-2">
             <SlidersHorizontal aria-hidden="true" className="size-4 opacity-70" />
@@ -261,11 +294,14 @@ export function TopFilterChips({
   items,
   onRemove,
   onClearAll,
+  variant = "solid",
   className,
 }: {
   items: TopFilterChip[];
   onRemove: (chip: TopFilterChip) => void;
   onClearAll?: () => void;
+  /** Pill treatment — see `FilterPillVariant`. */
+  variant?: FilterPillVariant;
   className?: string;
 }) {
   if (!items.length) return null;
@@ -280,6 +316,7 @@ export function TopFilterChips({
         <FilterPill
           key={`${chip.facetKey}|${chip.option}`}
           label={chip.label}
+          variant={variant}
           onRemove={() => onRemove(chip)}
         />
       ))}
@@ -305,6 +342,7 @@ export function PlpTopFilterBar({
   onClearAll,
   resultCount,
   sticky = true,
+  variant = "inset",
   moreLabel,
   className,
 }: {
@@ -319,6 +357,14 @@ export function PlpTopFilterBar({
   resultCount?: number;
   /** Pins the bar to the top of the viewport (xl and up, where it is one row). */
   sticky?: boolean;
+  /**
+   * How the row is framed.
+   *  - `inset` — the bordered card the row shipped in originally.
+   *  - `plain` — no container at all: the dropdowns sit straight on the page
+   *    and carry the light-blue DS hover instead, so the filters read as
+   *    page chrome rather than a grey inset box (Nov 17 review).
+   */
+  variant?: "inset" | "plain";
   moreLabel?: string;
   className?: string;
 }) {
@@ -326,15 +372,23 @@ export function PlpTopFilterBar({
   // the row is exactly the same width. The single row needs a desktop
   // viewport to stay legible, so narrower screens wrap to three then two.
   const columns = Math.max(2, Math.min(facets.length + 1, 6));
+  const plain = variant === "plain";
+  const hover: TopFilterHover = plain ? "accent" : "neutral";
 
   return (
     <section
       aria-label="Filter results"
       className={cn(
-        "rounded-lg border bg-card p-2 shadow-xs",
-        // Small screens stack the dropdowns, so pinning would eat the
-        // viewport — the bar only pins once it sits on a single row.
-        sticky && "xl:sticky xl:top-2 xl:z-20",
+        plain
+          ? // No box: the pinned state only needs the page background behind
+            // it so the grid doesn't show through the row as it scrolls under.
+            sticky && "xl:sticky xl:top-0 xl:z-20 xl:bg-background xl:py-2"
+          : cn(
+              "rounded-lg border bg-card p-2 shadow-xs",
+              // Small screens stack the dropdowns, so pinning would eat the
+              // viewport — the bar only pins once it sits on a single row.
+              sticky && "xl:sticky xl:top-2 xl:z-20",
+            ),
         className,
       )}
     >
@@ -349,6 +403,7 @@ export function PlpTopFilterBar({
             selected={selected[facet.key]}
             onToggle={(option) => onToggle(facet.key, option)}
             onClear={onClearFacet ? () => onClearFacet(facet.key) : undefined}
+            hover={hover}
           />
         ))}
         <TopFilterMore
@@ -358,6 +413,7 @@ export function PlpTopFilterBar({
           onClearAll={onClearAll}
           resultCount={resultCount}
           label={moreLabel}
+          hover={hover}
         />
       </div>
     </section>

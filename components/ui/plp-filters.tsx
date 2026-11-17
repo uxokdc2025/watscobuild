@@ -8,12 +8,49 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export function FilterPill({ label, onRemove }: { label: string; onRemove?: () => void }) {
+/** How an applied-filter pill is drawn.
+ *  - `solid`   — the filled primary pill (the original treatment).
+ *  - `outline` — plain white pill, thin outline, small red × (Nov 17 review).
+ *    Use it wherever the pills sit directly under the results count, so a
+ *    long row of applied facets never reads as a wall of blue.
+ */
+export type FilterPillVariant = "solid" | "outline";
+
+export function FilterPill({
+  label,
+  onRemove,
+  variant = "solid",
+  className,
+}: {
+  label: string;
+  onRemove?: () => void;
+  variant?: FilterPillVariant;
+  className?: string;
+}) {
+  const outline = variant === "outline";
   return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground">
+    <span
+      className={cn(
+        "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium",
+        outline
+          ? "border border-input bg-background text-foreground"
+          : "bg-primary text-primary-foreground",
+        className,
+      )}
+    >
       {label}
       {onRemove ? (
-        <button type="button" aria-label={`Remove ${label} filter`} onClick={onRemove} className="rounded-full p-0.5 hover:bg-primary-foreground/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground">
+        <button
+          type="button"
+          aria-label={`Remove ${label} filter`}
+          onClick={onRemove}
+          className={cn(
+            "rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-2",
+            outline
+              ? "text-destructive hover:bg-destructive/10 focus-visible:ring-destructive"
+              : "hover:bg-primary-foreground/15 focus-visible:ring-primary-foreground",
+          )}
+        >
           <X aria-hidden="true" className="size-3.5" />
         </button>
       ) : null}

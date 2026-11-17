@@ -1,12 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { ChevronRight, LayoutGrid, List } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FilterPill, FilterOption, FilterSection, RadiusControl } from "@/components/ui/plp-filters";
+import { ResultsHeader, ResultsViewToggle, type ResultsView } from "@/components/ui/plp-results-header";
 import { ProductListRow } from "@/components/ui/product-list-row";
 import { SearchAutocomplete } from "@/components/ui/search-autocomplete";
 import { CategoryThumbnails, type CategoryThumbnailItem } from "@/components/ui/category-thumbnails";
@@ -23,15 +24,24 @@ const CATEGORY_THUMBNAILS: CategoryThumbnailItem[] = [
 
 export function PlpSection() {
   const [radius, setRadius] = React.useState("50");
+  const [resultsView, setResultsView] = React.useState<ResultsView>("grid");
   return (
-    <Category id="plp" title="PLP patterns" description="Reusable product-list patterns: category thumbnails, branch selection, applied filters, radius, facets, view controls, and product actions.">
+    <Category id="plp" title="PLP patterns" description="Reusable product-list patterns: category thumbnails, the results header, branch selection, applied filters, radius, facets, view controls, and product actions.">
       <Demo name="Category thumbnails" slug="category-thumbnails" description="The scrolling category strip above search and PLP results. Square tiles on the small corner-radius token — never circles.">
         <State label="Default" className="w-full items-stretch">
           <CategoryThumbnails items={CATEGORY_THUMBNAILS} href="#" className="mb-0 w-full border-b-0 pb-0" />
         </State>
       </Demo>
-      <Demo name="Applied filter pills" slug="plp-filters" description="Blue pills sit below the results heading; Clear All is a text link.">
-        <State label="Default">
+      <Demo name="Results header" slug="plp-results-header" description="One row above the filters: title, result count beside it in a smaller font, and the view toggle at the right end.">
+        <State label="Default" className="w-full items-stretch">
+          <ResultsHeader className="w-full" title="Residential" count={348} actions={<ResultsViewToggle value={resultsView} onChange={setResultsView} />} />
+        </State>
+      </Demo>
+      <Demo name="Applied filter pills" slug="plp-filters" description="Removable pills sit under the results count; Clear All is a text link.">
+        <State label="Outlined (results page)">
+          <div className="flex flex-wrap items-center gap-2"><FilterPill variant="outline" label="Brand: Factory Authorized Parts" onRemove={() => undefined} /><FilterPill variant="outline" label="Tonnage: 3 Ton" onRemove={() => undefined} /><Button variant="link" className="px-1">Clear All</Button></div>
+        </State>
+        <State label="Solid">
           <div className="flex flex-wrap items-center gap-2"><FilterPill label="Manchester, NH - Homans" onRemove={() => undefined} /><FilterPill label="Amps: 2" onRemove={() => undefined} /><Button variant="link" className="px-1">Clear All</Button></div>
         </State>
       </Demo>
@@ -46,8 +56,9 @@ export function PlpSection() {
       <Demo name="Facet list" slug="plp-facet-list" description="Expandable section with checkboxes, counts, and a compact See More link.">
         <State label="Expanded"><div className="w-full max-w-sm"><FilterSection title="Amps"><div className="space-y-1"><FilterOption id="plp-amp-2" label="2" count={1} /><FilterOption id="plp-amp-3" label="3" count={4} /><FilterOption id="plp-amp-4" label="4" count={10} /></div><Button variant="link" size="sm" className="mt-2 px-0">See More</Button></FilterSection></div></State>
       </Demo>
-      <Demo name="Results view controls" slug="plp-view-toggle" description="Grid and list are mutually exclusive selected states.">
-        <State label="Grid selected"><div className="inline-flex rounded-md border p-0.5"><Button size="sm" className="gap-1"><LayoutGrid />Grid</Button><Button size="sm" variant="ghost" className="gap-1"><List />List</Button></div></State>
+      <Demo name="Results view controls" slug="plp-view-toggle" description="Grid and list are mutually exclusive selected states, at the right end of the results header row.">
+        <State label="Grid selected"><ResultsViewToggle value="grid" onChange={() => undefined} /></State>
+        <State label="List selected"><ResultsViewToggle value="list" onChange={() => undefined} /></State>
       </Demo>
       <Demo name="Product list row" slug="product-list-row" description="Compact PLP result row: product identity on the left, commerce actions aligned to the right.">
         <State label="Default"><div className="w-full"><ProductListRow image="/peirce-search/blower-motor-01.avif" imageAlt="Blower motor" brand="Factory Authorized Parts" title="Blower Motor 1/2 HP · 120/240 V" item="58MV660006" mfg="58MV 660 006" actions={<Button size="sm">Add to Cart</Button>} /></div></State>
