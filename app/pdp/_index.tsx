@@ -275,19 +275,10 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Search / PLP — “Want more options?” end card is no longer blue (item 7)",
-        desc: "The tile that closes the results grid keeps everything it did — the map-pin icon, the centered layout, the bold counts — but drops the solid blue. It is now a plain white card inside a thick grey outline, so it reads as a quiet offer instead of a billboard. The Nov 10 link still opens the blue version.",
-        changed: "vs Nov 10: the end card was filled solid primary blue with white text. It is now white inside a thick (3px) grey outline, with no blue anywhere on it. Nothing else about the card moved — same icon, same headline, same two sub-tiles, same counts.",
-        bullets: [
-          "No blue anywhere on it: no blue fill, no blue outline, no blue count. The white surface and a thick grey outline (3px, three times the edge on a product card) are the whole treatment.",
-          "Unchanged: the map-pin icon, the “Want more options?” headline, the “24 in stock at Manchester, NH - Homans” line, and the two stacked sub-tiles (Nearby branches / All branches) with their big bold counts and arrows. Clicking one still switches the availability scope.",
-          "The counts and the icon chip sit on the design system’s neutral grey tokens, and the counts are emphasised in the normal text colour, so nothing is hand-picked.",
-          "Added to the design system as a second framing of the existing end card (variant “outline”), documented side by side with the old blue one on the Product Card page.",
-        ],
+        title: "Search / PLP — “Want more options?” end card",
+        desc: "The tile that closes the results grid read as a billboard in solid blue, then as a heavy outlined box. It is now the same soft yellow note the site already uses for messages, with the headline and stock line in plain black. The two branch counts underneath are blue links you can click to widen the search.",
         links: [
           { label: "PLP — Residential, end of grid (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
-          { label: "PLP — Residential, end of grid (Nov 10, blue)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
-          { label: "DS — Product Card End card", href: "/components/product-card#end-card" },
         ],
       },
       {
@@ -364,7 +355,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search results — “Want more options?” end card",
         desc: "A blue call-to-action tile at the end of the results grid that sends shoppers to products stocked at other locations (designed by Nita, based on ecmdi.com).",
-        superseded: "Restyled by Nov 17, item 7: white card, thick grey outline, no blue. The link below still opens the blue Nov 10 version; the Nov 17 entry has the outlined one.",
+        superseded: "Restyled by Nov 17: the end card is now a soft yellow note with black copy and blue branch links. The link below still opens the blue Nov 10 version; the Nov 17 entry has the new one.",
         bullets: [
           "Sits as the last tile in the Grid view, filled in the primary blue with white text, everything centered.",
           "A map-pin icon in a soft white circle, the headline “Want more options?”, and “N in stock at {branch}” with N in bold.",

@@ -230,26 +230,36 @@ export default function ProductCardReference() {
             stock scopes instead of another product. Everything is centered: a{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">MapPin</code> icon in a soft
             circle, the headline, the &ldquo;<span className="font-medium text-foreground">N</span>{" "}
-            in stock at {"{branch}"}&rdquo; subline, then one stacked sub-tile per wider scope —
-            fully clickable, with a large bold count, a small label and a trailing arrow. Every
-            count comes from the page&rsquo;s{" "}
-            <span className="font-medium text-foreground">Stocked At</span> facet, and each sub-tile
-            switches that filter. Only scopes holding strictly more products are offered; when none
-            do, the card is dropped. Click the sub-tiles below to switch scope.
+            in stock at {"{branch}"}&rdquo; subline, then one row per wider scope — fully clickable,
+            with a large bold count, a small label and a trailing arrow. Every count comes from the
+            page&rsquo;s <span className="font-medium text-foreground">Stocked At</span> facet, and
+            each row switches that filter. Only scopes holding strictly more products are offered;
+            when none do, the card is dropped. Click the rows below to switch scope.
           </p>
           <p className="text-sm text-muted-foreground">
             Two framings, one anatomy and one behaviour.{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code>{" "}
-            is the <span className="font-medium text-foreground">Nov 17 review treatment</span> and
-            the one to reach for: a white card surface inside a{" "}
-            <span className="font-medium text-foreground">thick grey outline</span> — 3px on the{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-xs">border-input</code> token, three
-            times the product card&rsquo;s 1px edge — with the icon chip and sub-tiles on{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-xs">muted</code> and the counts
-            emphasised in <code className="rounded bg-muted px-1 py-0.5 text-xs">foreground</code>.
-            No blue at all: no blue fill, no blue outline, no blue count. The thick neutral frame is
-            the whole signal, so the tile sets itself apart from the products either side of it
-            without shouting over the grid it closes.{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;toast&quot;</code> is
+            the <span className="font-medium text-foreground">Nov 17 review treatment</span> and the
+            one to reach for: the design system&rsquo;s{" "}
+            <span className="font-medium text-foreground">yellow messaging surface</span> — the same
+            one the warning toast and{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">
+              Alert variant=&quot;warning&quot;
+            </code>{" "}
+            use — a light yellow fill (
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">bg-yellow-400/20</code>) inside a
+            brownish yellow edge (
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">border-yellow-600/60</code>). The
+            headline and the subline are plain{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">foreground</code> black; the only
+            colour on the card is the scope rows, which are{" "}
+            <span className="font-medium text-foreground">DS blue links</span> —{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">
+              Button variant=&quot;link&quot;
+            </code>
+            , count and label together as one link. The note surface is the whole signal, so the tile
+            sets itself apart from the products either side of it without shouting over the grid it
+            closes.{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;solid&quot;</code>{" "}
             is the original primary-blue tile, kept for the pages reviewed before Nov 17.
           </p>
@@ -261,9 +271,9 @@ export default function ProductCardReference() {
     Counts come straight from the "Stocked At" facet, so the card and the
     facet rail can never disagree. */}
 <li>
-  {/* variant="outline" — Nov 17: white surface, thick grey outline, no blue. */}
+  {/* variant="toast" — Nov 17: DS yellow note surface, black copy, blue link counts. */}
   <MoreOptionsCard
-    variant="outline"
+    variant="toast"
     branchName="Manchester, NH - Homans"
     shownCount={16}
     scopes={[
@@ -279,7 +289,7 @@ export default function ProductCardReference() {
             <div className="w-[247px]">
               <ProductCard signedIn data={BASE} />
             </div>
-            <EndCardDemo variant="outline" />
+            <EndCardDemo variant="toast" />
             <EndCardDemo />
           </PreviewCode>
           <PropsTable
@@ -288,7 +298,7 @@ export default function ProductCardReference() {
               { name: "branchName", type: "string", description: "The selected Stocked At scope — the branch name in the default scope." },
               { name: "shownCount", type: "number", description: "How many products the grid is showing in that scope." },
               { name: "scopes", type: "MoreOptionsScope[]", description: "Wider scopes to offer, ascending by count: { label, count, onSelect }. Pass only scopes with MORE products; empty means drop the card." },
-              { name: "variant", type: '"solid" | "outline"', description: 'Framing. "outline" (Nov 17) is a white surface in a thick 3px border-input grey outline, counts in foreground, no blue anywhere. "solid" (default) is the original primary-blue tile. Anatomy and behaviour are identical.' },
+              { name: "variant", type: '"solid" | "toast"', description: 'Framing. "toast" (Nov 17) is the DS yellow messaging surface — bg-yellow-400/20 inside a brownish border-yellow-600/60 edge, headline and subline in foreground black, the scope rows as DS blue links. "solid" (default) is the original primary-blue tile. Anatomy and behaviour are identical.' },
               { name: "className", type: "string?", description: "Cell-level overrides only — never a fixed height." },
             ]}
           />
@@ -311,9 +321,9 @@ export default function ProductCardReference() {
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;MoreOptionsCard&gt;</code>{" "}
                 and feed it the <strong>Stocked At</strong> counts the facet rail already shows.</>,
               <>Reach for{" "}
-                <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code>{" "}
-                on new work — the thick grey outline on white is the Nov 17 treatment, and it keeps
-                the icon, the centered layout and the emphasised counts exactly as they were.</>,
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;toast&quot;</code>{" "}
+                on new work — the DS yellow note surface is the Nov 17 treatment, and it keeps the
+                icon, the centered layout and the counts exactly where they were.</>,
               <><strong>Unit of measure is always ALL-CAPS</strong> — render it through{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">formatUom()</code> as{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">/ EACH</code> (leading slash + space, &quot;EA&quot;/&quot;Each&quot; → &quot;EACH&quot;). Never print a lowercase &quot;each&quot;.</>,
@@ -325,10 +335,11 @@ export default function ProductCardReference() {
               <>Style status as a bare colored <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;span&gt;</code> instead of <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Badge&gt;</code>.</>,
               <>Recolour a product card to make an end card, give the end card a second accent
                 colour, or hand it counts the Stocked At facet does not show.</>,
-              <>Put blue back on the outline end card — no blue fill, no blue edge, no blue count.
-                The outline is a grey token (<code className="rounded bg-muted px-1 py-0.5 text-xs">border-input</code>),
-                and a hand-picked grey or a thin 1px edge loses the signal that separates it from a
-                product tile.</>,
+              <>Mix a second colour into the toast end card — the surface and its edge are the DS
+                warning yellows (<code className="rounded bg-muted px-1 py-0.5 text-xs">yellow-400</code>{" "}
+                / <code className="rounded bg-muted px-1 py-0.5 text-xs">yellow-600</code>), the
+                headline and subline are black, and blue appears only on the scope links. A
+                hand-picked yellow or a blue fill loses the note the card is meant to read as.</>,
             ]}
           />
         </section>
@@ -369,7 +380,7 @@ export default function ProductCardReference() {
           <div className="flex flex-wrap gap-2">
             {[
               { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1" },
-              { label: "PLP — End card, outline (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
+              { label: "PLP — End card, yellow note (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17" },
               { label: "PLP — End card, solid (Nov 10)", href: "/search?brand=homans&category=residential&signedin=1" },
               { label: "PDP — Replacement Products", href: "/pdp/uc-replacement-products?signedin=1" },
             ].map((l) => (
