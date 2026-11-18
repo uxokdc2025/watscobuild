@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
  * as selected in its dropdown (and as a chip) and vice-versa.
  *
  * Composition:
- *   <PlpTopFilterBar>   pinned row — N dropdowns + "More filters"
+ *   <PlpTopFilterBar>   pinned row — N dropdowns, optionally + "More filters"
  *     <TopFilterDropdown>   one facet, popover of checkboxes
  *     <TopFilterMore>       sheet with every facet group
  *   <TopFilterChips>    removable applied-filter chips + Clear All
@@ -42,6 +42,11 @@ import { cn } from "@/lib/utils";
  * Two framings, one behaviour: `variant="inset"` keeps the bordered card the
  * row shipped in; `variant="plain"` drops the container and moves the signal
  * onto the triggers as the DS light-blue hover.
+ *
+ * Two row behaviours: `layout="wrap"` lays the triggers out as a grid that
+ * wraps on narrow screens; `layout="scroll"` keeps them on one no-wrap row
+ * that scrolls sideways, with the right edge fading out over the next filter
+ * so the row reads as "there is more" instead of ending flat.
  * ------------------------------------------------------------------ */
 
 export type TopFilterOption = { name: string; count?: number };
@@ -64,6 +69,20 @@ const ACCENT_HOVER =
 function hoverClasses(hover: TopFilterHover) {
   return hover === "accent" ? ACCENT_HOVER : undefined;
 }
+
+/**
+ * How the row lays its triggers out.
+ *  - `wrap`   — one grid cell per trigger: a single row on desktop that wraps
+ *    to three columns on tablets and two on phones.
+ *  - `scroll` — one no-wrap row that scrolls sideways, every trigger at the
+ *    same fixed width. Use it when there are more facets than fit a row: the
+ *    right-edge fade over a partly-visible filter is the "keep scrolling"
+ *    affordance, so facets stay in the row instead of behind More filters.
+ */
+export type TopFilterLayout = "wrap" | "scroll";
+
+/** Trigger width in the scrolling row — one rhythm, never ragged. */
+const SCROLL_TRIGGER_WIDTH = "w-48 shrink-0";
 
 export type TopFilterFacet = {
   /** Stable key used for state + DOM ids. */
@@ -343,10 +362,16 @@ export function PlpTopFilterBar({
   resultCount,
   sticky = true,
   variant = "inset",
+  layout = "wrap",
+  showMore = true,
   moreLabel,
   className,
 }: {
-  /** The pinned facets — 4 or 5 reads cleanly; the rest live behind More filters. */
+  /**
+   * The facets in the row. With `layout="wrap"` that is 4 or 5, and the rest
+   * live behind More filters; with `layout="scroll"` the row can carry the
+   * whole shortlist, because what doesn't fit scrolls into view.
+   */
   facets: TopFilterFacet[];
   /** Every facet group, for the More filters sheet. Defaults to `facets`. */
   allFacets?: TopFilterFacet[];
@@ -365,15 +390,79 @@ export function PlpTopFilterBar({
    *    page chrome rather than a grey inset box (Nov 17 review).
    */
   variant?: "inset" | "plain";
+  /** Wrapping grid (default) or one sideways-scrolling row — see `TopFilterLayout`. */
+  layout?: TopFilterLayout;
+  /**
+   * Whether the row ends in a "More filters" trigger. Off for a scrolling row
+   * that already carries its facets and keeps the long tail in the left rail
+   * (Nov 17 review): two ways into the same filters is one too many.
+   */
+  showMore?: boolean;
   moreLabel?: string;
   className?: string;
 }) {
-  // One column per dropdown plus one for More filters, so every control in
-  // the row is exactly the same width. The single row needs a desktop
-  // viewport to stay legible, so narrower screens wrap to three then two.
-  const columns = Math.max(2, Math.min(facets.length + 1, 6));
   const plain = variant === "plain";
   const hover: TopFilterHover = plain ? "accent" : "neutral";
+  const scrolls = layout === "scroll";
+  /** Controls in the row: one per facet, plus More filters when it is on. */
+  const controls = facets.length + (showMore ? 1 : 0);
+  // One column per control, so every one is exactly the same width. The
+  // single row needs a desktop viewport to stay legible, so narrower screens
+  // wrap to three then two. (`layout="scroll"` never wraps instead.)
+  const columns = Math.max(2, Math.min(controls, 6));
+
+  // The right-edge fade is only honest while there is something left to
+  // scroll to, so it tracks the scroll position and the row's width rather
+  // than sitting there permanently. `false` until measured, so a row that
+  // fits never flashes a fade it doesn't need.
+  const scrollerRef = React.useRef<HTMLDivElement | null>(null);
+  const [moreToScroll, setMoreToScroll] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = scrollerRef.current;
+    // `controls` is a dependency because the row's content width changes with
+    // it, and a content change is the one thing the resize observer below
+    // cannot see (the scroller itself keeps its width).
+    if (!el || !scrolls || controls === 0) return;
+    const measure = () => {
+      // 1px of slack: sub-pixel widths otherwise leave the fade stuck on at
+      // the end of the row.
+      setMoreToScroll(el.scrollWidth - el.clientWidth - el.scrollLeft > 1);
+    };
+    measure();
+    el.addEventListener("scroll", measure, { passive: true });
+    const observer =
+      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+    observer?.observe(el);
+    return () => {
+      el.removeEventListener("scroll", measure);
+      observer?.disconnect();
+    };
+  }, [scrolls, controls]);
+
+  const dropdowns = facets.map((facet) => (
+    <TopFilterDropdown
+      key={facet.key}
+      facet={facet}
+      selected={selected[facet.key]}
+      onToggle={(option) => onToggle(facet.key, option)}
+      onClear={onClearFacet ? () => onClearFacet(facet.key) : undefined}
+      hover={hover}
+      className={scrolls ? SCROLL_TRIGGER_WIDTH : undefined}
+    />
+  ));
+  const more = showMore ? (
+    <TopFilterMore
+      facets={allFacets ?? facets}
+      selected={selected}
+      onToggle={onToggle}
+      onClearAll={onClearAll}
+      resultCount={resultCount}
+      label={moreLabel}
+      hover={hover}
+      className={scrolls ? SCROLL_TRIGGER_WIDTH : undefined}
+    />
+  ) : null;
 
   return (
     <section
@@ -392,30 +481,42 @@ export function PlpTopFilterBar({
         className,
       )}
     >
-      <div
-        style={{ "--top-filter-columns": columns } as React.CSSProperties}
-        className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:[grid-template-columns:repeat(var(--top-filter-columns),minmax(0,1fr))]"
-      >
-        {facets.map((facet) => (
-          <TopFilterDropdown
-            key={facet.key}
-            facet={facet}
-            selected={selected[facet.key]}
-            onToggle={(option) => onToggle(facet.key, option)}
-            onClear={onClearFacet ? () => onClearFacet(facet.key) : undefined}
-            hover={hover}
+      {scrolls ? (
+        // The negative margin only buys the scroller 4px of room on each side
+        // so a focus ring is never clipped flat by `overflow-x`; its own
+        // padding puts the first trigger back on the column edge, in line
+        // with the results header above it.
+        <div className="relative -mx-1">
+          <div
+            ref={scrollerRef}
+            className="flex gap-2 overflow-x-auto overflow-y-hidden px-1 pt-1 pb-2 [scrollbar-color:var(--border)_transparent] [scrollbar-width:thin]"
+          >
+            {dropdowns}
+            {more}
+          </div>
+          {/* The affordance: the row's right edge dissolves into the page
+              over the next filter, so a half-seen trigger says "scroll" —
+              and it drops away once the row is scrolled to its end. */}
+          <div
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute top-0 right-0 bottom-2 w-16 bg-gradient-to-l transition-opacity duration-200",
+              // Fades to the same colour at zero alpha, never through
+              // transparent-black, so the row doesn't pick up a grey edge.
+              plain ? "from-background to-background/0" : "from-card to-card/0",
+              moreToScroll ? "opacity-100" : "opacity-0",
+            )}
           />
-        ))}
-        <TopFilterMore
-          facets={allFacets ?? facets}
-          selected={selected}
-          onToggle={onToggle}
-          onClearAll={onClearAll}
-          resultCount={resultCount}
-          label={moreLabel}
-          hover={hover}
-        />
-      </div>
+        </div>
+      ) : (
+        <div
+          style={{ "--top-filter-columns": columns } as React.CSSProperties}
+          className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:[grid-template-columns:repeat(var(--top-filter-columns),minmax(0,1fr))]"
+        >
+          {dropdowns}
+          {more}
+        </div>
+      )}
     </section>
   );
 }

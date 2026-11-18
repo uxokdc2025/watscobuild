@@ -44,6 +44,7 @@ const TOC = [
   { id: "facets", label: "Facet List" },
   { id: "facet-dropdown", label: "Facet Dropdown" },
   { id: "pinned-bar", label: "Pinned Filter Bar" },
+  { id: "scrollable-row", label: "Scrollable Filter Row" },
   { id: "view-toggle", label: "View Toggle" },
   { id: "list-row", label: "Product List Row" },
   { id: "anatomy", label: "Anatomy" },
@@ -128,6 +129,24 @@ const DEMO_ALL_FACETS: TopFilterFacet[] = [
     ],
   },
   {
+    key: "Phase",
+    label: "Phase",
+    options: [
+      { name: "Single Phase", count: 312 },
+      { name: "Three Phase", count: 36 },
+    ],
+  },
+  {
+    key: "Fuel Type",
+    label: "Fuel Type",
+    options: [
+      { name: "Natural Gas", count: 153 },
+      { name: "Oil", count: 20 },
+      { name: "Electric", count: 118 },
+      { name: "Propane", count: 44 },
+    ],
+  },
+  {
     key: "AFUE",
     label: "AFUE",
     options: [
@@ -137,6 +156,24 @@ const DEMO_ALL_FACETS: TopFilterFacet[] = [
     ],
   },
 ];
+
+/* The scrolling row's shortlist, in order — more facets than fit a row, which
+   is the whole point: what doesn't fit scrolls into view under the fade. */
+const DEMO_SCROLL_ORDER = [
+  "Brand",
+  "Tonnage",
+  "SEER2",
+  "Refrigerant",
+  "Product Family",
+  "Voltage",
+  "Phase",
+  "Stage",
+  "Fuel Type",
+];
+const DEMO_SCROLL_FACETS: TopFilterFacet[] = DEMO_SCROLL_ORDER.flatMap((key) => {
+  const facet = DEMO_ALL_FACETS.find((f) => f.key === key);
+  return facet ? [facet] : [];
+});
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
   return (
@@ -162,7 +199,8 @@ const ANATOMY: { part: string; detail: string }[] = [
   { part: "Branch selector", detail: "Your Store / Nearby / All radio card; the active header store is preselected and never becomes a pill." },
   { part: "Radius", detail: "Numeric input with an explicit miles label and an Apply action." },
   { part: "Facets", detail: "Expandable section of checkboxes with counts and a compact “See More” link." },
-  { part: "Pinned filter bar", detail: "Always-on row of facet dropdowns under the header row + “More filters”. No container; light-blue hover on each trigger. Adds to the rail, never replaces it — one shared selection." },
+  { part: "Pinned filter bar", detail: "Always-on row of facet dropdowns under the header row. No container; light-blue hover on each trigger. Adds to the rail, never replaces it — one shared selection." },
+  { part: "Scrollable filter row", detail: "The filter bar carrying more facets than fit: one no-wrap row that scrolls sideways, its right edge fading out over a half-seen next filter. No “More filters” — the long tail lives in the left rail." },
   { part: "View toggle", detail: "Grid / List — mutually-exclusive selected states on shared Buttons, at the right end of the header row." },
   { part: "List row", detail: "The product in List view — identity left, availability centered, commerce actions right. No Compare. Rendered on its own, or as the expanded row of the grouped Family Table." },
 ];
@@ -512,14 +550,22 @@ export default function PlpReference() {
             <a href="#results-header" className="font-medium text-primary hover:underline">
               results header
             </a>{" "}
-            and above the results, with{" "}
-            <span className="font-medium text-foreground">More filters</span> opening the full list
-            in a sheet. It is an <span className="font-medium text-foreground">addition</span> to the
+            and above the results, with an optional{" "}
+            <span className="font-medium text-foreground">More filters</span> trigger opening the
+            full list in a sheet (
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">showMore={"{false}"}</code> drops
+            it — see the{" "}
+            <a href="#scrollable-row" className="font-medium text-primary hover:underline">
+              scrollable row
+            </a>
+            ). It is an <span className="font-medium text-foreground">addition</span> to the
             left rail, not a replacement: both are bound to one selection map, so checking{" "}
             <em>3 Ton</em> in either place selects it in the other and produces one chip. Every
-            control is one cell of a grid, so the widths are identical by construction: a single row
-            on desktop, wrapping to three columns on tablets and two on phones rather than scrolling
-            controls off-screen. The bar is <span className="font-medium text-foreground">always on</span>{" "}
+            control is one cell of a grid, so the widths are identical by construction: with the
+            default{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">layout=&quot;wrap&quot;</code>{" "}
+            that is a single row on desktop, wrapping to three columns on tablets and two on
+            phones. The bar is <span className="font-medium text-foreground">always on</span>{" "}
             for search and category PLPs — there is no Sidebar / Top bar switch.
           </p>
           <PreviewCode
@@ -595,6 +641,57 @@ export default function PlpReference() {
             below the bar and read{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">Facet: Option</code> — up top a
             bare &ldquo;14&rdquo; has lost the group heading that explained it.
+          </p>
+        </section>
+
+        {/* ── Scrollable filter row ── */}
+        <section className="space-y-4">
+          <H2 id="scrollable-row">Scrollable filter row</H2>
+          <p className="text-sm text-muted-foreground">
+            The same bar when there are more facets worth showing than fit a row. With{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">layout=&quot;scroll&quot;</code>{" "}
+            the triggers stay on <span className="font-medium text-foreground">one row</span> at
+            every width — no wrapping, every trigger the same fixed width — and the row scrolls
+            sideways. Its right edge{" "}
+            <span className="font-medium text-foreground">fades into the page</span> over the next
+            filter, so a half-seen trigger is the affordance that there is more; the fade clears
+            once the row is scrolled to its end, and never appears at all when every filter
+            already fits. Scroll the row below.
+          </p>
+          <PreviewCode
+            previewClassName="block"
+            code={`<PlpTopFilterBar
+  layout="scroll"        // one no-wrap row, fading right edge
+  showMore={false}       // no More filters — the long tail is in the left rail
+  facets={SHORTLIST}     // Brand, Tonnage, SEER2, Refrigerant, Product Family, Voltage, Phase, Stage, Fuel Type
+  selected={selected}
+  onToggle={toggleFacet}
+  onClearFacet={clearFacet}
+/>`}
+          >
+            <div className="w-full">
+              <PlpTopFilterBar
+                facets={DEMO_SCROLL_FACETS}
+                selected={topSelected}
+                onToggle={toggleTop}
+                onClearFacet={clearTopFacet}
+                sticky={false}
+                variant="plain"
+                layout="scroll"
+                showMore={false}
+              />
+            </div>
+          </PreviewCode>
+          <p className="text-sm text-muted-foreground">
+            Pair it with{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">showMore={"{false}"}</code>:
+            a scrolling row already reaches its own facets, and the left rail already holds every
+            group, so a More filters sheet would be a third way into the same checkboxes. The rule
+            that matters is the one that has always held — the row is an{" "}
+            <span className="font-medium text-foreground">addition</span> to the rail, so no facet
+            is ever reachable <em>only</em> from the row. Keep the rail complete and put the
+            shortlist a contractor narrows by first — brand, size, refrigerant, efficiency,
+            electrical — in the row.
           </p>
         </section>
 
@@ -699,7 +796,8 @@ export default function PlpReference() {
               <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">FilterPill</code> for every removable applied facet, on <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;outline&quot;</code> under the results count.</>,
               <>Render Grid results with <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;ProductCard&gt;</code> and List results with <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;ProductListRow&gt;</code>.</>,
               <>Keep row/toggle actions on the shared <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Button&gt;</code> so hover/focus match everywhere.</>,
-              <>Bind the pinned bar and the left rail to one selection map, and pin only the four or five facets that actually narrow the set.</>,
+              <>Bind the pinned bar and the left rail to one selection map, and pin only the facets that actually narrow the set.</>,
+              <>Put a longer shortlist on <code className="rounded bg-muted px-1 py-0.5 text-xs">layout=&quot;scroll&quot;</code> and let the faded right edge show there is more, rather than squeezing the triggers or burying facets behind a button.</>,
             ]}
             donts={[
               <>Render category thumbnails as circles (<code className="rounded bg-muted px-1 py-0.5 text-xs">rounded-full</code>) or on a bespoke radius — they&apos;re square tiles on the small radius token.</>,
@@ -710,6 +808,7 @@ export default function PlpReference() {
               <>Let Grid and List both read as selected; they&apos;re mutually exclusive.</>,
               <>Drop the left rail when you add the pinned bar, give the dropdowns ragged widths, or hide every facet behind one &ldquo;Filters&rdquo; button.</>,
               <>Wrap the results-page filter row in a grey inset box, or hand-roll a second title/count/toggle row under it.</>,
+              <>Let a scrolling row end flat — with no fade, nothing says there is another filter past the edge — or make it the only route to a facet the left rail doesn&apos;t carry.</>,
             ]}
           />
         </section>
