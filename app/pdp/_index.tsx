@@ -229,11 +229,25 @@ const CHANGE_LOGS: ChangeLog[] = [
     note: "Every edit from the Nov 17 punch list, newest meeting first. Each entry opens with what changed against the Nov 10 state, and carries its own revised link — a new route or “&rev=nov17” on the same page — so every link handed out at the Nov 10 review still opens the Nov 10 state. Where both exist, the solid blue button is the Nov 17 link and the outlined one beside it opens the Nov 10 state to compare against; the plain links are design-system reference pages.",
     items: [
       {
-        title: "Search / PLP — header row, filter bar and active filters",
+        title: "Search / PLP — header row, filter bar and active filters (items 2, 4, 4b, 5)",
         desc: "The area above the results was doing too much: two stacked header lines, a grey box around the filters, and heavy blue filter tags. Now it is one header row, and the filters sit straight on the page in a single row that scrolls sideways and fades out at the right edge so you can see there is more. Applied filters read as quiet white pills, and the extra “More filters” button is gone — the left filter nav already holds every filter.",
+        changed: "vs Nov 10: the title sat on one line and “Shop 16 results” (24 now) with its own Grid / List toggle on a second; they are now one row. The filter bar had a grey inset box and ended in a “More filters” button; the box is gone, “More filters” is gone, and the row now carries Voltage, Phase, Stage and Fuel Type as well, scrolling sideways with a fade on the right edge over the next, partly visible filter. Active filters were dark-blue pills; they are now white pills with a thin outline and a small red ×.",
+        bullets: [
+          "Item 2 — one header row: the title with the results count beside it, and the Grid / List toggle at the right end of the same row.",
+          "Item 4 — the dropdowns sit straight on the page with no grey box, and each trigger gets the design system’s light-blue hover and open state.",
+          "Item 4b — no “More filters” button. Category pages show nine dropdowns (Brand, Tonnage, SEER2, Refrigerant, Product Family, Voltage, Phase, Stage, Fuel Type) on one row that scrolls sideways; the right-edge fade disappears once the row is scrolled to its end. The left filter nav still holds every filter and stays in sync with the row.",
+          "Item 5 — active filters are white pills with a thin outline and a small red ×; Clear All stays a text link.",
+          "Item 3 was dropped (the toggle stays on the header row), and the square category thumbnails are unchanged (item 9).",
+        ],
         links: [
           { label: "PLP — Residential (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
           { label: "PLP — Search Results (Nov 17)", href: "/search?q=blower%20motor&signedin=1&rev=nov17", rev: "nov17" },
+          { label: "PLP — Residential (Nov 10 chrome)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
+          { label: "PLP — Search Results (Nov 10 chrome)", href: "/search?q=blower%20motor&signedin=1", rev: "nov10" },
+          { label: "DS — Results Header", href: "/components/plp#results-header" },
+          { label: "DS — Top filter bar (no box)", href: "/components/plp#pinned-bar" },
+          { label: "DS — Scrollable filter row", href: "/components/plp#scrollable-row" },
+          { label: "DS — Active filter pills", href: "/components/plp#applied-filters" },
         ],
       },
       {
