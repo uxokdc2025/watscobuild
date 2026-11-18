@@ -275,10 +275,18 @@ const CHANGE_LOGS: ChangeLog[] = [
         ],
       },
       {
-        title: "Search / PLP — “Want more options?” end card",
+        title: "Search / PLP — “Want more options?” end card (items 7, 7b)",
         desc: "The tile that closes the results grid read as a billboard in solid blue, then as a heavy outlined box. It is now the same soft yellow note the site already uses for messages, with the headline and stock line in plain black. The two branch counts underneath are blue links you can click to widen the search.",
+        changed: "vs Nov 10: the end card was filled solid primary blue with white text and two white sub-tiles. It is now a light yellow note with a brownish-yellow edge; the headline and the “24 in stock at Manchester, NH - Homans” line are plain black, and “96 Nearby branches” and “348 All branches” are blue links (number and label together). Same map-pin icon, same layout, same counts, and clicking a count still switches the availability scope.",
+        bullets: [
+          "Item 7 first took the blue away (a white card with a thick grey outline); item 7b replaces that outline with the yellow message styling, so the card reads as a note rather than a product or a button.",
+          "Only the two branch counts carry colour, as the design system’s blue link button; everything else on the card is black text.",
+          "Documented on the Product Card page as the end card’s “toast” framing, next to the original blue one that the Nov 10 links still show.",
+        ],
         links: [
           { label: "PLP — Residential, end of grid (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
+          { label: "PLP — Residential, end of grid (Nov 10, blue)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
+          { label: "DS — Product Card End card", href: "/components/product-card#end-card" },
         ],
       },
       {
