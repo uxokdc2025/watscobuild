@@ -16,6 +16,8 @@ import {
   BranchAvailabilityList,
   ExpandableProductRowDetail,
 } from "@/components/ui/expandable-product-row";
+import { ProductListRow } from "@/components/ui/product-list-row";
+import { InventoryLine } from "@/app/ahri/_lib/parts";
 import { CodeBlock, PreviewCode, PropsTable, Guidance } from "../_ds/code";
 import { OnThisPage } from "../_ds/sidebar";
 
@@ -23,7 +25,8 @@ const TOC = [
   { id: "family-section", label: "Family Section" },
   { id: "family-table", label: "Family Table" },
   { id: "column-config", label: "Column Config" },
-  { id: "expandable-row", label: "Expandable Row" },
+  { id: "expanded-list-card", label: "Expanded Row — List Card" },
+  { id: "expandable-row", label: "Expanded Row — Spec Panel" },
   { id: "branch-availability", label: "Branch Availability" },
   { id: "qty-stepper", label: "Qty Stepper" },
   { id: "anatomy", label: "Anatomy" },
@@ -181,6 +184,67 @@ function DemoDetail({ row }: { row: DemoRow }) {
   );
 }
 
+/**
+ * The expanded row as the DS list-view card — the shape the storefront List
+ * view ships (Nov 17, item 6b). `renderDetail` returns `ProductListRow`, the
+ * same component the list stack and the substitute drawers render, so the
+ * panel carries no spec grid, no availability box and no Compare.
+ */
+function DemoListCardDetail({ row }: { row: DemoRow }) {
+  return (
+    <div className="overflow-hidden rounded-lg border bg-background">
+      <ProductListRow
+        image={DEMO_IMAGE}
+        imageAlt={row.title}
+        brand={row.brand}
+        title={
+          <Link
+            href={`/pdp/tradepro-${row.item.toLowerCase()}`}
+            className="text-primary underline-offset-2 hover:underline"
+          >
+            {row.title}
+          </Link>
+        }
+        item={row.item}
+        mfg={row.mfg}
+        availability={
+          <InventoryLine
+            branchQty={2}
+            branchName="Manchester, NH - Homans"
+            allBranchesQty={31}
+          />
+        }
+        actions={
+          <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
+            <p className="text-base font-semibold text-price">
+              {row.price}
+              <span className="ml-1 text-xs font-normal text-muted-foreground">/ EACH</span>
+            </p>
+            <Button type="button" size="sm">
+              <ShoppingCart className="size-4 shrink-0" />
+              Add
+            </Button>
+          </div>
+        }
+      />
+    </div>
+  );
+}
+
+function DemoFamilyTableListCard() {
+  return (
+    <FamilyTable
+      columns={DEMO_COLUMNS}
+      groups={[{ key: "r-454b", label: "R-454B", rows: DEMO_ROWS }]}
+      groupLabel="Refrigerant"
+      caption="Bryant® Legacy™ 134SAN — compare by tonnage, capacity, voltage, dimensions, brand, price"
+      rowKey={(r) => r.id}
+      rowLabel={(r) => r.title}
+      renderDetail={(r) => <DemoListCardDetail row={r} />}
+    />
+  );
+}
+
 function DemoFamilyTable() {
   return (
     <FamilyTable
@@ -202,8 +266,9 @@ const ANATOMY: { part: string; detail: string }[] = [
   { part: "Column header", detail: "Uppercase 12px muted labels on a muted band; labels come from the category's column config." },
   { part: "Sub-group band", detail: "A colgroup <th> spanning the table: “Refrigerant: R-454B (12)”. One table per family so columns stay aligned across bands." },
   { part: "Summary row", detail: "Comparison columns only — the attributes a contractor scans. The whole row is the expand target; the chevron carries the aria-expanded state." },
-  { part: "Expanded panel", detail: "Image, brand, name, Item/MFG, View product details, Compare, full spec list, price, availability by branch, qty, Add to Cart, Add to List." },
-  { part: "Responsive drop-out", detail: "hideBelow drops a column below sm/md/lg; the value still appears in the panel's spec list, so a phone loses no information." },
+  { part: "Expanded row", detail: "The DS list-view card (ProductListRow): image, capped description, availability column, price + Add. No spec grid, no availability box, no Compare." },
+  { part: "Expanded panel (legacy)", detail: "The older ExpandableProductRowDetail: image, identity, full spec list, availability by branch, qty, Add to Cart. Only pinned revision links still open it." },
+  { part: "Responsive drop-out", detail: "hideBelow drops a column below sm/md/lg — the attributes a contractor compares. Identity, availability and price stay on the open row at every width." },
 ];
 
 export default function FamilyTableReference() {
@@ -218,14 +283,18 @@ export default function FamilyTableReference() {
           <p className="max-w-2xl text-muted-foreground">
             The grouped result table that replaces the flat list view. Results are bucketed into
             product families; each family is a section with a thumbnail and a short description,
-            rows are sub-grouped by a key attribute, and a row expands in place with everything
-            needed to buy. Columns are data-driven per category — a category gets different
+            rows are sub-grouped by a key attribute, and a row expands in place into the design
+            system&rsquo;s list-view product card — everything needed to buy, in the row shape used
+            everywhere else. Columns are data-driven per category — a category gets different
             columns by adding a config entry, never by forking the table.
           </p>
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
               import {"{ FamilyTable, ProductFamilySection, SpecList }"} from
               &quot;@/components/ui/family-table&quot;
+            </code>
+            <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
+              import {"{ ProductListRow }"} from &quot;@/components/ui/product-list-row&quot;
             </code>
             <code className="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-xs text-muted-foreground">
               import {"{ ExpandableProductRowDetail, BranchAvailabilityList }"} from
@@ -342,11 +411,54 @@ export const CATEGORY_TABLE_CONFIG: Record<string, CategoryTableConfig> = {
           />
         </section>
 
+        {/* ── Expanded row: the DS list card (what ships) ── */}
+        <section className="space-y-4">
+          <H2 id="expanded-list-card">Expanded row — list card (default)</H2>
+          <p className="text-sm text-muted-foreground">
+            What a row should open into: the design system&rsquo;s list-view product card,{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code> — the same
+            component the <Link href="/components/list-views" className="text-primary underline-offset-2 hover:underline">List Views</Link>{" "}
+            page documents and the substitute drawers render. The table stays the comparison
+            surface; the open row is the product, in the one row shape used everywhere else. No
+            spec grid, no availability box, and no Compare — the card has none.
+          </p>
+          <PreviewCode
+            previewClassName="block"
+            code={`<FamilyTable
+  columns={columns}
+  groups={groupBySpec(rows, "refrigerant")}
+  groupLabel="Refrigerant"
+  rowKey={(row) => row.id}
+  rowLabel={(row) => row.title}
+  // The expanded row IS the DS list-view card.
+  renderDetail={(row) => (
+    <div className="overflow-hidden rounded-lg border bg-background">
+      <ProductListRow
+        image={row.image}
+        imageAlt={row.title}
+        brand={row.brand}
+        title={<Link href={pdpHref}>{row.title}</Link>}
+        item={row.item}
+        mfg={row.mfg}
+        availability={<InventoryLine ... />}
+        actions={<Price + Add />}
+      />
+    </div>
+  )}
+/>`}
+          >
+            <div className="w-full overflow-hidden rounded-lg border bg-card">
+              <DemoFamilyTableListCard />
+            </div>
+          </PreviewCode>
+        </section>
+
         {/* ── Expandable row ── */}
         <section className="space-y-4">
-          <H2 id="expandable-row">Expandable row</H2>
+          <H2 id="expandable-row">Expanded row — spec panel (legacy)</H2>
           <p className="text-sm text-muted-foreground">
-            The panel a row opens into — three zones at lg+, stacked below. The{" "}
+            The older panel, kept documented because pinned revision links still open it. Prefer
+            the list card above for new work. Three zones at lg+, stacked below. The{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">commerce</code> slot is
             caller-supplied, because price gating, cart wiring and branch inventory are app
             concerns; the panel owns the layout and the identity block.
@@ -424,9 +536,10 @@ export const CATEGORY_TABLE_CONFIG: Record<string, CategoryTableConfig> = {
           <Guidance
             dos={[
               <>Group by product family first, then sub-group by the attribute the category is actually filtered on.</>,
-              <>Keep the summary row to comparison columns — identity and commerce belong in the panel.</>,
+              <>Keep the summary row to comparison columns — identity and commerce belong in the open row.</>,
               <>Add a category by adding a config entry to <code className="rounded bg-muted px-1 py-0.5 text-xs">CATEGORY_TABLE_CONFIG</code>.</>,
-              <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">hideBelow</code> for narrow screens; the spec list in the panel is the safety net.</>,
+              <>Use <code className="rounded bg-muted px-1 py-0.5 text-xs">hideBelow</code> for narrow screens; the open row carries the identity a dropped column loses.</>,
+              <>Open a row into the DS list-view card (<code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code>) so the expanded row matches every other list row in the system.</>,
             ]}
             donts={[
               <>Ship a flat one-row-per-SKU table — that is the &ldquo;Excel spreadsheet&rdquo; this pattern replaced.</>,
@@ -434,6 +547,8 @@ export const CATEGORY_TABLE_CONFIG: Record<string, CategoryTableConfig> = {
               <>Open every row at once; one panel at a time keeps the comparison on screen.</>,
               <>Put price in the table without the signed-in gate — price is always gated.</>,
               <>Use the Family Table for the Grid view; Grid stays on the canonical ProductCard.</>,
+              <>Hang a Compare checkbox off an expanded row — comparison lives on the product page.</>,
+              <>Hand-roll a panel for the expanded row when the DS list card already carries image, identity, availability and commerce.</>,
             ]}
           />
         </section>
@@ -446,8 +561,9 @@ export const CATEGORY_TABLE_CONFIG: Record<string, CategoryTableConfig> = {
           </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "Residential category — List view", href: "/search?brand=homans&category=residential&signedin=1" },
-              { label: "Search results — List view", href: "/search?q=blower%20motor&signedin=1" },
+              { label: "Residential — List view (list-card rows)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list" },
+              { label: "Search results — List view (list-card rows)", href: "/search?q=blower%20motor&signedin=1&rev=nov17&view=list" },
+              { label: "Residential — List view (Nov 10 spec panel)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov10&view=list" },
             ].map((l) => (
               <Link
                 key={l.href}

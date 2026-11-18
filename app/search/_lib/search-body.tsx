@@ -179,9 +179,11 @@ type SearchBodyProps = {
   initialView?: "grid" | "list";
   /**
    * How List view renders its rows.
-   * "cards" (default) = the design-system list-view product card, one per SKU.
-   * "family-tables" = the Nov 10 Grainger-style family tables, kept reachable
-   * with `?rev=nov10` so the Nov 10 review links still show the Nov 10 state.
+   * "family-tables" (default) = the Grainger-style grouped table — column
+   * headers, rows grouped into attribute sections, each row expanding in
+   * place. Both revisions use it; `rev` decides what a row expands into
+   * (Nov 17: the DS list-view card. Nov 10: the spec/availability panel).
+   * "cards" = a flat stack of DS list-view cards with no table.
    */
   listVariant?: "cards" | "family-tables";
   results: SearchResult[];
@@ -316,7 +318,7 @@ export function SearchBody({
   listVariant: listVariantProp,
 }: SearchBodyProps) {
   const nov17 = rev === "nov17";
-  const listVariant = listVariantProp ?? (nov17 ? "cards" : "family-tables");
+  const listVariant = listVariantProp ?? "family-tables";
   const [view, setView] = React.useState<"grid" | "list">(initialView);
   const [stockLocation, setStockLocation] = React.useState<StockLocationValue>("your-branch");
   // One selection map for every facet, keyed by facet key (search results) or
@@ -750,18 +752,22 @@ export function SearchBody({
                 ) : null}
               </ProductGrid>
             ) : listVariant === "family-tables" ? (
-              // Nov 10 state, kept reachable at `?rev=nov10`: results grouped
-              // by product family, each row expanding in place.
+              // The Grainger-style grouped table: column headers, rows grouped
+              // into attribute sections, each row expanding in place. Nov 17
+              // (item 6b) expands into the DS list-view card; `?rev=nov10`
+              // still expands into the Nov 10 spec/availability panel.
               <FamilyListView
                 results={results}
                 signedIn={signedIn}
                 brandKey={brandKey}
                 storeName={storeName}
                 config={tableConfigFor(categorySlug)}
+                expandedRow={nov17 ? "list-card" : "spec-panel"}
+                signInHref={signInHref}
               />
             ) : (
-              // List view — one design-system list-view product card per SKU
-              // (see /components/list-views). No tables, no Compare.
+              // listVariant="cards" — a flat stack of DS list-view cards with
+              // no grouping table (see /components/list-views). No Compare.
               <SearchListView
                 results={results}
                 signedIn={signedIn}

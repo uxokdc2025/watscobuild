@@ -310,8 +310,8 @@ const USAGES: { name: string; grid: string; desc: string; href: string; example:
   {
     name: "Search / PLP — List view",
     grid: "[96px · minmax(0,340px) · minmax(0,1fr) · auto]",
-    desc: "The ProductListRow component: full-width rows with availability as its own centered middle column, a capped description, and price + Add. No Compare, no attribute table.",
-    href: "/search?brand=homans&category=residential&signedin=1&view=list",
+    desc: "The ProductListRow component: full-width rows with availability as its own centered middle column, a capped description, and price + Add. No Compare. On the storefront it is what a row of the grouped Family Table expands into.",
+    href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list",
     example: <Row item={SAMPLE_ROWS[0]} />,
   },
   {
@@ -352,9 +352,9 @@ export default function ListViewsReference() {
             Four zones: <strong>image</strong>, a <strong>capped description</strong> (so the
             title wraps instead of sprawling), <strong>availability as its own centered column</strong>,
             and <strong>price + action</strong>. Build new lists from this — never a one-off.
-            The search/PLP List view is the shared{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code>{" "}
-            component itself; there is no Compare control on the row.
+            The search/PLP List view expands a row of the grouped Family Table into this same
+            shared <code className="rounded bg-muted px-1 py-0.5 text-xs">ProductListRow</code>{" "}
+            component; there is no Compare control on the row.
           </p>
         </header>
 
