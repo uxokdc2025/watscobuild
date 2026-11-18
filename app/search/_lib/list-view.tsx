@@ -1,13 +1,20 @@
 "use client";
 
 /**
- * Search / PLP list view — what the List toggle (`?view=list`) renders.
+ * Search / PLP list rows — the design-system list-view product card, wired.
  *
  * Every row is the design system's list-view product card
  * (`@/components/ui/product-list-row`, documented at /components/list-views):
  * image, capped description, availability as its own centered column, price +
- * Add. Nothing else — no attribute/comparison tables, no family header
- * sections, and no Compare checkbox (the DS card has none).
+ * Add. No Compare checkbox — the DS card has none.
+ *
+ * Two consumers, one adapter:
+ * - `SearchListView` — a flat stack of rows, kept reachable with
+ *   `listVariant="cards"`.
+ * - `SearchListRow` — one wired row on its own, which the family table renders
+ *   as its expanded-row content (Nov 17, item 6b). Exported for exactly that:
+ *   the expanded row and the standalone list row are then the same component,
+ *   not two panels that have to be kept in step.
  *
  * This file is the ADAPTER only. App concerns live here: the signed-in price
  * gate, the cart wiring, Homans' contact-for-availability behavior. Layout is
@@ -49,7 +56,7 @@ export function SearchListView({
     <ul className="divide-y overflow-hidden rounded-xl border bg-background">
       {results.map((result, i) => (
         <li key={result.id}>
-          <ResultRow
+          <SearchListRow
             result={result}
             image={productImageFor(brandKey, i, result.image)}
             signedIn={signedIn}
@@ -62,7 +69,11 @@ export function SearchListView({
   );
 }
 
-function ResultRow({
+/**
+ * One product as the DS list-view card, commerce wired. Exported so the family
+ * table's expanded row can render it instead of carrying a panel of its own.
+ */
+export function SearchListRow({
   result,
   image,
   signedIn,
@@ -70,9 +81,10 @@ function ResultRow({
   signInHref,
 }: {
   result: SearchResult;
-  image: string;
+  image?: string;
   signedIn: boolean;
   storeName: string;
+  /** Current URL with `signedin=1` — the gated-price link target. */
   signInHref: string;
 }) {
   const { addItem } = useCart();

@@ -8,9 +8,19 @@
  * section with a thumbnail and a short description, rows sub-grouped by a key
  * attribute and expanding in place.
  *
+ * The expanded row has two documented shapes, picked with `expandedRow`:
+ *
+ * - `"list-card"` (Nov 17, item 6b) — the row opens into the design system's
+ *   list-view product card (`ProductListRow`, via `./list-view`): image,
+ *   capped description, availability, price + Add. No spec grid, no
+ *   availability box, no Compare.
+ * - `"spec-panel"` — the Nov 10 panel (`ExpandableProductRowDetail`), kept so
+ *   `?rev=nov10` still opens the state handed out at that review.
+ *
  * This file is the ADAPTER only. The visual patterns live in the design
  * system (`@/components/ui/family-table`,
- * `@/components/ui/expandable-product-row`) and the columns come from the
+ * `@/components/ui/expandable-product-row`,
+ * `@/components/ui/product-list-row`) and the columns come from the
  * per-category config map (`./family-table-config`). Everything app-specific
  * — the signed-in price gate, the cart, Homans' contact-for-availability
  * behavior — is resolved here.
@@ -38,6 +48,7 @@ import { useCart } from "@/components/cart/cart-context";
 import { formatUSD } from "@/app/pdp/_lib/types";
 
 import type { SearchResult } from "./mock-data";
+import { SearchListRow } from "./list-view";
 import { productImageFor } from "./product-images";
 import {
   groupBySpec,
@@ -55,6 +66,8 @@ export function FamilyListView({
   brandKey,
   storeName,
   config,
+  expandedRow = "spec-panel",
+  signInHref = "?signedin=1",
 }: {
   results: SearchResult[];
   signedIn: boolean;
@@ -62,6 +75,13 @@ export function FamilyListView({
   /** Branch label for the first availability line, e.g. "Manchester, NH - Homans". */
   storeName: string;
   config: CategoryTableConfig;
+  /**
+   * What a row opens into. "list-card" renders the DS list-view product card
+   * (the Nov 17 state); "spec-panel" keeps the Nov 10 spec/availability panel.
+   */
+  expandedRow?: "list-card" | "spec-panel";
+  /** Current URL with `signedin=1` — the gated-price link target. */
+  signInHref?: string;
 }) {
   const families = React.useMemo(
     () => groupIntoFamilies(results, (r, i) => productImageFor(brandKey, i, r.image)),
@@ -112,14 +132,28 @@ export function FamilyListView({
               caption={`${family.name} — compare by ${config.columns.map((c) => c.label).join(", ")}`}
               rowKey={(row) => row.id}
               rowLabel={(row) => row.title}
-              renderDetail={(row) => (
-                <RowDetail
-                  row={row}
-                  signedIn={signedIn}
-                  storeName={storeName}
-                  config={config}
-                />
-              )}
+              renderDetail={(row) =>
+                expandedRow === "list-card" ? (
+                  // The expanded row IS the design system's list-view card —
+                  // same component the list stack and the drawers render.
+                  <div className="overflow-hidden rounded-lg border bg-background">
+                    <SearchListRow
+                      result={row}
+                      image={row.image}
+                      signedIn={signedIn}
+                      storeName={storeName}
+                      signInHref={signInHref}
+                    />
+                  </div>
+                ) : (
+                  <RowDetail
+                    row={row}
+                    signedIn={signedIn}
+                    storeName={storeName}
+                    config={config}
+                  />
+                )
+              }
             />
           </ProductFamilySection>
         );
@@ -145,7 +179,8 @@ function PriceCell({ row, signedIn }: { row: NormalizedProduct; signedIn: boolea
 }
 
 /* ------------------------------------------------------------------ *
- * Expanded row
+ * Expanded row — the Nov 10 spec/availability panel. Only `?rev=nov10`
+ * reaches this now; Nov 17 opens the DS list card above.
  * ------------------------------------------------------------------ */
 
 function RowDetail({

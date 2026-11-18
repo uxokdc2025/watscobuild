@@ -20,10 +20,12 @@ type SearchParams = {
   view?: string;
   /**
    * Which revision to render. Absent keeps the Nov 10 state (original search
-   * chrome and Grainger-style family tables), so every link handed out at that
-   * review still shows what was reviewed. `rev=nov17` opts into the Nov 17
-   * punch-list chrome (header row, container-less filter bar, outlined pills)
-   * and the design-system list-view product card (no Compare).
+   * chrome, and an expanded list row that opens the spec/availability panel),
+   * so every link handed out at that review still shows what was reviewed.
+   * `rev=nov17` opts into the Nov 17 punch-list chrome (header row,
+   * container-less filter bar, outlined pills) and, in List view, the same
+   * grouped table with the design-system list-view card as the expanded row
+   * (no Compare).
    */
   rev?: string;
 };
@@ -88,7 +90,6 @@ export default async function SearchPage({
             category={categoryLabel}
             categorySlug={category}
             initialView={view === "list" ? "list" : "grid"}
-            listVariant={rev === "nov17" ? "cards" : "family-tables"}
             results={results}
             totalResults={totalResults}
             pageSize={pageSize}
