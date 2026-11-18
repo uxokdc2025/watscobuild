@@ -229,26 +229,11 @@ const CHANGE_LOGS: ChangeLog[] = [
     note: "Every edit from the Nov 17 punch list, newest meeting first. Each entry opens with what changed against the Nov 10 state, and carries its own revised link — a new route or “&rev=nov17” on the same page — so every link handed out at the Nov 10 review still opens the Nov 10 state. Where both exist, the solid blue button is the Nov 17 link and the outlined one beside it opens the Nov 10 state to compare against; the plain links are design-system reference pages.",
     items: [
       {
-        title: "Search / PLP — header row, top filter bar and active filter pills (items 2, 4, 5)",
-        desc: "The search chrome above the results is one change: a single header row, a filter bar with no box around it, and quiet white filter pills. The Nov 10 links still open the Nov 10 state — the new chrome is on the same page with “&rev=nov17”.",
-        changed: "vs Nov 10: the two stacked header lines (title, then “Shop 16 results” — “Shop 24 results” now that Residential carries a full page — with its own Grid / List toggle) are now one row — title, count and toggle together. The grey inset box around the top filter bar is gone, so the dropdowns sit straight on the page. Active filters were dark-blue pills; they are now white pills with a thin outline and a small red ×.",
-        bullets: [
-          "Item 2 — one header row above the filter bar: the title (“Residential”) with the results count beside it in a smaller font, and the Grid / List toggle at the right end of that same row. The second “Shop 16 results” line (24 now) and its separate toggle are gone. The square category thumbnails stay exactly as they are.",
-          "Item 4 — the top filter bar keeps the full row of dropdowns and the left filter nav, but loses the grey inset box around it: the dropdowns now sit straight on the page. Each dropdown trigger picks up a light-blue hover and open state, taken from the design system’s existing active-nav / tab tokens.",
-          "Item 5 — active filters are no longer dark-blue pills. They are plain white pills with a thin outline and a small red × (“Brand: Factory Authorized Parts ×”), sitting under the results count. Clear All stays a text link.",
-          "Item 3 was dropped: the Grid / List toggle stays at the top, on the header row, per item 2. Item 9 is unchanged — the category thumbnails are still square.",
-          "Left nav and top bar still share one selection, so a facet checked in either place shows checked in the other and produces exactly one pill.",
-          "Added to the design system first, then used: the Results Header (title + count + view toggle), the filter bar’s container-less “plain” framing with the light-blue trigger hover, and the outlined white Filter Pill — all on the PLP Patterns page.",
-        ],
+        title: "Search / PLP — header row, filter bar and active filters",
+        desc: "The area above the results was doing too much: two stacked header lines, a grey box around the filters, and heavy blue filter tags. Now it is one header row, and the filters sit straight on the page in a single row that scrolls sideways and fades out at the right edge so you can see there is more. Applied filters read as quiet white pills, and the extra “More filters” button is gone — the left filter nav already holds every filter.",
         links: [
           { label: "PLP — Residential (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
-          { label: "PLP — Residential, List view (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list", rev: "nov17" },
           { label: "PLP — Search Results (Nov 17)", href: "/search?q=blower%20motor&signedin=1&rev=nov17", rev: "nov17" },
-          { label: "PLP — Residential (Nov 10 chrome)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
-          { label: "PLP — Search Results (Nov 10 chrome)", href: "/search?q=blower%20motor&signedin=1", rev: "nov10" },
-          { label: "DS — Results Header", href: "/components/plp#results-header" },
-          { label: "DS — Active filter pills", href: "/components/plp#applied-filters" },
-          { label: "DS — Top filter bar (no box)", href: "/components/plp#pinned-bar" },
         ],
       },
       {
@@ -380,7 +365,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       {
         title: "Search results — pinned horizontal filter bar (always on)",
         desc: "A row of facet dropdowns across the top of the results, the way retail is moving. It is always on for search and category pages, and the left rail stays exactly where it is.",
-        superseded: "Reframed by Nov 17, items 4 and 5: the grey inset box around the bar is gone and the chips are now outlined white pills. The dropdowns and the shared selection are unchanged. The link below still opens the Nov 10 framing.",
+        superseded: "Reframed by Nov 17: the grey inset box around the bar is gone, the row carries more filters and scrolls sideways instead of ending in “More filters”, and the chips are now outlined white pills. The shared selection with the left rail is unchanged. The link below still opens the Nov 10 framing.",
         bullets: [
           "Brand, Tonnage, SEER2, Refrigerant and Product Family as equal-width dropdowns above the grid; “More filters” opens every remaining facet in a sheet.",
           "The bar and the sidebar share one selection, so checking a facet in either place selects it in the other and produces one removable chip (“Tonnage: 3 Ton”). Nothing is duplicated and nothing is replaced.",

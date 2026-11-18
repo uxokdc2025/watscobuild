@@ -154,6 +154,20 @@ const CATEGORY_FACETS: StaticFacet[] = [
 /* Which facets get pinned to the top bar. Everything else stays one click
    away behind "More filters". Keys match the facet keys built below. */
 const PINNED_CATEGORY_FACETS = ["Brand", "Tonnage", "SEER2", "Refrigerant", "Product Family"];
+/* Nov 17 (item 4b): with the row scrolling sideways and "More filters" gone,
+   the bar carries a real shortlist of HVAC facets instead of five — the ones
+   a contractor narrows by first. The long tail stays in the left rail. */
+const PINNED_CATEGORY_FACETS_NOV17 = [
+  "Brand",
+  "Tonnage",
+  "SEER2",
+  "Refrigerant",
+  "Product Family",
+  "Voltage",
+  "Phase",
+  "Stage",
+  "Fuel Type",
+];
 const PINNED_SEARCH_FACETS = ["brand", "amps", "bearingType", "capacitorMfdF", "basisOfRotationView"];
 
 /** Shared empty set so unselected facets keep a stable prop identity. */
@@ -435,13 +449,17 @@ export function SearchBody({
   }, [category, facetCount, brandCount]);
 
   const pinnedTopFacets = React.useMemo<TopFilterFacet[]>(() => {
-    const order = category ? PINNED_CATEGORY_FACETS : PINNED_SEARCH_FACETS;
+    const order = category
+      ? nov17
+        ? PINNED_CATEGORY_FACETS_NOV17
+        : PINNED_CATEGORY_FACETS
+      : PINNED_SEARCH_FACETS;
     const byKey = new Map(allTopFacets.map((facet) => [facet.key, facet]));
     const pinned = order
       .map((key) => byKey.get(key))
       .filter((facet): facet is TopFilterFacet => Boolean(facet));
     return pinned.length ? pinned : allTopFacets.slice(0, 5);
-  }, [allTopFacets, category]);
+  }, [allTopFacets, category, nov17]);
 
   const facetLabels = React.useMemo(() => {
     const labels: Record<string, string> = {};
@@ -692,7 +710,10 @@ export function SearchBody({
               <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{category}</h1>
             ) : null}
             {/* Pinned filter bar — always on. Sits above the grid and shares
-                one selection with the left rail, which stays put. */}
+                one selection with the left rail, which stays put. Nov 17
+                (item 4b): the row scrolls sideways with a fading right edge
+                and drops "More filters" — the long tail of facets is already
+                in the rail, which is the one place that holds all of them. */}
             <PlpTopFilterBar
               facets={pinnedTopFacets}
               allFacets={allTopFacets}
@@ -702,6 +723,8 @@ export function SearchBody({
               onClearAll={clearAllFilters}
               resultCount={totalResults}
               variant={nov17 ? "plain" : "inset"}
+              layout={nov17 ? "scroll" : "wrap"}
+              showMore={!nov17}
             />
             {/* Results toolbar — heading + view toggle. The Nov 17 chrome
                 folds both into the header row above the filter bar. */}
