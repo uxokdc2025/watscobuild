@@ -204,8 +204,6 @@ type ChangeItem = {
   title: string;
   /** One-line lead describing the edit. */
   desc: string;
-  /** What changed against the previous meeting's state — rendered as a callout. */
-  changed?: string;
   /** Quieter callout: this entry has been overtaken by later work. */
   superseded?: string;
   /** Optional explicit list of what changed — rendered as bullets. */
@@ -226,102 +224,36 @@ const CHANGE_LOGS: ChangeLog[] = [
     id: "nov-17",
     badge: "Nov 17",
     title: "Nov 17, 2026 — new edits since the Nov 17 meeting",
-    note: "Every edit from the Nov 17 punch list, newest meeting first. Each entry opens with what changed against the Nov 10 state, and carries its own revised link — a new route or “&rev=nov17” on the same page — so every link handed out at the Nov 10 review still opens the Nov 10 state. Where both exist, the solid blue button is the Nov 17 link and the outlined one beside it opens the Nov 10 state to compare against; the plain links are design-system reference pages.",
+    note: "Every edit from the Nov 17 punch list. Each entry links the pages it changed.",
     items: [
       {
-        title: "Search / PLP — header row, filter bar and active filters (items 2, 4, 4b, 5)",
-        desc: "The area above the results was doing too much: two stacked header lines, a grey box around the filters, and heavy blue filter tags. Now it is one header row, and the filters sit straight on the page in a single row that scrolls sideways and fades out at the right edge so you can see there is more. Applied filters read as quiet white pills, and the extra “More filters” button is gone — the left filter nav already holds every filter.",
-        changed: "vs Nov 10: the title sat on one line and “Shop 16 results” (24 now) with its own Grid / List toggle on a second; they are now one row. The filter bar had a grey inset box and ended in a “More filters” button; the box is gone, “More filters” is gone, and the row now carries Voltage, Phase, Stage and Fuel Type as well, scrolling sideways with a fade on the right edge over the next, partly visible filter. Active filters were dark-blue pills; they are now white pills with a thin outline and a small red ×.",
-        bullets: [
-          "Item 2 — one header row: the title with the results count beside it, and the Grid / List toggle at the right end of the same row.",
-          "Item 4 — the dropdowns sit straight on the page with no grey box, and each trigger gets the design system’s light-blue hover and open state.",
-          "Item 4b — no “More filters” button. Category pages show nine dropdowns (Brand, Tonnage, SEER2, Refrigerant, Product Family, Voltage, Phase, Stage, Fuel Type) on one row that scrolls sideways; the right-edge fade disappears once the row is scrolled to its end. The left filter nav still holds every filter and stays in sync with the row.",
-          "Item 5 — active filters are white pills with a thin outline and a small red ×; Clear All stays a text link.",
-          "Item 3 was dropped (the toggle stays on the header row), and the square category thumbnails are unchanged (item 9).",
-        ],
+        title: "Search / PLP — header row, filter bar and applied filters",
+        desc: "The area above the results was doing too much: two stacked header lines, a grey box around the filters, and heavy blue filter tags. The title, result count and the Grid / List toggle now share one row, and the filters sit straight on the page in a single row that scrolls sideways when there are more. Applied filters read as quiet white pills.",
         links: [
-          { label: "PLP — Residential (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
-          { label: "PLP — Search Results (Nov 17)", href: "/search?q=blower%20motor&signedin=1&rev=nov17", rev: "nov17" },
-          { label: "PLP — Residential (Nov 10 chrome)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
-          { label: "PLP — Search Results (Nov 10 chrome)", href: "/search?q=blower%20motor&signedin=1", rev: "nov10" },
-          { label: "DS — Results Header", href: "/components/plp#results-header" },
-          { label: "DS — Top filter bar (no box)", href: "/components/plp#pinned-bar" },
-          { label: "DS — Scrollable filter row", href: "/components/plp#scrollable-row" },
-          { label: "DS — Active filter pills", href: "/components/plp#applied-filters" },
+          { label: "PLP — Residential", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
+          { label: "PLP — Search Results", href: "/search?q=blower%20motor&signedin=1&rev=nov17", rev: "nov17" },
         ],
       },
       {
-        title: "Search / PLP — List view: the grouped table is back, and a row now opens the design system’s list card (items 6, 6b)",
-        desc: "List view is the Grainger-style grouped table again — the column headers (Tonnage, Cooling capacity, Efficiency, Voltage, Dimensions, Brand, Price), the rows grouped into sections like “REFRIGERANT: R-454B (4)”, and the collapsed rows with an expand chevron. The one thing that changed is what a row opens into: the design system’s list-view product card, instead of the old panel. Grid view is unchanged.",
-        changed: "vs Nov 10: the table itself is the same table. What a row expands into is not — it used to open a panel of its own (a large product image, a two-column spec grid, a bordered availability box and a Compare checkbox) and now opens the design system’s list-view product card: image, capped description, availability, web price and Add. No Compare anywhere. This also corrects the first Nov 17 pass, which had dropped the grouped table for a flat stack of cards; the table is back, because the layout was right — only the expanded row was wrong.",
-        bullets: [
-          "The grouped table is the one from before the first Nov 17 pass: column headers Tonnage / Cooling capacity / Efficiency / Voltage / Dimensions (H×W×D) / Brand / Price, rows grouped into attribute sections (“REFRIGERANT: R-454B (4)” with its count), one row per product with a chevron, and one row open at a time so the comparison never scrolls away.",
-          "An open row renders ProductListRow, the shared list card from the Components tab — the same component the cart lines, checkout review and the replacement drawers use. Nothing extra is hung off it.",
-          "Gone from the open row: the large product image with the two-column spec grid, the bordered availability box, and the Compare checkbox. There is no Compare anywhere on the page.",
-          "Price stays gated to signed-in in both the Price column and the open row, and Homans’ flagged products keep “Limited Availability / Contact Us” instead of a stock line.",
-          "Narrow screens lose nothing: Efficiency and Dimensions drop out of the table below 1024 and Voltage / Brand below 768, and the open row carries the product’s identity, availability and price at every width.",
-          "Grid view is untouched. The Nov 10 state is still on the same link with “&rev=nov10” — the same table, but a row there still opens the Nov 10 spec panel.",
-          "“/category/residential?rev=nov17” opens this same revised List view, so either link works. Without “rev” that address still opens the category landing page exactly as before.",
-          "Added to the design system first, then used: the Family Table page documents “Expanded row — list card” as the default shape, with the old spec panel kept below it as legacy.",
-        ],
+        title: "Search / PLP — List view",
+        desc: "The list view had drifted off the grouped table everyone reviewed, and opening a row showed a one-off panel with a Compare checkbox. The grouped table is back, and a row now opens the same product list card the rest of the site uses. Grid view is unchanged.",
         links: [
-          { label: "PLP — Residential, List view (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list", rev: "nov17" },
-          { label: "Residential category link (Nov 17)", href: "/category/residential?rev=nov17", rev: "nov17" },
-          { label: "PLP — Search Results, List view (Nov 17)", href: "/search?q=blower%20motor&signedin=1&rev=nov17&view=list", rev: "nov17" },
-          { label: "PLP — List view, Nov 10 state", href: "/search?brand=homans&category=residential&signedin=1&view=list&rev=nov10", rev: "nov10" },
-          { label: "DS — Family Table, expanded row as list card", href: "/components/family-table#expanded-list-card" },
-          { label: "DS — List Views", href: "/components/list-views" },
-          { label: "DS — PLP list row", href: "/components/plp#list-row" },
+          { label: "PLP — Residential, List view", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17&view=list", rev: "nov17" },
+          { label: "PLP — Search Results, List view", href: "/search?q=blower%20motor&signedin=1&rev=nov17&view=list", rev: "nov17" },
         ],
       },
       {
-        title: "Search / PLP — “Want more options?” end card (items 7, 7b)",
-        desc: "The tile that closes the results grid read as a billboard in solid blue, then as a heavy outlined box. It is now the same soft yellow note the site already uses for messages, with the headline and stock line in plain black. The two branch counts underneath are blue links you can click to widen the search.",
-        changed: "vs Nov 10: the end card was filled solid primary blue with white text and two white sub-tiles. It is now a light yellow note with a brownish-yellow edge; the headline and the “24 in stock at Manchester, NH - Homans” line are plain black, and “96 Nearby branches” and “348 All branches” are blue links (number and label together). Same map-pin icon, same layout, same counts, and clicking a count still switches the availability scope.",
-        bullets: [
-          "Item 7 first took the blue away (a white card with a thick grey outline); item 7b replaces that outline with the yellow message styling, so the card reads as a note rather than a product or a button.",
-          "Only the two branch counts carry colour, as the design system’s blue link button; everything else on the card is black text.",
-          "Documented on the Product Card page as the end card’s “toast” framing, next to the original blue one that the Nov 10 links still show.",
-        ],
+        title: "Search / PLP — “Want more options?” end card",
+        desc: "The tile that closes the results grid read as a billboard, too heavy and too blue. It is now the soft yellow note the site already uses for messages, with the copy in plain black and the branch counts as blue links you can click to widen the search.",
         links: [
-          { label: "PLP — Residential, end of grid (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
-          { label: "PLP — Residential, end of grid (Nov 10, blue)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
-          { label: "DS — Product Card End card", href: "/components/product-card#end-card" },
+          { label: "PLP — Residential, end of grid", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
         ],
       },
       {
-        title: "Product grid — five columns maximum, never six (item 8)",
-        desc: "The grid now stops at five columns at every width. It reaches five at 1440 with the left filters showing, and stays five all the way to 2560 — past 1440 the extra width makes the cards bigger instead of adding a sixth column. This replaces the Nov 10 / Nov 16 grid, which stepped up to six from 1728.",
-        changed: "vs Nov 10: the grid stepped up to a sixth column from 1728 and the Residential page carried a short page of products. It now holds at five columns from 1440 to 2560, and Residential carries a full 24 products so the wide grid reads as a 5 × 5 with the end card. This is the one Nov 17 edit that is NOT behind “&rev=nov17”: the column cap is a layout token every page reads, so the Nov 10 links show the five-column grid too. Everything else on those links — chrome, pills, list view, end card — is still the Nov 10 state.",
-        bullets: [
-          "Residential now carries a full page of 24 products, so with the “Want more options?” end card as the 25th tile the wide grid reads as a 5 × 5.",
-          "Below 1440 it steps down as before: 4 beside the filters from 1280, 3 at 1024, 3 on tablets, 2 on phones — the count only drops when a card would get too narrow to keep its qty stepper and Add button on one line.",
-          "The change is in the layout tokens, not on the page: --layout-columns stops at 5 and --layout-card-min is 196px (the card’s real minimum), so every page using the shared product grid follows — search, category PLPs and the CMS product slider.",
-          "The Foundations “Grid & breakpoints” page is updated to match: the rule callout, the breakpoints table, the “PLP with filters” column, the token table and the live resizable demo all read 5 as the cap.",
-          "Follow-up fix (PR #20): at exactly 1440 beside the filters the five 196.8px cards had Add wrapping under the qty stepper. The card’s stepper-to-Add gap is now 6px (gap-1.5) and the 196px minimum counts the card’s 1px borders, so the stepper and Add sit on one line at 1440 and every width above it — still five columns, never six.",
-          "Checked for sideways scroll at 1024, 1280, 1440, 1920 and 2560 — including 1440 with the filter sidebar, which is the tightest fit (five 196.8px cards in a 1080px column).",
-        ],
+        title: "Product grid — five columns maximum, never six",
+        desc: "On wide screens the grid added a sixth column and the cards got cramped. It now stops at five columns at every width, and extra width makes the cards bigger instead of adding another one. Residential carries a full page of products, so the wide grid reads as a complete block.",
         links: [
-          { label: "PLP — Residential, 24 products + end card (Nov 17)", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
-          { label: "PLP — Residential (Nov 10 chrome, same 5-column grid)", href: "/search?brand=homans&category=residential&signedin=1", rev: "nov10" },
-          { label: "DS — Grid & Breakpoints (max 5 columns)", href: "/components/grid" },
-        ],
-      },
-      {
-        title: "Landing page (/) — Nov 17 section at the top, Nov 10 and older collapsed (item 1)",
-        desc: "This page. The change log now leads with a “Nov 17, 2026” section holding every edit from this punch list; Nov 10 and every older meeting are collapsed below it. Each Nov 17 entry opens with what changed against the Nov 10 state and carries its own revised link, so nothing handed out at the Nov 10 review has moved.",
-        changed: "vs Nov 10: the Nov 10 section used to sit at the top and open on load. The newest meeting now leads, and only the newest meeting is open — Nov 10, Nov 3, Oct 28, Oct 20, Oct 9, Oct 2 and the earlier baseline all start collapsed. Entries also gained a what-changed callout and a Nov 17 / Nov 10 split on their links, which the Nov 10 section never had.",
-        bullets: [
-          "Newest meeting first, and only the newest is expanded on load. Older meetings stay one click away in the same accordion.",
-          "Every page the Nov 17 punch list touched has a revised link here — a new route or “&rev=nov17” on the same page — and the Nov 10 link beside it still opens the Nov 10 state. The solid blue button is the Nov 17 link; the outlined one beside it is Nov 10.",
-          "The one exception is called out on its own entry: the five-column cap is a layout token, not a page, so it applies on the Nov 10 links too.",
-          "Item 9 is a no-change: the Quick Order V2 drawer was approved as reviewed and the category thumbnails stay square, so their Nov 10 links are untouched and keep working as handed out.",
-          "The what-changed notes use the design system’s Callout — added to the Components tab (Feedback) first, then used here and on the Grid & Breakpoints rules.",
-        ],
-        links: [
-          { label: "Landing page (/) — Nov 17", href: "/", rev: "nov17" },
-          { label: "Quick Order V2 (item 9 — unchanged)", href: "/quickorder/v2?signedin=1", rev: "nov10" },
-          { label: "DS — Callout", href: "/components/feedback#callout" },
+          { label: "PLP — Residential grid", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
         ],
       },
     ],
@@ -910,9 +842,9 @@ export default function PdpMasterPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             Grouped by meeting, newest first — each card is dated to a meeting and holds the new
             edits made since it. The latest ({CHANGE_LOGS[0]?.badge ?? "latest"}) is open; Nov 10 and
-            every older meeting are collapsed, one click away. Each entry says what changed against
-            the previous meeting and carries its own revised link, so a link handed out at an earlier
-            review still opens the state that was reviewed.
+            every older meeting are collapsed, one click away. Each entry links the pages it changed;
+            older sections keep their original links, so a link handed out at an earlier review still
+            opens the state that was reviewed.
           </p>
           <Accordion
             type="multiple"
@@ -945,12 +877,6 @@ export default function PdpMasterPage() {
                       <li key={c.title} className="rounded-lg border bg-background p-4">
                         <p className="font-semibold">{c.title}</p>
                         <p className="mt-0.5 text-sm text-muted-foreground">{c.desc}</p>
-                        {c.changed ? (
-                          <Callout className="mt-3">
-                            <CalloutTitle>What changed</CalloutTitle>
-                            <CalloutDescription>{c.changed}</CalloutDescription>
-                          </Callout>
-                        ) : null}
                         {c.superseded ? (
                           <Callout variant="neutral" className="mt-3">
                             <CalloutTitle>Since Nov 17</CalloutTitle>
