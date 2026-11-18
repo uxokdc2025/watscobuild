@@ -230,7 +230,7 @@ type SearchBodyProps = {
    * `nov17` is the reviewed punch-list chrome — one header row (title +
    * count + view toggle) above a container-less filter bar, with the applied
    * filters as outlined white pills underneath, and the grid's "Want more
-   * options?" end card on its thick-grey-outline framing instead of blue.
+   * options?" end card on the DS yellow note framing instead of blue.
    */
   rev?: "nov10" | "nov17";
 };
@@ -761,8 +761,9 @@ export function SearchBody({
                   <li>
                     <MoreOptionsCard
                       // Nov 17 review: the end card drops the solid blue for
-                      // the thick-grey-outline framing on a white surface.
-                      variant={nov17 ? "outline" : "solid"}
+                      // the DS yellow note framing — light yellow surface,
+                      // brownish edge, black copy, blue links on the counts.
+                      variant={nov17 ? "toast" : "solid"}
                       branchName={selectedScopeLabel}
                       shownCount={stockCounts[stockLocation]}
                       scopes={widerScopes.map((loc) => ({
