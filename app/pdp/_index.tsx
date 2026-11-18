@@ -244,7 +244,7 @@ const CHANGE_LOGS: ChangeLog[] = [
       },
       {
         title: "Search / PLP — “Want more options?” end card",
-        desc: "The tile that closes the results grid read as a billboard, too heavy and too blue. It is now the soft yellow note the site already uses for messages, with the copy in plain black and the branch counts as blue links you can click to widen the search.",
+        desc: "The tile that closes the results grid read as a billboard, too heavy and too blue. It is now the soft yellow note the site already uses for messages, with the copy in plain black and the branch counts as blue links in white boxes you can click to widen the search.",
         links: [
           { label: "PLP — Residential, end of grid", href: "/search?brand=homans&category=residential&signedin=1&rev=nov17", rev: "nov17" },
         ],

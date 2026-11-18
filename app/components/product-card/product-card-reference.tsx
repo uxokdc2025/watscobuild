@@ -251,15 +251,21 @@ export default function ProductCardReference() {
             brownish yellow edge (
             <code className="rounded bg-muted px-1 py-0.5 text-xs">border-yellow-600/60</code>). The
             headline and the subline are plain{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-xs">foreground</code> black; the only
-            colour on the card is the scope rows, which are{" "}
-            <span className="font-medium text-foreground">DS blue links</span> —{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">foreground</code> black, and the
+            scope rows sit in <span className="font-medium text-foreground">white tiles</span> on the
+            yellow — the DS{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">
-              Button variant=&quot;link&quot;
-            </code>
-            , count and label together as one link. The note surface is the whole signal, so the tile
-            sets itself apart from the products either side of it without shouting over the grid it
-            closes.{" "}
+              Button variant=&quot;outline&quot;
+            </code>{" "}
+            surface (<code className="rounded bg-muted px-1 py-0.5 text-xs">bg-background</code>, the
+            subtle <code className="rounded bg-muted px-1 py-0.5 text-xs">border</code> grey,{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">shadow-xs</code>,{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">rounded-sm</code>) carrying the
+            count and the label together as one{" "}
+            <span className="font-medium text-foreground">DS blue link</span> (
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">text-primary</code>) plus the
+            trailing arrow. The note surface is the whole signal, so the tile sets itself apart from
+            the products either side of it without shouting over the grid it closes.{" "}
             <code className="rounded bg-muted px-1 py-0.5 text-xs">variant=&quot;solid&quot;</code>{" "}
             is the original primary-blue tile, kept for the pages reviewed before Nov 17.
           </p>
@@ -271,7 +277,8 @@ export default function ProductCardReference() {
     Counts come straight from the "Stocked At" facet, so the card and the
     facet rail can never disagree. */}
 <li>
-  {/* variant="toast" — Nov 17: DS yellow note surface, black copy, blue link counts. */}
+  {/* variant="toast" — Nov 17: DS yellow note surface, black copy, and the scope
+      rows as white outline tiles with blue link counts. */}
   <MoreOptionsCard
     variant="toast"
     branchName="Manchester, NH - Homans"
@@ -298,7 +305,7 @@ export default function ProductCardReference() {
               { name: "branchName", type: "string", description: "The selected Stocked At scope — the branch name in the default scope." },
               { name: "shownCount", type: "number", description: "How many products the grid is showing in that scope." },
               { name: "scopes", type: "MoreOptionsScope[]", description: "Wider scopes to offer, ascending by count: { label, count, onSelect }. Pass only scopes with MORE products; empty means drop the card." },
-              { name: "variant", type: '"solid" | "toast"', description: 'Framing. "toast" (Nov 17) is the DS yellow messaging surface — bg-yellow-400/20 inside a brownish border-yellow-600/60 edge, headline and subline in foreground black, the scope rows as DS blue links. "solid" (default) is the original primary-blue tile. Anatomy and behaviour are identical.' },
+              { name: "variant", type: '"solid" | "toast"', description: 'Framing. "toast" (Nov 17) is the DS yellow messaging surface — bg-yellow-400/20 inside a brownish border-yellow-600/60 edge, headline and subline in foreground black, and the scope rows in white outline tiles (bg-background, subtle border grey, shadow-xs, rounded-sm) with the count and label as one DS blue text-primary link. "solid" (default) is the original primary-blue tile. Anatomy and behaviour are identical.' },
               { name: "className", type: "string?", description: "Cell-level overrides only — never a fixed height." },
             ]}
           />

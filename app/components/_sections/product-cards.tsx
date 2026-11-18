@@ -80,7 +80,7 @@ export function ProductCardsSection() {
     <Category
       id="product-cards"
       title="Product Card"
-      description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated. The last two tiles are the grid end card: the Nov 17 toast framing (the DS yellow note surface, black copy, blue links on the counts) and the original solid-blue one."
+      description="Canonical worst-case card. Every slot reserves fixed height — cards in a row are always the same height regardless of which fields are populated. The last two tiles are the grid end card: the Nov 17 toast framing (the DS yellow note surface, black copy, and the counts as blue links in white tiles) and the original solid-blue one."
     >
       <div className="flex flex-wrap items-stretch gap-6 lg:col-span-2">
         {/* Badges + % Also Purchased (richest state) */}
@@ -92,7 +92,8 @@ export function ProductCardsSection() {
         {/* End card framings — last tile in the PLP grid. Counts mirror the
             page's "Stocked At" facet; the interactive version (links switch
             the filter) lives on the Product Card page. `toast` is the Nov 17
-            treatment: the DS yellow note surface, black copy, blue links. */}
+            treatment: the DS yellow note surface, black copy, and the counts
+            as blue links inside white outline tiles. */}
         <EndCard variant="toast" label="End card — yellow note (Nov 17)" />
         <EndCard variant="solid" label="End card — solid (Nov 10)" />
       </div>
