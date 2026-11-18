@@ -28,11 +28,14 @@
  *                 `Alert variant="warning"` use — a light yellow fill
  *                 (`bg-yellow-400/20`) inside a brownish yellow edge
  *                 (`border-yellow-600/60`). The headline and the subline are
- *                 plain `text-foreground` black; only the scope rows carry
- *                 colour, as DS blue links (`Button variant="link"` — count
- *                 and label together are the link). The note surface is what
- *                 sets the tile apart from the products either side of it,
- *                 without a wall of blue shouting over the grid it closes.
+ *                 plain `text-foreground` black, and the scope rows sit in
+ *                 white tiles on the yellow — the DS `Button variant="outline"`
+ *                 surface (`bg-background`, subtle `border` grey, `shadow-xs`,
+ *                 `rounded-sm`), with the count and the label together as one
+ *                 DS blue `text-primary` link and the trailing arrow. The note
+ *                 surface is what sets the tile apart from the products either
+ *                 side of it, without a wall of blue shouting over the grid it
+ *                 closes.
  *
  * ── Counts ──
  * `shownCount` and every `scopes[].count` come from the page's "Stocked At"
@@ -41,10 +44,10 @@
  * are no more options to offer and the caller should drop the card entirely.
  *
  * Tokens only: `bg-primary`/`bg-primary-foreground` for the solid framing, the
- * DS warning yellows (`yellow-400` / `yellow-600`) plus `text-foreground` and
- * `text-primary` for the toast framing, the small radius (`rounded-sm`) and
- * the DS type scale. Never a hand-picked yellow, grey or blue, and never a
- * second accent colour.
+ * DS warning yellows (`yellow-400` / `yellow-600`) plus `bg-background`,
+ * `border`, `text-foreground` and `text-primary` for the toast framing, the
+ * small radius (`rounded-sm`) and the DS type scale. Never a hand-picked
+ * yellow, grey or blue, and never a second accent colour.
  */
 
 import * as React from "react";
@@ -140,20 +143,24 @@ export function MoreOptionsCard({
         <ul className="flex w-full flex-col gap-2 pt-1">
           {scopes.map((scope) => (
             <li key={scope.label}>
-              {/* The whole row is the DS Button: the blue `link` variant on the
-                  toast framing — count and label are one blue link, nothing
-                  else on the card is coloured — or the inverse-token tile when
-                  it sits on the primary surface. */}
+              {/* The whole row is the DS Button: the `outline` white tile on
+                  the toast framing — a white surface with the subtle DS grey
+                  edge on the yellow, carrying the count and the label as one
+                  blue `text-primary` link — or the inverse-token tile when it
+                  sits on the primary surface. */}
               <Button
                 type="button"
-                variant={toast ? "link" : "secondary"}
+                variant={toast ? "outline" : "secondary"}
                 onClick={scope.onSelect}
                 aria-label={`Show ${scope.count.toLocaleString()} products stocked at ${scope.label}`}
                 className={cn(
-                  "group/scope h-auto w-full justify-between gap-3 rounded-sm text-left whitespace-normal",
+                  "group/scope h-auto w-full justify-between gap-3 rounded-sm px-3 py-2.5 text-left whitespace-normal",
                   toast
-                    ? "px-0 py-1"
-                    : "bg-primary-foreground px-3 py-2.5 text-primary shadow-xs transition-colors hover:bg-primary-foreground/90 focus-visible:ring-primary-foreground/70",
+                    ? // `outline` already brings `bg-background`, the subtle
+                      // `border` grey and `shadow-xs`; the links stay DS blue
+                      // through the DS accent hover.
+                      "text-primary hover:text-primary"
+                    : "bg-primary-foreground text-primary shadow-xs transition-colors hover:bg-primary-foreground/90 focus-visible:ring-primary-foreground/70",
                 )}
               >
                 <span className="flex flex-col">

@@ -762,7 +762,8 @@ export function SearchBody({
                     <MoreOptionsCard
                       // Nov 17 review: the end card drops the solid blue for
                       // the DS yellow note framing — light yellow surface,
-                      // brownish edge, black copy, blue links on the counts.
+                      // brownish edge, black copy, and the branch counts as
+                      // blue links in white outline tiles.
                       variant={nov17 ? "toast" : "solid"}
                       branchName={selectedScopeLabel}
                       shownCount={stockCounts[stockLocation]}
