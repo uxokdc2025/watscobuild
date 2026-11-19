@@ -4,6 +4,8 @@ import * as React from "react";
 import {
   BookOpen,
   Boxes,
+  ChevronDown,
+  ChevronUp,
   ClipboardList,
   Fan,
   FileText,
@@ -36,6 +38,7 @@ import {
 } from "@/components/ui/accordion";
 import {
   formatUSD,
+  type AhriMatchupItem,
   type PartRow,
   type PartsCatalog,
   type PartItem,
@@ -863,10 +866,89 @@ const CARD_TITLE_CLS =
 // item/mfg or price/availability doesn't push the card taller than needed.
 const CARD_DESC_CLS = "mt-1 text-xs text-muted-foreground leading-tight";
 
+/** Number of AHRI matchup rows shown before "See more" expands the rest. */
+const INITIAL_COUNT = 3;
+
+/** AHRI Matchups — the multi-matchup form of the card below. Same outer box and
+ *  row layout as PRO Picks, one row per certified matchup: `INITIAL_COUNT` rows
+ *  show by default and a footer control expands to the full list, so a product
+ *  with several matches doesn't stack full mini buy boxes down the narrow
+ *  summary column. */
+function AhriMatchups({ matchups }: { matchups: AhriMatchupItem[] }) {
+  const [expanded, setExpanded] = React.useState(false);
+  const visible = expanded ? matchups : matchups.slice(0, INITIAL_COUNT);
+  const remaining = matchups.length - INITIAL_COUNT;
+  return (
+    <section aria-label="AHRI Matchups" className="flex flex-col gap-3">
+      <h2 className="text-lg font-bold tracking-tight">
+        AHRI Matchups{" "}
+        <span className="text-sm font-normal text-muted-foreground">
+          ({matchups.length})
+        </span>
+      </h2>
+      <div className="overflow-hidden rounded-lg border bg-muted/30">
+        {visible.map((m, i) => (
+          <div
+            key={m.number}
+            className={`grid grid-cols-[3.5rem_1fr_auto] items-center gap-4 px-4 py-4 ${i > 0 ? "border-t" : ""}`}
+          >
+            <div className="size-14">
+              <ProductThumb src={m.matchedProduct.image} alt={m.matchedProduct.title} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-muted-foreground">
+                AHRI Matchup: {m.number}
+              </p>
+              <a href="#" className={CARD_TITLE_CLS}>
+                {m.matchedProduct.title}
+              </a>
+              <p className="mt-1 flex flex-wrap items-baseline gap-1.5 leading-tight">
+                <span className="text-base font-bold">
+                  {formatUSD(m.matchedProduct.price)}
+                </span>
+                {m.matchedProduct.wasPrice != null ? (
+                  <span className="text-xs text-muted-foreground line-through">
+                    {formatUSD(m.matchedProduct.wasPrice)}
+                  </span>
+                ) : null}
+              </p>
+              {m.matchedProduct.availabilityNote ? (
+                <p className={CARD_DESC_CLS}>{m.matchedProduct.availabilityNote}</p>
+              ) : null}
+            </div>
+            <QtyAdd />
+          </div>
+        ))}
+        {remaining > 0 ? (
+          <div className="border-t">
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-10 w-full rounded-none text-sm font-semibold"
+              aria-expanded={expanded}
+              onClick={() => setExpanded((v) => !v)}
+            >
+              {expanded ? "See less" : `See more (${remaining})`}
+              {expanded ? (
+                <ChevronUp className="size-4" />
+              ) : (
+                <ChevronDown className="size-4" />
+              )}
+            </Button>
+          </div>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 /** AHRI Matchup — mirrors the PRO Picks shape: H2 heading + single-row card,
  *  no wrapping "box within a box". Reference: ecmdi.com LIVO outdoor (matched
- *  LIVO indoor). Only renders when `product.ahri?.matchedProduct` is present. */
+ *  LIVO indoor). Renders the single matched product when `matchedProduct` is
+ *  set, or the expandable multi-matchup list when `matchups` is present. */
 export function AhriMatchup({ product }: { product: PdpProduct }) {
+  const matchups = product.ahri?.matchups;
+  if (matchups?.length) return <AhriMatchups matchups={matchups} />;
   const match = product.ahri?.matchedProduct;
   if (!product.ahri || !match) return null;
   return (

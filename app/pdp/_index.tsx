@@ -193,12 +193,13 @@ function TemplateCard({
 /**
  * A review link. `rev` says which state it opens, so a reviewer can tell a
  * revised link from the one handed out at the previous meeting:
+ * - `nov19` — the revised link from the latest meeting.
  * - `nov17` — the revised link (a new route, or `?rev=nov17` on the same page).
  * - `nov10` — the link handed out at the Nov 10 review, kept working so it
  *   still shows the Nov 10 state. Use it to compare the two side by side.
  * - omitted — a design-system reference page (not dated).
  */
-type ChangeLink = { label: string; href: string; rev?: "nov17" | "nov10" };
+type ChangeLink = { label: string; href: string; rev?: "nov19" | "nov17" | "nov10" };
 
 type ChangeItem = {
   title: string;
@@ -220,6 +221,20 @@ type ChangeLog = {
 };
 
 const CHANGE_LOGS: ChangeLog[] = [
+  {
+    id: "nov-19",
+    badge: "Nov 19",
+    title: "Nov 19, 2026 — new edits",
+    items: [
+      {
+        title: "Product page — multiple AHRI matchups",
+        desc: "The product page only showed a single AHRI matchup under Add to Cart, leaving no pattern for products with several certified matches. The matchup box now stacks three matches by default and expands to show two more with a See more / See less toggle.",
+        links: [
+          { label: "PDP — multiple AHRI matchups", href: "/pdp/uc-livo-multi?signedin=1", rev: "nov19" },
+        ],
+      },
+    ],
+  },
   {
     id: "nov-17",
     badge: "Nov 17",
@@ -740,8 +755,14 @@ const CHANGE_LOGS: ChangeLog[] = [
 export default function PdpMasterPage() {
   // Glasfloss (Gemaire) is a placeholder-image example — hidden from the master.
   // AHRI is out of scope for this review — its PDP is excluded everywhere.
+  // uc-livo-multi is the multi-matchup variant of the LIVO use case — it's
+  // linked from the Nov 19 change log only, so it doesn't duplicate uc-livo
+  // in the grids below.
   const templates = pdps.filter(
-    (p) => p.slug !== "glasfloss-zlp17h211" && p.slug !== "uc-ahri-matched-system",
+    (p) =>
+      p.slug !== "glasfloss-zlp17h211" &&
+      p.slug !== "uc-ahri-matched-system" &&
+      p.slug !== "uc-livo-multi",
   );
   const tabsAccordionsSlugs = ["uc-tabs-accordions"];
   const tabsAccordions = templates.filter((p) =>
@@ -841,8 +862,8 @@ export default function PdpMasterPage() {
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Grouped by meeting, newest first — each card is dated to a meeting and holds the new
-            edits made since it. The latest ({CHANGE_LOGS[0]?.badge ?? "latest"}) is open; Nov 10 and
-            every older meeting are collapsed, one click away. Each entry links the pages it changed;
+            edits made since it. The latest ({CHANGE_LOGS[0]?.badge ?? "latest"}) is open; every
+            older meeting is collapsed, one click away. Each entry links the pages it changed;
             older sections keep their original links, so a link handed out at an earlier review still
             opens the state that was reviewed.
           </p>
@@ -897,7 +918,7 @@ export default function PdpMasterPage() {
                               asChild
                               size="sm"
                               variant={
-                                l.rev === "nov17"
+                                l.rev === "nov19" || l.rev === "nov17"
                                   ? "default"
                                   : l.rev === "nov10"
                                     ? "outline"

@@ -92,7 +92,9 @@ export function Pdp({
                   box, in the summary column. AHRI Matchup renders in this same
                   band using the PRO-Picks shape (H2 + single card, no nested
                   box) — reference: ecmdi.com LIVO outdoor / matched LIVO indoor. */}
-              {product.ahri?.matchedProduct ? <AhriMatchup product={product} /> : null}
+              {product.ahri?.matchedProduct || product.ahri?.matchups?.length ? (
+                <AhriMatchup product={product} />
+              ) : null}
               {product.proPicks?.length ? <ProPicks product={product} /> : null}
               {product.replacements?.length ? (
                 <Replacements product={product} />
