@@ -224,11 +224,15 @@ export function PdpSummary({
   // PDPs that are explicitly *asking the shopper to discover a match*: the
   // product carries an `ahri` object (matchup number is known / expected)
   // but no `matchedProduct` is wired yet. If a matched system is already
-  // wired, the AhriMatchup section below Add-to-Cart is the answer — no
-  // discovery needed. If a page has `ahriEmpty: true` alone (no `ahri`), it's
+  // wired — one `matchedProduct` or a list of `matchups` — the AhriMatchup
+  // section below Add-to-Cart is the answer, so no discovery is needed. If a
+  // page has `ahriEmpty: true` alone (no `ahri`), it's
   // just flagging the empty-state UI on the source page — not calling for
   // the CTA. Ref: registry-badged "AHRI Matched System" use case.
-  const showFindAhri = Boolean(product.ahri) && !product.ahri?.matchedProduct;
+  const showFindAhri =
+    Boolean(product.ahri) &&
+    !product.ahri?.matchedProduct &&
+    !product.ahri?.matchups?.length;
 
   return (
     <div className="flex flex-col gap-4">

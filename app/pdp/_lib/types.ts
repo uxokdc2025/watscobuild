@@ -62,6 +62,15 @@ export type ProPickItem = {
   availabilityNote?: string;
 };
 
+/** One certified AHRI matchup: the certificate number + the paired indoor unit. */
+export type AhriMatchupItem = {
+  /** AHRI certificate number, e.g. "214779350". */
+  number: string;
+  /** Short differentiator between matchups, e.g. "19 SEER2 · Wall Mount". */
+  specNote?: string;
+  matchedProduct: ProPickItem;
+};
+
 /** A downloadable/linked asset shown in the "Product Documentation" tab. */
 export type PdpDocument = {
   label: string;
@@ -191,6 +200,13 @@ export type PdpProduct = {
       wasPrice?: number;
       availabilityNote?: string;
     };
+    /**
+     * Multi-matchup case: a product certified in more than one AHRI system.
+     * When present, the section renders one row per matchup (3 by default,
+     * "See more" expands the rest) instead of the single `matchedProduct`
+     * row, so `number` is not used in the heading.
+     */
+    matchups?: AhriMatchupItem[];
   };
   /** Render an empty "No AHRI Matchups Found" box (ECMDI equipment PDPs). */
   ahriEmpty?: boolean;

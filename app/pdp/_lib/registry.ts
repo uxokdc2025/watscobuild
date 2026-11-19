@@ -1682,6 +1682,83 @@ const ucLivo: PdpProduct = {
   ],
 };
 
+// ── Multi-matchup variant of the LIVO use case: the same buy box, populated
+//   with 5 certified AHRI matchups (3 rows visible, "See more" reveals the
+//   rest). `uc-livo` stays the 1-matchup reference; this entry is deliberately
+//   unlisted on the index (no `useCase`) and reached from the change log only.
+const ucLivoMulti: PdpProduct = {
+  ...ucLivo,
+  slug: "uc-livo-multi",
+  useCase: undefined,
+  ahri: {
+    // Unused in the multi-matchup heading (each row carries its own number);
+    // kept because the first certificate is still this product's primary one.
+    number: "214779350",
+    matchups: [
+      {
+        number: "214779350",
+        specNote: "19 SEER2 · Wall Mount",
+        matchedProduct: {
+          id: "livo-indoor-12k-19",
+          title:
+            "LIVO Indoor Heat Pump - 12,000 BTU - 19 SEER2 - Wall Mount - 208/230V - R-32",
+          image: "https://cdn.ecmdi.com/gree_livo-indoor_en_normal?wid=400&hei=400&qlt=80",
+          price: 305.27,
+          availabilityNote: "1 available at: Durham NC #1",
+        },
+      },
+      {
+        number: "214779351",
+        specNote: "20 SEER2 · Wall Mount",
+        matchedProduct: {
+          id: "livo-plus-indoor-12k-20",
+          title:
+            "LIVO Plus Indoor Heat Pump - 12,000 BTU - 20 SEER2 - Wall Mount - 208/230V - R-32",
+          image: "https://cdn.ecmdi.com/gree_livo-indoor_en_normal?wid=400&hei=400&qlt=80",
+          price: 349.0,
+          availabilityNote: "4 available at: Durham NC #1",
+        },
+      },
+      {
+        number: "215025054",
+        specNote: "21 SEER2 · Low Ambient",
+        matchedProduct: {
+          id: "livo-gen4-indoor-12k-21",
+          title:
+            "LIVO Gen4 Low-Ambient Indoor Unit - 12,000 BTU - 21 SEER2 - 208/230V - R-32",
+          image: "https://cdn.ecmdi.com/gree_livo-indoor_en_normal?wid=400&hei=400&qlt=80",
+          price: 389.5,
+          availabilityNote: "6 available at: Durham NC #1",
+        },
+      },
+      {
+        number: "215025055",
+        specNote: "18.5 SEER2 · Slim Ducted",
+        matchedProduct: {
+          id: "livo-slim-ducted-12k",
+          title:
+            "LIVO Slim Ducted Indoor Air Handler - 12,000 BTU - 18.5 SEER2 - 208/230V - R-32",
+          image: "https://cdn.ecmdi.com/gree_livo-indoor_en_normal?wid=400&hei=400&qlt=80",
+          price: 462.0,
+          availabilityNote: "2 available at: Durham NC #1",
+        },
+      },
+      {
+        number: "216691486",
+        specNote: "19.5 SEER2 · Ceiling Cassette",
+        matchedProduct: {
+          id: "livo-cassette-12k",
+          title:
+            "LIVO Ceiling Cassette Indoor Unit - 12,000 BTU - 19.5 SEER2 - 208/230V - R-32",
+          image: "https://cdn.ecmdi.com/gree_livo-indoor_en_normal?wid=400&hei=400&qlt=80",
+          price: 518.75,
+          availabilityNote: "0 at Durham NC #1 · 5 nearby",
+        },
+      },
+    ],
+  },
+};
+
 // ── Pattern: Tabs & Accordions (Carrier Enterprise style — About This Product
 //   with a tabbed content strip on top of grouped-section accordions on the right) ──
 const ucTabsAccordions: PdpProduct = {
@@ -2019,6 +2096,7 @@ export const pdps: PdpProduct[] = [
   ucPoints,
   ucNonSellable,
   ucLivo,
+  ucLivoMulti,
   ucLicense,
   ucStrikeThru,
   ucTabsAccordions,
